@@ -15,9 +15,9 @@ export const SPEAKER_EVENT_ROLE_SHORT_LABELS = {
 export const SPEAKER_PROMINENCE_ORDER = [
   'christelle-morancais',
   'jean-baptiste-kempf',
-  'theo-hubert',
-  'quentin-adam',
   'julien-lesaicherre',
+  'quentin-adam',
+  'theo-hubert',
   'nicolas-martignole',
 ] as const;
 
