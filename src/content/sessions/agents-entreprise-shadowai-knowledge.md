@@ -9,6 +9,10 @@ room: ""
 speakerSlugs: ["gael-brisson"]
 format: "talk"
 themes: ["Agents d'entreprise", "Shadow AI", "Knowledge management"]
+illustration:
+  alt: "Un dirigeant observe des équipes au travail sur des écrans dans un bureau plongé dans la pénombre"
+  src: "/talks/agents-enterprise-optimized.webp"
+  variant: "agents"
 ---
 
 Comment reprendre le contrôle des usages non maîtrisés de ChatGPT en entreprise, entre risques de fuite de données et opportunité de construire des agents IA internes, gouvernés et connectés à la base de connaissance de l'entreprise.

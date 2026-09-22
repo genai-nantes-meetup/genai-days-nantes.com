@@ -9,6 +9,10 @@ room: ""
 speakerSlugs: ["quentin-adam", "constance-nebbula", "jean-baptiste-kempf"]
 format: "table-ronde"
 themes: ["Souveraineté", "Cloud", "RGPD", "infrastructure"]
+illustration:
+  alt: "Deux mains posent un bâtiment de datacenter entouré de chaînes et de cadenas"
+  src: "/talks/souverainete-optimized.webp"
+  variant: "sovereignty"
 ---
 
 Comment sortir de la dépendance aux fournisseurs cloud et IA américains, entre alternatives européennes, conformité RGPD et enjeux de souveraineté numérique pour les entreprises et les territoires.

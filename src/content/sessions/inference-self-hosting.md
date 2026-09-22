@@ -9,6 +9,10 @@ room: ""
 speakerSlugs: []
 format: "talk"
 themes: ["Inference", "Self-hosting", "GPU"]
+illustration:
+  alt: "Des ouvriers bâtissent un escalier de briques à côté d'un sablier géant posé sur un tas de pièces"
+  src: "/talks/inference-optimized.webp"
+  variant: "rag"
 ---
 
 Comment internaliser l'hébergement de ses GPUs sans faire exploser les coûts ni les délais d'approvisionnement, entre choix de matériel, dimensionnement et architecture.
