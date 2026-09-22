@@ -388,8 +388,8 @@ const structuredData = [
   }
 
   .partner-tile--platinum .partner-tile__logo img {
-    max-width: 76%;
-    max-height: 6rem;
+    max-width: 88%;
+    max-height: 8.25rem;
   }
 
   .partner-tile--coorganizer .partner-tile__logo img {
@@ -435,7 +435,7 @@ const structuredData = [
     }
 
     .partner-board__group--platinum.partner-board__group--with-coorganizer {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
     .partner-tile--coorganizer {
@@ -463,17 +463,17 @@ const structuredData = [
     }
 
     .partner-board__group--platinum.partner-board__group--with-coorganizer {
-      grid-template-columns: repeat(6, minmax(0, 1fr));
+      grid-template-columns: repeat(5, minmax(0, 1fr));
     }
 
     .partner-tile--coorganizer {
       grid-column: span 2;
     }
 
-    /* Sept colonnes, autant que d'emplacements gold ouverts dans
-     * src/lib/partners.ts : le rang tient sur une seule ligne. */
+    /* Six colonnes, autant que de partenaires gold confirmés dans
+     * src/content/partners/ : le rang tient sur une seule ligne. */
     .partner-board__group--gold {
-      grid-template-columns: repeat(7, minmax(0, 1fr));
+      grid-template-columns: repeat(6, minmax(0, 1fr));
     }
 
     .partner-board__group--silver {

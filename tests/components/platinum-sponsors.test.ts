@@ -5,20 +5,18 @@ import PartnersShowcase from '../../src/components/PartnersShowcase.astro';
 import PlatinumSponsors from '../../src/components/PlatinumSponsors.astro';
 
 describe('PlatinumSponsors.astro', () => {
-  it('keeps the co-organizer separate from the four Platinum partner logos', async () => {
+  it('keeps the co-organizer separate from the three Platinum partner logos', async () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(PlatinumSponsors);
 
     expect(html).toContain('aria-label="Partenaires Platinum"');
     expect(html).not.toContain('<h3');
-    expect(html.match(/<li/g)).toHaveLength(4);
+    expect(html.match(/<li/g)).toHaveLength(3);
     expect(html).not.toContain('Logo Région Pays de la Loire');
     expect(html).toContain('alt="Logo Clever Cloud"');
     expect(html).toContain('alt="Logo Swiftask"');
     expect(html).toContain('alt="Logo ADN Ouest"');
-    expect(html).toContain('alt="Logo SII"');
     expect(html).toContain('src="/logos/adn-ouest.png"');
-    expect(html).toContain('src="/logos/SII_white-optimized.svg"');
   });
 
   it('keeps the Platinum logos attached to the scrolling hero title', async () => {

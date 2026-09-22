@@ -65,14 +65,13 @@ describe('content collections', () => {
     ]);
   });
 
-  it('places the five confirmed organizations among the Platinum partners', async () => {
+  it('places the four confirmed organizations among the Platinum partners', async () => {
     const partners = await getCollection('partners');
     const platinum = partners.filter((partner) => partner.data.tier === 'platinum');
     expect(platinum.map((partner) => partner.data.name).sort()).toEqual([
       'ADN Ouest',
       'Clever Cloud',
       'Région Pays de la Loire',
-      'SII',
       'Swiftask',
     ]);
   });

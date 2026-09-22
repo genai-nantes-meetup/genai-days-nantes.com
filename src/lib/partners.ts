@@ -1,5 +1,5 @@
 export const PARTNER_TIER_CAPACITIES = {
-  platinum: 5,
-  gold: 7,
+  platinum: 4,
+  gold: 6,
   silver: null,
 } as const;

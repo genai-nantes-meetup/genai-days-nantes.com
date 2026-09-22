@@ -1,7 +1,7 @@
 ---
-title: "Mon modèle consomme trop de GPUs"
+title: "Mon modèle ne tient pas sur une puce embarquée"
 subtitle: "Small language models, fine-tuning & compression"
-seoTitle: "Mon modèle consomme trop de GPUs"
+seoTitle: "Mon modèle ne tient pas sur une puce embarquée"
 track: "tech"
 startTime: "11:15"
 durationMinutes: 40
@@ -15,6 +15,6 @@ illustration:
   variant: "evaluation"
 ---
 
-Comment concevoir des Small Language Models spécialisés et compresser les modèles pour les déployer plus près des usages, avec moins de coûts, de latence et de consommation.
+Aujourd’hui, l’IA est majoritairement consommée dans le Cloud. Mais peut-on faire autrement ? L’objectif de cette prise de parole est de montrer concrètement comment faire tourner localement un modèle de langage performant, sur un PC ou une carte comme la Jetson Nano.
 
-Cette session détaille les techniques concrètes, quantification, distillation, pruning, qui permettent de réduire la taille d'un modèle sans sacrifier ses performances.
+Sur un environnement contraint, réduire la taille arbitrairement d’un modèle ne suffit pas. Nous verrons comment les SLM (Small Language Models) permettent de conserver de bonnes performances grâce à différentes approches : trimming, quantification, pruning et fine-tuning. Nous irons ensuite plus loin en comparant ces techniques d’optimisation à une autre approche : concevoir des architectures nativement pensées pour l’Edge, et donc adaptées dès l’origine aux contraintes de calcul.

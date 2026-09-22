@@ -30,7 +30,7 @@ export const SPEAKER_PORTRAIT_DIMENSIONS: Record<string, { width: number; height
   'constance-nebbula': { width: 832, height: 832 },
   'david-leaurant': { width: 800, height: 800 },
   'florian-herveou': { width: 600, height: 600 },
-  'gael-brisson': { width: 800, height: 800 },
+  'gael-brisson': { width: 1024, height: 1024 },
   'julien-lesaicherre': { width: 800, height: 800 },
   'nicolas-martignole': { width: 1448, height: 1086 },
   'jean-baptiste-kempf': { width: 1200, height: 1801 },
