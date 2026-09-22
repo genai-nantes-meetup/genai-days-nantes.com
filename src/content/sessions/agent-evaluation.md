@@ -3,7 +3,7 @@ title: "Je n'arrive pas à savoir si mes agents sont performants ou non"
 subtitle: "Observability & evaluation"
 seoTitle: "Je n'arrive pas à savoir si mes agents sont performants ou non"
 track: "tech"
-startTime: "16:00"
+startTime: "16:55"
 durationMinutes: 40
 room: ""
 speakerSlugs: []
