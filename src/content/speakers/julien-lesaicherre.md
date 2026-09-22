@@ -26,6 +26,7 @@ companies:
     relationship: "General Manager France depuis 2026"
     description: "ElevenLabs est une entreprise d’origine européenne qui développe des modèles vocaux et des agents IA conversationnels, utilisés notamment par Deutsche Telekom, Stripe et TV5MONDE."
     website: "https://elevenlabs.io/"
+    logo: "/logos/elevenlabs-optimized.svg"
 photo: "/speakers/julien-lesaicherre-optimized.webp"
 companyLogo: "/logos/elevenlabs-optimized.svg"
 companyLogoAlt: "Logo ElevenLabs"
