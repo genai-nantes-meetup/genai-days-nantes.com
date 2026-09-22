@@ -27,6 +27,8 @@ companies:
     description: "ElevenLabs est une entreprise d’origine européenne qui développe des modèles vocaux et des agents IA conversationnels, utilisés notamment par Deutsche Telekom, Stripe et TV5MONDE."
     website: "https://elevenlabs.io/"
 photo: "/speakers/julien-lesaicherre-optimized.webp"
+companyLogo: "/logos/elevenlabs-optimized.svg"
+companyLogoAlt: "Logo ElevenLabs"
 linkedin: "https://www.linkedin.com/in/julien11l/"
 website: "https://elevenlabs.io/"
 x: "https://x.com/jlesaicherre"
