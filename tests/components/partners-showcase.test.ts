@@ -15,7 +15,7 @@ describe('PartnersShowcase.astro', () => {
     expect(html).toContain('data-partner-emphasis="remaining"');
     expect(html.match(/data-marquee-copy="primary"/g)).toHaveLength(2);
     expect(html.match(/data-marquee-copy="duplicate"/g)).toHaveLength(2);
-    expect(html.match(/data-partner-logo=/g)).toHaveLength(13);
+    expect(html.match(/data-partner-logo=/g)).toHaveLength(14);
     expect(html).toContain('class="partner-showcase__coorganizer"');
     expect(html).toContain(
       'La Région Pays de la Loire co-organise cette édition et nous ouvre les portes de l’Hôtel de Région',
@@ -33,6 +33,7 @@ describe('PartnersShowcase.astro', () => {
     expect(html).toContain('alt="Logo Cross Data"');
     expect(html).toContain('alt="Logo _icilundi"');
     expect(html).toContain('alt="Logo Externatic"');
+    expect(html).toContain('alt="Logo Explore the Vault"');
     expect(html).not.toContain('alt="Logo SII"');
     expect(html).not.toContain('alt="Logo Mistral AI"');
     expect(html).not.toContain('alt="Logo NVIDIA"');
@@ -55,11 +56,12 @@ describe('PartnersShowcase.astro', () => {
     expect(html).toContain('href="https://www.crossdata.tech/"');
     expect(html).toContain('href="https://icilundi.fr/"');
     expect(html).toContain('href="https://www.externatic.fr/"');
+    expect(html).toContain('href="https://explorethevault.ai/"');
     expect(html).not.toContain('href="https://sii-group.com/"');
     expect(html).toContain('aria-label="Visiter le site de Région Pays de la Loire"');
     expect(html).toContain('target="_blank"');
     expect(html).toContain('rel="noopener noreferrer"');
-    expect(html.match(/tabindex="-1"/g)).toHaveLength(13);
+    expect(html.match(/tabindex="-1"/g)).toHaveLength(14);
     expect(html).toContain('href="/partenaires"');
     expect(html).toContain('Découvrir tous les partenaires');
   });
