@@ -3,16 +3,15 @@ import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import HeroAffiche from '../../src/components/HeroAffiche.astro';
 
 describe('HeroAffiche.astro', () => {
-  it('renders the full-bleed poster with the proposition and no competing CTA', async () => {
+  it('renders the full-bleed poster with the proposition and a single ticket CTA', async () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(HeroAffiche);
     expect(html).toContain('hero-affiche');
     expect(html).toContain('src="/images/cover_v2-optimized.webp"');
-    expect(html).toContain('L’IA générative');
-    expect(html).toContain('est déjà chez vous.');
-    expect(html).toContain('C’est maintenant');
-    expect(html).toContain('que ça se complique.');
+    expect(html).toContain('LA Conf Gen AI dédiée aux décideurs et leurs équipes techs');
+    expect(html).toContain('2 tracks pour décider où investir et comprendre comment déployer');
     expect(html).not.toContain('placeholder-billetterie');
+    expect(html).toMatch(/hero-affiche__cta[\s\S]*href="https:\/\/www\.billetweb\.fr\/genai-days-nantes-2026"[\s\S]*Réserver ma place[\s\S]*hero-affiche__sponsors/);
     expect(html).not.toContain('Prendre mon ticket');
     expect(html).toContain('data-poster-trame');
     expect(html).not.toContain('places limitées');
@@ -21,12 +20,13 @@ describe('HeroAffiche.astro', () => {
   it('carries the event facts on the peelable identity sticker', async () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(HeroAffiche);
-    expect(html).toContain('MARDI · ACCUEIL 08:30');
-    expect(html).toContain('CONFÉRENCES');
+    const label = html.slice(html.indexOf('data-poster-label'), html.indexOf('data-label-pin-host'));
+    expect(label).not.toContain('ACCUEIL');
+    expect(label).not.toContain('CONFÉRENCES');
     expect(html).toMatch(/<strong[^>]*>17<\/strong>/);
     expect(html).toMatch(/<b[^>]*>novembre<\/b>/);
     expect(html).toContain('Hôtel de Région');
-    expect(html).not.toContain('Hôtel de Région Pays de la Loire');
+    expect(label).not.toContain('Hôtel de Région Pays de la Loire');
     expect(html).toContain('Nantes');
     expect(html.match(/data-label-id="landing-day-manifesto"/g)).toHaveLength(1);
     expect(html).not.toContain('event-name');
@@ -42,11 +42,11 @@ describe('HeroAffiche.astro', () => {
     expect(html).not.toContain('data-label-obstacle');
   });
 
-  it('keeps a typographic relay of the sticker facts for when it is collected', async () => {
+  it('always shows the practical line under the title', async () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(HeroAffiche);
 
-    expect(html).toMatch(/hero-affiche__practical[\s\S]*MARDI 17 novembre 2026[\s\S]*Hôtel de Région, Nantes[\s\S]*ACCUEIL 08:30/);
+    expect(html).toMatch(/hero-affiche__practical[\s\S]*MARDI 17 novembre 2026[\s\S]*Hôtel de Région, Nantes[\s\S]*\+\u00a0400 PARTICIPANTS/);
     expect(html).toContain('hero-affiche__coorganizer--relay');
   });
 });
