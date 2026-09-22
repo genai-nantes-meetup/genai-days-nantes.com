@@ -9,6 +9,10 @@ room: ""
 speakerSlugs: []
 format: "talk"
 themes: ["Industrialisation IA", "Qualité des données", "MLOps"]
+illustration:
+  alt: "Une porte lumineuse ouvre un passage isolé au milieu d'un océan de prototypes bloqués"
+  src: "/talks/industrialisation-optimized.webp"
+  variant: "governance"
 ---
 
 Pourquoi la majorité des projets d'intelligence artificielle restent bloqués au stade du prototype, et ce qu'il faut changer dans la qualité des données, la gouvernance et les équipes pour les faire passer en production.

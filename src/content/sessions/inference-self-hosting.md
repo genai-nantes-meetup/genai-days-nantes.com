@@ -10,7 +10,7 @@ speakerSlugs: []
 format: "talk"
 themes: ["Inference", "Self-hosting", "GPU"]
 illustration:
-  alt: "Des ouvriers bâtissent un escalier de briques à côté d'un sablier géant posé sur un tas de pièces"
+  alt: "Une file de cadres verse chacun son tour du métal en fusion dans un serveur GPU"
   src: "/talks/inference-optimized.webp"
   variant: "rag"
 ---

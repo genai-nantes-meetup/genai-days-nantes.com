@@ -9,6 +9,10 @@ room: ""
 speakerSlugs: []
 format: "talk"
 themes: ["Harnais d'agents", "Orchestration", "Context engineering"]
+illustration:
+  alt: "Une pile de pages s'envole au-dessus d'une tête où un cerveau électronique surchargé s'illumine"
+  src: "/talks/context-engineering-optimized.webp"
+  variant: "agents"
 ---
 
 Comment concevoir le harness qui entoure un agent IA, entre sélection d'outils, mémoire et orchestration, la quantité de contexte injecté n'étant qu'un levier parmi d'autres et pouvant même dégrader les résultats.

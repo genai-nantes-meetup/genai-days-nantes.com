@@ -9,6 +9,10 @@ room: ""
 speakerSlugs: []
 format: "talk"
 themes: ["Robots humanoïdes", "Physical AI", "Automatisation industrielle"]
+illustration:
+  alt: "Un dirigeant assis seul face à une longue rangée de robots humanoïdes alignés autour d'une table"
+  src: "/talks/ia-industrie-optimized.webp"
+  variant: "governance"
 ---
 
 Comment les robots humanoïdes et l'IA physique s'installent dans les chaînes de production, et ce que cela change pour la compétitivité des entreprises.

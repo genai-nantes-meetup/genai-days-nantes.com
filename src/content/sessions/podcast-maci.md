@@ -15,10 +15,9 @@ presentedBy:
 format: "podcast"
 themes: ["Actualité tech", "Cloud", "Podcast"]
 illustration:
-  alt: "Pochette du podcast Message à Caractère Informatique de Clever Cloud"
+  alt: "Un micro géant illuminé domine la scène devant un public assis dans la pénombre"
   src: "/talks/podcast-maci-clever-cloud-optimized.webp"
   variant: "podcast"
-  fit: "contain"
 ---
 
 « Message à Caractère Informatique », le podcast de Clever Cloud, passe en public pour une session de veille, de débats et de digressions sur l’actualité tech, enregistrée en parallèle de l’apéro.

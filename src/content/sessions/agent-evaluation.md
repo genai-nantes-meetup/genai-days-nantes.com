@@ -9,6 +9,10 @@ room: ""
 speakerSlugs: []
 format: "talk"
 themes: ["Évaluation d'agents", "Observabilité", "Benchmarks"]
+illustration:
+  alt: "Une silhouette face à un couloir éclairé, entourée de points d'interrogation, avant de rendre son verdict"
+  src: "/talks/agent-evaluation-optimized.webp"
+  variant: "evaluation"
 ---
 
 Comment mesurer objectivement la performance des agents IA en production, entre métriques, benchmarks et observabilité, plutôt que de se fier à une impression subjective.
