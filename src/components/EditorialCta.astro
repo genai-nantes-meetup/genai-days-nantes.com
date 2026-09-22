@@ -1,0 +1,99 @@
+---
+import ArrowIcon from './ArrowIcon.astro';
+
+interface Props {
+  href: string;
+  align?: 'start' | 'end';
+  variant?: 'link' | 'conversion';
+  target?: '_blank' | '_self';
+  rel?: string;
+}
+
+const { href, align = 'start', variant = 'link', target, rel } = Astro.props;
+---
+
+<a
+  class:list={['editorial-cta', `editorial-cta--${align}`, `editorial-cta--${variant}`]}
+  href={href}
+  target={target}
+  rel={rel}
+>
+  <span><slot /></span>
+  <ArrowIcon />
+</a>
+
+<style>
+  .editorial-cta {
+    display: inline-flex;
+    width: fit-content;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    font-family: var(--font-nav);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.025em;
+    line-height: 1.2;
+    text-underline-offset: 0.28em;
+    text-transform: uppercase;
+    transition: color 180ms ease, text-decoration-color 180ms ease;
+  }
+
+  .editorial-cta--link {
+    padding-block: 0.45rem;
+    color: var(--color-brand-blue);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, currentColor 42%, transparent);
+    text-decoration-thickness: 1px;
+  }
+
+  .editorial-cta--conversion {
+    padding: 0.75rem 0.95rem;
+    background: var(--color-action-ticket);
+    color: var(--color-action-ticket-ink);
+    text-decoration: none;
+    transition: background-color 180ms ease, transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .editorial-cta--end {
+    justify-self: end;
+  }
+
+  .editorial-cta :global(svg) {
+    flex: none;
+    transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .editorial-cta--link:hover {
+    color: color-mix(in srgb, var(--color-brand-blue) 78%, var(--color-brand-black));
+    text-decoration-color: currentColor;
+    text-decoration-thickness: 2px;
+  }
+
+  .editorial-cta--conversion:hover {
+    background: var(--color-action-ticket-hover);
+    transform: translateY(-0.1rem);
+  }
+
+  .editorial-cta:hover :global(svg),
+  .editorial-cta:focus-visible :global(svg) {
+    transform: translateX(0.25rem);
+  }
+
+  .editorial-cta--conversion:active {
+    transform: translateY(0) scale(0.98);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .editorial-cta,
+    .editorial-cta :global(svg) {
+      transition: none;
+    }
+
+    .editorial-cta--conversion:hover,
+    .editorial-cta--conversion:active {
+      transform: none;
+    }
+  }
+</style>

@@ -1,0 +1,722 @@
+---
+import '@fontsource/special-elite/400.css';
+import ArrowIcon from './ArrowIcon.astro';
+import EditorialCta from './EditorialCta.astro';
+import EditorialGrid from './EditorialGrid.astro';
+import EventName from './EventName.astro';
+import { CTA_LINKS } from '../lib/cta-links';
+import { EVENT, formatEventDateLabel } from '../lib/event';
+import { formatPriceAmount, PRICING } from '../lib/pricing';
+
+const ticketDate = new Date(`${EVENT.date}T00:00:00`);
+const ticketDateDay = new Intl.DateTimeFormat('fr-FR', { day: '2-digit' }).format(ticketDate);
+const ticketDateMonth = new Intl.DateTimeFormat('fr-FR', { month: 'short' })
+  .format(ticketDate)
+  .replace('.', '')
+  .toLocaleUpperCase('fr-FR');
+const ticketDateYear = new Intl.DateTimeFormat('fr-FR', { year: 'numeric' }).format(ticketDate);
+---
+
+<section id="pass-participant" class="ticket-field" aria-labelledby="ticket-title">
+  <EditorialGrid />
+  <div class="ticket-field__inner">
+    <header class="ticket-field__heading">
+      <div class="ticket-field__heading-copy">
+        <h2 id="ticket-title" class="type-section-title">Un pass pour toute la journée.</h2>
+        <p>Profitez de toutes les conférences, rencontres et temps forts, du matin jusqu’au soir.</p>
+      </div>
+    </header>
+    <div class="ticket-field__stage">
+      <article class="admission-ticket" aria-label={`${PRICING.name} · ${formatPriceAmount()}`}>
+        <img
+          class="admission-ticket__paper"
+          src="/da/admission-ticket-blank-brick-v1-optimized.webp"
+          alt=""
+          loading="lazy"
+          decoding="async"
+          aria-hidden="true"
+        />
+        <div class="admission-ticket__body">
+          <header class="admission-ticket__header">
+            <p>Billet participant · <EventName /></p>
+            <span>{ticketDateDay}·{ticketDateMonth}·{ticketDateYear.slice(-2)}</span>
+          </header>
+          <div class="admission-ticket__price">
+            <p>{formatPriceAmount()}</p>
+            <span class="admission-ticket__barcode" aria-hidden="true"></span>
+          </div>
+          <dl class="admission-ticket__facts">
+            <div>
+              <dt>Date</dt>
+              <dd>{formatEventDateLabel()}</dd>
+            </div>
+            <div>
+              <dt>Lieu</dt>
+              <dd>{EVENT.venue.name}</dd>
+            </div>
+            <div>
+              <dt>Accueil</dt>
+              <dd>{EVENT.startTime}</dd>
+            </div>
+          </dl>
+          <p class="admission-ticket__admit">Adhésion annuelle à l'association Naomakers</p>
+          <ul class="admission-ticket__includes" aria-label="Prestations comprises">
+            <li><span>Programme</span><strong>Accès conférences · 2 tracks<br>Afterwork</strong></li>
+            <li><span>Compris</span><strong>Café, pauses et déjeuner</strong></li>
+            <li><span>Après</span><strong>Accès privilégié aux autres événements de l'association</strong></li>
+          </ul>
+          <footer class="admission-ticket__footer">
+            <p class="admission-ticket__policy">{PRICING.policy}</p>
+            <a class="admission-ticket__practical-link" href="/infos-pratiques">
+              Préparer ma venue <ArrowIcon />
+            </a>
+          </footer>
+        </div>
+        <div class="admission-ticket__stub">
+          <EventName class="admission-ticket__stub-wordmark" />
+          <p class="admission-ticket__stub-date">
+            <strong>{ticketDateDay}</strong>
+            <span>{ticketDateMonth}<br />{ticketDateYear}</span>
+          </p>
+          <p class="admission-ticket__stub-meta">
+            <span>{EVENT.venue.city}</span>
+            <span>Accès journée · {PRICING.capacity} places</span>
+          </p>
+        </div>
+      </article>
+      <div class="ticket-field__cta">
+        <EditorialCta href={CTA_LINKS.tickets} variant="conversion" target="_blank" rel="noopener">
+          Réserver ma place
+        </EditorialCta>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .ticket-field {
+    position: relative;
+    z-index: 2;
+    overflow: visible;
+    border-top: 1px solid rgb(57 54 54 / 18%);
+    background: transparent;
+    color: var(--color-brand-black);
+    scroll-margin-top: calc(
+      var(--site-header-height) + clamp(3.5rem, 7svh, 5rem)
+    );
+  }
+
+  .ticket-field__inner {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    width: min(calc(100% - 2 * var(--layout-gutter)), var(--layout-editorial));
+    margin-inline: auto;
+    padding-block: var(--space-section-compact) 0.75rem;
+    row-gap: clamp(1.5rem, 3vw, 2rem);
+  }
+
+  .ticket-field__heading {
+    display: grid;
+    justify-items: center;
+    gap: 1.5rem;
+    text-align: center;
+  }
+
+  .ticket-field__heading-copy {
+    display: grid;
+    max-width: 46rem;
+    gap: 0.75rem;
+  }
+
+  .ticket-field__heading h2 {
+    color: var(--color-brand-black);
+  }
+
+  .ticket-field__heading-copy > p {
+    max-width: 65ch;
+    color: rgb(from var(--color-brand-black) r g b / 72%);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    text-wrap: balance;
+  }
+
+  .ticket-field__stage {
+    position: relative;
+    display: grid;
+    padding: 0 clamp(0.75rem, 2vw, 1.5rem) 0.5rem;
+    align-items: center;
+    row-gap: 0;
+  }
+
+  .ticket-field__cta {
+    position: relative;
+    z-index: 4;
+    display: grid;
+    justify-items: center;
+  }
+
+  .ticket-field__cta :global(.editorial-cta) {
+    min-width: min(100%, 15rem);
+    min-height: 3.25rem;
+    padding: 0.9rem 1.3rem;
+    font-size: 0.8125rem;
+    gap: 0.9rem;
+  }
+
+  .admission-ticket {
+    --ticket-rotation: 0deg;
+    --ticket-stub-surface: #c96f55;
+    position: relative;
+    display: grid;
+    width: min(100%, 32rem);
+    margin-inline: auto;
+    overflow: visible;
+    background: transparent;
+    filter: drop-shadow(0.3rem 1.05rem 1.25rem rgb(9 18 46 / 38%));
+    transform: rotate(var(--ticket-rotation));
+  }
+
+  .admission-ticket__paper {
+    display: none;
+  }
+
+  .admission-ticket__body {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    padding: clamp(1rem, 4vw, 1.5rem);
+    background: var(--color-brand-cream);
+    box-shadow: none;
+  }
+
+  .admission-ticket__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    border-bottom: 1px solid rgb(57 54 54 / 42%);
+    padding: 0.15rem 0.25rem 0.55rem;
+    gap: 1rem;
+  }
+
+  .admission-ticket__header p,
+  .admission-ticket__header > span {
+    font-family: 'Special Elite', var(--font-nav);
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  .admission-ticket__header > span {
+    flex: none;
+    color: rgb(57 54 54 / 76%);
+    letter-spacing: 0.08em;
+  }
+
+  .admission-ticket__price {
+    display: grid;
+    align-items: end;
+    border-bottom: 1px solid rgb(57 54 54 / 42%);
+    padding: 0.8rem 0.25rem 0.7rem;
+    gap: 0.75rem;
+  }
+
+  .admission-ticket__price > p {
+    font-family: var(--font-serif);
+    font-size: clamp(3.5rem, 16vw, 5rem);
+    font-weight: 600;
+    font-variant-numeric: lining-nums tabular-nums;
+    letter-spacing: -0.035em;
+    line-height: 0.8;
+  }
+
+  .admission-ticket__barcode {
+    width: min(72%, 14rem);
+    height: 1.6rem;
+    background: repeating-linear-gradient(
+      90deg,
+      currentColor 0 1px,
+      transparent 1px 3px,
+      currentColor 3px 5px,
+      transparent 5px 8px
+    );
+    opacity: 0.78;
+  }
+
+  .admission-ticket__facts {
+    display: grid;
+    margin: 0;
+    border-bottom: 1px solid rgb(57 54 54 / 42%);
+  }
+
+  .admission-ticket__facts > div {
+    display: grid;
+    grid-template-columns: 4rem minmax(0, 1fr);
+    align-items: baseline;
+    padding: 0.55rem 0.25rem;
+    gap: 0.5rem;
+  }
+
+  .admission-ticket__facts > div + div {
+    border-top: 1px solid rgb(57 54 54 / 28%);
+  }
+
+  .admission-ticket__facts dt,
+  .admission-ticket__facts dd {
+    margin: 0;
+    font-family: 'Special Elite', var(--font-sans);
+    line-height: 1.25;
+  }
+
+  .admission-ticket__facts dt {
+    color: rgb(57 54 54 / 72%);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .admission-ticket__facts dd {
+    font-size: 0.875rem;
+  }
+
+  .admission-ticket__admit {
+    margin: 0.55rem 0 0;
+    background: var(--color-brand-black);
+    padding: 0.55rem 0.65rem 0.45rem;
+    color: var(--color-brand-cream);
+    font-family: 'Special Elite', var(--font-nav);
+    font-size: 0.75rem;
+    letter-spacing: 0.035em;
+    line-height: 1.35;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .admission-ticket__includes {
+    display: grid;
+    margin: 0;
+    border-bottom: 1px solid rgb(57 54 54 / 42%);
+  }
+
+  .admission-ticket__includes li {
+    display: grid;
+    grid-template-columns: 5rem minmax(0, 1fr);
+    align-items: baseline;
+    padding: 0.55rem 0.25rem;
+    gap: 0.5rem;
+  }
+
+  .admission-ticket__includes li + li {
+    border-top: 1px solid rgb(57 54 54 / 28%);
+  }
+
+  .admission-ticket__includes span,
+  .admission-ticket__includes strong {
+    font-family: 'Special Elite', var(--font-sans);
+    line-height: 1.25;
+  }
+
+  .admission-ticket__includes span {
+    color: rgb(57 54 54 / 72%);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .admission-ticket__includes strong {
+    font-size: 0.875rem;
+    font-weight: 400;
+  }
+
+  .admission-ticket__footer {
+    display: grid;
+    align-self: end;
+    align-items: end;
+    margin-top: 0.65rem;
+    padding-inline: 0.25rem;
+    gap: 0.65rem;
+  }
+
+  .admission-ticket__policy {
+    margin: 0;
+    color: rgb(57 54 54 / 78%);
+    font-family: 'Special Elite', var(--font-sans);
+    font-size: 0.75rem;
+    line-height: 1.35;
+  }
+
+  .admission-ticket__practical-link {
+    display: inline-flex;
+    width: fit-content;
+    align-items: center;
+    justify-self: start;
+    padding-block: 0.3rem;
+    border-bottom: 1px solid currentColor;
+    gap: 0.6rem;
+    color: var(--color-brand-blue);
+    font-family: 'Special Elite', var(--font-sans);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    line-height: 1.25;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .admission-ticket__practical-link :global(.arrow-icon) {
+    transition: transform 180ms ease;
+  }
+
+  .admission-ticket__practical-link:hover :global(.arrow-icon),
+  .admission-ticket__practical-link:focus-visible :global(.arrow-icon) {
+    transform: translateX(0.2rem);
+  }
+
+  .admission-ticket__practical-link:focus-visible {
+    outline: 2px solid var(--color-brand-orange);
+    outline-offset: 4px;
+  }
+
+  .admission-ticket__stub {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    min-height: 12rem;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto 1fr auto;
+    align-items: end;
+    padding: 1.25rem;
+    background: var(--ticket-stub-surface);
+    box-shadow: none;
+    color: var(--color-brand-night);
+  }
+
+  .admission-ticket__stub::before {
+    position: absolute;
+    top: -0.42rem;
+    right: 0;
+    left: 0;
+    height: 0.84rem;
+    background: radial-gradient(circle, var(--ticket-stub-surface) 0 0.3rem, transparent 0.32rem) 0 0 / 0.9rem 0.84rem repeat-x;
+    content: '';
+    pointer-events: none;
+  }
+
+  :global(.admission-ticket__stub-wordmark) {
+    grid-row: 1;
+    grid-column: 1 / -1;
+    justify-self: start;
+    font-size: 0.875rem;
+  }
+
+  .admission-ticket__stub-date {
+    display: flex;
+    grid-row: 2;
+    grid-column: 1 / -1;
+    align-items: center;
+    justify-self: center;
+    gap: 0.6rem;
+  }
+
+  .admission-ticket__stub-date strong {
+    font-family: var(--font-serif);
+    font-size: clamp(3.5rem, 16vw, 5rem);
+    font-weight: 600;
+    font-variant-numeric: lining-nums tabular-nums;
+    letter-spacing: -0.04em;
+    line-height: 0.8;
+  }
+
+  .admission-ticket__stub-date span,
+  .admission-ticket__stub-meta {
+    font-family: 'Special Elite', var(--font-nav);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    line-height: 1.25;
+    text-transform: uppercase;
+  }
+
+  .admission-ticket__stub-date span {
+    opacity: 0.9;
+  }
+
+  .admission-ticket__stub-meta {
+    display: grid;
+    grid-row: 3;
+    grid-column: 1 / -1;
+    justify-items: end;
+    padding: 0 0.5rem 0.5rem 0;
+    gap: 0.2rem;
+  }
+
+  .admission-ticket__stub-meta span:last-child {
+    opacity: 0.9;
+  }
+
+  @media (min-width: 64rem) {
+    .ticket-field__heading {
+      padding-inline: clamp(1.5rem, 2.5vw, 2rem);
+    }
+
+    .admission-ticket {
+      --ticket-rotation: -0.35deg;
+      display: block;
+      width: min(100%, 64rem);
+      aspect-ratio: 1991 / 790;
+    }
+
+    .admission-ticket__paper {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+      pointer-events: none;
+    }
+
+    .admission-ticket__body {
+      position: absolute;
+      top: 10%;
+      left: 4%;
+      width: 64.5%;
+      height: 80%;
+      grid-template-rows: auto auto auto auto minmax(3.25rem, 1fr) auto;
+      padding: 0.45rem 0.55rem;
+      background: transparent;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .admission-ticket__header {
+      padding: 0.1rem 0.25rem 0.35rem;
+    }
+
+    .admission-ticket__price {
+      grid-template-columns: auto minmax(6rem, 1fr);
+      align-items: end;
+      padding: 0.35rem 0.25rem 0.45rem;
+      gap: clamp(1.25rem, 2.5vw, 2.5rem);
+    }
+
+    .admission-ticket__price > p {
+      font-size: clamp(4.5rem, 7vw, 5.75rem);
+    }
+
+    .admission-ticket__barcode {
+      width: min(100%, 12rem);
+      height: 1.45rem;
+      margin-bottom: 0.45rem;
+    }
+
+    .admission-ticket__facts {
+      grid-template-columns: 1.15fr 1.55fr 0.7fr;
+    }
+
+    .admission-ticket__facts > div {
+      display: block;
+      padding: 0.35rem 0.45rem 0.3rem;
+    }
+
+    .admission-ticket__facts > div + div {
+      border-top: 0;
+      border-left: 1px solid rgb(57 54 54 / 28%);
+    }
+
+    .admission-ticket__facts dt {
+      margin-bottom: 0.15rem;
+    }
+
+    .admission-ticket__facts dd {
+      font-size: 0.75rem;
+    }
+
+    .admission-ticket__admit {
+      margin-top: 0.4rem;
+      padding: 0.4rem 0.55rem 0.32rem;
+      line-height: 1.2;
+    }
+
+    .admission-ticket__includes {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .admission-ticket__includes li {
+      display: grid;
+      grid-template-columns: 1fr;
+      align-content: start;
+      padding: 0.4rem 0.45rem 0.35rem;
+      gap: 0.15rem;
+    }
+
+    .admission-ticket__includes li + li {
+      border-top: 0;
+      border-left: 1px solid rgb(57 54 54 / 28%);
+    }
+
+    .admission-ticket__includes strong {
+      font-size: 0.75rem;
+    }
+
+    .admission-ticket__footer {
+      grid-template-columns: minmax(0, 1fr) auto;
+      margin-top: 0.45rem;
+      gap: 0.75rem;
+    }
+
+    .admission-ticket__practical-link {
+      justify-self: end;
+    }
+
+    .admission-ticket__stub {
+      position: absolute;
+      top: 10%;
+      right: 2.8%;
+      display: grid;
+      width: 24.8%;
+      height: 80%;
+      min-height: 0;
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 1fr auto;
+      align-items: end;
+      padding: clamp(0.75rem, 1.2vw, 1.15rem);
+      background: transparent;
+      box-shadow: none;
+      color: var(--color-brand-night);
+    }
+
+    .admission-ticket__stub::before {
+      display: none;
+    }
+
+    .admission-ticket__stub > * {
+      transform: none;
+    }
+
+    :global(.admission-ticket__stub-wordmark) {
+      grid-row: 1;
+      justify-self: start;
+      font-size: 0.75rem;
+    }
+
+    .admission-ticket__stub-date {
+      grid-row: 2;
+      grid-column: 1;
+      justify-self: center;
+    }
+
+    .admission-ticket__stub-date strong {
+      font-size: clamp(3.5rem, 5vw, 4.5rem);
+    }
+
+    .admission-ticket__stub-meta {
+      grid-column: 1;
+      justify-self: end;
+    }
+  }
+
+  @media (min-width: 80rem) {
+    .ticket-field__inner {
+      padding-block: clamp(2.5rem, 5svh, 3.25rem) 0.75rem;
+      row-gap: 1.25rem;
+    }
+
+    .ticket-field__heading {
+      padding-inline: clamp(1.5rem, 2.5vw, 2rem);
+    }
+
+    .ticket-field__heading-copy {
+      max-width: 48rem;
+    }
+
+    .ticket-field__stage {
+      width: 100%;
+    }
+
+    .admission-ticket {
+      filter: drop-shadow(0.25rem 0.85rem 1rem rgb(57 54 54 / 22%));
+    }
+
+    .admission-ticket__body {
+      top: 8%;
+      height: 84%;
+      grid-template-rows: 1fr 3fr 1.4fr 1.1fr 2.3fr 1.5fr;
+      padding: 0.35rem 0.45rem;
+    }
+
+    .admission-ticket__header {
+      align-items: center;
+      padding: 0.05rem 0.2rem 0.2rem;
+    }
+
+    .admission-ticket__price {
+      padding: 0.2rem;
+      gap: clamp(1rem, 2vw, 1.75rem);
+    }
+
+    .admission-ticket__price > p {
+      font-size: clamp(3.5rem, 4.5vw, 4.5rem);
+    }
+
+    .admission-ticket__barcode {
+      height: 1.1rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .admission-ticket__facts > div {
+      display: grid;
+      align-content: center;
+      padding: 0.2rem 0.35rem;
+    }
+
+    .admission-ticket__facts dt {
+      margin-bottom: 0.05rem;
+    }
+
+    .admission-ticket__admit {
+      display: grid;
+      margin-top: 0.25rem;
+      padding: 0.25rem 0.45rem 0.2rem;
+      place-items: center;
+    }
+
+    .admission-ticket__includes li {
+      padding: 0.25rem 0.35rem 0.2rem;
+    }
+
+    .admission-ticket__footer {
+      align-self: stretch;
+      align-items: center;
+      margin-top: 0.25rem;
+      padding-inline: 0.2rem;
+      gap: 0.5rem;
+    }
+
+    .admission-ticket__policy {
+      font-size: 0.7rem;
+      line-height: 1.25;
+    }
+
+    .admission-ticket__stub {
+      top: 8%;
+      height: 84%;
+      padding: clamp(0.65rem, 1vw, 0.9rem);
+    }
+
+    .admission-ticket__stub-date strong {
+      font-size: clamp(3.25rem, 4vw, 3.75rem);
+    }
+
+    .admission-ticket__stub-date span,
+    .admission-ticket__stub-meta {
+      font-size: 0.7rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .admission-ticket__practical-link :global(.arrow-icon) {
+      transition: none;
+      transform: none;
+    }
+  }
+</style>

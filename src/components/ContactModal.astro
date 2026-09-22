@@ -1,0 +1,552 @@
+<dialog class="contact-dialog" data-contact-dialog aria-label="Préparer un message">
+  <div class="contact-dialog__shell">
+    <button
+      class="contact-dialog__close"
+      type="button"
+      data-contact-close
+      aria-label="Fermer la fenêtre de contact"
+    >
+      <span aria-hidden="true">×</span>
+    </button>
+
+    <div class="contact-dialog__loading" data-contact-loading role="status">
+      <span aria-hidden="true"></span>
+      <p data-contact-loading-message></p>
+    </div>
+
+    <div class="contact-dialog__error" data-contact-error hidden role="alert">
+      <p data-contact-error-message></p>
+      <button type="button" data-contact-retry>Réessayer</button>
+    </div>
+
+    <div class="contact-email" data-contact-content hidden>
+      <div class="contact-email__row contact-email__row--recipient">
+        <span class="contact-email__row-label">À</span>
+        <div class="contact-person__portrait" aria-hidden="true">
+          <img class="portrait-photo" data-contact-image alt="" hidden draggable="false" />
+          <span data-contact-initial>N</span>
+        </div>
+        <div class="contact-email__recipient">
+          <strong data-contact-name></strong>
+          <small data-contact-role></small>
+          <div class="contact-email__address">
+            <output data-contact-value></output>
+            <button
+              type="button"
+              data-contact-copy="coordinate"
+              aria-label="Copier la coordonnée"
+            >
+              Copier
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-email__row">
+        <span class="contact-email__row-label">Objet</span>
+        <strong class="contact-email__subject" data-contact-subject></strong>
+      </div>
+
+      <section class="contact-email__message" aria-label="Message proposé">
+        <button
+          type="button"
+          data-contact-copy="message"
+          aria-label="Copier le message"
+        >
+          Copier
+        </button>
+        <pre data-contact-message></pre>
+      </section>
+    </div>
+  </div>
+</dialog>
+
+<script>
+  import { capture } from '../lib/analytics';
+
+  interface ContactResponse {
+    contact: {
+      label: string;
+      value: string;
+    };
+    person: {
+      image?: string;
+      name: string;
+      role: string;
+    };
+    subject: string;
+    suggestion: string;
+  }
+
+  const dialog = document.querySelector<HTMLDialogElement>('[data-contact-dialog]');
+  const loading = dialog?.querySelector<HTMLElement>('[data-contact-loading]');
+  const content = dialog?.querySelector<HTMLElement>('[data-contact-content]');
+  const error = dialog?.querySelector<HTMLElement>('[data-contact-error]');
+  const errorMessage = dialog?.querySelector<HTMLElement>('[data-contact-error-message]');
+  const loadingMessage = dialog?.querySelector<HTMLElement>('[data-contact-loading-message]');
+  const personImage = dialog?.querySelector<HTMLImageElement>('[data-contact-image]');
+  const personInitial = dialog?.querySelector<HTMLElement>('[data-contact-initial]');
+  const personName = dialog?.querySelector<HTMLElement>('[data-contact-name]');
+  const personRole = dialog?.querySelector<HTMLElement>('[data-contact-role]');
+  const messageSubject = dialog?.querySelector<HTMLElement>('[data-contact-subject]');
+  const contactValue = dialog?.querySelector<HTMLOutputElement>('[data-contact-value]');
+  const suggestedMessage = dialog?.querySelector<HTMLElement>('[data-contact-message]');
+
+  let activeTopic = '';
+  let activeRequest: AbortController | undefined;
+  let opener: HTMLElement | null = null;
+
+  const LOADING_MESSAGE = 'Préparation du message…';
+  const FALLBACK_ERROR_MESSAGE = 'Impossible de récupérer les coordonnées pour le moment.';
+
+  function setState(state: 'loading' | 'content' | 'error') {
+    if (loading) loading.hidden = state !== 'loading';
+    if (content) content.hidden = state !== 'content';
+    if (error) error.hidden = state !== 'error';
+    // Le texte est écrit après l'affichage : une région live encore masquée n'annonce rien.
+    if (loadingMessage) loadingMessage.textContent = state === 'loading' ? LOADING_MESSAGE : '';
+  }
+
+  function renderContact(data: ContactResponse) {
+    if (personName) personName.textContent = data.person.name;
+    if (personRole) personRole.textContent = data.person.role;
+    if (messageSubject) messageSubject.textContent = data.subject;
+    if (contactValue) contactValue.textContent = data.contact.value;
+    if (suggestedMessage) suggestedMessage.textContent = data.suggestion;
+
+    if (personInitial) {
+      personInitial.textContent = data.person.name.trim().charAt(0).toUpperCase() || 'N';
+      personInitial.hidden = Boolean(data.person.image);
+    }
+
+    if (personImage) {
+      if (data.person.image) {
+        personImage.src = data.person.image;
+        personImage.alt = '';
+        personImage.hidden = false;
+      } else {
+        personImage.removeAttribute('src');
+        personImage.hidden = true;
+      }
+    }
+  }
+
+  async function loadContact(topic: string) {
+    activeRequest?.abort();
+    activeRequest = new AbortController();
+    setState('loading');
+
+    try {
+      const response = await fetch('/api/contact-details', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ topic }),
+        cache: 'no-store',
+        credentials: 'same-origin',
+        signal: activeRequest.signal,
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(typeof data.message === 'string' ? data.message : 'Les coordonnées sont indisponibles.');
+      }
+
+      // La modale est dévoilée avant l'écriture : les mutations de l'output sont alors annoncées.
+      setState('content');
+      renderContact(data as ContactResponse);
+    } catch (requestError) {
+      if (requestError instanceof DOMException && requestError.name === 'AbortError') return;
+      const message = requestError instanceof Error ? requestError.message : FALLBACK_ERROR_MESSAGE;
+      setState('error');
+      requestAnimationFrame(() => {
+        if (errorMessage) errorMessage.textContent = message;
+      });
+    }
+  }
+
+  function openContact(topic: string, trigger: HTMLElement) {
+    if (!dialog) return;
+    activeTopic = topic;
+    opener = trigger;
+    if (!dialog.open) dialog.showModal();
+    document.body.classList.add('contact-dialog-open');
+    capture('contact_modal_opened', { topic });
+    void loadContact(topic);
+  }
+
+  async function copyText(value: string, button: HTMLButtonElement) {
+    if (!value) return;
+
+    const originalLabel = button.textContent ?? 'Copier';
+    const originalAccessibleLabel = button.getAttribute('aria-label') ?? '';
+
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(value);
+      } else {
+        const temporaryField = document.createElement('textarea');
+        temporaryField.value = value;
+        temporaryField.setAttribute('readonly', '');
+        temporaryField.style.position = 'fixed';
+        temporaryField.style.opacity = '0';
+        document.body.append(temporaryField);
+        temporaryField.select();
+        document.execCommand('copy');
+        temporaryField.remove();
+      }
+
+      button.textContent = 'Copié';
+      button.classList.add('is-copied');
+      button.setAttribute('aria-label', 'Copié');
+      window.setTimeout(() => {
+        button.textContent = originalLabel;
+        button.classList.remove('is-copied');
+        button.setAttribute('aria-label', originalAccessibleLabel);
+      }, 1800);
+    } catch {
+      button.textContent = 'À copier';
+      button.setAttribute('aria-label', 'Sélectionnez puis copiez manuellement');
+    }
+  }
+
+  document.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+
+    const trigger = target.closest<HTMLElement>('[data-contact-topic]');
+    if (trigger) {
+      const topic = trigger.dataset.contactTopic;
+      if (topic) {
+        event.preventDefault();
+        openContact(topic, trigger);
+      }
+      return;
+    }
+
+    if (target.closest('[data-contact-close]')) {
+      dialog?.close();
+      return;
+    }
+
+    if (target.closest('[data-contact-retry]') && activeTopic) {
+      void loadContact(activeTopic);
+      return;
+    }
+
+    const copyButton = target.closest<HTMLButtonElement>('[data-contact-copy]');
+    if (copyButton) {
+      const value =
+        copyButton.dataset.contactCopy === 'message'
+          ? suggestedMessage?.textContent ?? ''
+          : contactValue?.textContent ?? '';
+      void copyText(value, copyButton);
+    }
+  });
+
+  dialog?.addEventListener('click', (event) => {
+    if (event.target === dialog) dialog.close();
+  });
+
+  dialog?.addEventListener('close', () => {
+    activeRequest?.abort();
+    document.body.classList.remove('contact-dialog-open');
+    opener?.focus();
+  });
+</script>
+
+<style>
+  :global(body.contact-dialog-open) {
+    overflow: hidden;
+  }
+
+  .contact-dialog {
+    --contact-dialog-gap: clamp(0.75rem, 4dvh, 2.5rem);
+
+    width: min(44rem, calc(100% - 1.25rem));
+    max-height: calc(100dvh - 2 * var(--contact-dialog-gap));
+    margin: var(--contact-dialog-gap) auto auto;
+    padding: 0;
+    overflow: hidden auto;
+    border: 1px solid rgb(57 54 54 / 16%);
+    border-radius: 0.9rem;
+    background: white;
+    color: var(--color-brand-black);
+    box-shadow: 0 1.5rem 5rem rgb(23 26 78 / 28%);
+  }
+
+  .contact-dialog::backdrop {
+    background: rgb(23 26 78 / 62%);
+    backdrop-filter: blur(0.25rem);
+  }
+
+  .contact-dialog__shell {
+    position: relative;
+  }
+
+  .contact-dialog__close {
+    position: absolute;
+    z-index: 2;
+    top: 0.75rem;
+    right: 0.75rem;
+    display: grid;
+    width: 2.5rem;
+    height: 2.5rem;
+    place-items: center;
+    border: 1px solid rgb(57 54 54 / 12%);
+    border-radius: 999px;
+    background: white;
+    color: rgb(57 54 54 / 62%);
+    cursor: pointer;
+    font-size: 1.6rem;
+    line-height: 1;
+  }
+
+  .contact-dialog__close:hover,
+  .contact-dialog__close:focus-visible {
+    border-color: var(--color-brand-blue);
+    color: var(--color-brand-blue);
+  }
+
+  .contact-dialog__loading,
+  .contact-dialog__error {
+    min-height: 14rem;
+    padding: 3rem 1.5rem;
+  }
+
+  .contact-dialog__loading {
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 0.9rem;
+    color: rgb(57 54 54 / 72%);
+    text-align: center;
+  }
+
+  .contact-dialog__loading[hidden],
+  .contact-dialog__error[hidden],
+  .contact-email[hidden] {
+    display: none;
+  }
+
+  .contact-dialog__loading > span {
+    width: 1.75rem;
+    height: 1.75rem;
+    border: 3px solid rgb(61 67 206 / 16%);
+    border-top-color: var(--color-brand-blue);
+    border-radius: 999px;
+    animation: contact-spin 700ms linear infinite;
+  }
+
+  .contact-dialog__error {
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .contact-dialog__error p {
+    max-width: 30rem;
+    color: rgb(57 54 54 / 68%);
+    line-height: 1.55;
+  }
+
+  .contact-dialog__error button {
+    padding: 0.7rem 1rem;
+    border: 2px solid var(--color-brand-blue);
+    border-radius: 0.35rem;
+    background: var(--color-brand-blue);
+    color: white;
+    cursor: pointer;
+    font-weight: 800;
+  }
+
+  .contact-email {
+    background: white;
+  }
+
+  .contact-email__row {
+    display: grid;
+    grid-template-columns: 3.25rem minmax(0, 1fr);
+    gap: 0.75rem;
+    align-items: center;
+    min-height: 4.5rem;
+    padding: 0.8rem 4.25rem 0.8rem 1.25rem;
+    border-bottom: 1px solid rgb(57 54 54 / 11%);
+  }
+
+  .contact-email__row--recipient {
+    grid-template-columns: 3.25rem 3rem minmax(0, 1fr);
+    min-height: 6.5rem;
+  }
+
+  .contact-email__row-label {
+    color: rgb(57 54 54 / 75%);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: var(--tracking-ui);
+    text-transform: uppercase;
+  }
+
+  .contact-person__portrait {
+    display: grid;
+    width: 3rem;
+    height: 3rem;
+    overflow: hidden;
+    place-items: center;
+    border-radius: 999px;
+    background: var(--color-brand-orange);
+    color: white;
+    font-family: var(--font-serif);
+    font-size: 1.6rem;
+    font-style: italic;
+    font-weight: 700;
+  }
+
+  .contact-person__portrait img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .contact-email__recipient {
+    min-width: 0;
+  }
+
+  .contact-email__recipient > strong,
+  .contact-email__recipient > small {
+    display: block;
+  }
+
+  .contact-email__recipient > strong {
+    font-size: 1rem;
+  }
+
+  .contact-email__recipient > small {
+    margin-top: 0.12rem;
+    color: rgb(57 54 54 / 72%);
+    font-size: 0.78rem;
+    line-height: 1.3;
+  }
+
+  .contact-email__address {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem 0.75rem;
+    align-items: center;
+    margin-top: 0.45rem;
+  }
+
+  .contact-email__address output {
+    min-width: 0;
+    color: var(--color-brand-blue);
+    font-family: var(--font-label-mono);
+    font-size: 0.78rem;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+    user-select: all;
+  }
+
+  .contact-email__subject {
+    font-size: 0.9rem;
+    line-height: 1.35;
+  }
+
+  .contact-email__address button,
+  .contact-email__message button {
+    min-height: 2.75rem;
+    padding: 0.6rem 0.9rem;
+    border: 1px solid rgb(61 67 206 / 26%);
+    border-radius: 0.35rem;
+    background: rgb(61 67 206 / 6%);
+    color: var(--color-brand-blue);
+    cursor: pointer;
+    font-size: 0.7rem;
+    font-weight: 800;
+  }
+
+  .contact-email__address button:hover,
+  .contact-email__address button:focus-visible,
+  .contact-email__message button:hover,
+  .contact-email__message button:focus-visible {
+    border-color: var(--color-brand-blue);
+    background: var(--color-brand-blue);
+    color: white;
+  }
+
+  .contact-email__address button.is-copied,
+  .contact-email__message button.is-copied {
+    border-color: #26824a;
+    background: #26824a;
+    color: white;
+  }
+
+  .contact-email__message {
+    position: relative;
+    min-height: 19rem;
+    padding: 2rem 1.5rem 2.5rem;
+  }
+
+  .contact-email__message > button {
+    position: absolute;
+    top: 1rem;
+    right: 1.25rem;
+  }
+
+  .contact-email__message pre {
+    max-width: calc(100% - 6.25rem);
+    margin: 0;
+    color: rgb(57 54 54 / 82%);
+    font-family: var(--font-sans);
+    font-size: 0.92rem;
+    line-height: 1.65;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+    user-select: all;
+  }
+
+  @keyframes contact-spin {
+    to {
+      transform: rotate(1turn);
+    }
+  }
+
+  @media (max-width: 29.999rem) {
+    .contact-email__row {
+      grid-template-columns: 2.5rem minmax(0, 1fr);
+      padding-right: 3.75rem;
+      padding-left: 0.9rem;
+    }
+
+    .contact-email__row--recipient {
+      grid-template-columns: 2.5rem 2.6rem minmax(0, 1fr);
+    }
+
+    .contact-person__portrait {
+      width: 2.6rem;
+      height: 2.6rem;
+    }
+
+    .contact-email__message {
+      padding-inline: 1rem;
+    }
+
+    .contact-email__message > button {
+      right: 1rem;
+    }
+
+    .contact-email__message pre {
+      max-width: calc(100% - 6rem);
+      font-size: 0.86rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .contact-dialog__loading > span {
+      animation: none;
+    }
+  }
+</style>

@@ -1,0 +1,842 @@
+---
+import ArrowIcon from './ArrowIcon.astro';
+import Button from './Button.astro';
+import EventName from './EventName.astro';
+import { CTA_LINKS } from '../lib/cta-links';
+import EVENT from '../content/event.json';
+
+interface Props {
+  /* Sur la landing, le header démarre posé sur l'affiche, sans surface
+   * propre (état immergé rendu côté serveur : aucun flash de barre blanche
+   * au chargement). header-scroll.ts pilote ensuite les états au scroll. */
+  immersive?: boolean;
+  showTicketCta?: boolean;
+}
+
+const { immersive = false, showTicketCta = true } = Astro.props;
+
+interface NavLink {
+  label: string;
+  href: string;
+}
+
+interface DirectoryLink extends NavLink {
+  description: string;
+  isExternal?: boolean;
+}
+
+/* Le menu ne relie que des pages, jamais des ancres de la landing : chaque
+ * destination n'y apparaît qu'une fois. Explorer range les pages annexes. */
+const primaryLinks: NavLink[] = [
+  { label: 'Programme', href: '/programme' },
+  { label: 'Intervenants', href: '/speakers' },
+  { label: 'Partenaires', href: '/partenaires' },
+  { label: 'Infos pratiques', href: '/infos-pratiques' },
+];
+
+const directoryLinks: DirectoryLink[] = [
+  { label: 'Espace presse', href: '/press-kit', description: 'Logos, visuels et chiffres clés' },
+  { label: 'L’équipe', href: '/equipe', description: 'Les six organisateurs' },
+  { label: 'Code of conduct', href: '/code-of-conduct', description: 'Un événement inclusif et respectueux' },
+  {
+    label: 'L’association',
+    href: 'https://naomakers.com',
+    description: `${EVENT.organizer.name}, qui porte l’événement`,
+    isExternal: true,
+  },
+];
+
+const primaryMenuLabel = 'L’événement';
+
+const isCurrentPage = (href: string) =>
+  href.startsWith('/')
+  && href !== '/'
+  && (Astro.url.pathname === href || Astro.url.pathname.startsWith(`${href}/`));
+---
+
+<header
+  data-site-header
+  class:list={[
+    'site-header',
+    { 'is-immersed': immersive },
+    'sticky top-0 z-100 grid w-full min-w-0 grid-cols-[1fr_auto_1fr] items-center gap-3',
+  ]}
+>
+  <a href="/" class="site-header__brand justify-self-start shrink-0 whitespace-nowrap text-lg font-bold tracking-wide sm:text-xl" data-scroll-top><EventName showLocation /></a>
+
+  <div class="site-header__navigation col-start-2 justify-self-center">
+    <nav class="site-header__nav items-center" aria-label="Navigation principale">
+      {primaryLinks.map((link) => (
+        <a
+          href={link.href}
+          class="site-header__nav-link"
+          aria-current={isCurrentPage(link.href) ? 'page' : undefined}
+        >
+          {link.label}
+        </a>
+      ))}
+    </nav>
+
+    <button
+      type="button"
+      class="menu-toggle cursor-pointer items-center gap-2 uppercase"
+      data-menu-toggle
+      aria-expanded="false"
+      aria-controls="site-menu"
+    >
+      <span class="menu-toggle__label menu-toggle__label--mobile">Menu</span>
+      <span class="menu-toggle__label menu-toggle__label--desktop">Explorer</span>
+      <span class="menu-toggle__bars" aria-hidden="true"></span>
+      <span class="menu-toggle__chevron" aria-hidden="true"></span>
+    </button>
+  </div>
+
+  {showTicketCta && (
+    <div class="site-header__actions col-start-3 items-center justify-self-end">
+      <Button class:list={['header-cta header-cta--tickets', { 'header-cta--poster': immersive }]} variant="accent" href={CTA_LINKS.tickets}>Réserver ma place</Button>
+    </div>
+  )}
+
+  <div
+    class="site-menu absolute inset-x-0 top-full border-b border-black/10 shadow-lg"
+    id="site-menu"
+    data-menu-panel
+    data-menu-state="closed"
+    data-menu-view="sections"
+    aria-hidden="true"
+    inert
+  >
+    <div class="site-menu__inner site-menu__inner--sectioned">
+      <nav class="site-menu__group site-menu__sections" aria-label={primaryMenuLabel}>
+        <p class="site-menu__group-label">{primaryMenuLabel}</p>
+        <div class="site-menu__links">
+          {primaryLinks.map((link) => (
+            <a
+              href={link.href}
+              class="site-menu__link"
+              aria-current={isCurrentPage(link.href) ? 'page' : undefined}
+            >
+              <span class="site-menu__link-label">{link.label}</span>
+            </a>
+          ))}
+        </div>
+        <button type="button" class="site-menu__drill-button" data-menu-directory-open>
+          <span>Explorer le site</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m9 5 7 7-7 7"></path>
+          </svg>
+        </button>
+      </nav>
+
+      <nav class="site-menu__group site-menu__directory" id="site-menu-directory" aria-label="Explorer">
+        <div class="site-menu__directory-heading">
+          <button type="button" class="site-menu__back-button" data-menu-directory-close>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m15 5-7 7 7 7"></path>
+            </svg>
+            <span>{primaryMenuLabel}</span>
+          </button>
+          <p class="site-menu__group-label">Explorer</p>
+        </div>
+        <div class="site-menu__links site-menu__links--directory">
+          {directoryLinks.map((link) => (
+            <a
+              href={link.href}
+              class="site-menu__link site-menu__directory-link"
+              target={link.isExternal ? '_blank' : undefined}
+              aria-current={isCurrentPage(link.href) ? 'page' : undefined}
+            >
+              <span class="site-menu__link-label">
+                {link.label}
+                {link.isExternal && (
+                  <>
+                    <ArrowIcon direction="external" class="site-menu__external-icon" />
+                    <span class="sr-only">, ouvre un nouvel onglet</span>
+                  </>
+                )}
+              </span>
+              <span class="site-menu__link-description">{link.description}</span>
+            </a>
+          ))}
+        </div>
+      </nav>
+    </div>
+  </div>
+</header>
+
+{/* Le CTA est fixe, donc hors du flux : sans ce conteneur il vivrait en
+    enfant direct de <body>, en dehors de tout point de repère. */}
+{showTicketCta && (
+  <aside class="mobile-ticket-bar" aria-label="Billetterie">
+    <Button class:list={['mobile-ticket-cta', { 'mobile-ticket-cta--poster': immersive }]} variant="accent" href={CTA_LINKS.tickets}>Réserver ma place</Button>
+  </aside>
+)}
+
+<script>
+  import { initHeaderMenu } from '../scripts/header-menu';
+
+  initHeaderMenu();
+</script>
+
+<style>
+  /* La surface évolue sans jamais modifier la géométrie du header. Au sommet,
+   * un dégradé sombre très léger l'ancre dans l'affiche. À la sortie du hero,
+   * le même calque devient le papier crème de la page. */
+  .site-header {
+    height: var(--site-header-height);
+    min-height: var(--site-header-height);
+    /* viewport-fit=cover : en paysage sur iPhone à encoche, l'inset latéral
+     * dépasse le gouttière du header et mangerait le wordmark. */
+    padding-block: 0;
+    padding-inline:
+      max(clamp(1rem, 2.2vw, 2rem), env(safe-area-inset-left))
+      max(clamp(1rem, 2.2vw, 2rem), env(safe-area-inset-right));
+    background:
+      linear-gradient(
+        to bottom,
+        rgb(5 5 16 / calc((1 - var(--header-surface, 1)) * 30%)),
+        transparent
+      ),
+      rgb(from var(--color-brand-cream) r g b / calc(var(--header-surface, 1) * 96%));
+    box-shadow: 0 1.2rem 3.5rem rgb(13 13 18 / calc(var(--header-surface, 1) * 8%));
+    color: var(--color-brand-black);
+    backdrop-filter: blur(calc(var(--header-surface, 1) * 12px));
+  }
+
+  .site-header::after {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 1px;
+    background: rgb(57 54 54 / 12%);
+    content: "";
+    opacity: var(--header-surface, 1);
+    pointer-events: none;
+  }
+
+  .site-header.is-immersed {
+    --header-surface: 0;
+    box-shadow: none;
+    color: var(--color-brand-cream);
+    backdrop-filter: none;
+  }
+
+  .site-header__nav {
+    display: none;
+    gap: clamp(1.15rem, 1.8vw, 2rem);
+    font-family: var(--font-nav);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.015em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .site-header__navigation {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: clamp(0.9rem, 1.4vw, 1.35rem);
+  }
+
+  .site-header__nav-link {
+    position: relative;
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    color: currentColor;
+    opacity: 0.78;
+    transition: color 180ms ease, opacity 180ms ease;
+  }
+
+  /* Le point reprend le repère actif de Neo Mirai. Il entre depuis le bas
+   * au survol puis reste en place sous la page courante. */
+  .site-header__nav-link::after {
+    position: absolute;
+    bottom: 0.32rem;
+    left: 50%;
+    width: 0.34rem;
+    height: 0.34rem;
+    border-radius: 50%;
+    background: var(--color-brand-orange);
+    content: "";
+    opacity: 0;
+    transform: translate(-50%, 0.3rem);
+    transition: opacity 180ms ease, transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .site-header__nav-link:hover,
+  .site-header__nav-link:focus-visible,
+  .site-header__nav-link[aria-current='page'] {
+    color: currentColor;
+    opacity: 1;
+  }
+
+  .site-header__nav-link:hover::after,
+  .site-header__nav-link:focus-visible::after,
+  .site-header__nav-link[aria-current='page']::after {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  /* La lisibilité sur l'affiche vient d'un halo par lettre, comme le titre
+   * du hero. Le fond ne devient pleinement matériel qu'à sa sortie. */
+  .site-header.is-immersed .site-header__nav a,
+  .site-header.is-immersed .menu-toggle,
+  .site-header.is-immersed > a[href="/"] {
+    color: var(--color-brand-cream);
+    text-shadow: 0 1px 14px rgb(5 5 16 / 55%), 0 1px 2px rgb(5 5 16 / 35%);
+  }
+
+  .menu-toggle {
+    position: relative;
+    display: flex;
+    min-height: 44px;
+    font-family: var(--font-nav);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.015em;
+    color: rgb(57 54 54 / 80%);
+    transition: color 180ms ease;
+  }
+
+  .menu-toggle__label--desktop {
+    display: none;
+  }
+
+  /* Zone de toucher étendue à environ 44px de haut ; le débord horizontal
+   * reste sous l'écart avec le CTA voisin pour ne jamais chevaucher sa
+   * propre zone interactive. */
+  .menu-toggle::after {
+    content: "";
+    position: absolute;
+    inset: -0.75rem -0.25rem;
+  }
+
+  .menu-toggle:hover,
+  .menu-toggle:focus-visible,
+  .menu-toggle[aria-expanded='true'] {
+    color: var(--color-brand-blue);
+  }
+
+  .site-header__actions {
+    display: none;
+  }
+
+  .menu-toggle__bars {
+    position: relative;
+    display: inline-flex;
+    width: 1.1rem;
+    height: 0.75rem;
+    align-items: center;
+  }
+
+  .menu-toggle__chevron {
+    display: none;
+    width: 0.48rem;
+    height: 0.48rem;
+    border-right: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+    transform: translateY(-0.12rem) rotate(45deg);
+    transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .menu-toggle__bars::before,
+  .menu-toggle__bars::after {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: currentColor;
+    content: '';
+    transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .menu-toggle__bars::before {
+    transform: translateY(-0.22rem);
+  }
+
+  .menu-toggle__bars::after {
+    transform: translateY(0.22rem);
+  }
+
+  .menu-toggle[aria-expanded='true'] .menu-toggle__bars::before {
+    transform: rotate(45deg);
+  }
+
+  .menu-toggle[aria-expanded='true'] .menu-toggle__bars::after {
+    transform: rotate(-45deg);
+  }
+
+  .menu-toggle[aria-expanded='true'] .menu-toggle__chevron {
+    transform: translateY(0.12rem) rotate(225deg);
+  }
+
+  .site-header.is-immersed .menu-toggle[aria-expanded='true'] {
+    color: var(--color-brand-orange);
+  }
+
+  /* Le panneau pose sa propre surface, donc il pose aussi sa propre encre :
+   * sans ça il hérite du crème de .is-immersed, prévu pour l'affiche sombre,
+   * et les liens deviennent invisibles sur le papier du panneau. */
+  .site-menu {
+    z-index: 10;
+    background: var(--color-brand-cream);
+    color: var(--color-brand-black);
+    clip-path: inset(0 0 100% 0);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-0.35rem);
+    visibility: hidden;
+    transition:
+      visibility 0s linear 200ms,
+      clip-path 200ms cubic-bezier(0.4, 0, 1, 1),
+      opacity 130ms ease-in,
+      transform 200ms cubic-bezier(0.4, 0, 1, 1);
+  }
+
+  .site-menu[data-menu-state='open'] {
+    clip-path: inset(0);
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+    visibility: visible;
+    transition:
+      visibility 0s,
+      clip-path 320ms cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 180ms ease-out,
+      transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .site-menu__inner {
+    display: grid;
+    width: min(100%, 80rem);
+    max-height: calc(100svh - var(--site-header-height));
+    margin-inline: auto;
+    padding:
+      1.25rem max(1.5rem, env(safe-area-inset-right))
+      calc(1.25rem + var(--mobile-cta-reserve)) max(1.5rem, env(safe-area-inset-left));
+    gap: 1.5rem;
+    overflow-y: auto;
+    opacity: 0;
+    transform: translateY(-0.3rem);
+    transition:
+      opacity 100ms ease-in,
+      transform 160ms ease-in;
+  }
+
+  .site-menu[data-menu-state='open'] .site-menu__inner {
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+      opacity 180ms ease-out 50ms,
+      transform 260ms cubic-bezier(0.16, 1, 0.3, 1) 50ms;
+  }
+
+  .site-menu__group-label {
+    margin: 0 0 0.55rem;
+    font-family: var(--font-nav);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    opacity: 0.72;
+    text-transform: uppercase;
+  }
+
+  .site-menu__links {
+    display: grid;
+  }
+
+  .site-menu__drill-button,
+  .site-menu__back-button {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    border: 0;
+    font-family: var(--font-nav);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.015em;
+    text-transform: uppercase;
+  }
+
+  .site-menu__drill-button {
+    width: 100%;
+    justify-content: space-between;
+    border-bottom: 1px solid rgb(57 54 54 / 16%);
+    color: var(--color-brand-blue);
+  }
+
+  .site-menu__back-button {
+    color: currentColor;
+    gap: 0.45rem;
+  }
+
+  .site-menu__drill-button svg,
+  .site-menu__back-button svg {
+    width: 1rem;
+    height: 1rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: square;
+    stroke-linejoin: miter;
+    stroke-width: 1.8;
+  }
+
+  .site-menu__directory-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .site-menu__directory-heading .site-menu__group-label {
+    margin-bottom: 0;
+  }
+
+  .site-menu__link {
+    display: grid;
+    min-height: 44px;
+    align-content: center;
+    padding-block: 0.65rem;
+    border-top: 1px solid rgb(57 54 54 / 16%);
+    color: currentColor;
+    gap: 0.22rem;
+  }
+
+  .site-menu__link:last-child {
+    border-bottom: 1px solid rgb(57 54 54 / 16%);
+  }
+
+  .site-menu__link-label {
+    font-family: var(--font-nav);
+    font-size: 0.75rem;
+    font-weight: 650;
+    letter-spacing: 0.015em;
+    text-transform: uppercase;
+  }
+
+  /* Le label passe en majuscules de 0.75rem : l'icône à sa taille par
+   * défaut pèserait plus lourd que les lettres. */
+  :global(.site-menu__external-icon) {
+    width: 0.95em;
+    height: 0.95em;
+    margin-inline-start: 0.3em;
+    vertical-align: -0.12em;
+  }
+
+  .site-menu__link-description {
+    color: rgb(57 54 54 / 78%);
+    font-size: 0.75rem;
+    line-height: 1.4;
+  }
+
+  .site-menu__link:hover .site-menu__link-label,
+  .site-menu__link:focus-visible .site-menu__link-label,
+  .site-menu__link[aria-current='page'] .site-menu__link-label {
+    color: var(--color-brand-blue);
+  }
+
+  /* Ouvert sur l'affiche, le panneau appartient au décor : une dalle crème y
+   * coupait l'image en deux, sous une barre restée transparente, soit deux
+   * surfaces sans rapport empilées. Il reprend donc l'encre de nuit du poster,
+   * la barre prend la même, et les deux se lisent comme un seul volet descendu
+   * du haut. Crème sur cette nuit : 15,9:1 même si l'affiche est claire dessous. */
+  .site-header.is-immersed .site-menu {
+    border-block-end-color: rgb(249 244 236 / 18%);
+    background: rgb(5 5 16 / 92%);
+    box-shadow: 0 1.5rem 3rem rgb(5 5 16 / 45%);
+    color: var(--color-brand-cream);
+    backdrop-filter: blur(14px);
+  }
+
+  .site-header.is-immersed .site-menu__link {
+    border-color: rgb(249 244 236 / 18%);
+  }
+
+  .site-header.is-immersed .site-menu__link-description {
+    color: rgb(249 244 236 / 78%);
+  }
+
+  .site-header.is-immersed .site-menu__link:hover .site-menu__link-label,
+  .site-header.is-immersed .site-menu__link:focus-visible .site-menu__link-label {
+    color: var(--color-brand-orange);
+  }
+
+  .site-header.is-immersed .site-menu__drill-button {
+    border-color: rgb(249 244 236 / 18%);
+    color: var(--color-brand-orange);
+  }
+
+  .site-header.is-immersed:has([data-menu-panel][data-menu-state='open']) {
+    background: rgb(5 5 16 / 92%);
+    backdrop-filter: blur(14px);
+  }
+
+  /* Le bleu du repère actif tombe à 2,40:1 sur cette nuit : l'orange signal,
+   * qui porte déjà le point actif de la nav, y tient 5,22:1. */
+  .site-header.is-immersed .site-menu__link[aria-current='page'] .site-menu__link-label {
+    color: var(--color-brand-orange);
+  }
+
+  /* Le CTA fixe s'installe dans la bande basse sans jamais se masquer : les
+   * blocs de fin de page réservent sa hauteur pour rester lisibles. */
+  :global(:root) {
+    --mobile-cta-reserve: 0px;
+  }
+
+  @media (max-width: 47.999rem) {
+    :global(:root) {
+      --mobile-cta-reserve: calc(3.25rem + max(1rem, env(safe-area-inset-bottom)) + 1rem);
+    }
+  }
+
+  :global(.mobile-ticket-cta) {
+    position: fixed;
+    z-index: 90;
+    right: max(1rem, env(safe-area-inset-right));
+    bottom: max(1rem, env(safe-area-inset-bottom));
+    left: max(1rem, env(safe-area-inset-left));
+    justify-content: center;
+    min-height: 3.25rem;
+    font-size: 0.8rem;
+  }
+
+  /* Sous 40rem le classeur d'étiquettes pose son onglet de 2.65rem au ras du
+   * bas : le CTA remonte d'autant pour lui rendre son compteur et sa cible. */
+  @media (max-width: 39.999rem) {
+    :global(body:has(.label-archive.is-available)) {
+      --mobile-cta-reserve: calc(3.25rem + max(1rem, env(safe-area-inset-bottom)) + 2.65rem + 1rem);
+    }
+
+    :global(body:has(.label-archive.is-available) .mobile-ticket-cta) {
+      bottom: calc(max(1rem, env(safe-area-inset-bottom)) + 2.65rem);
+    }
+  }
+
+  /* Remonter de 2,65rem suffit tant que le classeur est réduit à son onglet.
+   * Dès qu'il sort, il occupe 264px de haut et le CTA le traversait en son
+   * milieu : deux fiches sur quatre entièrement masquées et la ligne de
+   * progression coupée. Pendant un glissé c'est pire, la barre couvre 62% de
+   * la zone de dépôt et ses deux consignes, et c'est elle qui reçoit le doigt.
+   * Le CTA s'efface donc le temps de la manipulation : le classeur est un
+   * geste court et volontaire, et la billetterie revient dès la fermeture. */
+  :global(body:has(.label-archive.is-open) .mobile-ticket-cta),
+  :global(body:has(.label-archive.is-revealed) .mobile-ticket-cta),
+  :global(body:has(.label-archive.is-reveal-ready) .mobile-ticket-cta),
+  :global(body:has([data-menu-panel][data-menu-state='open']) .mobile-ticket-cta) {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+    transition:
+      opacity 160ms ease,
+      visibility 0s linear 160ms;
+  }
+
+  /* Dans le header, la billetterie reste un signal compact. Le décalage
+   * d'encre appartient aux grands CTA de page, pas à cette barre utilitaire. */
+  :global(.header-cta) {
+    padding: 0.55rem 1.05rem;
+    border-width: 1px;
+    box-shadow: none;
+    font-family: var(--font-nav);
+    font-size: 0.66rem;
+    letter-spacing: 0.01em;
+    transition:
+      border-color 160ms ease,
+      background-color 160ms ease,
+      color 160ms ease;
+    white-space: nowrap;
+  }
+
+  :global(.header-cta:hover) {
+    border-color: var(--color-action-ticket-hover);
+    background-color: var(--color-action-ticket-hover);
+    color: var(--color-action-ticket-ink);
+    translate: 0 0;
+    box-shadow: none;
+  }
+
+  /* L'orange est verrouillé sur le token officiel de la DA. */
+  :global(.header-cta--poster) {
+    border-color: var(--color-action-ticket);
+    background-color: var(--color-action-ticket);
+    color: var(--color-action-ticket-ink);
+  }
+
+  :global(.mobile-ticket-cta--poster) {
+    border-color: var(--color-action-ticket);
+    background-color: var(--color-action-ticket);
+    color: var(--color-action-ticket-ink);
+    box-shadow: 0.3rem 0.3rem 0 0 var(--mobile-cta-shadow, var(--color-brand-cream));
+  }
+
+  :global(.mobile-ticket-cta--poster:hover) {
+    box-shadow: 0.15rem 0.15rem 0 0 var(--mobile-cta-shadow, var(--color-brand-cream));
+  }
+
+  /* Entre mobile et grand écran, la navigation reste dans le menu mais la
+   * billetterie rejoint déjà le header. Le CTA bas reste ainsi réservé aux
+   * écrans étroits, où il constitue une vraie zone d'action au pouce. */
+  @media (min-width: 48rem) {
+    .site-header__actions {
+      display: flex;
+    }
+
+    .mobile-ticket-bar {
+      display: none;
+    }
+
+    .site-menu__inner {
+      padding-bottom: 1.25rem;
+    }
+
+    .site-menu__inner--sectioned {
+      grid-template-columns: minmax(12rem, 0.7fr) minmax(0, 1.3fr);
+      gap: clamp(2rem, 5vw, 5rem);
+    }
+
+    .site-menu__drill-button,
+    .site-menu__back-button {
+      display: none;
+    }
+  }
+
+  @media (min-width: 68.75rem) {
+    .site-header__nav {
+      display: flex;
+    }
+
+    .mobile-ticket-bar {
+      display: none;
+    }
+
+    .menu-toggle__label--mobile {
+      display: none;
+    }
+
+    .menu-toggle__label--desktop {
+      display: inline;
+    }
+
+    .menu-toggle__bars {
+      display: none;
+    }
+
+    .menu-toggle__chevron {
+      display: inline-block;
+    }
+
+    .site-menu__inner,
+    .site-menu__inner--sectioned {
+      display: block;
+      padding-block: 1.4rem 1.65rem;
+    }
+
+    .site-menu__sections {
+      display: none;
+    }
+
+    .site-menu__directory .site-menu__group-label {
+      display: none;
+    }
+
+    .site-menu__directory-heading {
+      display: none;
+    }
+
+    .site-menu__links--directory {
+      grid-auto-columns: minmax(0, 1fr);
+      grid-auto-flow: column;
+    }
+
+    .site-menu__directory-link {
+      padding: 0.55rem clamp(0.65rem, 1vw, 1rem);
+      border-top: 0;
+      border-left: 1px solid rgb(57 54 54 / 16%);
+    }
+
+    .site-menu__directory-link:last-child {
+      border-bottom: 0;
+    }
+
+    .site-header.is-immersed .site-menu__directory-link {
+      border-color: rgb(249 244 236 / 18%);
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .site-header {
+      background:
+        linear-gradient(
+          to bottom,
+          rgb(5 5 16 / calc((1 - var(--header-surface, 1)) * 30%)),
+          transparent
+        ),
+        rgb(255 255 255 / calc(var(--header-surface, 1) * 96%));
+    }
+  }
+
+  @media (max-width: 47.999rem) {
+    .site-menu__inner--sectioned {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+      overflow-x: hidden;
+    }
+
+    .site-menu__inner--sectioned .site-menu__group {
+      grid-area: 1 / 1;
+      min-width: 0;
+      opacity: 1;
+      transform: translateX(0);
+      transition:
+        opacity 150ms ease-out,
+        transform 260ms cubic-bezier(0.16, 1, 0.3, 1),
+        visibility 0s;
+    }
+
+    .site-menu__inner--sectioned .site-menu__directory {
+      opacity: 0;
+      transform: translateX(calc(100% + 1.5rem));
+      visibility: hidden;
+    }
+
+    .site-menu[data-menu-view='directory'] .site-menu__inner--sectioned .site-menu__sections {
+      transform: translateX(calc(-100% - 1.5rem));
+    }
+
+    .site-menu[data-menu-view='directory'] .site-menu__inner--sectioned .site-menu__sections {
+      opacity: 0;
+      visibility: hidden;
+      transition:
+        opacity 120ms ease-in,
+        transform 260ms cubic-bezier(0.16, 1, 0.3, 1),
+        visibility 0s linear 150ms;
+    }
+
+    .site-menu[data-menu-view='directory'] .site-menu__inner--sectioned .site-menu__directory {
+      opacity: 1;
+      transform: translateX(0);
+      visibility: visible;
+    }
+
+    .site-menu__link-description {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-menu,
+    .site-menu__inner,
+    .site-menu__inner--sectioned .site-menu__group,
+    .site-header__nav-link,
+    .site-header__nav-link::after,
+    .menu-toggle__bars::before,
+    .menu-toggle__bars::after,
+    .menu-toggle__chevron {
+      transition: none;
+    }
+  }
+
+</style>

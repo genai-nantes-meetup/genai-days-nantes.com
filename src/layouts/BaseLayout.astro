@@ -1,0 +1,311 @@
+---
+import '@fontsource-variable/eb-garamond/wght.css';
+import '@fontsource-variable/eb-garamond/wght-italic.css';
+import '../styles/global.css';
+import ebGaramondLatinNormalUrl from '@fontsource-variable/eb-garamond/files/eb-garamond-latin-wght-normal.woff2?url';
+import ebGaramondLatinItalicUrl from '@fontsource-variable/eb-garamond/files/eb-garamond-latin-wght-italic.woff2?url';
+import ContactModal from '../components/ContactModal.astro';
+import BackToTop from '../components/BackToTop.astro';
+import { EVENT, EVENT_YEAR, formatEventDateLabel } from '../lib/event';
+import { POSTHOG_API_HOST, POSTHOG_UI_HOST } from '../lib/analytics';
+import { getSocialImageUrl } from '../lib/social-image';
+
+interface Props {
+  title: string;
+  description: string;
+  structuredData?: object[];
+  robots?: string;
+  socialImage?: { src: string; alt: string; width?: number; height?: number };
+}
+
+const {
+  title,
+  description,
+  structuredData = [],
+  socialImage = {
+    src: EVENT.image,
+    alt: `GENAI DAYS · ${formatEventDateLabel()} · ${EVENT.venue.city}`,
+    width: 2560,
+    height: 1454,
+  },
+  robots = 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1',
+} = Astro.props;
+const socialImageUrl = getSocialImageUrl(socialImage.src, Astro.site ?? Astro.url.origin);
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).href;
+const socialImageAlt = socialImage.alt;
+const posthogKey = import.meta.env.PUBLIC_POSTHOG_KEY;
+const analyticsEnabled = import.meta.env.PROD && Boolean(posthogKey);
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <link rel="icon" type="image/svg+xml" href="/logos/Gen AI Logo.svg" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="GENAI DAYS · informations pour les agents IA" />
+    {/* EB Garamond porte tous les titres du site (--font-serif) : le latin
+     * couvre les accents français et l'apostrophe typographique du H1 de
+     * la hero. Précharger évite au texte visible d'attendre la découverte
+     * tardive du <link> injecté par le CSS @fontsource. */}
+    <link rel="preload" as="font" type="font/woff2" href={ebGaramondLatinNormalUrl} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={ebGaramondLatinItalicUrl} crossorigin />
+    {analyticsEnabled && <link rel="preconnect" href={POSTHOG_API_HOST} crossorigin />}
+    <style is:inline>
+      html {
+        --page-transition-band-height: clamp(7rem, 16vh, 12rem);
+        background: #F9F4EC;
+      }
+
+      /* La trame reprend la dissolution du hero. Elle est construite dans le
+       * CSS critique et reste attachée au front de l'aplat crème : aucun
+       * asset tardif ne peut la désynchroniser du changement de page. */
+      html::before,
+      html::after {
+        position: fixed;
+        content: "";
+        pointer-events: none;
+      }
+
+      html::before {
+        z-index: 2147483646;
+        top: 0;
+        right: 0;
+        left: 0;
+        height: var(--page-transition-band-height);
+        background:
+          radial-gradient(circle at 50% 5%, #F9F4EC 0 0.4px, transparent 0.65px) 0 0 / 10px 100% repeat-x,
+          radial-gradient(circle at 50% 11%, #F9F4EC 0 0.55px, transparent 0.8px) 5px 0 / 10px 100% repeat-x,
+          radial-gradient(circle at 50% 17%, #F9F4EC 0 0.7px, transparent 0.95px) 0 0 / 10px 100% repeat-x,
+          radial-gradient(circle at 50% 23%, #F9F4EC 0 0.9px, transparent 1.15px) 5px 0 / 10px 100% repeat-x,
+          radial-gradient(circle at 50% 29%, #F9F4EC 0 1.1px, transparent 1.35px) 0 0 / 10px 100% repeat-x,
+          radial-gradient(circle at 50% 35%, #F9F4EC 0 1.3px, transparent 1.55px) 5px 0 / 10px 100% repeat-x,
+          radial-gradient(circle at 50% 41%, #F9F4EC 0 1.6px, transparent 1.85px) 0 0 / 10px 100% repeat-x,
+          radial-gradient(circle at 50% 47%, #F9F4EC 0 1.9px, transparent 2.15px) 5px 0 / 10px 100% repeat-x,
+          radial-gradient(circle at 50% 53%, #F9F4EC 0 2.2px, transparent 2.45px) 0 0 / 10px 100% repeat-x,
+          radial-gradient(circle at 50% 59%, #F9F4EC 0 2.5px, transparent 2.75px) 5px 0 / 10px 100% repeat-x,
+          radial-gradient(circle at 50% 65%, #F9F4EC 0 2.8px, transparent 3.05px) 0 0 / 10px 100% repeat-x,
+          radial-gradient(circle at 50% 71%, #F9F4EC 0 3.2px, transparent 3.45px) 5px 0 / 10px 100% repeat-x,
+          radial-gradient(circle at 50% 77%, #F9F4EC 0 3.5px, transparent 3.75px) 0 0 / 10px 100% repeat-x,
+          radial-gradient(circle at 50% 83%, #F9F4EC 0 3.9px, transparent 4.15px) 5px 0 / 10px 100% repeat-x,
+          radial-gradient(circle at 50% 89%, #F9F4EC 0 4.3px, transparent 4.55px) 0 0 / 10px 100% repeat-x,
+          radial-gradient(circle at 50% 95%, #F9F4EC 0 4.7px, transparent 4.95px) 5px 0 / 10px 100% repeat-x,
+          linear-gradient(to bottom, transparent 78%, rgb(249 244 236 / 18%) 88%, rgb(249 244 236 / 68%) 97%, #F9F4EC 100%);
+        transform: translateY(100vh);
+      }
+
+      html::after {
+        z-index: 2147483647;
+        inset: 0;
+        background: #F9F4EC;
+        transform: translateY(100%);
+      }
+
+      html[data-page-transition='leaving']::before {
+        transform: translateY(calc(-1 * var(--page-transition-band-height)));
+        transition: transform 680ms cubic-bezier(0.65, 0, 0.35, 1);
+      }
+
+      html[data-page-transition='leaving']::after {
+        transform: translateY(0);
+        transition: transform 680ms cubic-bezier(0.65, 0, 0.35, 1);
+      }
+
+      html[data-page-transition='entering']::before {
+        transform: translateY(calc(-1 * var(--page-transition-band-height)));
+      }
+
+      html[data-page-transition='entering']::after {
+        transform: translateY(0);
+      }
+
+      html[data-page-transition='revealing']::before {
+        transform: translateY(100vh);
+        transition: transform 760ms cubic-bezier(0.65, 0, 0.35, 1);
+      }
+
+      html[data-page-transition='revealing']::after {
+        transform: translateY(100%);
+        transition: transform 760ms cubic-bezier(0.65, 0, 0.35, 1);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html[data-page-transition]::before,
+        html[data-page-transition]::after {
+          transition: none;
+        }
+      }
+    </style>
+    <script is:inline>
+      /* Le marqueur posé avant le départ est consommé dans le head de la
+       * destination. L'aplat est ainsi présent avant sa première peinture. */
+      (function () {
+        var storageKey = 'genaidays:page-transition:v1';
+        var expectedDestination = '';
+        try {
+          expectedDestination = window.sessionStorage.getItem(storageKey) || '';
+          window.sessionStorage.removeItem(storageKey);
+        } catch {}
+
+        var reduceMotion = window.matchMedia
+          && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var pathname = window.location.pathname.replace(/\/+$/, '') || '/';
+        var currentDestination = pathname + window.location.search + window.location.hash;
+        if (reduceMotion || expectedDestination !== currentDestination) return;
+        document.documentElement.dataset.pageTransition = 'entering';
+
+        window.setTimeout(function () {
+          if (document.documentElement.dataset.pageTransition === 'entering') {
+            delete document.documentElement.dataset.pageTransition;
+          }
+        }, 2000);
+      })();
+    </script>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content={robots} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="GENAI DAYS" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:image" content={socialImageUrl} />
+    {socialImage.width && <meta property="og:image:width" content={socialImage.width} />}
+    {socialImage.height && <meta property="og:image:height" content={socialImage.height} />}
+    <meta property="og:image:alt" content={socialImageAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={socialImageUrl} />
+    <meta name="twitter:image:alt" content={socialImageAlt} />
+    {structuredData.map((entry) => <script type="application/ld+json" set:html={JSON.stringify(entry)} />)}
+    <script is:inline>
+      // Anti-téléportation : les étiquettes déplacées ou archivées vivent en
+      // localStorage, que le HTML statique ne peut pas connaître. Ce script
+      // bloquant les masque avant la première peinture; label-easter-egg les
+      // replace puis les révèle (classe is-storage-settled ou déplacement hors
+      // du shell). La clé doit rester alignée sur src/lib/label-collection.ts.
+      (function () {
+        try {
+          var raw = window.localStorage.getItem('genaidays:label-archive:v5');
+          if (!raw) return;
+          var state = JSON.parse(raw);
+          var placements = state.placements && typeof state.placements === 'object' ? state.placements : {};
+          var ids = (Array.isArray(state.collected) ? state.collected : [])
+            .concat(Object.keys(placements))
+            .filter(function (id) { return /^[a-z0-9-]+$/i.test(id); });
+          if (ids.length === 0) return;
+          var style = document.createElement('style');
+          style.textContent = ids.map(function (id) {
+            return '[data-label-shell][data-label-id="' + id + '"]:not(.is-storage-settled) .site-label{visibility:hidden}';
+          }).join('');
+          document.head.appendChild(style);
+          // Filet : si le module d'étiquettes ne s'exécute jamais (chunk
+          // absent après déploiement, extension, proxy), ce masque resterait
+          // posé et l'étiquette serait invisible pour toujours alors que le
+          // HTML la contient. Il est levé tard, assez pour laisser le module
+          // replacer les étiquettes sans téléportation visible.
+          window.addEventListener('load', function () {
+            window.setTimeout(function () { style.remove(); }, 3000);
+          });
+        } catch (error) {
+          // Storage inaccessible : rien n'est mémorisé, donc rien à masquer.
+        }
+      })();
+    </script>
+    {
+      /* Placé en dernier dans <head> : ce chargeur n'a rien à peindre, contrairement
+       * aux deux scripts qui le précèdent (transition de page, anti-téléportation
+       * des étiquettes), qui doivent s'exécuter avant le premier rendu. */
+      analyticsEnabled && (
+        <script
+          is:inline
+          define:vars={{ posthogKey, apiHost: POSTHOG_API_HOST, uiHost: POSTHOG_UI_HOST, edition: EVENT_YEAR }}
+        >
+          !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagResult isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+
+          /* Le site Astro effectue un chargement complet à chaque page. Ces
+           * options restent explicites pour éviter une interprétation SPA. */
+          posthog.init(posthogKey, {
+            api_host: apiHost,
+            ui_host: uiHost,
+            defaults: '2026-05-30',
+            capture_pageview: true,
+            capture_pageleave: true,
+            autocapture: true,
+            persistence: 'cookie',
+          });
+          posthog.register({ edition: edition });
+        </script>
+      )
+    }
+  </head>
+  <body class="bg-brand-cream text-brand-black font-sans">
+    <a class="skip-link" href="#contenu">Aller au contenu</a>
+    <slot />
+    <script is:inline>
+      /* Le <main> appartient à chaque page ; le layout lui pose la cible du
+       * lien d'évitement pour qu'aucune page n'ait à la déclarer. Placé après
+       * le slot, donc le <main> est déjà analysé quand ce script s'exécute. */
+      (function () {
+        var main = document.querySelector('main');
+        if (!main || main.id) return;
+        main.id = 'contenu';
+        main.setAttribute('tabindex', '-1');
+      })();
+    </script>
+    <ContactModal />
+    <BackToTop />
+    <script>
+      import { initLabelShine } from '../scripts/label-shine';
+      import { initAnalytics } from '../scripts/analytics';
+      import { initHeaderScroll } from '../scripts/header-scroll';
+      import { initPageTransition } from '../scripts/page-transition';
+      import { initSmoothScroll } from '../scripts/smooth-scroll';
+
+      initPageTransition();
+      initAnalytics();
+      initLabelShine();
+      initHeaderScroll();
+      initSmoothScroll();
+    </script>
+  </body>
+</html>
+
+<style>
+  /* Lien d'évitement : présent dans l'ordre de tabulation dès le premier
+   * Tab, hors écran tant qu'il n'a pas le focus. Il passe devant le header
+   * collant, dont le z-index vaut 100. */
+  .skip-link {
+    position: fixed;
+    z-index: 200;
+    /* Décollé du coin pour que l'anneau de focus par défaut, qui déborde de
+     * 8px, ne soit pas rogné par les bords du viewport. */
+    top: 0.5rem;
+    left: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: var(--color-brand-blue);
+    color: var(--color-brand-cream);
+    font-family: var(--font-nav);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: var(--tracking-ui);
+    text-transform: uppercase;
+    translate: 0 calc(-100% - 1rem);
+  }
+
+  /* L'anneau de focus reste celui de global.css : l'orange de la DA ne tient
+   * que 2,17:1 sur l'aplat bleu, la paire nuit sur halo crème y tient 6,63:1. */
+  .skip-link:focus {
+    translate: 0 0;
+  }
+
+  /* La cible atterrit sous le header collant, jamais dessous. */
+  :global(#contenu) {
+    scroll-margin-top: calc(var(--site-header-height) + 0.75rem);
+  }
+</style>

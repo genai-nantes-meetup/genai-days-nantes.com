@@ -1,0 +1,135 @@
+---
+interface Props {
+  alt?: string;
+  src?: string;
+  variant?: 'governance' | 'transformation' | 'rag' | 'agents' | 'evaluation' | 'sovereignty' | 'opening' | 'closing' | 'podcast';
+  fit?: 'cover' | 'contain';
+  class?: string;
+  decorative?: boolean;
+  size?: 'fill' | 'hero' | 'thumb' | 'square';
+}
+
+const { alt = '', src, variant = 'opening', fit = 'cover', class: className = '', decorative = false, size = 'fill' } = Astro.props;
+
+const backgrounds = {
+  governance: 'linear-gradient(135deg, #22357d, #5f8dd3 54%, #ff4b2b)',
+  transformation: 'linear-gradient(135deg, #0d0d12, #22357d 45%, #ff4b2b)',
+  rag: 'linear-gradient(135deg, #26a6a6, #f6c54f 48%, #ff4b2b)',
+  agents: 'linear-gradient(135deg, #22357d, #8f3f9f 54%, #ff4b2b)',
+  evaluation: 'linear-gradient(135deg, #26a6a6, #f6c54f 48%, #ff4b2b)',
+  sovereignty: 'linear-gradient(135deg, #22357d, #367960 56%, #ff4b2b)',
+  opening: 'linear-gradient(135deg, #0d0d12, #22357d 58%, #f6c54f)',
+  closing: 'linear-gradient(135deg, #0d0d12, #22357d 58%, #f6c54f)',
+  podcast: 'var(--color-brand-blue)',
+};
+
+const sizeStyles = {
+  fill: 'min-height: 100%;',
+  hero: 'min-height: 24rem; aspect-ratio: 2 / 1;',
+  thumb: 'min-height: 100%;',
+  square: 'aspect-ratio: 1; min-height: 0;',
+};
+
+const coverStyle = `display: block; width: 100%; background: ${backgrounds[variant]}; ${sizeStyles[size]}`;
+---
+
+<div
+  class:list={['session-cover', `session-cover--${variant}`, `session-cover--size-${size}`, `session-cover--fit-${fit}`, className]}
+  role={!src && !decorative ? 'img' : undefined}
+  aria-hidden={decorative ? 'true' : undefined}
+  aria-label={!src && !decorative ? alt : undefined}
+  style={coverStyle}
+>
+  {src ? (
+    <img
+      class="session-cover__image"
+      src={src}
+      alt={decorative ? '' : alt}
+      loading={size === 'hero' ? 'eager' : 'lazy'}
+      fetchpriority={size === 'hero' ? 'high' : 'auto'}
+    />
+  ) : (
+    <span class="session-cover__grid"></span>
+  )}
+</div>
+
+<style>
+  .session-cover {
+    position: relative;
+    min-height: 100%;
+    overflow: hidden;
+    background: linear-gradient(135deg, #22357d, #ff4b2b);
+  }
+
+  .session-cover--size-hero {
+    min-height: 24rem;
+    aspect-ratio: 2 / 1;
+  }
+
+  .session-cover--size-thumb {
+    min-height: 100%;
+  }
+
+  .session-cover--size-square {
+    aspect-ratio: 1;
+    min-height: 0;
+  }
+
+  .session-cover__grid {
+    position: absolute;
+    inset: 1rem;
+    border: 2px solid rgb(255 255 255 / 35%);
+    background-image:
+      linear-gradient(rgb(255 255 255 / 16%) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(255 255 255 / 16%) 1px, transparent 1px);
+    background-size: 2.5rem 2.5rem;
+  }
+
+  .session-cover__image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: inherit;
+    object-fit: cover;
+  }
+
+  .session-cover--fit-contain .session-cover__image {
+    object-fit: contain;
+  }
+
+  .session-cover--podcast {
+    background: var(--color-brand-blue);
+  }
+
+  .session-cover--opening,
+  .session-cover--closing {
+    background: linear-gradient(135deg, #0d0d12, #22357d 58%, #f6c54f);
+  }
+
+  .session-cover--rag,
+  .session-cover--evaluation {
+    background: linear-gradient(135deg, #26a6a6, #f6c54f 48%, #ff4b2b);
+  }
+
+  .session-cover--governance {
+    background: linear-gradient(135deg, #22357d, #5f8dd3 54%, #ff4b2b);
+  }
+
+  .session-cover--transformation {
+    background: linear-gradient(135deg, #0d0d12, #22357d 45%, #ff4b2b);
+  }
+
+  .session-cover--agents {
+    background: linear-gradient(135deg, #22357d, #8f3f9f 54%, #ff4b2b);
+  }
+
+  .session-cover--sovereignty {
+    background: linear-gradient(135deg, #22357d, #367960 56%, #ff4b2b);
+  }
+
+  @media (max-width: 39.999rem) {
+    .session-cover--size-hero {
+      min-height: 24rem;
+    }
+  }
+</style>

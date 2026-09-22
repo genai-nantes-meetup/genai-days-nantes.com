@@ -1,0 +1,419 @@
+---
+import { getCollection } from 'astro:content';
+import EventName from '../../components/EventName.astro';
+import StickerRewardLayout from '../../layouts/StickerRewardLayout.astro';
+import { EVENT, EVENT_URL, formatEventDateLabel, formatEventDateShort } from '../../lib/event';
+
+const sessions = await getCollection('sessions');
+const speakers = await getCollection('speakers');
+const requiredLabelIds = [
+  'landing-day-manifesto',
+  ...speakers.map((speaker) => `speaker-${speaker.id}`),
+  ...sessions.map((session) => `session-${session.id}`),
+];
+
+/* Le rendez-vous est composé une seule fois : l'aperçu du post et le texte
+ * réellement partagé par le script doivent dire exactement la même chose. */
+const shareRendezVous = `le ${formatEventDateLabel()} à ${EVENT.venue.city}`;
+---
+
+<StickerRewardLayout
+  title="Félicitations · GenAI Days"
+  description={`Tu as complété l’easter egg GenAI Days. Rendez-vous ${shareRendezVous} pour récupérer ta récompense.`}
+  step="Récompense · 02/02"
+>
+  <section
+    class="reward-success"
+    data-reward-success-page
+    data-required-labels={JSON.stringify(requiredLabelIds)}
+    data-share-rendezvous={shareRendezVous}
+    hidden
+  >
+    <div class="reward-success__message">
+      <p class="reward-success__eyebrow">MISSION ACCOMPLIE · DOSSIER CLASSÉ</p>
+      <h1>Félicitations, <span data-reward-first-name>toi</span>&nbsp;!</h1>
+      <p class="reward-success__lead">
+        Tu as complété l’easter egg des stickers. Rendez-vous {shareRendezVous} pour récupérer
+        ton cadeau spécial auprès de l’équipe <EventName />.
+      </p>
+      <div class="reward-success__ticket" aria-label="Récompense validée">
+        <div>
+          <span>STATUT</span>
+          <strong>GAGNANT·E</strong>
+        </div>
+        <div>
+          <span>RENDEZ-VOUS</span>
+          <strong>{formatEventDateShort()}</strong>
+        </div>
+        <b aria-hidden="true">{requiredLabelIds.length}/{requiredLabelIds.length}</b>
+      </div>
+    </div>
+
+    <aside class="reward-success__share">
+      <div class="reward-success__share-intro">
+        <p>À TOI DE LANCER LE DÉFI</p>
+        <h2>Partage ta découverte sans révéler le secret.</h2>
+        <p>
+          Ce message donne juste assez d’indices pour donner envie aux autres d’explorer le site à leur tour.
+        </p>
+      </div>
+
+      <article class="reward-success__post" aria-label="Aperçu du post à partager">
+        <header>
+          <span class="reward-success__avatar" aria-hidden="true">G</span>
+          <div>
+            <strong><EventName /></strong>
+            <span>@GenAIDays</span>
+          </div>
+          <b aria-hidden="true">𝕏</b>
+        </header>
+        <div class="reward-success__post-copy" data-share-copy>
+          <p>J’ai trouvé l’easter egg caché sur le site de <EventName /> 👀</p>
+          <p>Je garde le secret, mais le défi est lancé.</p>
+          <p>
+            Explorez le site, ouvrez l’œil et dites-moi si vous le trouvez à votre tour.
+          </p>
+          <p>Rendez-vous {shareRendezVous}. #GenAIDays</p>
+        </div>
+        <footer>
+          <span>{new URL(EVENT_URL).hostname}</span>
+          <span>{formatEventDateLabel()}</span>
+        </footer>
+      </article>
+
+      <div class="reward-success__share-actions">
+        <a
+          href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(EVENT_URL)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-share-linkedin
+        >
+          Partager sur LinkedIn
+        </a>
+        <a
+          href="https://twitter.com/intent/tweet"
+          target="_blank"
+          rel="noopener noreferrer"
+          data-share-x
+        >
+          Partager sur X
+        </a>
+      </div>
+      <p class="reward-success__share-status" data-share-status role="status" aria-live="polite"></p>
+    </aside>
+  </section>
+
+  <noscript>
+    <div class="reward-success__noscript">
+      JavaScript doit être activé pour vérifier ta récompense. <a href="/">Retour à l’accueil</a>
+    </div>
+  </noscript>
+</StickerRewardLayout>
+
+<script define:vars={{ EVENT_URL }}>
+  import {
+    getRewardRegistration,
+    hasCollectedEvery,
+  } from '../../lib/label-collection';
+
+  const page = document.querySelector<HTMLElement>('[data-reward-success-page]');
+
+  if (page) {
+    const requiredLabelIds = JSON.parse(page.dataset.requiredLabels || '[]') as string[];
+    const registration = getRewardRegistration();
+
+    /* L'inscription prime sur l'état du classeur : une étiquette peut être
+     * reprise du classeur pour être recollée dans la page après coup, ce qui
+     * rend la collection incomplète. Une récompense déjà enregistrée reste
+     * acquise, sa page ne doit pas se refermer sur son gagnant. */
+    if (registration) {
+      const firstName = page.querySelector<HTMLElement>('[data-reward-first-name]');
+      if (firstName) firstName.textContent = registration.firstName;
+      page.hidden = false;
+    } else if (!hasCollectedEvery(requiredLabelIds)) {
+      window.location.replace('/');
+    } else {
+      window.location.replace('/stickers/recompense');
+    }
+
+    const postText = [
+      'J’ai trouvé l’easter egg caché sur le site de GENAI DAYS 👀',
+      '',
+      'Je garde le secret, mais le défi est lancé.',
+      '',
+      'Explorez le site, ouvrez l’œil et dites-moi si vous le trouvez à votre tour.',
+      '',
+      `Rendez-vous ${page.dataset.shareRendezvous || ''}. #GenAIDays`,
+    ].join('\n');
+    const shareUrl = EVENT_URL;
+    const shareStatus = page.querySelector<HTMLElement>('[data-share-status]');
+    const xLink = page.querySelector<HTMLAnchorElement>('[data-share-x]');
+    const linkedinLink = page.querySelector<HTMLAnchorElement>('[data-share-linkedin]');
+
+    if (xLink) {
+      xLink.href =
+        `https://twitter.com/intent/tweet?text=${encodeURIComponent(postText)}&url=${encodeURIComponent(shareUrl)}`;
+    }
+
+    linkedinLink?.addEventListener('click', () => {
+      navigator.clipboard?.writeText(`${postText}\n\n${shareUrl}`).then(() => {
+        if (shareStatus) {
+          shareStatus.textContent = 'Texte copié. Il ne reste plus qu’à le coller dans ton post LinkedIn.';
+        }
+      }).catch(() => {
+        if (shareStatus) {
+          shareStatus.textContent = 'Le post est prêt dans l’aperçu juste au-dessus.';
+        }
+      });
+    });
+  }
+</script>
+
+<style>
+  .reward-success {
+    display: grid;
+    width: min(72rem, 100%);
+    grid-template-columns: minmax(0, 0.84fr) minmax(22rem, 1.16fr);
+    gap: clamp(1.8rem, 6vw, 5.5rem);
+    align-items: center;
+  }
+
+  .reward-success[hidden] {
+    display: none;
+  }
+
+  .reward-success__eyebrow,
+  .reward-success__share-intro > p:first-child {
+    font-family: var(--font-label-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+  }
+
+  .reward-success__message h1 {
+    max-width: 11ch;
+    margin-top: 0.85rem;
+    font-size: clamp(3.2rem, 8vw, 7rem);
+    line-height: 0.82;
+    text-wrap: balance;
+  }
+
+  .reward-success__lead {
+    max-width: 34rem;
+    margin-top: 1.5rem;
+    color: rgb(255 255 255 / 82%);
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    line-height: 1.5;
+  }
+
+  .reward-success__ticket {
+    position: relative;
+    display: grid;
+    max-width: 34rem;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1.6rem;
+    padding: 1.1rem 4.6rem 1.1rem 1.1rem;
+    border: 1px solid rgb(255 255 255 / 34%);
+    background: rgb(8 12 30 / 34%);
+  }
+
+  .reward-success__ticket div {
+    display: grid;
+    gap: 0.28rem;
+  }
+
+  .reward-success__ticket span {
+    color: rgb(255 255 255 / 58%);
+    font-family: var(--font-label-mono);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+
+  .reward-success__ticket strong {
+    font-size: 0.88rem;
+  }
+
+  .reward-success__ticket > b {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: grid;
+    width: 3.7rem;
+    height: 100%;
+    place-items: center;
+    border-left: 1px dashed rgb(255 255 255 / 38%);
+    font-family: var(--font-label-mono);
+    font-size: 0.72rem;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+  }
+
+  .reward-success__share {
+    padding: clamp(1.25rem, 4vw, 2rem);
+    border: 1px solid rgb(255 255 255 / 22%);
+    background: rgb(8 12 30 / 26%);
+  }
+
+  .reward-success__share-intro h2 {
+    max-width: 16ch;
+    margin-top: 0.55rem;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    line-height: 0.94;
+    text-wrap: balance;
+  }
+
+  .reward-success__share-intro > p:last-child {
+    max-width: 36rem;
+    margin-top: 0.8rem;
+    color: rgb(255 255 255 / 70%);
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+
+  .reward-success__post {
+    margin-top: 1.25rem;
+    overflow: hidden;
+    border: 1px solid rgb(13 13 18 / 20%);
+    border-radius: 0.9rem;
+    background: #fff;
+    box-shadow: 0.55rem 0.7rem 0 rgb(8 12 30 / 20%);
+    color: #101014;
+  }
+
+  .reward-success__post header {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 1rem 1rem 0;
+  }
+
+  .reward-success__avatar {
+    display: grid;
+    width: 2.6rem;
+    height: 2.6rem;
+    place-items: center;
+    border-radius: 50%;
+    background: #3d43ce;
+    color: #fff;
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    font-style: italic;
+    font-weight: 800;
+  }
+
+  .reward-success__post header div {
+    display: grid;
+    min-width: 0;
+  }
+
+  .reward-success__post header div span {
+    color: rgb(13 13 18 / 55%);
+    font-size: 0.78rem;
+  }
+
+  .reward-success__post header > b {
+    margin-left: auto;
+    font-size: 1.25rem;
+  }
+
+  .reward-success__post-copy {
+    display: grid;
+    gap: 0.7rem;
+    padding: 1rem;
+    font-size: clamp(0.92rem, 2vw, 1.06rem);
+    line-height: 1.35;
+  }
+
+  .reward-success__post footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.8rem 1rem;
+    border-top: 1px solid rgb(13 13 18 / 12%);
+    color: rgb(13 13 18 / 58%);
+    font-size: 0.72rem;
+  }
+
+  .reward-success__share-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+  }
+
+  .reward-success__share-actions a {
+    display: inline-flex;
+    min-height: 3rem;
+    align-items: center;
+    justify-content: center;
+    padding: 0.7rem 0.85rem;
+    border: 2px solid #fff;
+    border-radius: 0.25rem;
+    color: #fff;
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.035em;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .reward-success__share-actions a:first-child {
+    border-color: #fff;
+    background: #fff;
+    color: #22357d;
+  }
+
+  .reward-success__share-actions a:hover,
+  .reward-success__share-actions a:focus-visible {
+    opacity: 0.82;
+  }
+
+  .reward-success__share-status {
+    min-height: 1.25rem;
+    margin-top: 0.75rem;
+    color: rgb(255 255 255 / 72%);
+    font-size: 0.76rem;
+    line-height: 1.35;
+  }
+
+  .reward-success__noscript {
+    max-width: 34rem;
+    padding: 1.5rem;
+    border: 1px solid rgb(255 255 255 / 32%);
+    background: rgb(8 12 30 / 42%);
+    text-align: center;
+  }
+
+  .reward-success__noscript a {
+    color: #fff;
+  }
+
+  @media (max-width: 54rem) {
+    .reward-success {
+      grid-template-columns: 1fr;
+    }
+
+    .reward-success__message h1 {
+      max-width: 13ch;
+    }
+  }
+
+  @media (max-width: 30rem) {
+    .reward-success__share {
+      padding: 1rem;
+    }
+
+    .reward-success__share-actions {
+      grid-template-columns: 1fr;
+    }
+
+    .reward-success__post footer {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+  }
+</style>

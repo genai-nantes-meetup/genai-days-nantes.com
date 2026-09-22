@@ -1,0 +1,992 @@
+---
+import { getCollection, render, type CollectionEntry } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import SessionIllustration from "../../components/SessionIllustration.astro";
+import CoverLabel from "../../components/CoverLabel.astro";
+import TrackMark from "../../components/TrackMark";
+import LabelArchive from "../../components/LabelArchive.astro";
+import BrandText from "../../components/BrandText.astro";
+import {
+  SPEAKER_EVENT_ROLE_LABELS,
+  SPEAKER_PORTRAIT_DIMENSIONS,
+  getSpeakerPortraitSrcset,
+} from "../../lib/speakers";
+import { toISODateTime } from "../../lib/event";
+import EVENT from "../../content/event.json";
+import { getSocialImageUrl } from "../../lib/social-image";
+import { stripMarkdownToPlainText } from "../../lib/markdown";
+
+export async function getStaticPaths() {
+  const sessions = await getCollection("sessions");
+  const speakers = await getCollection("speakers");
+  const tracks = await getCollection("tracks");
+  const speakerById = new Map(speakers.map((speaker) => [speaker.id, speaker]));
+  const trackById = new Map(tracks.map((track) => [track.id, track]));
+
+  return sessions.map((session) => {
+    const sameTrackSessions = sessions
+      .filter((candidate) => candidate.data.track === session.data.track)
+      .sort((a, b) => a.data.startTime.localeCompare(b.data.startTime));
+    const sessionIndex = sameTrackSessions.findIndex(
+      (candidate) => candidate.id === session.id,
+    );
+
+    return {
+      params: { session: session.id },
+      props: {
+        session,
+        track: trackById.get(session.data.track),
+        previousSession: sameTrackSessions[sessionIndex - 1],
+        nextSession: sameTrackSessions[sessionIndex + 1],
+        speakers: session.data.speakerSlugs
+          .map((slug) => speakerById.get(slug))
+          .filter((speaker): speaker is CollectionEntry<"speakers"> =>
+            Boolean(speaker),
+          ),
+      },
+    };
+  });
+}
+
+const { session, speakers, track, previousSession, nextSession } = Astro.props;
+const { Content } = await render(session);
+const partners = await getCollection("partners");
+const companyLogoByName = new Map(
+  partners.map((partner) => [partner.data.name, partner.data.logo]),
+);
+const labelPresenters = [
+  ...speakers.map((speaker) => ({
+    name: speaker.data.name,
+    company: speaker.data.company,
+    companyLogo:
+      speaker.data.companyLogo ?? companyLogoByName.get(speaker.data.company),
+  })),
+  ...(session.data.presentedBy
+    ? [
+        {
+          name: session.data.presentedBy.name,
+          company: session.data.presentedBy.name,
+          companyLogo:
+            session.data.presentedBy.logo ??
+            companyLogoByName.get(session.data.presentedBy.name),
+        },
+      ]
+    : []),
+];
+
+const formatLabel = {
+  keynote: "Keynote",
+  talk: "Talk",
+  "table-ronde": "Table ronde",
+  atelier: "Atelier",
+  concours: "Startup Contest",
+  podcast: "Podcast en public",
+}[session.data.format];
+
+const themeLabels: Record<
+  NonNullable<typeof session.data.illustration>["variant"],
+  string[]
+> = {
+  governance: ["Gouvernance data", "Conformité IA Act", "Risques"],
+  transformation: ["Transformation IA", "Adoption", "ROI"],
+  rag: ["RAG", "Production", "Architecture"],
+  agents: ["Agents IA", "Observabilité", "Évaluation continue"],
+  evaluation: ["Évaluation modèles", "Qualité", "Tests"],
+  sovereignty: ["Souveraineté numérique", "Secteur public", "Infrastructure"],
+  opening: ["Vision", "Stratégie", "Retours terrain"],
+  closing: ["Synthèse", "Prospective", "Passage à l’action"],
+  podcast: ["Actualité tech", "Cloud", "Podcast"],
+};
+
+const themes =
+  session.data.themes ??
+  (session.data.illustration
+    ? themeLabels[session.data.illustration.variant]
+    : [formatLabel]);
+const trackName =
+  track?.data.name ??
+  (session.data.track === "commun" ? "Temps commun" : session.data.track);
+const trackAccent =
+  session.data.track === "tech"
+    ? "var(--color-brand-orange)"
+    : session.data.track === "decideurs"
+      ? "var(--color-brand-blue)"
+      : "var(--color-brand-black)";
+/* L'orange de marque tient le seuil non textuel de 3:1 mais plafonne à 3,05:1
+ * sur crème : les filets gardent l'accent du parcours, les libellés passent
+ * en bleu. */
+const trackTextAccent =
+  trackAccent === "var(--color-brand-orange)"
+    ? "var(--color-brand-blue)"
+    : trackAccent;
+
+const [startHour, startMinute] = session.data.startTime.split(":").map(Number);
+const endMinutesOfDay =
+  startHour * 60 + startMinute + session.data.durationMinutes;
+const endTime = `${String(Math.floor(endMinutesOfDay / 60) % 24).padStart(2, "0")}:${String(endMinutesOfDay % 60).padStart(2, "0")}`;
+const displayRoom = session.data.room || trackName;
+const showRoom = Boolean(session.data.room) && session.data.room !== trackName;
+const programmeTrack =
+  session.data.track === "decideurs" || session.data.track === "tech"
+    ? session.data.track
+    : undefined;
+
+const siteUrl = (Astro.site ?? new URL(Astro.url.origin)).href;
+const sessionUrl = `${siteUrl}programme/${session.id}`;
+const startDateTime = toISODateTime(session.data.startTime);
+const endDateTime = toISODateTime(endTime);
+const speakerNames = speakers.map((speaker) => speaker.data.name).join(", ");
+const pageDescription = session.body?.trim()
+  ? stripMarkdownToPlainText(session.body)
+  : `${formatLabel} de GenAI Days${speakerNames ? ` avec ${speakerNames}` : ""}, le ${session.data.startTime} en salle ${displayRoom}.`;
+const pageTitle = `${session.data.seoTitle ?? session.data.title} · GENAI DAYS`;
+const socialImage = session.data.illustration?.src
+  ? { src: session.data.illustration.src, alt: session.data.illustration.alt }
+  : undefined;
+
+const sessionJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Event",
+  name: session.data.title,
+  description: pageDescription,
+  url: sessionUrl,
+  startDate: startDateTime,
+  endDate: endDateTime,
+  eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+  eventStatus: "https://schema.org/EventScheduled",
+  inLanguage: "fr",
+  image: [getSocialImageUrl(socialImage?.src ?? EVENT.image, siteUrl)],
+  superEvent: { "@id": `${siteUrl}#event` },
+  organizer: { "@id": `${siteUrl}#organizer` },
+  location: {
+    "@type": "Place",
+    name: `${displayRoom} · ${EVENT.venue.name}`,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: EVENT.venue.address,
+      postalCode: EVENT.venue.postalCode,
+      addressLocality: EVENT.venue.city,
+      addressCountry: EVENT.venue.country,
+    },
+  },
+  performer: [
+    ...speakers.map((speaker) => ({
+      "@type": "Person",
+      "@id": `${siteUrl}speakers/${speaker.id}#person`,
+      name: speaker.data.name,
+      jobTitle: speaker.data.role,
+      url: `${siteUrl}speakers/${speaker.id}`,
+    })),
+    ...(session.data.presentedBy
+      ? [
+          {
+            "@type": "Organization",
+            name: session.data.presentedBy.name,
+            url: session.data.presentedBy.website,
+          },
+        ]
+      : []),
+  ],
+};
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Accueil", item: siteUrl },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Programme",
+      item: `${siteUrl}programme`,
+    },
+    {
+      "@type": "ListItem",
+      position: 3,
+      name: session.data.title,
+      item: sessionUrl,
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  socialImage={socialImage}
+  structuredData={[sessionJsonLd, breadcrumbJsonLd]}
+>
+  <Header />
+  <main>
+    <section class="px-6 pt-8">
+      {
+        /* La fiche session n'avait aucune remontée : arrivé depuis une recherche,
+          le seul chemin vers le programme passait par la nav du header. Même
+          geste que « Tous les intervenants » et « Tous les partenaires ». */
+      }
+      <a
+        href="/programme"
+        class="session-back-link mx-auto mb-8 flex max-w-5xl items-center gap-2"
+      >
+        <span aria-hidden="true">←</span>
+        Tout le programme
+      </a>
+
+      <div
+        class="session-cover relative mx-auto max-w-5xl overflow-hidden"
+        data-session-cover
+      >
+        {
+          session.data.illustration && (
+            <SessionIllustration
+              class="session-hero-illustration"
+              alt={session.data.illustration.alt}
+              src={session.data.illustration.src}
+              variant={session.data.illustration.variant}
+              fit={session.data.illustration.fit}
+              size="hero"
+            />
+          )
+        }
+        <CoverLabel
+          labelId={`session-${session.id}`}
+          format={formatLabel}
+          room={displayRoom}
+          startTime={session.data.startTime}
+          durationMinutes={session.data.durationMinutes}
+          title={session.data.title}
+          quoted={session.data.quoteTitle}
+          speakers={labelPresenters}
+        />
+      </div>
+    </section>
+
+    <section
+      class="mx-auto max-w-5xl px-6 py-12 sm:py-16"
+      style={`--session-accent: ${trackAccent}; --session-text-accent: ${trackTextAccent};`}
+    >
+      <article>
+        <h2 class="sr-only">Fiche technique</h2>
+        <dl class="session-facts">
+          <div>
+            <dt>Parcours</dt>
+            <dd class="session-facts__accent">
+              {
+                programmeTrack ? (
+                  <TrackMark track={programmeTrack} />
+                ) : (
+                  trackName
+                )
+              }
+            </dd>
+          </div>
+          <div>
+            <dt>Horaire</dt>
+            <dd>{session.data.startTime}&nbsp;→&nbsp;{endTime}</dd>
+          </div>
+          <div>
+            <dt>Durée</dt>
+            <dd>{session.data.durationMinutes} min</dd>
+          </div>
+          <div>
+            <dt>Format</dt>
+            <dd>{formatLabel}</dd>
+          </div>
+          {
+            showRoom && (
+              <div>
+                <dt>Salle</dt>
+                <dd>{session.data.room}</dd>
+              </div>
+            )
+          }
+        </dl>
+
+        <div
+          class="session-title-fallback"
+          data-session-title-fallback
+          data-label-id={`session-${session.id}`}
+          data-state="covered"
+        >
+          <div class="session-title-fallback__inner">
+            <h1 class="session-title">
+              {session.data.quoteTitle ? (
+                <Fragment>"<BrandText text={session.data.title} />"</Fragment>
+              ) : (
+                <BrandText text={session.data.title} />
+              )}
+            </h1>
+            {session.data.subtitle && (
+              <p class="session-subtitle">
+                <BrandText text={session.data.subtitle} />
+              </p>
+            )}
+          </div>
+        </div>
+
+        <h2 class="sr-only">Description</h2>
+        {session.body?.trim() ? (
+          <div class="session-description">
+            <Content />
+          </div>
+        ) : (
+          <p class="session-description">
+            <BrandText text="Le détail de cette conférence sera publié prochainement." />
+          </p>
+        )}
+
+        <ul class="session-tags" aria-label="Thématiques de la session">
+          {themes.map((theme) => <li>{theme}</li>)}
+        </ul>
+
+        {
+          /* Une session peut n'avoir personne d'annoncé sur scène, comme le podcast enregistré
+           * pendant l'apéro (présenté par une entreprise) : dans ce cas le bloc « Sur scène »
+           * n'a rien à montrer. Si en revanche personne n'est annoncé du tout, ni speaker ni
+           * entreprise, on affiche un espace réservé plutôt que de rester muet. */
+        }
+        {
+          speakers.length === 0 && labelPresenters.length === 0 && (
+            <section class="session-speakers" aria-label="Participant de la session">
+              <h2 class="session-eyebrow">Sur scène</h2>
+              <p class="mt-6">Speaker To Be Announced</p>
+            </section>
+          )
+        }
+        {
+          speakers.length > 0 && (
+            <section
+              class="session-speakers"
+              aria-label={
+                speakers.length > 1
+                  ? "Participants de la session"
+                  : "Participant de la session"
+              }
+            >
+              <h2 class="session-eyebrow">Sur scène</h2>
+              <aside class="mt-6 grid gap-4">
+                {speakers.map((speaker, index) => (
+                  <article
+                    class={`speaker-feature-card ${index % 2 === 1 ? "speaker-feature-card--tilt-right" : ""}`}
+                  >
+                    <div class="speaker-feature-card__visual">
+                      <a
+                        class="speaker-feature-card__cover"
+                        href={`/speakers/${speaker.id}`}
+                        aria-label={`Voir la page de ${speaker.data.name}`}
+                      >
+                        <span
+                          class="speaker-feature-card__fallback"
+                          aria-hidden="true"
+                        >
+                          {speaker.data.name.slice(0, 1)}
+                        </span>
+                        {speaker.data.photo ? (
+                          <img
+                            class="portrait-photo"
+                            src={speaker.data.photo}
+                            srcset={getSpeakerPortraitSrcset(
+                              speaker.id,
+                              speaker.data.photo,
+                            )}
+                            sizes="(min-width: 40rem) 12rem, 45vw"
+                            alt=""
+                            width={
+                              SPEAKER_PORTRAIT_DIMENSIONS[speaker.id]?.width
+                            }
+                            height={
+                              SPEAKER_PORTRAIT_DIMENSIONS[speaker.id]?.height
+                            }
+                            loading="lazy"
+                            onerror="this.remove()"
+                            draggable="false"
+                          />
+                        ) : null}
+                      </a>
+                    </div>
+                    <div class="speaker-feature-card__details">
+                      {speaker.data.eventRole && (
+                        <p class="speaker-feature-card__eyebrow">
+                          {SPEAKER_EVENT_ROLE_LABELS[speaker.data.eventRole]}
+                        </p>
+                      )}
+                      <a
+                        class="speaker-feature-card__name"
+                        href={`/speakers/${speaker.id}`}
+                      >
+                        {speaker.data.name}
+                      </a>
+                      <p class="speaker-feature-card__role">
+                        {speaker.data.role} · {speaker.data.company}
+                      </p>
+                      <p class="speaker-feature-card__bio">
+                        <BrandText text={speaker.data.bio} />
+                      </p>
+                      <div
+                        class="speaker-feature-card__links"
+                        aria-label={`Liens de ${speaker.data.name}`}
+                      >
+                        {speaker.data.linkedin && (
+                          <a
+                            href={speaker.data.linkedin}
+                            rel="noopener noreferrer"
+                            target="_blank"
+                          >
+                            LinkedIn
+                          </a>
+                        )}
+                        {speaker.data.website && (
+                          <a
+                            href={speaker.data.website}
+                            rel="noopener noreferrer"
+                            target="_blank"
+                          >
+                            Website
+                          </a>
+                        )}
+                        {speaker.data.x && (
+                          <a
+                            href={speaker.data.x}
+                            rel="noopener noreferrer"
+                            target="_blank"
+                          >
+                            X
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </aside>
+            </section>
+          )
+        }
+      </article>
+
+      {
+        (previousSession || nextSession) && (
+          <nav
+            class="mt-16 grid gap-4 sm:grid-cols-2"
+            aria-label="Talks du même track"
+          >
+            {previousSession ? (
+              <a
+                class={`session-nav-card session-nav-card--previous session-nav-card--${previousSession.data.track}`}
+                href={`/programme/${previousSession.id}`}
+              >
+                <SessionIllustration
+                  class="session-nav-card__thumb"
+                  src={previousSession.data.illustration?.src}
+                  variant={previousSession.data.illustration?.variant}
+                  decorative
+                  size="thumb"
+                />
+                <span class="session-nav-card__content">
+                  <span class="session-nav-card__direction">
+                    <span aria-hidden="true">←</span>
+                    Précédent
+                  </span>
+                  <span class="session-nav-card__meta">
+                    {previousSession.data.startTime} ·{" "}
+                    {previousSession.data.room || trackName}
+                  </span>
+                  <strong>
+                    {previousSession.data.quoteTitle
+                      ? `"${previousSession.data.title}"`
+                      : previousSession.data.title}
+                  </strong>
+                </span>
+              </a>
+            ) : (
+              <span />
+            )}
+            {nextSession && (
+              <a
+                class={`session-nav-card session-nav-card--next session-nav-card--${nextSession.data.track}`}
+                href={`/programme/${nextSession.id}`}
+              >
+                <span class="session-nav-card__content">
+                  <span class="session-nav-card__direction">
+                    Suivant
+                    <span aria-hidden="true">→</span>
+                  </span>
+                  <span class="session-nav-card__meta">
+                    {nextSession.data.startTime} · {nextSession.data.room || trackName}
+                  </span>
+                  <strong>
+                    {nextSession.data.quoteTitle
+                      ? `"${nextSession.data.title}"`
+                      : nextSession.data.title}
+                  </strong>
+                </span>
+                <SessionIllustration
+                  class="session-nav-card__thumb"
+                  src={nextSession.data.illustration?.src}
+                  variant={nextSession.data.illustration?.variant}
+                  decorative
+                  size="thumb"
+                />
+              </a>
+            )}
+          </nav>
+        )
+      }
+    </section>
+  </main>
+  <Footer />
+  <LabelArchive />
+  <script>
+    import { initLabelEasterEgg } from "../../scripts/label-easter-egg";
+    import { ARCHIVE_CHANGE_EVENT } from "../../scripts/my-day";
+
+    initLabelEasterEgg();
+
+    const titleFallback = document.querySelector<HTMLElement>(
+      "[data-session-title-fallback]",
+    );
+    const labelId = titleFallback?.dataset.labelId;
+    const labelOrigin = labelId
+      ? document.querySelector<HTMLElement>(
+          `[data-label-origin][data-label-id="${labelId}"]`,
+        )
+      : null;
+
+    if (titleFallback && labelId && labelOrigin) {
+      const showTitle = (animate: boolean) => {
+        if (!animate) {
+          titleFallback.dataset.state = "revealed";
+          return;
+        }
+
+        titleFallback.dataset.motion = "active";
+        titleFallback.dataset.state = "preparing";
+        requestAnimationFrame(() => {
+          titleFallback.dataset.state = "revealing";
+        });
+      };
+
+      const syncTitleWithLabel = () => {
+        if (labelOrigin.classList.contains("is-collected")) {
+          if (titleFallback.dataset.state === "covered") showTitle(false);
+          return;
+        }
+
+        if (titleFallback.dataset.state !== "covered")
+          titleFallback.dataset.motion = "active";
+        titleFallback.dataset.state = "covered";
+      };
+
+      syncTitleWithLabel();
+
+      new MutationObserver(syncTitleWithLabel).observe(labelOrigin, {
+        attributes: true,
+        attributeFilter: ["class"],
+      });
+
+      document.addEventListener(ARCHIVE_CHANGE_EVENT, (event) => {
+        const detail = (event as CustomEvent<{ labelId?: string }>).detail;
+        if (detail?.labelId === labelId) showTitle(true);
+      });
+    }
+  </script>
+</BaseLayout>
+
+<style>
+  /* Même registre que « Tous les intervenants » sur la fiche intervenant, avec
+   * l'encre du papier crème au lieu de celle du hero sombre : 72% est le
+   * plancher qui tient 4,5:1 pour du charbon sur crème. */
+  .session-back-link {
+    min-height: 1.5rem;
+    color: rgb(57 54 54 / 72%);
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    transition: color 160ms ease;
+  }
+
+  .session-back-link:hover,
+  .session-back-link:focus-visible {
+    color: var(--color-brand-black);
+  }
+
+  .session-cover.is-peeling-label {
+    overflow: visible;
+  }
+
+  .session-facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 clamp(1.5rem, 4vw, 3rem);
+    border-top: 1px solid rgb(13 13 18 / 12%);
+    border-bottom: 1px solid rgb(13 13 18 / 12%);
+    padding-block: 0.9rem;
+  }
+
+  .session-facts > div {
+    padding-block: 0.35rem;
+  }
+
+  .session-facts dt {
+    color: rgb(13 13 18 / 60%);
+    font-size: 0.75rem;
+    font-weight: 900;
+    letter-spacing: var(--tracking-label);
+    line-height: 1.1;
+    text-transform: uppercase;
+  }
+
+  .session-facts dd {
+    margin-top: 0.35rem;
+    font-size: 0.95rem;
+    font-weight: 800;
+    line-height: 1.2;
+  }
+
+  .session-facts__accent {
+    color: var(--session-text-accent, var(--color-brand-black));
+  }
+
+  .session-title-fallback {
+    display: grid;
+    grid-template-rows: 0fr;
+    margin-top: 0;
+  }
+
+  .session-title-fallback[data-motion="active"] {
+    transition:
+      grid-template-rows 420ms cubic-bezier(0.16, 1, 0.3, 1),
+      margin-top 420ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .session-title-fallback[data-state="revealing"],
+  .session-title-fallback[data-state="revealed"] {
+    grid-template-rows: 1fr;
+    margin-top: clamp(2rem, 4vw, 2.5rem);
+  }
+
+  .session-title-fallback__inner {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .session-title {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: clamp(2.25rem, 5vw, 3rem);
+    font-weight: 800;
+    letter-spacing: var(--tracking-heading);
+    line-height: 0.95;
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+
+  .session-subtitle {
+    margin-top: 0.6rem;
+    color: rgb(13 13 18 / 70%);
+    font-family: var(--font-sans);
+    font-size: clamp(1.05rem, 2vw, 1.3rem);
+    font-weight: 700;
+    line-height: 1.3;
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+
+  .session-title-fallback[data-motion="active"] .session-title,
+  .session-title-fallback[data-motion="active"] .session-subtitle {
+    transition:
+      opacity 280ms ease-out,
+      transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .session-title-fallback[data-state="revealing"] .session-title,
+  .session-title-fallback[data-state="revealed"] .session-title,
+  .session-title-fallback[data-state="revealing"] .session-subtitle,
+  .session-title-fallback[data-state="revealed"] .session-subtitle {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .session-description {
+    margin-top: clamp(1rem, 2vw, 1.5rem);
+    color: rgb(13 13 18 / 70%);
+    font-size: 1rem;
+    line-height: 1.65;
+    text-wrap: pretty;
+  }
+
+  .session-description :global(p + p) {
+    margin-top: 1em;
+  }
+
+  .session-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: clamp(1.5rem, 3vw, 2rem);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .session-title-fallback[data-motion="active"],
+    .session-title-fallback[data-motion="active"] .session-title,
+    .session-title-fallback[data-motion="active"] .session-subtitle {
+      transition: none;
+    }
+  }
+
+  .session-tags li {
+    border: 1px solid rgb(13 13 18 / 18%);
+    padding: 0.45rem 0.7rem;
+    font-size: 0.7rem;
+    font-weight: 900;
+    letter-spacing: var(--tracking-label);
+    line-height: 1.1;
+    text-transform: uppercase;
+  }
+
+  .session-speakers {
+    margin-top: clamp(3rem, 7vw, 4.5rem);
+    border-top: 1px solid rgb(13 13 18 / 12%);
+    padding-top: clamp(1.75rem, 4vw, 2.5rem);
+  }
+
+  .session-eyebrow {
+    color: var(--session-text-accent, var(--color-brand-black));
+    /* Le sur-titre est un h2 pour la structure du document : la fonte sans
+     * est redéclarée ici pour ne pas hériter du Garamond des titres. */
+    font-family: var(--font-sans);
+    font-size: 0.68rem;
+    font-weight: 900;
+    letter-spacing: var(--tracking-label);
+    line-height: 1.1;
+    text-transform: uppercase;
+  }
+
+  .speaker-feature-card {
+    display: grid;
+    grid-template-columns: minmax(12rem, 16rem) minmax(0, 1fr);
+    gap: clamp(1rem, 3vw, 1.6rem);
+    align-items: center;
+    padding-block: clamp(0.85rem, 2.4vw, 1.25rem);
+  }
+
+  .speaker-feature-card--tilt-right {
+  }
+
+  .speaker-feature-card__visual {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .speaker-feature-card__cover {
+    position: relative;
+    display: grid;
+    width: 100%;
+    aspect-ratio: 1;
+    place-items: center;
+    overflow: hidden;
+    background:
+      radial-gradient(
+        circle at 22% 18%,
+        rgb(255 255 255 / 38%),
+        transparent 30%
+      ),
+      linear-gradient(
+        135deg,
+        var(--color-brand-blue),
+        var(--color-brand-orange)
+      );
+    color: var(--color-brand-white);
+    box-shadow:
+      0 0.8rem 1.6rem rgb(13 13 18 / 18%),
+      inset 0 0 0 0.45rem rgb(255 255 255 / 18%);
+    transform: rotate(-1.4deg);
+  }
+
+  .speaker-feature-card--tilt-right .speaker-feature-card__cover {
+    transform: rotate(1.1deg);
+  }
+
+  .speaker-feature-card__cover img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .speaker-feature-card__fallback {
+    font-size: clamp(4rem, 12vw, 7rem);
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .speaker-feature-card__details {
+    min-width: 0;
+    padding-block: 0.35rem;
+  }
+
+  .speaker-feature-card__eyebrow {
+    font-size: 0.68rem;
+    font-weight: 900;
+    letter-spacing: var(--tracking-label);
+    line-height: 1.1;
+    text-transform: uppercase;
+    color: var(--color-brand-blue);
+  }
+
+  .speaker-feature-card__name {
+    display: inline-flex;
+    margin-top: 0.55rem;
+    font-family: var(--font-serif);
+    font-style: normal;
+    font-size: clamp(1.7rem, 4vw, 2.45rem);
+    font-weight: 800;
+    letter-spacing: var(--tracking-heading);
+    line-height: 0.95;
+  }
+
+  .speaker-feature-card__name:hover {
+    color: var(--color-brand-blue);
+  }
+
+  .speaker-feature-card__role {
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
+    font-weight: 800;
+    line-height: 1.25;
+    color: rgb(13 13 18 / 62%);
+  }
+
+  .speaker-feature-card__bio {
+    margin-top: 1rem;
+    max-width: 38rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: rgb(13 13 18 / 70%);
+  }
+
+  .speaker-feature-card__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    margin-top: 1.1rem;
+  }
+
+  /* Liens autonomes : la hauteur de cible monte à 24px sans grossir le
+   * libellé, le filet restant collé au bas du texte. */
+  .speaker-feature-card__links a {
+    display: inline-flex;
+    min-height: 1.5rem;
+    align-items: flex-end;
+    border-bottom: 2px solid currentColor;
+    color: var(--color-brand-blue);
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: var(--tracking-label);
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  .speaker-feature-card__links a:hover {
+    color: var(--color-brand-night);
+  }
+
+  .session-nav-card {
+    display: grid;
+    grid-template-columns: 5rem minmax(0, 1fr);
+    min-height: 7rem;
+    overflow: hidden;
+    border-left: 4px solid var(--session-nav-accent, rgb(13 13 18 / 18%));
+    background: var(--color-brand-white);
+    box-shadow: 0 1px 0 rgb(13 13 18 / 8%);
+  }
+
+  .session-nav-card--next {
+    grid-template-columns: minmax(0, 1fr) 5rem;
+    text-align: right;
+  }
+
+  .session-nav-card--decideurs {
+    --session-nav-accent: var(--color-brand-blue);
+    --session-nav-text-accent: var(--color-brand-blue);
+  }
+
+  /* Le filet garde l'orange du parcours tech ; le libellé passe en bleu,
+   * l'orange restant sous le seuil texte sur blanc. */
+  .session-nav-card--tech {
+    --session-nav-accent: var(--color-brand-orange);
+    --session-nav-text-accent: var(--color-brand-blue);
+  }
+
+  .session-nav-card--commun {
+    --session-nav-accent: var(--color-brand-black);
+    --session-nav-text-accent: var(--color-brand-black);
+  }
+
+  .session-nav-card__content {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0.85rem;
+  }
+
+  .session-nav-card__direction,
+  .session-nav-card__meta {
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: var(--tracking-label);
+    line-height: 1.1;
+    text-transform: uppercase;
+  }
+
+  .session-nav-card__direction {
+    display: inline-flex;
+    gap: 0.4rem;
+    align-items: center;
+    color: var(--session-nav-text-accent, var(--color-brand-black));
+  }
+
+  .session-nav-card--next .session-nav-card__direction {
+    justify-content: flex-end;
+  }
+
+  .session-nav-card__meta {
+    margin-top: 0.55rem;
+    color: rgb(13 13 18 / 68%);
+  }
+
+  .session-nav-card strong {
+    margin-top: 0.35rem;
+    font-size: 0.95rem;
+    line-height: 1.18;
+  }
+
+  .session-nav-card:hover {
+    color: var(--session-nav-text-accent, var(--color-brand-blue));
+  }
+
+  @media (max-width: 39.999rem) {
+    .speaker-feature-card {
+      grid-template-columns: 1fr;
+    }
+
+    .speaker-feature-card__visual {
+      justify-self: center;
+      width: min(52vw, 11rem);
+    }
+
+    .speaker-feature-card__cover {
+      width: 100%;
+    }
+
+    .speaker-feature-card__name {
+      font-size: 2rem;
+    }
+  }
+</style>

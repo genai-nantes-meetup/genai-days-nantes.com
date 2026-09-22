@@ -1,0 +1,31 @@
+---
+import { getButtonClasses, type ButtonVariant } from '../lib/button';
+import type { ContactTopic } from '../lib/contact';
+import ArrowIcon from './ArrowIcon.astro';
+
+interface Props {
+  variant: ButtonVariant;
+  href?: string;
+  contact?: ContactTopic;
+  class?: string;
+  target?: string;
+  rel?: string;
+}
+
+const { variant, href, contact, class: className = '', target, rel } = Astro.props;
+const classes = getButtonClasses(variant);
+---
+
+{
+  contact ? (
+    <button type="button" data-contact-topic={contact} class:list={[classes, className, 'cursor-pointer']}>
+      <slot />
+      {variant === 'tertiary' && <ArrowIcon />}
+    </button>
+  ) : (
+    <a href={href} target={target} rel={rel} class:list={[classes, className]}>
+      <slot />
+      {variant === 'tertiary' && <ArrowIcon />}
+    </a>
+  )
+}

@@ -1,0 +1,231 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ArrowIcon from '../components/ArrowIcon.astro';
+import DirectoryHero from '../components/DirectoryHero.astro';
+import EditorialGrid from '../components/EditorialGrid.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { EVENT } from '../lib/event';
+
+type ContactPath = {
+  title: string;
+  description: string;
+  actionLabel: string;
+  contact?: 'general';
+  href?: string;
+};
+
+const contactPaths: ContactPath[] = [
+  {
+    title: 'Une question sur l’événement',
+    description: 'Billetterie, accessibilité, repas ou organisation de la journée.',
+    actionLabel: 'Écrire à l’équipe',
+    contact: 'general',
+  },
+  {
+    title: 'Devenir partenaire',
+    description: 'Découvrez les formats de partenariat et échangez avec la personne qui porte le sujet.',
+    actionLabel: 'Voir les partenariats',
+    href: '/partenaires#devenir-partenaire',
+  },
+  {
+    title: 'Presse et médias',
+    description: 'Retrouvez le kit presse, les visuels, les porte-paroles et le contact dédié.',
+    actionLabel: 'Accéder à l’espace presse',
+    href: '/press-kit#contact-presse',
+  },
+];
+
+const siteUrl = (Astro.site ?? new URL(Astro.url.origin)).href;
+const pageTitle = `Contact · ${EVENT.name}`;
+const pageDescription = `Trouvez le bon point d’entrée pour joindre l’équipe ${EVENT.name} : question générale, partenariat ou demande presse.`;
+const contactPageJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ContactPage',
+  name: pageTitle,
+  description: pageDescription,
+  url: `${siteUrl}contact`,
+  about: { '@id': `${siteUrl}#event` },
+};
+---
+
+<BaseLayout title={pageTitle} description={pageDescription} structuredData={[contactPageJsonLd]}>
+  <Header />
+
+  <main class="contact-page">
+    <DirectoryHero
+      title="Contact"
+      titleId="contact-title"
+      lede={'Quel est votre besoin ? Choisissez le sujet pour accéder directement au bon interlocuteur ou à la page qui le traite.'}
+      image="/images/chateau-nantes-miroir-eau-banner-genai-days-optimized.webp"
+      imageWidth={1774}
+      imageHeight={886}
+      imagePosition="52% 46%"
+    />
+
+    <section class="contact-paths" aria-labelledby="contact-paths-title">
+      <EditorialGrid top={false} />
+      <div class="contact-paths__inner">
+        <h2 id="contact-paths-title" class="sr-only">Choisir un sujet de contact</h2>
+
+        <ul class="contact-ledger">
+          {contactPaths.map((contact) => {
+            const Tag = contact.href ? 'a' : 'button';
+            const triggerProps = contact.href
+              ? { href: contact.href }
+              : { type: 'button', 'data-contact-topic': contact.contact };
+
+            return (
+              <li>
+                <Tag
+                  {...triggerProps}
+                  class="contact-entry"
+                  aria-label={`${contact.actionLabel}, ${contact.title}`}
+                >
+                  <span class="contact-entry__copy">
+                    <span class="contact-entry__title">{contact.title}</span>
+                    <span class="contact-entry__description">{contact.description}</span>
+                  </span>
+                  <span class="contact-entry__action">
+                    {contact.actionLabel}
+                    <ArrowIcon direction="right" />
+                  </span>
+                </Tag>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <Footer grid />
+</BaseLayout>
+
+<style>
+  .contact-page {
+    position: relative;
+    background: var(--color-brand-cream);
+    color: var(--color-brand-black);
+  }
+
+  .contact-paths {
+    position: relative;
+    padding-block: clamp(1.5rem, 4vw, 3rem) var(--space-section-calm);
+    border-bottom: 1px solid rgb(57 54 54 / 18%);
+  }
+
+  .contact-paths__inner {
+    position: relative;
+    z-index: 3;
+    width: min(calc(100% - 2 * var(--layout-gutter)), var(--layout-editorial));
+    margin-inline: auto;
+  }
+
+  .contact-ledger {
+    margin: 0;
+    padding: 0;
+    border: 1px solid rgb(57 54 54 / 18%);
+    list-style: none;
+  }
+
+  .contact-ledger li + li {
+    border-top: 1px solid rgb(57 54 54 / 18%);
+  }
+
+  .contact-entry {
+    display: grid;
+    width: 100%;
+    min-height: 8rem;
+    align-items: center;
+    padding: clamp(1.5rem, 3vw, 2.25rem) clamp(1.25rem, 4vw, 3.5rem);
+    border: 0;
+    background: transparent;
+    color: currentColor;
+    cursor: pointer;
+    gap: 1.25rem clamp(2rem, 5vw, 4rem);
+    text-align: left;
+    transition: background-color 180ms ease;
+  }
+
+  .contact-entry:hover,
+  .contact-entry:focus-visible {
+    background: var(--color-brand-cream-deep);
+  }
+
+  .contact-entry:focus-visible {
+    outline: 2px solid var(--color-brand-blue);
+    outline-offset: -2px;
+  }
+
+  .contact-entry > .contact-entry__copy {
+    display: grid;
+    row-gap: 0.65rem;
+  }
+
+  .contact-entry__title,
+  .contact-entry__description {
+    display: block;
+  }
+
+  .contact-entry__title {
+    font-family: var(--font-serif);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 600;
+    line-height: 1.05;
+  }
+
+  .contact-entry__description {
+    max-width: 62ch;
+    color: rgb(57 54 54 / 78%);
+    line-height: 1.55;
+  }
+
+  .contact-entry__action {
+    display: inline-flex;
+    align-items: center;
+    justify-self: start;
+    padding-block: 0.25rem 0.45rem;
+    border-bottom: 1px solid currentColor;
+    color: var(--color-brand-blue);
+    font-family: var(--font-nav);
+    font-size: 0.75rem;
+    font-weight: 700;
+    gap: 0.65rem;
+    letter-spacing: var(--tracking-ui);
+    line-height: 1.35;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .contact-entry__action :global(svg) {
+    transition: transform 180ms ease;
+  }
+
+  .contact-entry:hover .contact-entry__action :global(svg),
+  .contact-entry:focus-visible .contact-entry__action :global(svg) {
+    transform: translateX(0.2rem);
+  }
+
+  @media (min-width: 48rem) {
+    .contact-entry {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .contact-entry__action {
+      justify-self: end;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .contact-entry,
+    .contact-entry__action :global(svg) {
+      transition: none;
+    }
+
+    .contact-entry:hover .contact-entry__action :global(svg),
+    .contact-entry:focus-visible .contact-entry__action :global(svg) {
+      transform: none;
+    }
+  }
+</style>

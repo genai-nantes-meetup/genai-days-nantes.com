@@ -1,0 +1,87 @@
+{
+  "rating": {
+    "value": 4.8,
+    "bestRating": 5,
+    "reviewCount": 247
+  },
+  "communities": [
+    {
+      "id": "shift",
+      "name": "SHIFT",
+      "title": "Le hackathon Gen AI",
+      "indexLabel": "Hackathon de 48 heures",
+      "logo": "/logos/logo-shift-noir.svg",
+      "logoWidth": 787,
+      "logoHeight": 153,
+      "href": "https://shift-hackathon.com/",
+      "linkLabel": "Découvrir SHIFT",
+      "description": "48 heures pour prototyper et présenter des projets d'IA générative à Nantes.",
+      "stats": [
+        {
+          "value": "48 h",
+          "label": "de création"
+        },
+        {
+          "value": "≈100",
+          "label": "participants"
+        },
+        {
+          "value": "16",
+          "label": "partenaires"
+        }
+      ]
+    },
+    {
+      "id": "nantes",
+      "name": "Generative AI Nantes",
+      "title": "Le meetup mensuel",
+      "indexLabel": "Communauté mensuelle",
+      "logo": "/logos/Meetup GenAi Nantes.png",
+      "logoWidth": 500,
+      "logoHeight": 500,
+      "href": "https://www.meetup.com/fr-fr/generative-ai-nantes/",
+      "linkLabel": "Voir le meetup",
+      "description": "À Nantes, professionnels et passionnés partagent leurs pratiques et leurs retours d'expérience.",
+      "stats": [
+        {
+          "value": "4,8/5",
+          "label": "sur 247 avis"
+        },
+        {
+          "value": "1 500",
+          "label": "abonnés Meetup et Eventbrite"
+        },
+        {
+          "value": "15+",
+          "label": "événements par an"
+        }
+      ]
+    },
+    {
+      "id": "france",
+      "name": "GenAI France",
+      "title": "Le réseau national",
+      "indexLabel": "Réseau de six villes",
+      "logo": "/logos/Gen AI Logo.svg",
+      "logoWidth": 199,
+      "logoHeight": 199,
+      "href": "https://www.generativeai.paris/",
+      "linkLabel": "Découvrir le réseau",
+      "description": "Six villes françaises réunies autour de rencontres locales consacrées à l'IA générative.",
+      "stats": [
+        {
+          "value": "7",
+          "label": "grandes villes"
+        },
+        {
+          "value": "10 000+",
+          "label": "membres"
+        },
+        {
+          "value": "50+",
+          "label": "événements par an"
+        }
+      ]
+    }
+  ]
+}

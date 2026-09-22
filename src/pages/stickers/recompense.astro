@@ -1,0 +1,550 @@
+---
+import { getCollection } from 'astro:content';
+import EventName from '../../components/EventName.astro';
+import StickerRewardLayout from '../../layouts/StickerRewardLayout.astro';
+import { EVENT, formatEventDateLabel, formatEventDateShort } from '../../lib/event';
+
+const sessions = await getCollection('sessions');
+const speakers = await getCollection('speakers');
+const requiredLabelIds = [
+  'landing-day-manifesto',
+  ...speakers.map((speaker) => `speaker-${speaker.id}`),
+  ...sessions.map((session) => `session-${session.id}`),
+];
+
+/* Les coordonnées sont conservées trois mois après l'événement : l'échéance
+ * suit la date de l'édition au lieu de rester figée sur un millésime. */
+const dataRetentionDate = new Date(`${EVENT.date}T00:00:00`);
+dataRetentionDate.setMonth(dataRetentionDate.getMonth() + 3);
+const dataRetentionLabel = new Intl.DateTimeFormat('fr-FR', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+}).format(dataRetentionDate);
+---
+
+<StickerRewardLayout
+  title="Ta récompense · GenAI Days"
+  description="Inscris-toi parmi les gagnants de l’easter egg GenAI Days pour récupérer ta récompense le jour de l’événement."
+  step="Récompense · 01/02"
+>
+  <section
+    class="reward-registration"
+    data-reward-registration-page
+    data-required-labels={JSON.stringify(requiredLabelIds)}
+    hidden
+  >
+    <div class="reward-registration__intro">
+      <p class="reward-registration__eyebrow">COLLECTION VALIDÉE · {requiredLabelIds.length}/{requiredLabelIds.length}</p>
+      <h1>Ton dossier est complet.</h1>
+      <p class="reward-registration__lead">
+        Le jour de <EventName />, une surprise t’attendra à l’accueil. Pour que notre équipe puisse
+        t’ajouter à la liste des gagnants et préparer ton cadeau, laisse-nous ces quelques informations.
+      </p>
+      <div class="reward-registration__note">
+        <strong>Ce que tu dois savoir</strong>
+        <p>
+          La récompense est réservée aux participants présents à <EventName /> et sera remise
+          uniquement sur place le {formatEventDateLabel()}.
+        </p>
+        <p>
+          Tes coordonnées seront utilisées uniquement pour confirmer ton inscription et te contacter
+          au sujet de cette récompense.
+        </p>
+      </div>
+    </div>
+
+    <form
+      class="reward-registration__form"
+      aria-labelledby="reward-form-title"
+      data-reward-registration-form
+    >
+      <div class="reward-registration__form-heading">
+        <span id="reward-form-title">FICHE GAGNANT</span>
+        <span>{formatEventDateShort()}</span>
+      </div>
+
+      <fieldset aria-labelledby="reward-form-title" data-reward-registration-fields>
+        <div class="reward-registration__field">
+          <label for="reward-last-name">Nom</label>
+          <input
+            id="reward-last-name"
+            name="lastName"
+            type="text"
+            autocomplete="family-name"
+            minlength="2"
+            maxlength="80"
+            required
+          />
+        </div>
+
+        <div class="reward-registration__field">
+          <label for="reward-first-name">Prénom</label>
+          <input
+            id="reward-first-name"
+            name="firstName"
+            type="text"
+            autocomplete="given-name"
+            minlength="2"
+            maxlength="80"
+            required
+          />
+        </div>
+
+        <div class="reward-registration__field">
+          <label for="reward-email">Email</label>
+          <input
+            id="reward-email"
+            name="email"
+            type="email"
+            autocomplete="email"
+            maxlength="160"
+            required
+          />
+        </div>
+
+        <div class="reward-registration__field">
+          <label for="reward-phone">Téléphone</label>
+          <input
+            id="reward-phone"
+            name="phone"
+            type="tel"
+            autocomplete="tel"
+            inputmode="tel"
+            minlength="6"
+            maxlength="32"
+            pattern="[+0-9][0-9 \(\)\.\-]{5,31}"
+            title="Chiffres, espaces, parenthèses, points et tirets uniquement, par exemple 06 12 34 56 78"
+            aria-describedby="reward-phone-hint"
+            required
+          />
+          <p class="reward-registration__hint" id="reward-phone-hint">
+            Format&nbsp;: 06 12 34 56 78 ou +33 6 12 34 56 78
+          </p>
+        </div>
+
+        <div class="reward-registration__honeypot" aria-hidden="true">
+          <label for="reward-note">Commentaire</label>
+          <input
+            id="reward-note"
+            name="note"
+            type="text"
+            tabindex="-1"
+            autocomplete="new-password"
+          />
+        </div>
+
+        <button type="submit" data-reward-submit>Sauvegarder mes informations</button>
+      </fieldset>
+
+      <p class="reward-registration__privacy">
+        Naomakers utilise ces informations pour vérifier ton éligibilité et organiser la remise de ta récompense.
+        Tous les champs sont obligatoires. Les données sont conservées jusqu’au {dataRetentionLabel}, puis supprimées.
+        <a href="/confidentialite#donnees-personnelles">En savoir plus sur tes données</a>.
+      </p>
+
+      <p
+        class="reward-registration__status"
+        id="reward-status"
+        data-reward-status
+        role="status"
+        aria-live="polite"
+      ></p>
+    </form>
+  </section>
+
+  <noscript>
+    <div class="reward-registration__noscript">
+      JavaScript doit être activé pour vérifier ta collection. <a href="/">Retour à l’accueil</a>
+    </div>
+  </noscript>
+</StickerRewardLayout>
+
+<script>
+  import {
+    getCollected,
+    getRewardRegistration,
+    hasCollectedEvery,
+    saveRewardRegistration,
+  } from '../../lib/label-collection';
+  import { capture } from '../../lib/analytics';
+  import { navigateWithPageTransition } from '../../scripts/page-transition';
+
+  const page = document.querySelector<HTMLElement>('[data-reward-registration-page]');
+
+  if (page) {
+    const requiredLabelIds = JSON.parse(page.dataset.requiredLabels || '[]') as string[];
+
+    if (!hasCollectedEvery(requiredLabelIds)) {
+      window.location.replace('/');
+    } else if (getRewardRegistration()) {
+      window.location.replace('/stickers/felicitations');
+    } else {
+      page.hidden = false;
+    }
+
+    const form = page.querySelector<HTMLFormElement>('[data-reward-registration-form]');
+    const fieldset = page.querySelector<HTMLFieldSetElement>('[data-reward-registration-fields]');
+    const submit = page.querySelector<HTMLButtonElement>('[data-reward-submit]');
+    const status = page.querySelector<HTMLElement>('[data-reward-status]');
+
+    /* Le serveur ne renvoie qu'une phrase : on en déduit le champ à pointer
+     * pour que le message serve à quelque chose au clavier et au lecteur
+     * d'écran. Une panne sans champ identifiable reste portée par la seule
+     * live region. */
+    const rejectableFields = ['reward-email', 'reward-phone']
+      .map((fieldId) => page.querySelector<HTMLInputElement>(`#${fieldId}`))
+      .filter((field): field is HTMLInputElement => field !== null);
+    const fieldDescriptions = new Map(
+      rejectableFields.map((field) => [field, field.getAttribute('aria-describedby')] as const),
+    );
+
+    const clearRejectedFields = (): void => {
+      rejectableFields.forEach((field) => {
+        field.removeAttribute('aria-invalid');
+        const description = fieldDescriptions.get(field);
+        if (description) {
+          field.setAttribute('aria-describedby', description);
+        } else {
+          field.removeAttribute('aria-describedby');
+        }
+      });
+    };
+
+    const rejectField = (message: string): void => {
+      const rejectedFieldId = /email/i.test(message)
+        ? 'reward-email'
+        : /téléphone/i.test(message)
+          ? 'reward-phone'
+          : '';
+      const field = rejectableFields.find((candidate) => candidate.id === rejectedFieldId);
+      if (!field) return;
+
+      const description = fieldDescriptions.get(field);
+      field.setAttribute('aria-invalid', 'true');
+      field.setAttribute(
+        'aria-describedby',
+        description ? `${description} reward-status` : 'reward-status',
+      );
+      field.focus();
+    };
+
+    rejectableFields.forEach((field) => {
+      field.addEventListener('input', clearRejectedFields);
+    });
+
+    /* Le bouton reste focalisable pendant l'envoi : le désactiver pousserait
+     * le focus sur body et rendrait son nouveau libellé inaudible. Le garde
+     * ci-dessous tient le rôle de verrou. */
+    let isSubmitting = false;
+
+    form?.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (isSubmitting) return;
+      if (!form.checkValidity() || !fieldset || !submit || !status) {
+        form.reportValidity();
+        return;
+      }
+
+      isSubmitting = true;
+      clearRejectedFields();
+      submit.setAttribute('aria-disabled', 'true');
+      submit.textContent = 'Sauvegarde en cours…';
+      status.classList.remove('is-error');
+      status.textContent = 'Sauvegarde en cours…';
+
+      const formData = new FormData(form);
+      const firstName = String(formData.get('firstName') || '').trim();
+
+      try {
+        const response = await fetch('/api/sticker-reward', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            firstName,
+            lastName: formData.get('lastName'),
+            email: formData.get('email'),
+            phone: formData.get('phone'),
+            note: formData.get('note'),
+            collected: getCollected(),
+          }),
+        });
+        const result = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+          throw new Error(
+            typeof result.message === 'string'
+              ? result.message
+              : 'L’inscription n’a pas pu être sauvegardée.',
+          );
+        }
+
+        const isSimulated = result.simulated === true;
+        fieldset.disabled = true;
+        saveRewardRegistration(firstName);
+        capture('sticker_reward_submitted', { simulated: isSimulated });
+        status.classList.remove('is-error');
+        status.textContent = isSimulated
+          ? 'Mode test local. Les informations sont validées, aucun email n’a été envoyé.'
+          : 'Informations sauvegardées. Ton message de félicitations arrive…';
+
+        window.setTimeout(() => {
+          navigateWithPageTransition('/stickers/felicitations');
+        }, isSimulated ? 1600 : 900);
+      } catch (error) {
+        const message = error instanceof Error
+          ? error.message
+          : 'L’inscription n’a pas pu être sauvegardée.';
+        isSubmitting = false;
+        submit.removeAttribute('aria-disabled');
+        submit.textContent = 'Sauvegarder mes informations';
+        status.classList.add('is-error');
+        status.textContent = message;
+        rejectField(message);
+      }
+    });
+  }
+</script>
+
+<style>
+  .reward-registration {
+    display: grid;
+    width: min(68rem, 100%);
+    grid-template-columns: minmax(0, 0.88fr) minmax(20rem, 1.12fr);
+    gap: clamp(1.5rem, 5vw, 4.5rem);
+    align-items: center;
+  }
+
+  .reward-registration[hidden] {
+    display: none;
+  }
+
+  .reward-registration__eyebrow {
+    font-family: var(--font-label-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+  }
+
+  .reward-registration__intro h1 {
+    max-width: 10ch;
+    margin-top: 0.8rem;
+    font-size: clamp(2.9rem, 7.5vw, 6.35rem);
+    line-height: 0.82;
+    text-wrap: balance;
+  }
+
+  .reward-registration__lead {
+    max-width: 34rem;
+    margin-top: 1.5rem;
+    color: rgb(255 255 255 / 82%);
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    line-height: 1.5;
+  }
+
+  .reward-registration__note {
+    max-width: 31rem;
+    margin-top: 1.5rem;
+    padding: 1rem 1.1rem;
+    border: 1px solid rgb(255 255 255 / 24%);
+    background: rgb(8 12 30 / 30%);
+  }
+
+  .reward-registration__note strong {
+    font-family: var(--font-label-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .reward-registration__note p {
+    margin-top: 0.35rem;
+    color: rgb(255 255 255 / 72%);
+    font-size: 0.82rem;
+    line-height: 1.4;
+  }
+
+  .reward-registration__form {
+    position: relative;
+    padding: clamp(1.35rem, 4vw, 2.2rem);
+    border: 1px solid rgb(13 13 18 / 42%);
+    background:
+      linear-gradient(90deg, transparent 2rem, rgb(205 40 36 / 16%) 2rem 2.06rem, transparent 2.06rem),
+      repeating-linear-gradient(0deg, transparent 0 2.6rem, rgb(36 72 126 / 8%) 2.6rem 2.66rem),
+      #f8f7f2;
+    box-shadow: 0.8rem 1rem 0 rgb(8 12 30 / 24%);
+    color: #101014;
+  }
+
+  .reward-registration__form-heading {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.4rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgb(13 13 18 / 22%);
+    font-family: var(--font-label-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+
+  .reward-registration__form fieldset {
+    display: grid;
+    gap: 1rem;
+    padding: 0;
+    border: 0;
+  }
+
+  .reward-registration__field {
+    display: grid;
+    gap: 0.38rem;
+  }
+
+  .reward-registration__field label {
+    font-family: var(--font-label-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .reward-registration__field input {
+    width: 100%;
+    min-height: 2.9rem;
+    padding: 0.75rem 0.85rem;
+    border: 1px solid rgb(13 13 18 / 38%);
+    border-radius: 0;
+    background: rgb(255 255 255 / 58%);
+    color: #101014;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.2;
+  }
+
+  .reward-registration__field input:focus-visible {
+    outline: 2px solid #3d43ce;
+    outline-offset: 2px;
+  }
+
+  .reward-registration__field input[aria-invalid="true"] {
+    border-color: #b42318;
+    box-shadow: inset 0 0 0 1px #b42318;
+  }
+
+  .reward-registration__field input:disabled {
+    color: rgb(13 13 18 / 62%);
+    opacity: 0.72;
+  }
+
+  .reward-registration__hint {
+    color: rgb(13 13 18 / 62%);
+    font-size: 0.72rem;
+    line-height: 1.35;
+  }
+
+  /* Piège à robots. La boîte du champ doit être nulle : hors écran ne suffit
+   * pas, l'autofill de Chrome et les gestionnaires de mots de passe ne
+   * considèrent invisible qu'un champ sans surface, et une inscription
+   * remplie par eux partirait avec un drapeau de spam. */
+  .reward-registration__honeypot {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .reward-registration__honeypot input {
+    width: 0;
+    height: 0;
+    min-height: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .reward-registration__form button {
+    min-height: 3.1rem;
+    margin-top: 0.25rem;
+    padding: 0.8rem 1rem;
+    border: 2px solid #3d43ce;
+    border-radius: 0.25rem;
+    background: #3d43ce;
+    color: #fff;
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .reward-registration__form button:hover,
+  .reward-registration__form button:focus-visible {
+    background: #3036bd;
+  }
+
+  .reward-registration__form button:disabled,
+  .reward-registration__form button[aria-disabled="true"] {
+    cursor: wait;
+    opacity: 0.68;
+  }
+
+  .reward-registration__status {
+    min-height: 1.35rem;
+    margin-top: 1rem;
+    color: #22357d;
+    font-size: 0.8rem;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  .reward-registration__privacy {
+    margin-top: 1rem;
+    color: rgb(13 13 18 / 62%);
+    font-size: 0.72rem;
+    line-height: 1.45;
+  }
+
+  .reward-registration__privacy a {
+    color: #22357d;
+    font-weight: 700;
+    text-underline-offset: 0.15em;
+  }
+
+  .reward-registration__status.is-error {
+    color: #b42318;
+  }
+
+  .reward-registration__noscript {
+    max-width: 34rem;
+    padding: 1.5rem;
+    border: 1px solid rgb(255 255 255 / 32%);
+    background: rgb(8 12 30 / 42%);
+    text-align: center;
+  }
+
+  .reward-registration__noscript a {
+    color: #fff;
+  }
+
+  @media (max-width: 50rem) {
+    .reward-registration {
+      grid-template-columns: 1fr;
+    }
+
+    .reward-registration__intro h1 {
+      max-width: 12ch;
+    }
+  }
+
+  @media (max-width: 28rem) {
+    .reward-registration {
+      gap: 1.35rem;
+    }
+
+    .reward-registration__form {
+      padding: 1.15rem;
+    }
+  }
+</style>

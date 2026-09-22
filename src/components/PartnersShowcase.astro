@@ -1,0 +1,626 @@
+---
+import { getCollection } from 'astro:content';
+import EditorialCta from './EditorialCta.astro';
+import EditorialGrid from './EditorialGrid.astro';
+import { EVENT } from '../lib/event';
+
+const showcasePartners = (await getCollection('partners'))
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((partner) => {
+    const logo = partner.data.monochromeLogo ?? partner.data.logo;
+    const width = partner.data.monochromeLogoWidth ?? partner.data.logoWidth;
+    const height = partner.data.monochromeLogoHeight ?? partner.data.logoHeight;
+    const ratio = width / height;
+    const format = ratio >= 2.8 ? 'wide' : ratio <= 1.8 ? 'compact' : 'standard';
+
+    return {
+      id: partner.id,
+      name: partner.data.name,
+      website: partner.data.website,
+      logo,
+      width,
+      height,
+      format,
+      tier: partner.data.tier,
+      coOrganizer: partner.data.coOrganizer,
+    } as const;
+  });
+
+const coOrganizer = showcasePartners.find((partner) => partner.coOrganizer);
+const platinumPartners = showcasePartners.filter((partner) => partner.tier === 'platinum' && !partner.coOrganizer);
+const remainingPartners = showcasePartners.filter((partner) => partner.tier !== 'platinum' && !partner.coOrganizer);
+const headingDescription = coOrganizer
+  ? `La ${coOrganizer.name} co-organise cette édition et nous ouvre les portes de l’${EVENT.venue.shortName}.`
+  : 'Entreprises, réseaux et acteurs du territoire réunis autour de cette première édition.';
+const partnerRows = [
+  { partners: platinumPartners, emphasis: 'platinum', direction: 'forward' },
+  ...(remainingPartners.length > 0
+    ? [{ partners: remainingPartners, emphasis: 'remaining', direction: 'backward' } as const]
+    : []),
+] as const;
+const usesTwoRows = partnerRows.length > 1;
+---
+
+<section
+  id="partenaires"
+  class="partner-showcase"
+  data-partner-showcase
+  aria-labelledby="partner-showcase-title"
+>
+  <EditorialGrid />
+
+  <div class="partner-showcase__inner">
+    <header class:list={['partner-showcase__heading', coOrganizer && 'partner-showcase__heading--with-coorganizer']}>
+      <div class="partner-showcase__heading-copy">
+        <h2 id="partner-showcase-title" class="type-section-title">Ils rendent la journée possible.</h2>
+        <p>{headingDescription}</p>
+      </div>
+      {coOrganizer && (
+        <a
+          class="partner-showcase__coorganizer"
+          href={coOrganizer.website}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`Visiter le site de ${coOrganizer.name}`}
+          style={`--partner-logo: url("${coOrganizer.logo}");`}
+        >
+          <img
+            src={coOrganizer.logo}
+            alt={`Logo ${coOrganizer.name}`}
+            width={coOrganizer.width}
+            height={coOrganizer.height}
+            loading="lazy"
+            decoding="async"
+          />
+        </a>
+      )}
+    </header>
+
+    <div
+      class:list={['partner-showcase__marquee', usesTwoRows && 'partner-showcase__marquee--two-rows']}
+      data-partner-layout={usesTwoRows ? 'two-rows' : 'single-row'}
+      aria-label="Aperçu des partenaires"
+    >
+      {partnerRows.map((row) => (
+        <div
+          class:list={[
+            'partner-showcase__row',
+            `partner-showcase__row--${row.direction}`,
+            `partner-showcase__row--${row.emphasis}`,
+          ]}
+          data-marquee-row
+          data-partner-emphasis={row.emphasis}
+        >
+          <div class="partner-showcase__track">
+            {[false, true].map((duplicate) => (
+              <ul
+                class="partner-showcase__group"
+                data-marquee-copy={duplicate ? 'duplicate' : 'primary'}
+                aria-hidden={duplicate ? 'true' : undefined}
+              >
+                {row.partners.map((partner) => (
+                  <li
+                    class:list={['partner-showcase__logo', `partner-showcase__logo--${partner.format}`]}
+                    data-partner-logo={duplicate ? undefined : partner.name}
+                    style={`--partner-logo: url("${partner.logo}");`}
+                  >
+                    <a
+                      href={partner.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={duplicate ? undefined : `Visiter le site de ${partner.name}`}
+                      tabindex={duplicate ? '-1' : undefined}
+                    >
+                      <img
+                        src={partner.logo}
+                        alt={`Logo ${partner.name}`}
+                        width={partner.width}
+                        height={partner.height}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div class="partner-showcase__cta">
+      <EditorialCta href="/partenaires">Découvrir tous les partenaires</EditorialCta>
+    </div>
+  </div>
+</section>
+
+<script>
+  const partnerShowcases = document.querySelectorAll<HTMLElement>('[data-partner-showcase]');
+
+  partnerShowcases.forEach((showcase) => {
+    const rows = showcase.querySelectorAll<HTMLElement>('[data-marquee-row]');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    const syncDocumentVisibility = () => {
+      showcase.classList.toggle('is-document-visible', !document.hidden);
+    };
+
+    const bindMarqueeInertia = (row: HTMLElement) => {
+      const track = row.querySelector<HTMLElement>('.partner-showcase__track');
+
+      if (!track || typeof track.getAnimations !== 'function') return false;
+
+      let rateFrame = 0;
+
+      const setPlaybackRate = (targetRate: number, duration: number) => {
+        window.cancelAnimationFrame(rateFrame);
+
+        const animation = track.getAnimations()[0];
+        if (!animation) return;
+
+        const initialRate = animation.playbackRate;
+        const startedAt = performance.now();
+
+        if (targetRate > 0 && animation.playState === 'paused') {
+          animation.play();
+        }
+
+        const updateRate = (now: number) => {
+          const progress = Math.min((now - startedAt) / duration, 1);
+          const easedProgress = 1 - Math.pow(1 - progress, 3);
+          const nextRate = initialRate + (targetRate - initialRate) * easedProgress;
+
+          animation.updatePlaybackRate(nextRate);
+
+          if (progress < 1) {
+            rateFrame = window.requestAnimationFrame(updateRate);
+          } else if (targetRate === 0) {
+            animation.pause();
+          }
+        };
+
+        rateFrame = window.requestAnimationFrame(updateRate);
+      };
+
+      row.addEventListener('mouseenter', () => {
+        if (!reduceMotion.matches) setPlaybackRate(0, 560);
+      });
+
+      row.addEventListener('mouseleave', () => {
+        if (!reduceMotion.matches) setPlaybackRate(1, 360);
+      });
+
+      row.addEventListener('focusin', () => {
+        if (!reduceMotion.matches) setPlaybackRate(0, 560);
+      });
+
+      row.addEventListener('focusout', () => {
+        if (!reduceMotion.matches) setPlaybackRate(1, 360);
+      });
+
+      return track.getAnimations().length > 0;
+    };
+
+    const observer = new IntersectionObserver(([entry]) => {
+      showcase.classList.toggle('is-in-view', entry?.isIntersecting ?? false);
+    });
+
+    syncDocumentVisibility();
+    observer.observe(showcase);
+    document.addEventListener('visibilitychange', syncDocumentVisibility);
+
+    rows.forEach((row) => {
+      if (bindMarqueeInertia(row)) row.classList.add('is-motion-enhanced');
+    });
+  });
+</script>
+
+<style>
+  .partner-showcase {
+    --partner-ink: color-mix(in srgb, var(--color-brand-orange) 46%, var(--color-brand-black));
+    position: relative;
+    overflow: hidden;
+    padding: var(--space-section-compact) 0 var(--space-section-close);
+    background: var(--color-brand-cream);
+    color: var(--color-brand-black);
+    isolation: isolate;
+  }
+
+  .partner-showcase__inner {
+    position: relative;
+    z-index: 3;
+    display: grid;
+    width: min(calc(100% - 2 * var(--layout-gutter)), var(--layout-editorial));
+    justify-items: center;
+    margin-inline: auto;
+  }
+
+  .partner-showcase__heading {
+    display: grid;
+    width: 100%;
+    max-width: 100%;
+    justify-items: start;
+    padding-inline: clamp(1.5rem, 2.5vw, 2rem);
+    text-align: left;
+  }
+
+  .partner-showcase__heading-copy {
+    display: grid;
+    justify-items: start;
+    gap: 0.75rem;
+  }
+
+  .partner-showcase__heading--with-coorganizer {
+    gap: clamp(1.5rem, 4vw, 3rem);
+  }
+
+  .partner-showcase__heading h2 {
+    max-width: 17ch;
+    color: var(--color-brand-black);
+  }
+
+  .partner-showcase__heading p {
+    max-width: 58ch;
+    color: rgb(from var(--color-brand-black) r g b / 72%);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    text-wrap: balance;
+  }
+
+  .partner-showcase__coorganizer {
+    --partner-row-ink: color-mix(in srgb, var(--color-brand-orange) 52%, var(--color-brand-black));
+    position: relative;
+    display: grid;
+    width: min(100%, 20rem);
+    min-height: 8rem;
+    place-items: center;
+    justify-self: center;
+  }
+
+  .partner-showcase__coorganizer:focus-visible {
+    outline: 2px solid var(--color-brand-blue);
+    outline-offset: 4px;
+  }
+
+  .partner-showcase__coorganizer img {
+    width: auto;
+    max-width: 82%;
+    height: auto;
+    max-height: 7rem;
+    object-fit: contain;
+    opacity: 0;
+  }
+
+  .partner-showcase__coorganizer::before {
+    position: absolute;
+    width: 82%;
+    height: 7rem;
+    background: var(--partner-row-ink);
+    content: '';
+    -webkit-mask: var(--partner-logo) center / contain no-repeat;
+    mask: var(--partner-logo) center / contain no-repeat;
+    pointer-events: none;
+    transition: background-color 180ms ease, transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .partner-showcase__coorganizer:hover::before,
+  .partner-showcase__coorganizer:focus-visible::before {
+    background: var(--color-brand-blue);
+    transform: scale(1.04);
+  }
+
+  .partner-showcase__marquee {
+    --rail-exclusion-overhang: clamp(2rem, 3vw, 3.25rem);
+    position: relative;
+    width: 100vw;
+    margin-top: clamp(2.5rem, 4vw, 3.5rem);
+    margin-inline: calc(50% - 50vw);
+    overflow: visible;
+    isolation: isolate;
+  }
+
+  .partner-showcase__marquee::before,
+  .partner-showcase__marquee::after {
+    position: absolute;
+    z-index: 0;
+    top: calc(-1 * var(--rail-exclusion-overhang));
+    bottom: calc(-1 * var(--rail-exclusion-overhang));
+    width: clamp(1.5rem, 3vw, 2.75rem);
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      var(--color-brand-cream) 12%,
+      var(--color-brand-cream) 88%,
+      transparent
+    );
+    content: '';
+    pointer-events: none;
+    transform: translateX(-50%);
+  }
+
+  .partner-showcase__marquee::before {
+    left: max(var(--layout-gutter), calc((100vw - var(--layout-editorial)) / 2));
+  }
+
+  .partner-showcase__marquee::after {
+    right: max(var(--layout-gutter), calc((100vw - var(--layout-editorial)) / 2));
+    transform: translateX(50%);
+  }
+
+  .partner-showcase__row {
+    --marquee-fade: clamp(2.5rem, 8vw, 8rem);
+    --partner-gap: clamp(2.5rem, 5vw, 5rem);
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 var(--marquee-fade),
+      #000 calc(100% - var(--marquee-fade)),
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 var(--marquee-fade),
+      #000 calc(100% - var(--marquee-fade)),
+      transparent
+    );
+  }
+
+  .partner-showcase__row--platinum {
+    --partner-row-ink: color-mix(in srgb, var(--color-brand-orange) 52%, var(--color-brand-black));
+    --partner-cell-width: clamp(11rem, 16.5vw, 15.5rem);
+    --partner-cell-height: clamp(5.75rem, 8vw, 7.25rem);
+    --partner-mark-height: 4.65rem;
+    --partner-wide-height: 4rem;
+    --partner-compact-height: 5.65rem;
+    --partner-gap: clamp(3rem, 5.5vw, 5.75rem);
+  }
+
+  .partner-showcase__row--remaining {
+    --partner-row-ink: color-mix(in srgb, var(--color-brand-orange) 42%, var(--color-brand-black));
+    --partner-cell-width: clamp(8rem, 11.5vw, 10.5rem);
+    --partner-cell-height: clamp(3.75rem, 5vw, 4.5rem);
+    --partner-mark-height: 2.8rem;
+    --partner-wide-height: 2.4rem;
+    --partner-compact-height: 3.4rem;
+    --partner-gap: clamp(2.25rem, 4vw, 4rem);
+    margin-top: 0.35rem;
+  }
+
+  .partner-showcase__track {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    width: max-content;
+    animation-duration: 34s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-play-state: paused;
+  }
+
+  .partner-showcase__row--forward .partner-showcase__track {
+    animation-name: partner-marquee-forward;
+  }
+
+  .partner-showcase__row--backward .partner-showcase__track {
+    animation-name: partner-marquee-backward;
+    animation-duration: 42s;
+  }
+
+  .partner-showcase.is-in-view.is-document-visible .partner-showcase__track {
+    animation-play-state: running;
+    will-change: transform;
+  }
+
+  .partner-showcase.is-in-view.is-document-visible
+    .partner-showcase__row:not(.is-motion-enhanced):focus-within
+    .partner-showcase__track {
+    animation-play-state: paused;
+  }
+
+  .partner-showcase__group {
+    display: flex;
+    min-width: 100vw;
+    flex: none;
+    align-items: center;
+    justify-content: space-around;
+    gap: var(--partner-gap);
+    padding-inline-end: var(--partner-gap);
+    list-style: none;
+  }
+
+  .partner-showcase__logo {
+    position: relative;
+    display: grid;
+    width: var(--partner-cell-width, clamp(9rem, 14vw, 13rem));
+    min-width: 0;
+    min-height: var(--partner-cell-height, clamp(4.75rem, 6.5vw, 6rem));
+    flex: none;
+    place-items: center;
+    padding: 0.65rem 0;
+  }
+
+  .partner-showcase__logo > a {
+    display: grid;
+    width: 100%;
+    min-height: inherit;
+    place-items: center;
+  }
+
+  .partner-showcase__logo > a:focus-visible {
+    outline: 2px solid var(--color-brand-blue);
+    outline-offset: 4px;
+  }
+
+  .partner-showcase__logo img {
+    width: auto;
+    max-width: 82%;
+    height: auto;
+    max-height: 3.8rem;
+    object-fit: contain;
+    opacity: 0;
+  }
+
+  .partner-showcase__logo::before {
+    position: absolute;
+    width: 82%;
+    height: var(--partner-mark-height, 3.8rem);
+    background: var(--partner-row-ink, var(--partner-ink));
+    content: '';
+    -webkit-mask: var(--partner-logo) center / contain no-repeat;
+    mask: var(--partner-logo) center / contain no-repeat;
+    pointer-events: none;
+    transition: background-color 180ms ease, transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .partner-showcase__logo:has(a:hover)::before,
+  .partner-showcase__logo:has(a:focus-visible)::before {
+    background: var(--color-brand-blue);
+    transform: scale(1.04);
+  }
+
+  .partner-showcase__logo--wide::before {
+    width: 88%;
+    height: var(--partner-wide-height, 3.25rem);
+  }
+
+  .partner-showcase__logo--compact::before {
+    width: 62%;
+    height: var(--partner-compact-height, 4.75rem);
+  }
+
+  .partner-showcase__cta {
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+
+  @keyframes partner-marquee-forward {
+    from {
+      transform: translateX(0);
+    }
+
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @keyframes partner-marquee-backward {
+    from {
+      transform: translateX(-50%);
+    }
+
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .partner-showcase.is-in-view.is-document-visible
+      .partner-showcase__row:not(.is-motion-enhanced):hover
+      .partner-showcase__track {
+      animation-play-state: paused;
+    }
+  }
+
+  @media (max-width: 47.999rem) {
+    .partner-showcase__row {
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+
+    .partner-showcase__track {
+      width: 100%;
+      animation: none;
+      transform: none;
+      will-change: auto;
+    }
+
+    .partner-showcase__group {
+      display: grid;
+      width: 100%;
+      min-width: 0;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      padding: 1rem var(--layout-gutter);
+      gap: clamp(1.5rem, 6vw, 2.5rem);
+    }
+
+    .partner-showcase__group[data-marquee-copy='duplicate'] {
+      display: none;
+    }
+
+    .partner-showcase__logo {
+      width: 100%;
+    }
+  }
+
+  @media (min-width: 48rem) {
+    .partner-showcase__heading:not(.partner-showcase__heading--with-coorganizer) h2,
+    .partner-showcase__heading:not(.partner-showcase__heading--with-coorganizer) p {
+      max-width: none;
+      text-wrap: nowrap;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .partner-showcase__heading--with-coorganizer {
+      grid-template-columns: minmax(0, 1.45fr) minmax(0, 0.75fr);
+      align-items: center;
+      text-align: left;
+    }
+
+    .partner-showcase__heading--with-coorganizer .partner-showcase__heading-copy {
+      justify-items: start;
+    }
+
+    .partner-showcase__heading--with-coorganizer h2 {
+      max-width: none;
+    }
+
+    .partner-showcase__coorganizer {
+      justify-self: end;
+    }
+  }
+
+  @media (min-width: 75rem) {
+    .partner-showcase__heading--with-coorganizer p {
+      max-width: none;
+      text-wrap: nowrap;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .partner-showcase__row {
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+
+    .partner-showcase__track {
+      width: 100%;
+      animation: none;
+      transform: none;
+      will-change: auto;
+    }
+
+    .partner-showcase__logo::before {
+      transition: none;
+    }
+
+    .partner-showcase__coorganizer::before {
+      transition: none;
+    }
+
+    .partner-showcase__group {
+      width: 100%;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 1rem var(--layout-gutter);
+    }
+
+    .partner-showcase__group[data-marquee-copy='duplicate'] {
+      display: none;
+    }
+  }
+</style>

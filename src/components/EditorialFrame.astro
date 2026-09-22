@@ -1,0 +1,70 @@
+---
+interface Props {
+  columns?: 1 | 2 | 3 | 4;
+  positions?: string[];
+  tone?: 'ink' | 'paper';
+  top?: boolean;
+  bottom?: boolean;
+}
+
+const { columns = 1, positions, tone = 'ink', top = true, bottom = true } = Astro.props;
+const divisions = positions ?? Array.from({ length: columns - 1 }, (_, index) => (
+  `${((index + 1) / columns) * 100}%`
+));
+---
+
+<div
+  class:list={['editorial-frame', `editorial-frame--${tone}`]}
+  aria-hidden="true"
+>
+  {top && <span class="editorial-frame__rule editorial-frame__rule--top"></span>}
+  {bottom && <span class="editorial-frame__rule editorial-frame__rule--bottom"></span>}
+  {divisions.map((position) => (
+    <span class="editorial-frame__division" style={`--editorial-frame-position: ${position};`}></span>
+  ))}
+</div>
+
+<style>
+  .editorial-frame {
+    --editorial-frame-line: rgb(57 54 54 / 11%);
+    position: absolute;
+    z-index: 5;
+    inset: 0;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .editorial-frame--paper {
+    --editorial-frame-line: rgb(249 244 236 / 20%);
+  }
+
+  .editorial-frame__rule {
+    position: absolute;
+    right: 0;
+    left: 0;
+    height: 1px;
+    background: var(--editorial-frame-line);
+  }
+
+  .editorial-frame__rule--top {
+    top: 0;
+  }
+
+  .editorial-frame__rule--bottom {
+    bottom: 0;
+  }
+
+  .editorial-frame__division {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--editorial-frame-position);
+    border-inline-start: 1px solid var(--editorial-frame-line);
+  }
+
+  @media (max-width: 63.999rem) {
+    .editorial-frame {
+      display: none;
+    }
+  }
+</style>

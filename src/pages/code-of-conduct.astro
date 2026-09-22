@@ -1,0 +1,210 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import EventName from "../components/EventName.astro";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import EVENT from "../content/event.json";
+---
+
+<BaseLayout
+  title="Code of conduct · GenAI Days"
+  description="Code de conduite de GenAI Days : un événement inclusif, respectueux et sans harcèlement pour tous les participants, intervenants et partenaires."
+>
+  <Header />
+
+  <main class="coc-page">
+    <section class="coc-hero px-6 py-16 sm:py-24">
+      <div class="mx-auto max-w-4xl">
+        <p class="coc-kicker">ENGAGEMENT</p>
+        <h1
+          class="mt-6 max-w-3xl text-[2.5rem] leading-[0.92] sm:text-7xl lg:text-8xl"
+        >
+          Code of conduct
+        </h1>
+        <p
+          class="mt-8 max-w-2xl text-lg leading-relaxed text-[rgb(57_54_54_/_72%)]"
+        >
+          <EventName /> s’engage pour un événement inclusif, respectueux et sans harcèlement,
+          pour toutes et tous.
+        </p>
+      </div>
+    </section>
+
+    <div class="bg-brand-white px-6 py-14 sm:py-20">
+      <article class="coc-content mx-auto max-w-3xl">
+        <section aria-labelledby="policy-heading">
+          <h2 id="policy-heading">Engagement</h2>
+          <p>
+            <EventName /> s’engage à offrir une expérience sans harcèlement pour toutes
+            les personnes, quels que soient leur âge, leur genre, leur orientation,
+            leur handicap, leur apparence physique, leur taille, leur origine, leur
+            religion ou leurs choix techniques.
+          </p>
+          <p>
+            Tout langage ou toute image à caractère sexuel est inapproprié dans
+            le cadre de l’événement, y compris dans les présentations, les
+            ateliers, les discussions et sur les supports des partenaires. Les
+            violations de ces règles peuvent entraîner des sanctions allant
+            jusqu’à l’exclusion sans remboursement.
+          </p>
+        </section>
+
+        <section aria-labelledby="standards-heading">
+          <h2 id="standards-heading">Normes de conduite</h2>
+          <p>
+            Le harcèlement inclut, sans s’y limiter : les remarques verbales
+            renforçant des rapports de domination, les images sexuelles dans les
+            espaces partagés, l’intimidation, le harcèlement, le suivi
+            indésirable, l’enregistrement ou la photographie non consentie, la
+            perturbation des activités, le contact physique inapproprié, les
+            avances sexuelles non désirées, la nudité publique et
+            l’encouragement de tels comportements.
+          </p>
+          <p>
+            Toute personne sollicitée pour arrêter un comportement de
+            harcèlement doit y mettre fin immédiatement. Les partenaires, les
+            exposants et le personnel des stands doivent également éviter tout
+            contenu ou tenue sexualisée ; en cas de non-conformité, un stand
+            peut être fermé.
+          </p>
+        </section>
+
+        <section aria-labelledby="authority-heading">
+          <h2 id="authority-heading">Autorité de l’organisation</h2>
+          <p>
+            L’équipe organisatrice peut, à sa discrétion, prendre toute mesure
+            appropriée face au harcèlement, y compris avertir ou expulser une
+            personne sans remboursement, et intervenir pour résoudre toute
+            perturbation ou condition hostile affectant le déroulement de
+            l’événement.
+          </p>
+        </section>
+
+        <section aria-labelledby="responsibilities-heading">
+          <h2 id="responsibilities-heading">
+            Responsabilités des participants
+          </h2>
+          <p>
+            Tous les participants doivent respecter ces lignes directrices dans
+            tous les lieux de l’événement et dans les espaces en ligne associés,
+            et étendre cette conduite respectueuse au-delà des activités de <EventName
+            />.
+          </p>
+        </section>
+
+        <section aria-labelledby="reporting-heading">
+          <h2 id="reporting-heading">Signaler un incident</h2>
+          <p>
+            Si vous vous sentez mal à l’aise ou si vous constatez un
+            comportement inapproprié, contactez l’équipe organisatrice sans
+            tarder. Les signalements personnels peuvent être faits au personnel
+            portant un badge « Équipe <EventName /> » ou en contactant directement
+            un membre de l’organisation.
+          </p>
+          <p>
+            Les signalements sont traités de manière discrète, avec un
+            accompagnement (liaison sécurité, escorte, services locaux). Vous
+            pouvez venir avec une personne de soutien ; il n’est pas nécessaire
+            de confronter la personne concernée ni de divulguer votre identité.
+            Pour un signalement par e-mail, contactez {EVENT.contactEmail} et incluez
+            vos coordonnées, le moment et le lieu de l’incident, une description,
+            des éléments sur la personne concernée et tout témoin ou contexte utile.
+          </p>
+        </section>
+
+        <section aria-labelledby="confidentiality-heading">
+          <h2 id="confidentiality-heading">Confidentialité et processus</h2>
+          <p>
+            Les signalements sont traités de manière confidentielle. Lorsqu’une
+            discussion avec la personne concernée est nécessaire, elle est menée
+            de façon anonymisée dans la mesure du possible.
+          </p>
+          <p>
+            Si un risque de sécurité ou de représailles existe, mentionnez-le
+            dans votre signalement. Plusieurs signalements anonymisés sur la
+            même personne peuvent entraîner une action. Si une déclaration
+            publique est requise, l’identité des victimes et des signalants
+            reste confidentielle sauf instruction contraire.
+          </p>
+        </section>
+
+        <section aria-labelledby="contact-heading">
+          <h2 id="contact-heading">Contact</h2>
+          <p>
+            Pour tout conflit d’intérêt ou signalement : contactez l’équipe <EventName
+            /> via <a href={`mailto:${EVENT.contactEmail}`}
+              >{EVENT.contactEmail}</a
+            >.
+          </p>
+          <p>
+            L’association <strong>Naomakers</strong>, organisatrice de <EventName
+            />, veille au respect de ces principes et s’engage à agir rapidement
+            et équitablement en cas de violation.
+          </p>
+        </section>
+
+        <section aria-labelledby="license-heading" class="coc-license">
+          <h2 id="license-heading">Licence</h2>
+          <p>
+            Ce document s’inspire du modèle Geek Feminism (Ada Initiative et
+            al.), publié sous licence Creative Commons Zero.
+          </p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <Footer grid />
+</BaseLayout>
+
+<style>
+  .coc-page {
+    background: var(--color-brand-cream);
+    color: var(--color-brand-black);
+  }
+
+  .coc-hero {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #faf8f3 0%, #f4f1e9 100%);
+  }
+
+  .coc-hero::after {
+    position: absolute;
+    right: -5rem;
+    bottom: -7rem;
+    width: 20rem;
+    height: 20rem;
+    border: 2px solid rgb(61 67 206 / 22%);
+    border-radius: 50%;
+    content: "";
+  }
+
+  .coc-kicker {
+    font-family: var(--font-label-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--color-brand-blue);
+  }
+
+  .coc-content h2 {
+    margin-top: clamp(3rem, 7vw, 5rem);
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    line-height: 1.1;
+  }
+
+  .coc-content p {
+    margin-top: 1.1rem;
+    line-height: 1.7;
+    color: rgb(57 54 54 / 72%);
+  }
+
+  .coc-license {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgb(57 54 54 / 14%);
+    color: rgb(57 54 54 / 56%);
+    font-size: 0.85rem;
+  }
+</style>

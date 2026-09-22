@@ -1,0 +1,337 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-20T19:53:37Z",
+  "title": "Design System: GENAI DAYS",
+  "extensions": {
+    "colorMeta": {
+      "paper-cream": {
+        "role": "neutral",
+        "displayName": "Papier crème",
+        "canonical": "#F6ECDD",
+        "tonalRamp": ["#2D261B", "#504435", "#756554", "#9C8974", "#C1AD94", "#DFCEB5", "#EDE0CB", "#F6ECDD"]
+      },
+      "paper-cream-deep": {
+        "role": "neutral",
+        "displayName": "Papier crème approfondi",
+        "canonical": "#EDE0CB",
+        "tonalRamp": ["#2A241C", "#4B4033", "#6E5E4C", "#927F69", "#B5A087", "#D1BFA4", "#E1D1BA", "#EDE0CB"]
+      },
+      "paper-white": {
+        "role": "neutral",
+        "displayName": "Papier blanc",
+        "canonical": "#FFFFFF",
+        "tonalRamp": ["#1A1A1A", "#333333", "#555555", "#808080", "#AAAAAA", "#CCCCCC", "#E8E8E8", "#FFFFFF"]
+      },
+      "electric-blue": {
+        "role": "primary",
+        "displayName": "Bleu électrique",
+        "canonical": "#3D43CE",
+        "tonalRamp": ["#101238", "#1A1D59", "#252979", "#30359F", "#3D43CE", "#6D72DC", "#A6A9EA", "#E5E6FA"]
+      },
+      "signal-orange": {
+        "role": "secondary",
+        "displayName": "Orange signal",
+        "canonical": "#FE4D1B",
+        "tonalRamp": ["#3A1208", "#641D0C", "#922A10", "#C43915", "#FE4D1B", "#FF7B57", "#FFB29D", "#FFE8E1"]
+      },
+      "ink-charcoal": {
+        "role": "neutral",
+        "displayName": "Noir d’encre",
+        "canonical": "#393636",
+        "tonalRamp": ["#151414", "#242222", "#393636", "#5D5858", "#817B7B", "#A9A5A5", "#D3D0D0", "#F2F1F1"]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Affiche",
+        "purpose": "Titres de page courts, monumentaux et déclaratifs."
+      },
+      "headline": {
+        "displayName": "Manchette",
+        "purpose": "Titres de section et grands messages éditoriaux."
+      },
+      "title": {
+        "displayName": "Titre interne",
+        "purpose": "Sous-sections, noms et accroches internes en Garamond romain."
+      },
+      "subtitle": {
+        "displayName": "Sous-titre",
+        "purpose": "Sous-titres et repères éditoriaux courts en Garamond semi-gras italique."
+      },
+      "body": {
+        "displayName": "Lecture",
+        "purpose": "Explications, informations pratiques et textes continus."
+      },
+      "label": {
+        "displayName": "Index",
+        "purpose": "Horaires, formats, statuts et métadonnées de billet."
+      }
+    },
+    "shadows": [
+      {
+        "name": "ink-offset-orange",
+        "value": "0.3rem 0.3rem 0 0 var(--color-brand-orange)",
+        "purpose": "Décalage d’encre du bouton principal bleu."
+      },
+      {
+        "name": "ink-offset-blue",
+        "value": "0.3rem 0.3rem 0 0 var(--color-brand-blue)",
+        "purpose": "Décalage d’encre du bouton accent orange."
+      },
+      {
+        "name": "card-rest",
+        "value": "0 1.25rem 3.5rem rgb(20 25 60 / 5%)",
+        "purpose": "Présence minimale des cartes portrait au repos."
+      },
+      {
+        "name": "card-lifted",
+        "value": "0 1.5rem 4rem rgb(20 25 60 / 9%)",
+        "purpose": "Réponse au survol des cartes portrait."
+      },
+      {
+        "name": "modal",
+        "value": "0 1.5rem 5rem rgb(23 26 78 / 28%)",
+        "purpose": "Séparation du dialogue de contact au-dessus de la page."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ink-recalibration",
+        "value": "150ms ease-out",
+        "purpose": "Translation, scale et réduction de l’ombre des boutons."
+      },
+      {
+        "name": "card-lift",
+        "value": "180ms ease",
+        "purpose": "Soulèvement discret des cartes interactives."
+      },
+      {
+        "name": "label-arrival",
+        "value": "620ms cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "Pose physique du sticker avec micro-tassement."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "compact",
+        "value": "640px"
+      },
+      {
+        "name": "navigation",
+        "value": "768px"
+      },
+      {
+        "name": "wide",
+        "value": "1024px"
+      },
+      {
+        "name": "full-navigation",
+        "value": "1100px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Action de conversion principale, traitée comme deux passages d’encre décalés.",
+      "html": "<button class=\"ds-button-primary\" type=\"button\">RÉSERVER MON PASS</button>",
+      "css": ".ds-button-primary { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; border: 2px solid var(--color-brand-blue, #3D43CE); border-radius: 0; background: var(--color-brand-blue, #3D43CE); box-shadow: 0.3rem 0.3rem 0 0 var(--color-brand-orange, #FE4D1B); color: var(--color-brand-white, #FFFFFF); font-family: var(--font-sans, Arial, Helvetica, sans-serif); font-size: 0.875rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; transition: translate 150ms ease-out, scale 150ms ease-out, box-shadow 150ms ease-out; cursor: pointer; } .ds-button-primary:hover { translate: 0.15rem 0.15rem; box-shadow: 0.15rem 0.15rem 0 0 var(--color-brand-orange, #FE4D1B); } .ds-button-primary:active { scale: 0.96; } .ds-button-primary:focus-visible { outline: 3px solid var(--color-brand-orange, #FE4D1B); outline-offset: 4px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Action secondaire transparente avec contour orange franc.",
+      "html": "<button class=\"ds-button-secondary\" type=\"button\">SPONSORISER</button>",
+      "css": ".ds-button-secondary { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; border: 2px solid var(--color-brand-orange, #FE4D1B); border-radius: 0; background: transparent; color: var(--color-brand-orange, #FE4D1B); font-family: var(--font-sans, Arial, Helvetica, sans-serif); font-size: 0.875rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; transition: background-color 150ms ease-out, scale 150ms ease-out; cursor: pointer; } .ds-button-secondary:hover { background: rgb(254 77 27 / 10%); } .ds-button-secondary:active { scale: 0.96; } .ds-button-secondary:focus-visible { outline: 3px solid var(--color-brand-blue, #3D43CE); outline-offset: 4px; }"
+    },
+    {
+      "name": "Tertiary Link",
+      "kind": "button",
+      "refersTo": "button-tertiary",
+      "description": "Action éditoriale légère, sans boîte ni relief.",
+      "html": "<a class=\"ds-link-tertiary\" href=\"#\">VOIR LE PROGRAMME <span aria-hidden=\"true\">→</span></a>",
+      "css": ".ds-link-tertiary { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--color-brand-blue, #3D43CE); font-family: var(--font-sans, Arial, Helvetica, sans-serif); font-size: 0.875rem; font-weight: 700; letter-spacing: 0.04em; text-decoration: none; text-transform: uppercase; } .ds-link-tertiary:hover { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 0.3em; } .ds-link-tertiary:focus-visible { outline: 3px solid var(--color-brand-orange, #FE4D1B); outline-offset: 4px; }"
+    },
+    {
+      "name": "Editorial CTA",
+      "kind": "button",
+      "refersTo": "editorial-cta",
+      "description": "Sortie de section de la landing, avec aplat bleu, texte blanc en Arial MT Pro gras et flèche.",
+      "html": "<a class=\"ds-editorial-cta\" href=\"#\">EXPLORER LES ENJEUX <span aria-hidden=\"true\">→</span></a>",
+      "css": ".ds-editorial-cta { display: inline-flex; min-height: 2.75rem; align-items: center; gap: 0.75rem; padding: 0.75rem 0.95rem; background: var(--color-brand-blue, #3D43CE); color: var(--color-brand-white, #FFFFFF); font-family: var(--font-nav, \"Arial MT Pro\", Arial, Helvetica, sans-serif); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.025em; text-transform: uppercase; }"
+    },
+    {
+      "name": "Primary Navigation",
+      "kind": "nav",
+      "refersTo": "navigation",
+      "description": "Navigation sticky en Arial MT Pro gras avec repère orange pour le survol, le focus et la section active.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Navigation principale\"><a class=\"ds-nav-link ds-nav-link-active\" href=\"#enjeux\">ENJEUX</a><a class=\"ds-nav-link\" href=\"#speakers\">INTERVENANTS</a><a class=\"ds-nav-link\" href=\"#programme\">PROGRAMME</a></nav>",
+      "css": ".ds-nav { display: flex; align-items: center; gap: clamp(1.15rem, 1.8vw, 2rem); color: var(--color-brand-black, #393636); font-family: var(--font-nav, \"Arial MT Pro\", Arial, Helvetica, sans-serif); font-size: 0.68rem; font-weight: 600; letter-spacing: 0.015em; text-transform: uppercase; white-space: nowrap; } .ds-nav-link { position: relative; display: inline-flex; min-height: 44px; align-items: center; color: currentColor; opacity: 0.78; text-decoration: none; transition: color 180ms ease, opacity 180ms ease; } .ds-nav-link::after { position: absolute; bottom: 0.32rem; left: 50%; width: 0.34rem; height: 0.34rem; border-radius: 50%; background: var(--color-brand-orange, #FE4D1B); content: \"\"; opacity: 0; transform: translate(-50%, 0.3rem); transition: opacity 180ms ease, transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1); } .ds-nav-link:hover, .ds-nav-link:focus-visible, .ds-nav-link-active { opacity: 1; } .ds-nav-link:hover::after, .ds-nav-link:focus-visible::after, .ds-nav-link-active::after { opacity: 1; transform: translate(-50%, 0); } .ds-nav-link:focus-visible { outline: 3px solid var(--color-brand-orange, #FE4D1B); outline-offset: 2px; }"
+    },
+    {
+      "name": "Event Wordmark",
+      "kind": "custom",
+      "refersTo": "wordmark",
+      "description": "Nom de l’événement en uppercase Garamond romain, avec GENAI gras, DAYS régulier et seulement AI en italique.",
+      "html": "<span class=\"ds-wordmark\"><span class=\"ds-wordmark-gen\">GEN</span><span class=\"ds-wordmark-ai\">AI</span><span class=\"ds-wordmark-days\"> DAYS</span></span>",
+      "css": ".ds-wordmark { display: inline-flex; color: var(--color-brand-black, #393636); font-family: var(--font-serif, \"EB Garamond Variable\", \"EB Garamond\", Georgia, serif); font-size: 2rem; font-style: normal; font-weight: 400; letter-spacing: 0.015em; line-height: 0.9; text-transform: uppercase; white-space: nowrap; } .ds-wordmark-gen, .ds-wordmark-ai { font-weight: 700; } .ds-wordmark-ai { font-style: italic; }"
+    },
+    {
+      "name": "Physical Label",
+      "kind": "custom",
+      "refersTo": "physical-label",
+      "description": "Étiquette métallique signature pour les speakers, sessions et objets de campagne.",
+      "html": "<article class=\"ds-label\"><header><span class=\"ds-label-wordmark\"><strong>GEN</strong><em>AI</em><span> DAYS</span></span><span aria-hidden=\"true\">✣</span></header><div><small>ENTREPRISE</small><strong>NOM INTERVENANT</strong></div><footer>RÔLE OU SESSION</footer></article>",
+      "css": ".ds-label { width: min(22rem, 100%); padding: 0.75rem 1rem; border: 0.5px solid rgb(57 54 54 / 72%); border-radius: 0.48rem; background: linear-gradient(105deg, rgb(255 255 255 / 42%), transparent 37%, rgb(30 32 33 / 12%) 100%), linear-gradient(180deg, rgb(255 255 255 / 16%), rgb(89 92 93 / 10%)), url('/textures/brushed-metal.jpg') center / cover; background-blend-mode: screen, multiply, normal; box-shadow: 0 0.08rem 0.1rem rgb(57 54 54 / 30%), 0 0.24rem 0.36rem -0.18rem rgb(57 54 54 / 42%), inset 0 0 0.8rem rgb(31 33 34 / 10%); color: var(--color-brand-black, #393636); font-family: var(--font-serif, Georgia, serif); transform: rotate(-1deg); } .ds-label header { display: flex; justify-content: space-between; align-items: start; } .ds-label-wordmark { font-size: 0.75rem; font-style: normal; font-weight: 400; letter-spacing: 0.04em; } .ds-label-wordmark strong, .ds-label-wordmark em { font-weight: 700; } .ds-label-wordmark em { font-style: italic; } .ds-label div { display: grid; place-items: center; padding: 0.7rem 0; text-align: center; } .ds-label small { font-size: 0.7rem; font-style: italic; font-weight: 600; letter-spacing: 0.035em; } .ds-label strong { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.04em; line-height: 0.92; } .ds-label footer { font-family: var(--font-sans, Arial, sans-serif); font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; } .ds-label:focus-within { outline: 3px solid var(--color-brand-orange, #FE4D1B); outline-offset: 4px; }"
+    },
+    {
+      "name": "Admission Ticket",
+      "kind": "custom",
+      "refersTo": "admission-ticket",
+      "description": "Billet participant responsive en deux parties, avec corps crème sémantique et souche bleue détachable.",
+      "html": "<article class=\"ds-ticket\"><div class=\"ds-ticket-body\"><header>BILLET PARTICIPANT · GENAI DAYS <span>17·NOV·26</span></header><strong class=\"ds-ticket-price\">147 € HT</strong><dl><div><dt>DATE</dt><dd>17 novembre 2026</dd></div><div><dt>LIEU</dt><dd>Hôtel de Région</dd></div></dl><p>ACCÈS JOURNÉE · 2 PARCOURS · DÉJEUNER · AFTERWORK</p></div><aside class=\"ds-ticket-stub\"><span>GENAI DAYS</span><strong>17</strong><small>NOV 2026 · NANTES</small></aside></article>",
+      "css": ".ds-ticket { display: grid; width: min(56rem, 100%); grid-template-columns: minmax(0, 1fr) 15rem; filter: drop-shadow(0 1.15rem 1.4rem rgb(57 54 54 / 18%)); color: var(--color-brand-black, #393636); } .ds-ticket-body { display: grid; padding: 1.5rem; background: var(--color-brand-cream, #F9F4EC); box-shadow: inset 0 0 0 1px rgb(57 54 54 / 38%); font-family: var(--font-nav, monospace); } .ds-ticket-body header { display: flex; justify-content: space-between; border-bottom: 1px solid rgb(57 54 54 / 42%); padding-bottom: 0.55rem; font-size: 0.75rem; letter-spacing: 0.05em; } .ds-ticket-price { padding: 1rem 0; border-bottom: 1px solid rgb(57 54 54 / 42%); font-family: var(--font-serif, Georgia, serif); font-size: 4rem; font-weight: 600; line-height: 0.85; } .ds-ticket dl { display: grid; margin: 0; } .ds-ticket dl div { display: grid; grid-template-columns: 4rem 1fr; padding: 0.55rem 0; border-bottom: 1px solid rgb(57 54 54 / 28%); gap: 0.5rem; } .ds-ticket dt, .ds-ticket dd { margin: 0; font-size: 0.75rem; } .ds-ticket-body > p { margin: 0.6rem 0 0; padding: 0.55rem; background: var(--color-brand-black, #393636); color: var(--color-brand-cream, #F9F4EC); font-size: 0.75rem; text-align: center; } .ds-ticket-stub { display: grid; place-items: center; padding: 1.25rem; background: var(--color-brand-blue, #3D43CE); box-shadow: inset 0 0 0 1px rgb(249 244 236 / 58%); color: var(--color-brand-cream, #F9F4EC); font-family: var(--font-nav, monospace); } .ds-ticket-stub > strong { font-family: var(--font-serif, Georgia, serif); font-size: 5rem; font-weight: 600; line-height: 0.8; } .ds-ticket-stub small { letter-spacing: 0.08em; } @media (max-width: 42rem) { .ds-ticket { grid-template-columns: 1fr; } .ds-ticket-stub { min-height: 10rem; } }"
+    },
+    {
+      "name": "Speaker Carousel Card",
+      "kind": "card",
+      "refersTo": "speaker-card",
+      "description": "Carte verticale du carrousel, avec portrait plein cadre ou annonce à venir et bandeau d’identité inférieur.",
+      "html": "<article class=\"ds-speaker\"><div class=\"ds-speaker-portrait\" aria-hidden=\"true\">01</div><div class=\"ds-speaker-identity\"><small>PARCOURS · DÉPLOYER</small><strong>NOM INTERVENANT</strong><span>RÔLE · ENTREPRISE</span></div></article>",
+      "css": ".ds-speaker { position: relative; width: min(24rem, 100%); height: 24rem; overflow: hidden; background: var(--color-brand-blue, #3D43CE); color: var(--color-brand-black, #393636); } .ds-speaker-portrait { display: grid; height: 100%; place-items: center; color: var(--color-brand-cream, #F9F4EC); font-family: var(--font-serif, Georgia, serif); font-size: 8rem; font-weight: 600; transition: filter 240ms ease, transform 500ms cubic-bezier(0.2, 0.75, 0.25, 1); } .ds-speaker:hover .ds-speaker-portrait { transform: scale(1.018); } .ds-speaker-identity { position: absolute; right: 0; bottom: 0; left: 0; display: grid; min-height: 7.5rem; align-content: center; gap: 0.35rem; padding: 1rem 1.15rem 1.1rem; background: rgb(255 255 255 / 94%); } .ds-speaker-identity small, .ds-speaker-identity span { overflow: hidden; font-family: var(--font-nav, monospace); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; text-overflow: ellipsis; text-transform: uppercase; white-space: nowrap; } .ds-speaker-identity small { color: var(--color-brand-blue, #3D43CE); } .ds-speaker-identity strong { overflow: hidden; font-family: var(--font-serif, Georgia, serif); font-size: 1.5rem; font-weight: 600; letter-spacing: -0.025em; line-height: 1.05; text-overflow: ellipsis; white-space: nowrap; } .ds-speaker:focus-within { outline: 3px solid var(--color-brand-orange, #FE4D1B); outline-offset: 3px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "L’Affiche manifeste d’un futur civique",
+    "overview": "Le système visuel transpose une campagne culturelle imprimée dans un produit web. Il associe l’autorité d’une composition éditoriale, l’énergie d’une affiche sérigraphiée et une imagerie spéculative où l’IA devient un sujet collectif, territorial et infrastructurel. Les scènes monumentales, les portails, les grilles, les architectures et les foules rendent les enjeux plus grands que les outils eux-mêmes.\n\nL’image est une structure, jamais un remplissage. Elle ouvre les surfaces, donne leur rythme aux sections et porte une palette volontairement limitée, avec grain, trame, contrastes francs et décalages d’encre. Le site répond par de grandes plages de papier, une typographie Garamond expressive et une composition qui accepte l’asymétrie, les changements d’échelle et les superpositions.\n\nLes éléments d’interface restent majoritairement plats et rectilignes. Le relief appartient aux objets physiques de la marque : billets, badges, étiquettes métalliques et stickers légèrement tournés, décollables ou posés sur l’image. Cette distinction maintient la lisibilité du produit sans perdre la matérialité singulière de la direction artistique.",
+    "keyCharacteristics": [
+      "Palette courte, saturée et immédiatement reconnaissable.",
+      "Imagerie rétrofuturiste monumentale, civique et collective.",
+      "Hiérarchie éditoriale à très fort contraste d’échelle.",
+      "Papier, encre, métal brossé, trame et défauts d’impression assumés.",
+      "Interface plate, objets de marque tactiles et physiquement présents."
+    ],
+    "rules": [
+      {
+        "name": "The Three-Ink Rule",
+        "body": "Le bleu électrique, l’orange signal et le noir d’encre portent l’identité. Le crème et le blanc servent de papier. Aucune nouvelle couleur saturée n’entre dans le système sans source de marque confirmée.",
+        "section": "colors"
+      },
+      {
+        "name": "The Orange Signal Rule",
+        "body": "L’orange attire l’œil sur un mot, un état, une bordure ou une action. Il ne devient pas une couleur de texte courant ni un fond systématique.",
+        "section": "colors"
+      },
+      {
+        "name": "The Orange Field Contrast Rule",
+        "body": "Lorsqu’un grand aplat orange porte du contenu, son encre de lecture est le charbon. Le blanc n’est pas utilisé pour le texte courant, les titres ou les métadonnées sur cette surface.",
+        "section": "colors"
+      },
+      {
+        "name": "The Wordmark Rule",
+        "body": "Toute occurrence visible du nom est rendue en uppercase Garamond romain, avec `GENAI` gras, `DAYS` régulier et seulement `AI` en italique. Le texte littéral passe par `EventName.astro`. Les chaînes rendues par expression passent par `BrandText.astro`.",
+        "section": "typography"
+      },
+      {
+        "name": "The Italic Accent Rule",
+        "body": "L’italique signale le `AI` du wordmark, les sous-titres et les emphases éditoriales courtes. Les titres de page et de section restent en romain afin de préserver une hiérarchie stable.",
+        "section": "typography"
+      },
+      {
+        "name": "The Editorial Contrast Rule",
+        "body": "Garamond affirme. Arial explique, indexe et guide les interactions. Ces rôles ne sont pas interchangeables et une police système générique ne remplace jamais la voix display.",
+        "section": "typography"
+      },
+      {
+        "name": "The Poster Field Rule",
+        "body": "Chaque grande surface possède un champ dominant, image, manchette ou objet physique. Éviter les suites de cartes identiques qui diluent le rythme éditorial.",
+        "section": "layout"
+      },
+      {
+        "name": "The Landing Rhythm Rule",
+        "body": "La landing possède trois pics visuels&nbsp;: le hero, les deux parcours et le ticket. Les enjeux restent compacts. Les intervenants, le programme et les partenaires utilisent des conteneurs de 72rem à 80rem, des colonnes de lecture étroites et des respirations verticales généreuses. Les intervenants forment un carrousel horizontal en boucle qui mêle portraits confirmés et emplacements d’annonce sans masquer l’état de la programmation. Après le hero, le papier crème reste continu&nbsp;: les rails, les séparations, les images et les changements de densité ponctuent les sections sans alternance systématique de fond. Deux pics visuels ne se suivent jamais sans une section textuelle ou structurée plus calme.",
+        "section": "layout"
+      },
+      {
+        "name": "The Editorial Guide Grid Rule",
+        "body": "Après l’affiche, toute la landing partage deux rails extérieurs alignés sur le conteneur de `78rem`. Seule la séparation horizontale qui démarque une section se prolonge jusqu’aux bords du viewport. Les autres traits horizontaux s’arrêtent aux rails extérieurs. Un axe intérieur n’existe que dans les limites du bloc de contenu qu’il segmente, jamais derrière son titre ou dans les respirations voisines. Les petits carrés orange marquent uniquement les coins extérieurs des sections. Aucun carré ne ponctue une séparation entre titre et contenu ni une division interne. La grille est donc un système de cadres locaux reliés par deux rails, jamais un motif répété en arrière-plan. Sur mobile, seuls les rails extérieurs et les séparations de section subsistent.",
+        "section": "layout"
+      },
+      {
+        "name": "The Manifesto Split Rule",
+        "body": "La partie éditoriale commence par un manifeste calme en deux colonnes dans la fin de course du hero. Le visuel collectif occupe la cellule gauche et le texte la cellule droite, sans séparation verticale. Le bloc traduit les deux parcours en une prise de position commune&nbsp;: dépasser les promesses, arbitrer les usages, les coûts et les données, puis confronter ces décisions à la production. Cette section conserve une densité de lecture mesurée avant l’index compact des enjeux.",
+        "section": "layout"
+      },
+      {
+        "name": "The Issue Index Rule",
+        "body": "La section suit le manifeste et son contenu apparaît après une respiration courte de `4rem` à `4.75rem`, sans écran vide ni délai théâtral. Sur desktop, le titre et son introduction occupent une première rangée pleine largeur, avec le même retrait intérieur que les sujets. La liste des quatre enjeux et le champ visuel associé partagent ensuite une seconde rangée. Le bord supérieur de l’image s’aligne sur « Coûts » et son bord inférieur sur « Production ». La colonne texte occupe `61.25%` du conteneur de `78rem` et rejoint directement la cellule visuelle de `38.75%`. Ce rapport permet au carré d’être centré dans sa zone sans gouttière ni recadrage brutal. Le contenu se raccorde directement à la section suivante, sans padding bas. Le survol, le focus et le clic déplacent l’emphase sans retenir le scroll ni masquer le texte. La sélection utilise une seule encre bleue pour son titre, son filet et son balayage directionnel de `620ms`. Le fond crème approfondi apporte le contraste sans introduire un second accent. Sur mobile, chaque enjeu conserve son image carrée dans le flux normal. Aucune information ne dépend de l’interaction et la réduction de mouvement supprime le balayage.",
+        "section": "layout"
+      },
+      {
+        "name": "The Programme Matrix Rule",
+        "body": "La section « Deux parcours + programme » reste dans le flux natif. Le panorama introduit les deux voies, puis les colonnes Décider et Déployer et les trois temps du programme restent visibles dans une matrice éditoriale. Le lien vers le programme complet précède la matrice. Sur mobile, la même information s’empile sans changer d’ordre sémantique.",
+        "section": "layout"
+      },
+      {
+        "name": "The Admission Ticket Rule",
+        "body": "Le pass est composé directement dans `LandingStory.astro` comme un billet imprimé en deux parties&nbsp;: corps crème informatif et souche bleue détachable. Son fond illustré reste décoratif. Le prix, la date, le lieu, l’accueil, la capacité et les prestations restent en HTML et proviennent des constantes du projet. L’implémentation courante fait autorité sur tout ancien mock.",
+        "section": "layout"
+      },
+      {
+        "name": "The Community Proof Rule",
+        "body": "Après le programme, la preuve communautaire transforme le doute lié à une première édition en confiance dans la capacité d’organisation. Un index vertical permet de choisir entre SHIFT, Generative AI Nantes et GenAI France en distinguant trois fonctions&nbsp;: organiser un événement exigeant, animer la communauté nantaise et participer à un réseau national. Une seule fiche et sa bande de preuves sont visibles à la fois, puis changent ensemble au clic ou au clavier. Sur mobile et tablette, l’index précède la fiche active, puis les preuves suivent immédiatement. Chaque état conserve l’identité, le rôle, trois chiffres et une matière propre. La bande de preuves affiche trois éléments, annonce le volume total et boucle horizontalement par boutons, clavier ou geste tactile, sans défilement vertical interne. Les avatars restent à leur taille native. Seules les photographies d’événements en définition suffisante occupent un grand format.",
+        "section": "layout"
+      },
+      {
+        "name": "The Footer Echo Rule",
+        "body": "Le footer ne répète ni le titre, ni l’étiquette, ni les actions du hero. Il en conserve seulement une empreinte&nbsp;: une vue bichrome du Château des ducs de Bretagne, cadrée sur ses tours puis coupée franchement par le bas dans un bandeau d’environ `32svh`. Un masque progressif laisse la silhouette perceptible avant son raccord au socle nuit. La crème de la page se fragmente au-dessus de l’image avec le shader exact du hero retourné verticalement. Sans canvas ou en réduction de mouvement, une trame CSS statique préserve le même raccord.",
+        "section": "layout"
+      },
+      {
+        "name": "The Print-Flat Rule",
+        "body": "Une surface d’interface reste plate tant qu’elle ne représente pas un objet physique ou un niveau modal. Les ombres ambiantes décoratives ne servent jamais à compenser une hiérarchie faible.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Static Motion Rule",
+        "body": "Le mouvement révèle une matière ou une profondeur sans porter d’information exclusive. Lorsque `prefers-reduced-motion` est actif, la composition reste complète et lisible dans un état statique.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Physical Corners Rule",
+        "body": "Un rayon décrit une matière ou une fonction, jamais une douceur générique appliquée à tous les composants.",
+        "section": "shapes"
+      },
+      {
+        "name": "The Hero Focus Rule",
+        "body": "Le premier écran porte une seule proposition forte. Le nom de l’événement reste dans le header, le titre occupe l’affiche, l’étiquette rassemble les métadonnées pratiques et aucun second CTA ne concurrence la billetterie permanente. Les retours de ligne du titre sont composés explicitement, puis redimensionnés par famille de formats pour conserver la même hiérarchie sans recadrage opportuniste.",
+        "section": "components"
+      },
+      {
+        "name": "The Object Motion Rule",
+        "body": "Les mouvements expriment une propriété physique précise : recalage d’encre, carte soulevée, sticker posé ou coin décollé. Aucun mouvement décoratif ne flotte indépendamment du contenu et chaque état animé possède un équivalent statique.",
+        "section": "components"
+      }
+    ],
+    "dos": [
+      "Do utiliser les illustrations comme architecture de page et non comme remplissage de carte.",
+      "Do préserver la tension entre papier calme, encres saturées et noir d’encre.",
+      "Do composer le texte des grands aplats orange en encre charbon.",
+      "Do réserver les textures, rotations et reflets aux objets physiques de la marque.",
+      "Do conserver les données du billet en HTML et les alimenter depuis `EVENT`, `PRICING` et `CTA_LINKS`.",
+      "Do maintenir des titres très contrastés et des colonnes de lecture plus étroites.",
+      "Do respecter la réduction de mouvement et conserver une hiérarchie complète sur mobile."
+    ],
+    "donts": [
+      "Don't transformer le site en dashboard SaaS composé de cartes arrondies uniformes.",
+      "Don't ajouter de glassmorphism, de lueurs néon multicolores ou une esthétique cyberpunk générique.",
+      "Don't remplacer l’imagerie civique et monumentale par des robots, cerveaux lumineux ou interfaces holographiques génériques.",
+      "Don't utiliser du texte blanc comme encre principale sur un grand aplat orange.",
+      "Don't utiliser une ombre douce sur chaque surface. Le relief doit correspondre à un objet ou à un état.",
+      "Don't inventer de nouvelles couleurs saturées, polices display ou formes de badge sans source dans la DA."
+    ]
+  }
+}

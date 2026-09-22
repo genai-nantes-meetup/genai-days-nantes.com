@@ -1,0 +1,450 @@
+---
+import EventName from './EventName.astro';
+import EditorialFrame from './EditorialFrame.astro';
+import EditorialGrid from './EditorialGrid.astro';
+import EVENT from '../content/event.json';
+import { SOCIAL_PROFILES } from '../lib/event';
+
+interface Props {
+  grid?: boolean;
+  lead?: boolean;
+}
+
+const { grid = false, lead = true } = Astro.props;
+
+const siteLinks = [
+  { label: 'Programme', href: '/programme' },
+  { label: 'Intervenants', href: '/speakers' },
+  { label: 'Partenaires', href: '/partenaires' },
+  { label: 'L’équipe', href: '/equipe' },
+];
+
+/* Tracés Simple Icons, dessinés sur une grille 24×24. */
+const socialIconPaths = {
+  linkedin: 'M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.125 2.062 2.062 0 0 1 0 4.125zM7.119 20.452H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z',
+  x: 'M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z',
+} as const;
+
+const utilityLinks = [
+  { label: 'Infos pratiques', href: '/infos-pratiques' },
+  { label: 'Contact', href: '/contact' },
+  { label: 'Espace presse', href: '/press-kit' },
+  { label: 'Confidentialité et mentions légales', href: '/confidentialite' },
+  { label: 'Code of conduct', href: '/code-of-conduct' },
+];
+---
+
+<footer class:list={['site-footer', { 'site-footer--editorial-grid': grid, 'site-footer--without-lead': !lead }] }>
+  {grid && <EditorialGrid tone="paper" top={false} />}
+
+  {lead && (
+    <div class="site-footer__visual" data-footer-coda aria-hidden="true">
+      <div class="site-footer__frame">
+        <img
+          class="site-footer__poster"
+          src="/images/affiche-chateau-nantes-1600.webp"
+          srcset="/images/affiche-chateau-nantes-800.webp 800w, /images/affiche-chateau-nantes-1600.webp 1600w, /images/affiche-chateau-nantes-2306.webp 2306w"
+          sizes="100vw"
+          alt=""
+          width="2306"
+          height="1269"
+          loading="lazy"
+          decoding="async"
+        />
+        <span class="site-footer__grade" aria-hidden="true"></span>
+      </div>
+    </div>
+  )}
+
+  <div class="site-footer__links">
+    {grid && <EditorialFrame columns={4} tone="paper" />}
+
+    <div class="site-footer__identity">
+      <a href="/" aria-label="Retour à l’accueil" data-scroll-top>
+        <EventName showLocation />
+      </a>
+      <p>Une journée pour ceux qui décident et ceux qui implémentent.</p>
+      <ul class="site-footer__social" aria-label="Réseaux sociaux">
+        {SOCIAL_PROFILES.map((profile) => (
+          <li>
+            <a
+              href={profile.url || '#'}
+              target="_blank"
+              aria-label={`${profile.label}, ouvre un nouvel onglet`}
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d={socialIconPaths[profile.network]} />
+              </svg>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <nav aria-label="Pages principales">
+      <p class="site-footer__nav-title">Explorer</p>
+      {siteLinks.map((link) => <a href={link.href}>{link.label}</a>)}
+    </nav>
+
+    <nav aria-label="Informations utiles">
+      <p class="site-footer__nav-title">Préparer sa venue</p>
+      {utilityLinks.map((link) => <a href={link.href}>{link.label}</a>)}
+    </nav>
+
+    <div class="site-footer__contribute">
+      <p class="site-footer__nav-title">Contribuer</p>
+      <a href="/partenaires#devenir-partenaire">Devenir partenaire</a>
+      <a href="https://naomakers.com" target="_blank">Association</a>
+    </div>
+  </div>
+
+  <div class="site-footer__bottom">
+    <span>{EVENT.venue.city} · {EVENT.year}</span>
+    <a href="/llms.txt" rel="alternate" type="text/plain">llms.txt</a>
+    <span>© <EventName /> · Tous droits réservés</span>
+  </div>
+</footer>
+
+<script>
+  import { initFooterCoda } from '../scripts/footer-coda';
+
+  initFooterCoda();
+</script>
+
+<style>
+  .site-footer {
+    --footer-coda-height: clamp(21rem, 36svh, 25rem);
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    background: var(--color-brand-night);
+    color: var(--color-brand-white);
+    isolation: isolate;
+  }
+
+  /* Quand le billet termine le contenu principal, le coda remonte derriere
+   * ses deux derniers tiers et transforme la rupture en horizon. */
+  :global(main:has(.ticket-field)) + .site-footer {
+    /* Valeur de premier rendu. footer-coda.ts la remplace par la mesure
+     * exacte du seuil place a 70 % de la hauteur du billet. */
+    --ticket-footer-overlap: clamp(15.5rem, 18vw, 18rem);
+    margin-top: calc(-1 * var(--ticket-footer-overlap));
+  }
+
+  :global(main:has(.ticket-field) .ticket-field) {
+    z-index: 2;
+  }
+
+  :global(main:has(.ticket-field)) + .site-footer::before {
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 1px;
+    background: var(--color-brand-cream);
+    content: '';
+    pointer-events: none;
+  }
+
+  .site-footer--editorial-grid .site-footer__links,
+  .site-footer--editorial-grid .site-footer__bottom {
+    position: relative;
+    z-index: 3;
+    width: min(calc(100% - 2 * var(--layout-gutter)), var(--layout-editorial));
+    margin-inline: auto;
+  }
+
+  .site-footer__visual {
+    height: var(--footer-coda-height);
+    background: var(--color-brand-cream);
+  }
+
+  .site-footer__frame,
+  .site-footer__poster,
+  .site-footer__grade {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .site-footer__frame {
+    z-index: 1;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      rgb(0 0 0 / 4%) 3%,
+      rgb(0 0 0 / 14%) 8%,
+      rgb(0 0 0 / 34%) 14%,
+      rgb(0 0 0 / 62%) 21%,
+      rgb(0 0 0 / 85%) 27%,
+      black 33%,
+      black 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      rgb(0 0 0 / 4%) 3%,
+      rgb(0 0 0 / 14%) 8%,
+      rgb(0 0 0 / 34%) 14%,
+      rgb(0 0 0 / 62%) 21%,
+      rgb(0 0 0 / 85%) 27%,
+      black 33%,
+      black 100%
+    );
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+  }
+
+  .site-footer__visual.is-coda-ready .site-footer__frame {
+    transform: translateY(-1.25%) scale(1.025);
+    transform-origin: 50% 42%;
+    transition: transform 1200ms cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
+  }
+
+  .site-footer__visual.is-coda-ready.is-revealed .site-footer__frame {
+    transform: translateY(0) scale(1);
+  }
+
+  .site-footer__poster {
+    z-index: 0;
+    filter: saturate(0.94) contrast(1.06) brightness(0.98);
+    object-fit: cover;
+    object-position: 50% 42%;
+  }
+
+  .site-footer__grade {
+    z-index: 1;
+    background: linear-gradient(
+      to bottom,
+      rgb(9 18 46 / 60%) 0,
+      rgb(9 18 46 / 67%) 24%,
+      rgb(9 18 46 / 76%) 50%,
+      rgb(9 18 46 / 84%) 74%,
+      rgb(9 18 46 / 90%) 100%
+    );
+    pointer-events: none;
+  }
+
+  .site-footer__links {
+    position: relative;
+    z-index: 3;
+    display: grid;
+    border-top: 1px solid rgb(249 244 236 / 20%);
+    border-bottom: 1px solid rgb(249 244 236 / 20%);
+    text-shadow: 0 1px 1.25rem rgb(9 18 46 / 88%);
+  }
+
+  .site-footer--without-lead .site-footer__links {
+    border-top-color: rgb(249 244 236 / 20%);
+  }
+
+  .site-footer__links > *:not(.editorial-frame) {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: clamp(1.75rem, 3.5vw, 2.75rem) clamp(1.25rem, 2.5vw, 2rem);
+    gap: 0.75rem;
+  }
+
+  .site-footer__identity a {
+    color: var(--color-brand-cream);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+  }
+
+  .site-footer__identity > p {
+    max-width: 24ch;
+    margin-top: 0.5rem;
+    color: rgb(249 244 236 / 78%);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  /* Le cadre de 44px centre l'icône : la marge négative recale son bord
+   * gauche sur celui de la baseline. */
+  .site-footer__social {
+    display: flex;
+    margin: 0.25rem 0 0 -0.75rem;
+    padding: 0;
+    gap: 0.25rem;
+    list-style: none;
+  }
+
+  .site-footer__identity .site-footer__social a {
+    display: inline-flex;
+    width: 2.75rem;
+    height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+  }
+
+  .site-footer__social svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    fill: currentColor;
+  }
+
+  .site-footer__nav-title {
+    margin-bottom: 0.35rem;
+    color: rgb(249 244 236 / 78%);
+    font-family: var(--font-label-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1.3;
+    text-transform: uppercase;
+  }
+
+  .site-footer__links a {
+    color: rgb(249 244 236 / 88%);
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1.35;
+    text-align: left;
+    transition: color 180ms ease;
+  }
+
+  .site-footer__links nav a,
+  .site-footer__contribute > a {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    padding-block: 0.4rem;
+  }
+
+  .site-footer__links a:hover {
+    color: var(--color-brand-orange);
+  }
+
+  .site-footer__links a:focus-visible {
+    border-radius: 0;
+    outline: 2px solid var(--color-brand-orange);
+    outline-offset: 4px;
+  }
+
+  .site-footer__bottom {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 1.25rem clamp(1.25rem, 2.5vw, 2rem);
+    gap: 1rem;
+    color: rgb(249 244 236 / 78%);
+    font-family: var(--font-label-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  .site-footer__bottom::before {
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 100vw;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      color-mix(in srgb, var(--color-brand-night) 56%, transparent) 38%,
+      color-mix(in srgb, var(--color-brand-night) 88%, transparent) 100%
+    );
+    content: '';
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  .site-footer__bottom a {
+    color: inherit;
+    text-underline-offset: 0.2em;
+  }
+
+  .site-footer__bottom a:hover {
+    color: var(--color-brand-orange);
+  }
+
+  .site-footer__bottom a:focus-visible {
+    outline: 2px solid var(--color-brand-orange);
+    outline-offset: 4px;
+  }
+
+  @media (max-width: 47.999rem) {
+    .site-footer {
+      --footer-coda-height: clamp(18rem, 34svh, 22rem);
+    }
+
+    .site-footer__poster {
+      object-position: 54% 50%;
+    }
+
+    /* Quatre colonnes qui retombent sur une seule empilaient 9 liens sur
+     * 1362px, soit deux écrans de pied de page que personne n'atteint. Les
+     * deux listes courtes se rangent côte à côte, l'identité et l'appel à
+     * contribuer gardent la pleine largeur : environ 750px, un écran. */
+    .site-footer__links {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    /* Le gabarit desktop réserve 28px de respiration en haut et en bas de
+     * chaque bloc, soit 224px sur les quatre. Au pouce, la hauteur de cible
+     * des liens porte déjà l'aération : le socle des blocs peut se resserrer. */
+    .site-footer__links > *:not(.editorial-frame) {
+      padding-block: 1.25rem;
+    }
+
+    .site-footer__identity,
+    .site-footer__contribute {
+      grid-column: 1 / -1;
+    }
+
+    .site-footer__links > *:not(.editorial-frame) {
+      border-bottom: 1px solid rgb(249 244 236 / 20%);
+    }
+
+    .site-footer__links > nav + nav {
+      border-left: 1px solid rgb(249 244 236 / 20%);
+    }
+
+    .site-footer__links > *:last-child {
+      border-bottom: 0;
+    }
+
+    /* Le CTA billetterie fixe ne se masque jamais : la dernière ligne du
+     * document réserve sa bande pour ne pas finir sous le bouton. */
+    .site-footer__bottom {
+      padding-bottom: calc(1.25rem + var(--mobile-cta-reserve, 0px));
+    }
+  }
+
+  @media (min-width: 48rem) {
+    .site-footer__links {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .site-footer__identity {
+      grid-column: 1;
+    }
+
+    .site-footer__links > *:not(.editorial-frame) + *:not(.editorial-frame) {
+      border-left: 1px solid rgb(249 244 236 / 20%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-footer__visual.is-coda-ready .site-footer__frame {
+      transform: none;
+      transition: none;
+    }
+  }
+</style>

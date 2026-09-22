@@ -1,0 +1,88 @@
+---
+import ArrowIcon from './ArrowIcon.astro';
+
+interface Props {
+  tone?: 'paper' | 'night';
+  class?: string;
+}
+
+const { tone = 'paper', class: className } = Astro.props;
+---
+
+<button
+  type="button"
+  data-contact-topic="press"
+  class:list={['press-contact-action', `press-contact-action--${tone}`, className]}
+>
+  <svg
+    class="press-contact-action__mail"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.8"
+    stroke-linecap="square"
+    stroke-linejoin="miter"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <path d="M3 5h18v14H3zM3 6l9 7 9-7" />
+  </svg>
+  <span><slot /></span>
+  <ArrowIcon class="press-contact-action__arrow" />
+</button>
+
+<style>
+  .press-contact-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    border: 0;
+    border-bottom: 1px solid currentColor;
+    padding: 0.55rem 0;
+    background: transparent;
+    font-family: var(--font-label-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: var(--tracking-ui);
+    line-height: 1.35;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 160ms ease-out;
+  }
+
+  .press-contact-action--paper {
+    color: var(--color-brand-blue);
+  }
+
+  .press-contact-action--night {
+    color: rgb(249 244 236 / 88%);
+  }
+
+  .press-contact-action__mail,
+  :global(.press-contact-action__arrow) {
+    width: 1.1rem;
+    height: 1.1rem;
+    flex: none;
+  }
+
+  :global(.press-contact-action__arrow) {
+    transition: translate 160ms ease-out;
+  }
+
+  .press-contact-action--paper:hover {
+    color: var(--color-brand-night);
+  }
+
+  .press-contact-action--night:hover {
+    color: var(--color-brand-orange);
+  }
+
+  .press-contact-action:hover :global(.press-contact-action__arrow) {
+    translate: 0.2rem 0;
+  }
+
+  .press-contact-action:focus-visible {
+    outline: 2px solid var(--color-brand-orange);
+    outline-offset: 4px;
+  }
+</style>

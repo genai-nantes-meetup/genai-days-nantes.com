@@ -1,0 +1,95 @@
+---
+import ArrowIcon from './ArrowIcon.astro';
+
+/**
+ * Remontée rapide : le standard universel, un bouton fixe en bas à droite
+ * de la page, qui n'apparaît qu'une fois la lecture engagée. Langage CTA de
+ * la DA : carré, encre bleue, ombre orange décalée. Sous le classeur
+ * d'étiquettes dans l'ordre de superposition, et masqué sur mobile où le
+ * bord d'écran appartient au classeur. Remonte avec le moteur de scroll
+ * actif pour interrompre proprement son inertie.
+ */
+---
+
+<button type="button" class="back-to-top" data-back-to-top data-scroll-top aria-label="Revenir en haut de page">
+  <ArrowIcon direction="up" />
+</button>
+
+<script>
+  import { initScrollTop } from '../scripts/scroll-top';
+
+  const REVEAL_AFTER_VIEWPORT_RATIO = 1.2;
+
+  const button = document.querySelector<HTMLButtonElement>('[data-back-to-top]');
+  initScrollTop();
+
+  if (button) {
+    const sync = (): void => {
+      const engaged = window.scrollY > document.documentElement.clientHeight * REVEAL_AFTER_VIEWPORT_RATIO;
+      button.classList.toggle('is-visible', engaged);
+    };
+    sync();
+    window.addEventListener('scroll', sync, { passive: true });
+  }
+</script>
+
+<style>
+  .back-to-top {
+    position: fixed;
+    right: clamp(1rem, 2vw, 1.75rem);
+    bottom: clamp(1rem, 2.5vh, 1.75rem);
+    z-index: 50;
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 2px solid var(--color-brand-blue);
+    background: var(--color-brand-blue);
+    color: var(--color-brand-white);
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0.25rem 0.25rem 0 0 var(--color-brand-orange);
+    opacity: 0;
+    visibility: hidden;
+    translate: 0 0.5rem;
+    transition:
+      opacity 220ms ease,
+      translate 220ms ease,
+      scale 150ms ease-out,
+      box-shadow 150ms ease-out,
+      visibility 0s linear 220ms;
+  }
+
+  .back-to-top.is-visible {
+    opacity: 1;
+    visibility: visible;
+    translate: 0 0;
+    transition:
+      opacity 220ms ease,
+      translate 220ms ease,
+      scale 150ms ease-out,
+      box-shadow 150ms ease-out,
+      visibility 0s linear 0s;
+  }
+
+  .back-to-top:hover {
+    box-shadow: 0.15rem 0.15rem 0 0 var(--color-brand-orange);
+  }
+
+  .back-to-top:active {
+    scale: 0.96;
+  }
+
+  @media (max-width: 47.999rem) {
+    .back-to-top {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .back-to-top {
+      transition-duration: 0s;
+    }
+  }
+</style>

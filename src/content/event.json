@@ -1,0 +1,30 @@
+{
+  "name": "GenAI Days",
+  "tagline": "L’IA générative est déjà chez vous. C’est maintenant que ça se complique.",
+  "description": "Journée-conférence consacrée à l'intelligence artificielle générative à Nantes, avec deux parcours complémentaires, un Startup Contest et des retours d'expérience pour celles et ceux qui décident et celles et ceux qui implémentent l'IA.",
+  "year": 2026,
+  "date": "2026-11-17",
+  "startTime": "08:30",
+  "endTime": "22:00",
+  "timezone": "+01:00",
+  "language": "fr",
+  "isAccessibleForFree": false,
+  "image": "images/cover_v2-optimized.webp",
+  "venue": {
+    "name": "Hôtel de Région Pays de la Loire",
+    "shortName": "Hôtel de Région",
+    "address": "1 Rue de la Loire",
+    "postalCode": "44200",
+    "city": "Nantes",
+    "country": "FR"
+  },
+  "url": "https://genai-days-nantes.com",
+  "organizer": {
+    "name": "Naomakers"
+  },
+  "social": {
+    "linkedin": "https://www.linkedin.com/company/generative-ai-nantes/",
+    "x": "https://x.com/GenAINantes"
+  },
+  "contactEmail": "hello@genai-days-nantes.com"
+}

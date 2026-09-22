@@ -1,0 +1,469 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ArrowIcon from '../components/ArrowIcon.astro';
+import DirectoryHero from '../components/DirectoryHero.astro';
+import EditorialGrid from '../components/EditorialGrid.astro';
+import EventName from '../components/EventName.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { EVENT, formatEventDateLabel } from '../lib/event';
+
+const venuePhoto = '/images/hotel-region-banner-genai-days-optimized.webp';
+const mapDestination = [
+  EVENT.venue.name,
+  EVENT.venue.address,
+  `${EVENT.venue.postalCode} ${EVENT.venue.city}`,
+].join(', ');
+const mapUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(mapDestination)}`;
+
+const accessOptions = [
+  {
+    mode: 'Train + Busway',
+    details: 'Gare SNCF, sortie Sud · Ligne 5 direction Hangar à bananes · Arrêt Pompidou',
+  },
+  {
+    mode: 'Bus',
+    details: `Ligne 26 direction ${EVENT.venue.name} · Terminus ${EVENT.venue.name}`,
+  },
+  {
+    mode: 'E-Busway',
+    details: 'Ligne 4 jusqu’à Île de Nantes, puis ligne 5 jusqu’à Pompidou',
+  },
+  {
+    mode: 'Vélo',
+    details: `Station Naolib vélos place Gaston-Defferre, devant ${EVENT.venue.name}`,
+  },
+  {
+    mode: 'Voiture',
+    details: 'Stationnement payant aux abords du campus et sur le parking du CRAPA',
+  },
+] as const;
+
+const partnerHotels = [
+  {
+    name: 'Novotel Nantes Centre Bord de Loire',
+    meta: 'Île de Nantes · 1 boulevard des Martyrs Nantais',
+    href: 'https://all.accor.com/hotel/7296/index.fr.shtml',
+  },
+  {
+    name: 'Seven Urban Suites Nantes Centre',
+    meta: 'Quartier Euronantes · 10 rue Konrad-Adenauer',
+    href: 'https://www.7urbansuites.fr/',
+  },
+  {
+    name: 'Mercure Nantes Centre Gare',
+    meta: 'Accès direct gare TGV · 50-51 quai Malakoff',
+    href: 'https://all.accor.com/hotel/3448/index.fr.shtml',
+  },
+] as const;
+
+const siteUrl = Astro.site ?? new URL(Astro.url.origin);
+const pageUrl = new URL('/infos-pratiques', siteUrl).href;
+const pageTitle = `Infos pratiques · ${EVENT.name}`;
+const pageDescription = `Adresse, transports, accessibilité et hébergements pour préparer votre venue à ${EVENT.name}, le ${formatEventDateLabel()} à ${EVENT.venue.name} à ${EVENT.venue.city}.`;
+
+const structuredData = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: pageTitle,
+    description: pageDescription,
+    url: pageUrl,
+    /* Le lieu est déjà décrit une fois pour toutes dans le Place de l'Event
+     * (buildEventJsonLd, lib/event.ts), sous le même @id : même pattern que
+     * les références organizer/superEvent réutilisées depuis les fiches
+     * session, plutôt que dupliquer l'adresse ici. */
+    about: { '@id': `${siteUrl.href}#venue` },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Accueil', item: siteUrl.href },
+      { '@type': 'ListItem', position: 2, name: 'Infos pratiques', item: pageUrl },
+    ],
+  },
+];
+
+---
+
+<BaseLayout title={pageTitle} description={pageDescription} structuredData={structuredData}>
+  <Header />
+
+  <main class="practical-page">
+    <DirectoryHero
+      title="Infos pratiques"
+      titleId="practical-title"
+      lede={`Adresse, transports, accès et hébergements pour préparer votre venue à ${EVENT.venue.city}.`}
+      image={venuePhoto}
+      imageWidth={1774}
+      imageHeight={886}
+      imagePosition="58% 54%"
+    />
+
+    <section class="practical-facts" aria-label="Informations essentielles">
+      <EditorialGrid top={false} />
+      <dl>
+        <div>
+          <dt>Date</dt>
+          <dd>{formatEventDateLabel()}</dd>
+        </div>
+        <div>
+          <dt>Accueil</dt>
+          <dd>{EVENT.startTime}</dd>
+        </div>
+        <div>
+          <dt>Lieu</dt>
+          <dd>{EVENT.venue.name}</dd>
+        </div>
+        <div>
+          <dt>Adresse</dt>
+          <dd>{EVENT.venue.address}, {EVENT.venue.postalCode} {EVENT.venue.city}</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="practical-guide" aria-label="Préparer le trajet et le séjour">
+      <EditorialGrid top={false} />
+      <div class="practical-guide__inner">
+        <section class="practical-section practical-section--arrival" aria-labelledby="arrival-title">
+          <div class="practical-section__intro">
+            <h2 id="arrival-title" class="type-section-title">Rejoindre {EVENT.venue.name}.</h2>
+            <p>
+              {EVENT.venue.address}, {EVENT.venue.postalCode} {EVENT.venue.city}. L’accès <EventName /> se fait côté rue de la Loire.
+            </p>
+            <a class="practical-link" href={mapUrl} target="_blank" rel="noopener noreferrer">
+              Calculer mon itinéraire <ArrowIcon direction="external" />
+            </a>
+          </div>
+
+          <dl class="access-ledger">
+            {accessOptions.map((option) => (
+              <div>
+                <dt>{option.mode}</dt>
+                <dd>{option.details}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+
+        <section class="practical-section practical-section--entrance" aria-labelledby="entrance-title">
+          <div class="practical-section__intro">
+            <h2 id="entrance-title" class="type-section-title">Entrée et accessibilité.</h2>
+          </div>
+
+          <div class="practical-section__body">
+            <p>
+              Depuis la rue de la Loire, passez le portail côté œuvre de François Morellet, puis suivez le parvis
+              jusqu’à l’entrée <EventName /> indiquée sur place.
+            </p>
+            <aside class="access-note">
+              <strong>Accès PMR</strong>
+              <span>Le cheminement jusqu’à l’entrée est accessible sans emprunter les marches.</span>
+            </aside>
+          </div>
+        </section>
+
+        <section class="practical-section practical-section--hotels" aria-labelledby="hotels-title">
+          <div class="practical-section__intro">
+            <h2 id="hotels-title" class="type-section-title">Dormir à proximité.</h2>
+            <p>
+              Trois solutions bien reliées à {EVENT.venue.name}, sur l’Île de Nantes ou à proximité immédiate de la gare.
+            </p>
+          </div>
+
+          <div>
+            <div class="hotel-ledger">
+              {partnerHotels.map((hotel) => (
+                <a href={hotel.href} target="_blank" rel="noopener noreferrer">
+                  <span>
+                    <strong>{hotel.name}</strong>
+                    <small>{hotel.meta}</small>
+                  </span>
+                  <ArrowIcon direction="external" />
+                </a>
+              ))}
+            </div>
+            <p class="hotel-note">
+              Les tarifs et conditions restent ceux affichés par chaque établissement. Les éventuels codes
+              partenaires seront publiés ici dès leur ouverture.
+            </p>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <Footer grid />
+</BaseLayout>
+
+<style>
+  .practical-page {
+    background: var(--color-brand-cream);
+    color: var(--color-brand-black);
+  }
+
+  .practical-facts,
+  .practical-guide {
+    position: relative;
+  }
+
+  .practical-facts {
+    border-bottom: 1px solid rgb(57 54 54 / 18%);
+  }
+
+  .practical-facts dl,
+  .practical-guide__inner {
+    position: relative;
+    z-index: 3;
+    width: min(calc(100% - 2 * var(--layout-gutter)), var(--layout-editorial));
+    margin-inline: auto;
+  }
+
+  .practical-facts dl {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .practical-facts dl > div {
+    display: grid;
+    min-width: 0;
+    align-content: start;
+    padding: 1.25rem clamp(1rem, 2vw, 1.75rem);
+    border-right: 1px solid rgb(57 54 54 / 14%);
+    border-bottom: 1px solid rgb(57 54 54 / 14%);
+    gap: 0.4rem;
+  }
+
+  .practical-facts dl > div:nth-child(even) {
+    border-right: 0;
+  }
+
+  .practical-facts dl > div:nth-child(n + 3) {
+    grid-column: 1 / -1;
+  }
+
+  .practical-facts dl > div:last-child {
+    border-bottom: 0;
+  }
+
+  .practical-facts dt,
+  .access-note strong {
+    font-family: var(--font-nav);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.055em;
+    line-height: 1.35;
+    text-transform: uppercase;
+  }
+
+  .practical-facts dt {
+    color: rgb(57 54 54 / 62%);
+  }
+
+  .practical-facts dd {
+    font-family: var(--font-serif);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 600;
+    line-height: 1.12;
+  }
+
+  .practical-guide__inner {
+    border-inline: 1px solid rgb(57 54 54 / 14%);
+  }
+
+  .practical-section {
+    display: grid;
+    padding: var(--space-section-compact) clamp(1.25rem, 4vw, 3.5rem);
+    border-bottom: 1px solid rgb(57 54 54 / 18%);
+    gap: clamp(2.25rem, 5vw, 5rem);
+  }
+
+  .practical-section:last-child {
+    border-bottom: 0;
+  }
+
+  .practical-section__intro {
+    align-self: start;
+  }
+
+  .practical-section h2 {
+    max-width: 15ch;
+  }
+
+  .practical-section__intro > p,
+  .practical-section__body > p {
+    max-width: 60ch;
+    margin-top: 1rem;
+    color: rgb(57 54 54 / 72%);
+    line-height: 1.65;
+  }
+
+  .practical-link {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 1.5rem;
+    padding-block: 0.25rem 0.55rem;
+    border-bottom: 1px solid currentColor;
+    gap: 0.65rem;
+    color: var(--color-brand-blue);
+    font-family: var(--font-nav);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.045em;
+    text-transform: uppercase;
+  }
+
+  .practical-link:hover,
+  .practical-link:focus-visible {
+    color: var(--color-brand-black);
+  }
+
+  .practical-link:focus-visible,
+  .hotel-ledger a:focus-visible {
+    outline: 2px solid var(--color-brand-blue);
+    outline-offset: 4px;
+  }
+
+  .access-ledger,
+  .hotel-ledger {
+    margin: 0;
+    border-top: 1px solid rgb(57 54 54 / 18%);
+  }
+
+  .access-ledger > div {
+    display: grid;
+    padding: 1rem 0;
+    border-bottom: 1px solid rgb(57 54 54 / 18%);
+    gap: 0.5rem 1.5rem;
+  }
+
+  .access-ledger dt {
+    font-weight: 700;
+  }
+
+  .access-ledger dd {
+    color: rgb(57 54 54 / 72%);
+    line-height: 1.55;
+  }
+
+  .access-note {
+    display: grid;
+    max-width: 52rem;
+    margin-top: 1.5rem;
+    padding: 1.25rem 1.35rem;
+    background: var(--color-brand-cream-deep);
+    gap: 0.35rem;
+  }
+
+  .access-note strong {
+    color: var(--color-brand-black);
+  }
+
+  .access-note span {
+    color: rgb(57 54 54 / 76%);
+    line-height: 1.55;
+  }
+
+  .hotel-ledger a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.15rem 0;
+    border-bottom: 1px solid rgb(57 54 54 / 18%);
+    gap: 1.5rem;
+    transition: color 180ms ease, transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .hotel-ledger a:hover,
+  .hotel-ledger a:focus-visible {
+    color: var(--color-brand-blue);
+    transform: translateX(0.25rem);
+  }
+
+  .hotel-ledger strong,
+  .hotel-ledger small {
+    display: block;
+  }
+
+  .hotel-ledger strong {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.12;
+  }
+
+  .hotel-ledger small {
+    margin-top: 0.3rem;
+    color: rgb(57 54 54 / 68%);
+    line-height: 1.45;
+  }
+
+  .hotel-note {
+    max-width: 65ch;
+    margin-top: 1.25rem;
+    color: rgb(57 54 54 / 68%);
+    font-size: 1rem;
+    line-height: 1.55;
+  }
+
+  @media (min-width: 48rem) {
+    .practical-facts dl {
+      grid-template-columns: 1fr 0.65fr 1.25fr 1.65fr;
+    }
+
+    .practical-facts dl > div,
+    .practical-facts dl > div:nth-child(even),
+    .practical-facts dl > div:nth-child(n + 3) {
+      min-height: 7.5rem;
+      grid-column: auto;
+      border-right: 1px solid rgb(57 54 54 / 14%);
+      border-bottom: 0;
+    }
+
+    .practical-facts dl > div:last-child {
+      border-right: 0;
+    }
+
+    .practical-section {
+      grid-template-columns: minmax(15rem, 0.42fr) minmax(0, 0.9fr);
+    }
+
+    .access-ledger > div {
+      grid-template-columns: minmax(7rem, 0.34fr) minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 31.99rem) {
+    .practical-facts dl {
+      grid-template-columns: 1fr;
+    }
+
+    .practical-facts dl > div,
+    .practical-facts dl > div:nth-child(even),
+    .practical-facts dl > div:nth-child(n + 3) {
+      grid-column: auto;
+      border-right: 0;
+      border-bottom: 1px solid rgb(57 54 54 / 14%);
+    }
+
+    .practical-facts dl > div:last-child {
+      border-bottom: 0;
+    }
+
+    .practical-section {
+      padding-inline: 1.25rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hotel-ledger a {
+      transition: none;
+    }
+
+    .hotel-ledger a:hover,
+    .hotel-ledger a:focus-visible {
+      transform: none;
+    }
+  }
+</style>

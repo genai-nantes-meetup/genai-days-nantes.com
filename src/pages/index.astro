@@ -1,0 +1,68 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import HeroAffiche from '../components/HeroAffiche.astro';
+import LandingStory from '../components/LandingStory.astro';
+import LabelArchive from '../components/LabelArchive.astro';
+import { CTA_LINKS } from '../lib/cta-links';
+import { buildEventJsonLd, EVENT } from '../lib/event';
+import { sortSpeakersByProminence } from '../lib/speakers';
+
+const siteUrl = (Astro.site ?? new URL(Astro.url.origin)).href;
+const coOrganizer = (await getCollection('partners')).find((partner) => partner.data.coOrganizer);
+const coOrganizerName = coOrganizer?.data.name;
+const pageTitle = `${EVENT.name} ${EVENT.year} · Conférence IA générative à ${EVENT.venue.city}${coOrganizerName ? ` avec la ${coOrganizerName}` : ''}`;
+const pageDescription = `Une journée-conférence sur l’IA générative à ${EVENT.venue.city} pour décideurs et équipes techniques : retours terrain, deux parcours et Startup Contest.${coOrganizerName ? ` Co-organisée avec la ${coOrganizerName} à l’${EVENT.venue.shortName}.` : ''}`;
+const speakers = sortSpeakersByProminence(await getCollection('speakers'));
+const eventJsonLd = {
+  ...(await buildEventJsonLd(siteUrl, CTA_LINKS.tickets)),
+  description: pageDescription,
+  performer: speakers.map((speaker) => ({
+    '@type': 'Person',
+    '@id': `${siteUrl}speakers/${speaker.id}#person`,
+    name: speaker.data.name,
+    url: `${siteUrl}speakers/${speaker.id}`,
+  })),
+};
+const organizationJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  '@id': `${siteUrl}#organizer`,
+  name: EVENT.organizer.name,
+  url: siteUrl,
+  event: { '@id': `${siteUrl}#event` },
+};
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${siteUrl}#website`,
+  name: EVENT.name.toUpperCase(),
+  alternateName: 'GenAI Days Nantes',
+  url: siteUrl,
+  inLanguage: EVENT.language,
+  publisher: { '@id': `${siteUrl}#organizer` },
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  structuredData={[eventJsonLd, organizationJsonLd, websiteJsonLd]}
+>
+  <Header immersive />
+  <main>
+    <HeroAffiche />
+    <LandingStory />
+  </main>
+  <Footer grid />
+  <LabelArchive />
+  <script>
+    import { initLabelEasterEgg } from '../scripts/label-easter-egg';
+    import { initPosterTrame } from '../scripts/poster-trame';
+
+    initLabelEasterEgg();
+    initPosterTrame();
+  </script>
+</BaseLayout>

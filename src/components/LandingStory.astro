@@ -1,0 +1,1193 @@
+---
+import { getCollection } from "astro:content";
+import AdmissionTicketSection from "./AdmissionTicketSection.astro";
+import EditorialCta from "./EditorialCta.astro";
+import EditorialFrame from "./EditorialFrame.astro";
+import EditorialGrid from "./EditorialGrid.astro";
+import EventName from "./EventName.astro";
+import PartnersShowcase from "./PartnersShowcase.astro";
+import CommunityProofSection from "./CommunityProofSection.astro";
+import TracksProgramme from "./TracksProgramme.astro";
+import VenueSpotlight from "./VenueSpotlight.astro";
+import {
+  SPEAKER_EVENT_ROLE_LABELS,
+  SPEAKER_PORTRAIT_DIMENSIONS,
+  SPEAKER_TARGET,
+  sortSpeakersByProminence,
+  getSpeakerPortraitSrcset,
+  trackForSpeaker,
+} from "../lib/speakers";
+
+const speakers = sortSpeakersByProminence(await getCollection("speakers"));
+const sessions = await getCollection("sessions");
+
+const issues = [
+  {
+    title: "Coûts",
+    description:
+      "Prioriser les usages, choisir les modèles et garder la facture sous contrôle.",
+    image: "/da/issue-costs-optimized.webp",
+    alt: "Une architecture monumentale composée de nombreuses colonnes bleues",
+  },
+  {
+    title: "Shadow AI",
+    description:
+      "Repérer les usages hors cadre avant que les données et les risques ne vous échappent.",
+    image: "/da/issue-shadow-ai-optimized.webp",
+    alt: "Une personne travaille au centre d’un labyrinthe d’infrastructures bleues",
+  },
+  {
+    title: "Souveraineté",
+    description:
+      "Arbitrer entre performance, dépendance technologique et maîtrise des données.",
+    image: "/da/issue-sovereignty-optimized.webp",
+    alt: "Un arc monumental entouré de serveurs sous des champs bleu et orange",
+  },
+  {
+    title: "Production",
+    description:
+      "Transformer les prototypes en systèmes fiables, supervisés et capables de tenir la charge.",
+    image: "/da/issue-production-optimized.webp",
+    alt: "Une usine rétrofuturiste se dresse entre deux aplats bleu et orange",
+  },
+];
+
+const carouselSpeakers = speakers.slice(0, SPEAKER_TARGET);
+
+// Les voix encore a annoncer tiennent dans une seule diapo de synthese : dix-sept cartes
+// identiques ne se traversent pas au doigt, une carte qui donne le reste a venir se lit.
+const pendingSpeakerCount = Math.max(
+  0,
+  SPEAKER_TARGET - carouselSpeakers.length,
+);
+
+const speakerSlides = [
+  ...carouselSpeakers.map((speaker) => ({
+    kind: "speaker" as const,
+    speaker,
+    track: trackForSpeaker(speaker.id, sessions),
+  })),
+  ...(pendingSpeakerCount > 0
+    ? [{ kind: "pending" as const, count: pendingSpeakerCount }]
+    : []),
+];
+const initialVisibleSlides = Math.min(3, speakerSlides.length);
+---
+
+<section
+  id="enjeux"
+  class="manifesto-section"
+  aria-labelledby="manifesto-title"
+>
+  <EditorialGrid top={false} />
+  <div class="manifesto-section__inner">
+    <figure class="manifesto-section__visual">
+      <img
+        src="/da/manifesto-civic-optimized.webp"
+        alt="Un auditoire réuni face à un portail monumental bleu et orange"
+        width="1200"
+        height="667"
+        loading="lazy"
+        decoding="async"
+      />
+    </figure>
+
+    <div class="manifesto-section__copy">
+      <h2 id="manifesto-title">
+        Une journée pour parler tech et faire des rencontres business.
+      </h2>
+      <div>
+        <p>
+          <EventName /> réunit celles et ceux qui décident, construisent et implémentent
+          l’IA générative.
+        </p>
+        <p>
+          Sur scène, des retours d’expérience qui entrent dans le détail. Dans
+          la salle, des dirigeants, des entrepreneurs, des partenaires et des
+          équipes techniques qui ont le temps de se parler.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <section
+    class="issue-index"
+    data-issue-index
+    aria-labelledby="issue-index-title"
+  >
+    <EditorialGrid />
+    <div class="issue-index__inner">
+      <header class="issue-index__heading">
+        <h2 id="issue-index-title">Du discours au terrain.</h2>
+        <p>
+          Sur scène, responsables et ingénieurs partagent les décisions prises
+          et ce qu’ils ont réellement implémenté.
+        </p>
+      </header>
+
+      <ol class="issue-index__topics" aria-label="Enjeux abordés">
+        {
+          issues.map((issue, index) => (
+            <li data-active={index === 0 ? "true" : "false"}>
+              <button
+                type="button"
+                class="issue-index__topic"
+                data-issue-trigger
+                aria-pressed={index === 0 ? "true" : "false"}
+                aria-controls={`issue-visual-${index + 1} issue-visual-inline-${index + 1}`}
+              >
+                <span class="issue-index__topic-copy">
+                  <strong>{issue.title}</strong>
+                  <span>{issue.description}</span>
+                </span>
+              </button>
+
+              <figure
+                id={`issue-visual-inline-${index + 1}`}
+                class="issue-index__mobile-visual"
+              >
+                <img
+                  src={issue.image}
+                  alt={issue.alt}
+                  width="900"
+                  height="560"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </figure>
+            </li>
+          ))
+        }
+      </ol>
+
+      <figure
+        class="issue-index__visual-frame"
+        aria-label="Illustration de l’enjeu actif"
+      >
+        <div class="issue-index__visual-rail">
+          {
+            issues.map((issue, index) => (
+              <div
+                id={`issue-visual-${index + 1}`}
+                class="issue-index__visual"
+                data-issue-visual
+                data-active={index === 0 ? "true" : "false"}
+                aria-hidden={index === 0 ? "false" : "true"}
+              >
+                <img
+                  class="issue-index__visual-image"
+                  src={issue.image}
+                  alt={issue.alt}
+                  width="900"
+                  height="560"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+            ))
+          }
+          <span class="issue-index__scan-line" aria-hidden="true"></span>
+        </div>
+      </figure>
+
+      <div class="issue-index__row-guide" aria-hidden="true">
+        <EditorialFrame positions={["61.25%"]} bottom={false} />
+      </div>
+    </div>
+  </section>
+</section>
+
+<section
+  id="speakers"
+  class="speaker-section"
+  data-speaker-carousel
+  data-speaker-section
+  aria-labelledby="speaker-section-title"
+>
+  <EditorialGrid />
+  <div class="speaker-section__inner">
+    <header class="speaker-section__heading">
+      <div>
+        <h2 id="speaker-section-title" class="type-section-title">
+          Intervenants
+        </h2>
+        <p>
+          Des voix choisies pour leur expertise. Des expériences forgées sur le
+          terrain.
+        </p>
+      </div>
+      <div class="speaker-carousel__controls">
+        <p class="sr-only" data-speaker-status aria-live="polite">
+          Diapositives 1 à {initialVisibleSlides} sur {speakerSlides.length}
+        </p>
+        <button
+          type="button"
+          class="speaker-carousel__control"
+          data-speaker-previous
+          aria-label="Voir les intervenants précédents"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m14.5 5-7 7 7 7"></path>
+          </svg>
+        </button>
+        <button
+          type="button"
+          class="speaker-carousel__control speaker-carousel__control--next"
+          data-speaker-next
+          aria-label="Voir les intervenants suivants"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m9.5 5 7 7-7 7"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <div
+      class="speaker-carousel__viewport"
+      data-speaker-viewport
+      role="region"
+      aria-roledescription="carrousel en boucle"
+      aria-label="Sélection des intervenants"
+      tabindex="0"
+    >
+      <div class="speaker-carousel__track">
+        {
+          speakerSlides.map((slide, index) => (
+            <article
+              class="speaker-card"
+              data-speaker-slide
+              data-track={slide.kind === "speaker" ? slide.track : undefined}
+              aria-label={
+                slide.kind === "speaker"
+                  ? `Intervenant ${index + 1} sur ${speakerSlides.length}`
+                  : `Diapositive ${index + 1} sur ${speakerSlides.length} : ${slide.count} voix encore à annoncer`
+              }
+            >
+              {slide.kind === "speaker" ? (
+                <a
+                  href={`/speakers/${slide.speaker.id}`}
+                  aria-label={`Découvrir ${slide.speaker.data.name}`}
+                >
+                  {slide.speaker.data.photo ? (
+                    <img
+                      class="portrait-photo"
+                      src={slide.speaker.data.photo}
+                      srcset={getSpeakerPortraitSrcset(
+                        slide.speaker.id,
+                        slide.speaker.data.photo,
+                      )}
+                      sizes="(min-width: 48rem) 22rem, 90vw"
+                      alt={`Portrait de ${slide.speaker.data.name}`}
+                      width={
+                        SPEAKER_PORTRAIT_DIMENSIONS[slide.speaker.id]?.width
+                      }
+                      height={
+                        SPEAKER_PORTRAIT_DIMENSIONS[slide.speaker.id]?.height
+                      }
+                      loading="lazy"
+                      decoding="async"
+                      draggable="false"
+                    />
+                  ) : (
+                    <span class="speaker-card__fallback" aria-hidden="true">
+                      {slide.speaker.data.name.slice(0, 1)}
+                    </span>
+                  )}
+                  <span class="speaker-card__identity">
+                    {slide.speaker.data.eventRole && (
+                      <small class="speaker-card__status">
+                        {
+                          SPEAKER_EVENT_ROLE_LABELS[
+                            slide.speaker.data.eventRole
+                          ]
+                        }
+                      </small>
+                    )}
+                    <strong class="speaker-card__name">
+                      {slide.speaker.data.name}
+                    </strong>
+                    <span class="speaker-card__role">
+                      {slide.speaker.data.role}
+                    </span>
+                    <span class="speaker-card__company">
+                      {slide.speaker.data.company}
+                    </span>
+                  </span>
+                </a>
+              ) : (
+                <div class="speaker-card__pending-surface">
+                  <span class="speaker-card__pending-count" aria-hidden="true">
+                    +{slide.count}
+                  </span>
+                  <span class="speaker-card__identity">
+                    <small class="speaker-card__status">
+                      Programmation en cours
+                    </small>
+                    <strong class="speaker-card__name">
+                      {slide.count} voix à annoncer
+                    </strong>
+                    <span class="speaker-card__role">
+                      Ceux qui décident · Ceux qui implémentent
+                    </span>
+                  </span>
+                </div>
+              )}
+            </article>
+          ))
+        }
+      </div>
+    </div>
+
+    <footer class="speaker-carousel__footer">
+      <EditorialCta href="/speakers">Découvrir les intervenants</EditorialCta>
+      <div
+        class="speaker-carousel__pagination"
+        aria-hidden="true"
+        style={`--speaker-slide-count: ${speakerSlides.length}`}
+      >
+        {
+          speakerSlides.map((_, index) => (
+            <span
+              data-speaker-segment
+              data-active={index < initialVisibleSlides ? "true" : "false"}
+            />
+          ))
+        }
+      </div>
+    </footer>
+  </div>
+</section>
+
+<TracksProgramme />
+
+<CommunityProofSection />
+
+<PartnersShowcase />
+
+<VenueSpotlight />
+
+<AdmissionTicketSection />
+
+<script>
+  import { initIssueIndex } from "../scripts/issue-index";
+  import { initSpeakerCarousels } from "../scripts/speaker-carousel";
+
+  initIssueIndex();
+  initSpeakerCarousels();
+</script>
+
+<style>
+  .manifesto-section,
+  .issue-index,
+  .speaker-section {
+    color: var(--color-brand-black);
+  }
+
+  .manifesto-section {
+    --manifesto-surface: var(--color-brand-cream);
+    --manifesto-overlap: 82svh;
+    --manifesto-seam: clamp(6rem, 14svh, 10rem);
+    position: relative;
+    z-index: 2;
+    isolation: isolate;
+    margin-top: calc(-1 * var(--manifesto-overlap));
+    background: var(--manifesto-surface);
+  }
+
+  .manifesto-section::before {
+    position: absolute;
+    top: calc(-1 * var(--manifesto-seam));
+    right: 0;
+    left: 0;
+    height: calc(var(--manifesto-seam) + 2px);
+    background: linear-gradient(
+      to bottom,
+      rgb(from var(--manifesto-surface) r g b / 0%) 0%,
+      rgb(from var(--manifesto-surface) r g b / 72%) 68%,
+      var(--manifesto-surface) 100%
+    );
+    content: "";
+    pointer-events: none;
+  }
+
+  .manifesto-section__inner {
+    position: relative;
+    z-index: 3;
+    display: grid;
+    width: min(100%, 82rem);
+    margin-inline: auto;
+    padding: clamp(5rem, 12vw, 8rem) var(--layout-gutter)
+      var(--space-section-close);
+    gap: clamp(2.5rem, 8vw, 4rem);
+  }
+
+  .manifesto-section__visual {
+    aspect-ratio: 6 / 5;
+    overflow: hidden;
+    background: var(--color-brand-white);
+  }
+
+  .manifesto-section__visual img {
+    width: 100%;
+    height: 100%;
+    filter: saturate(0.86) contrast(0.98);
+    object-fit: cover;
+    object-position: 50% 50%;
+    transition:
+      filter 360ms cubic-bezier(0.16, 1, 0.3, 1),
+      transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .manifesto-section__visual:hover img {
+    filter: saturate(0.96) contrast(1);
+    transform: scale(1.015);
+  }
+
+  .manifesto-section__copy {
+    display: grid;
+    align-content: center;
+    justify-items: start;
+    gap: clamp(1.5rem, 4vw, 2rem);
+  }
+
+  .manifesto-section__copy h2 {
+    max-width: 17ch;
+    color: var(--color-brand-black);
+    font-size: clamp(2.75rem, 8vw, 4rem);
+    font-style: normal;
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    line-height: 0.94;
+    text-wrap: balance;
+  }
+
+  .manifesto-section__copy > div {
+    display: grid;
+    max-width: 38rem;
+    gap: 1rem;
+  }
+
+  .manifesto-section__copy p {
+    color: rgb(57 54 54 / 78%);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.58;
+  }
+
+  .issue-index {
+    position: relative;
+    z-index: 2;
+    isolation: isolate;
+    background: var(--color-brand-cream);
+  }
+
+  .issue-index__inner {
+    position: relative;
+    z-index: 3;
+    width: min(100%, 82rem);
+    margin-inline: auto;
+    padding: clamp(5rem, 12vw, 8rem) var(--layout-gutter)
+      var(--space-section-close);
+    scroll-margin-top: calc(var(--site-header-height) + 0.75rem);
+  }
+
+  .issue-index__heading {
+    display: grid;
+    gap: 1.25rem;
+    padding-bottom: clamp(2rem, 6vw, 3rem);
+  }
+
+  .issue-index__heading h2 {
+    max-width: 9ch;
+    color: var(--color-brand-black);
+    font-size: clamp(3.5rem, 9vw, 5rem);
+    font-style: normal;
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 0.86;
+  }
+
+  .issue-index__heading p {
+    max-width: 46ch;
+    color: rgb(57 54 54 / 72%);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.55;
+  }
+
+  .issue-index__topics {
+    display: grid;
+    border-top: 1px solid rgb(57 54 54 / 18%);
+    list-style: none;
+  }
+
+  .issue-index__topics > li {
+    min-width: 0;
+    border-bottom: 1px solid rgb(57 54 54 / 18%);
+    transition: background-color 240ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .issue-index__topics > li[data-active="true"] {
+    border-inline-start: 3px solid var(--color-brand-blue);
+    background: var(--color-brand-cream-deep);
+  }
+
+  .issue-index__topic {
+    display: block;
+    width: 100%;
+    /* Le visuel de l'enjeu precedent se replie au-dessus du bouton qui prend
+     * le focus et le fait remonter sous le header collant. Le rattrapage de
+     * defilement du script s'appuie sur ces marges pour rendre au bouton la
+     * place du header et celle du CTA billetterie fixe (WCAG 2.4.11). */
+    scroll-margin-top: calc(var(--site-header-height) + 0.75rem);
+    scroll-margin-bottom: calc(var(--mobile-cta-reserve) + 0.75rem);
+    border: 0;
+    padding: clamp(1.5rem, 4vw, 2rem);
+    background: transparent;
+    color: var(--color-brand-black);
+    cursor: pointer;
+    text-align: left;
+  }
+
+  .issue-index__topic:focus-visible {
+    outline: 2px solid var(--color-brand-blue);
+    outline-offset: -0.4rem;
+  }
+
+  .issue-index__topic-copy {
+    display: grid;
+    gap: 0.55rem;
+  }
+
+  .issue-index__topic-copy strong {
+    font-family: var(--font-serif);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-style: normal;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+  }
+
+  .issue-index__topic-copy > span {
+    max-width: 46ch;
+    color: rgb(57 54 54 / 76%);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  /* Sous 64rem le visuel est affiche par le bouton de l'enjeu, pas en continu :
+     c'est ce qui donne une finalite au aria-pressed de .issue-index__topic. */
+  .issue-index__mobile-visual {
+    display: none;
+    /* Aligne le bord de l'image sur le padding de .issue-index__topic, pas sur la gouttiere. */
+    margin-inline: clamp(1.5rem, 4vw, 2rem);
+    margin-bottom: clamp(1.5rem, 5vw, 2.5rem);
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: var(--color-brand-white);
+  }
+
+  .issue-index__mobile-visual img {
+    width: 100%;
+    height: 100%;
+    filter: saturate(0.78) contrast(0.96);
+    mix-blend-mode: multiply;
+    object-fit: cover;
+  }
+
+  .issue-index__visual-frame {
+    display: none;
+  }
+
+  .issue-index__row-guide {
+    display: none;
+  }
+
+  .speaker-section {
+    position: relative;
+    isolation: isolate;
+    background: var(--color-brand-cream);
+  }
+
+  .speaker-section__inner {
+    position: relative;
+    z-index: 3;
+    width: min(calc(100% - 2 * var(--layout-gutter)), var(--layout-editorial));
+    margin-inline: auto;
+    padding: var(--space-section-compact) 0 var(--space-section-close);
+  }
+
+  .speaker-section__heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    padding-inline: clamp(1.5rem, 2.5vw, 2rem);
+    gap: 1.5rem 3rem;
+  }
+
+  .speaker-section__heading h2 {
+    max-width: 12ch;
+  }
+
+  .speaker-section__heading p {
+    max-width: 44ch;
+    margin-top: 0.8rem;
+    color: rgb(57 54 54 / 72%);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .speaker-carousel__controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .speaker-carousel__control {
+    display: grid;
+    width: 3rem;
+    height: 3rem;
+    place-items: center;
+    border: 1px solid var(--color-brand-blue);
+    background: transparent;
+    color: var(--color-brand-blue);
+    transition:
+      background-color 160ms ease,
+      color 160ms ease,
+      opacity 160ms ease;
+  }
+
+  .speaker-carousel__control--next {
+    background: var(--color-brand-blue);
+    color: var(--color-brand-white);
+  }
+
+  .speaker-carousel__control svg {
+    width: 1.2rem;
+    height: 1.2rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: square;
+    stroke-linejoin: miter;
+    stroke-width: 1.75;
+  }
+
+  .speaker-carousel__control:not(:disabled):hover,
+  .speaker-carousel__control:not(:disabled):focus-visible {
+    background: var(--color-brand-orange);
+    color: var(--color-brand-black);
+  }
+
+  .speaker-carousel__control:focus-visible,
+  .speaker-carousel__viewport:focus-visible {
+    outline: 3px solid var(--color-brand-orange);
+    outline-offset: 3px;
+  }
+
+  .speaker-carousel__control:disabled {
+    cursor: not-allowed;
+    opacity: 0.32;
+  }
+
+  .speaker-carousel__viewport {
+    position: relative;
+    margin-top: clamp(2rem, 4vw, 3.5rem);
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    scroll-snap-type: inline mandatory;
+  }
+
+  .speaker-carousel__viewport::-webkit-scrollbar {
+    display: none;
+  }
+
+  .speaker-carousel__track {
+    display: flex;
+    gap: 1px;
+    background: rgb(57 54 54 / 18%);
+  }
+
+  .speaker-card {
+    position: relative;
+    flex: 0 0 calc((100% - 2px) / 3);
+    min-width: 0;
+    overflow: hidden;
+    background: var(--color-brand-white);
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
+  .speaker-card > a,
+  .speaker-card__pending-surface {
+    position: relative;
+    display: grid;
+    height: clamp(23rem, 30vw, 27rem);
+    color: var(--color-brand-black);
+    grid-template-rows: minmax(0, 1fr) 7.5rem;
+  }
+
+  .speaker-card img,
+  .speaker-card__fallback {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    grid-row: 1;
+  }
+
+  .speaker-card img {
+    filter: grayscale(0.5) sepia(0.08) saturate(0.72) contrast(1.04);
+    object-fit: cover;
+    object-position: 50% 28%;
+    transition:
+      filter 240ms ease,
+      transform 500ms cubic-bezier(0.2, 0.75, 0.25, 1);
+  }
+
+  .speaker-card > a:hover img,
+  .speaker-card > a:focus-visible img {
+    filter: grayscale(0.12) sepia(0.04) saturate(0.94) contrast(1.04);
+    transform: scale(1.018);
+  }
+
+  .speaker-card__fallback {
+    display: grid;
+    place-items: center;
+    background: var(--color-brand-blue);
+    font-family: var(--font-serif);
+    font-size: 8rem;
+  }
+
+  .speaker-card__identity {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    height: 7.5rem;
+    align-content: center;
+    gap: 0.25rem;
+    padding: 0.9rem 1.15rem 1rem;
+    background: rgb(255 255 255 / 94%);
+    grid-row: 2;
+  }
+
+  .speaker-card__name {
+    overflow: hidden;
+    color: var(--color-brand-black);
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-style: normal;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .speaker-card__role,
+  .speaker-card__company {
+    overflow: hidden;
+    font-family: var(--font-nav);
+    font-size: 0.75rem;
+    line-height: 1.25;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .speaker-card__role {
+    color: rgb(57 54 54 / 76%);
+    font-weight: 500;
+  }
+
+  .speaker-card__company {
+    color: rgb(57 54 54 / 54%);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .speaker-card__status {
+    color: rgb(57 54 54 / 52%);
+    font-family: var(--font-nav);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.055em;
+    line-height: 1.3;
+    text-transform: uppercase;
+  }
+
+  .speaker-card__pending-surface {
+    overflow: hidden;
+    background: var(--color-brand-blue);
+    color: var(--color-brand-cream);
+  }
+
+  .speaker-card__pending-surface::before {
+    position: absolute;
+    top: 12%;
+    bottom: calc(7.5rem + 12%);
+    left: 50%;
+    width: min(42%, 7rem);
+    border: 1px solid currentColor;
+    border-radius: 50% 50% 0 0;
+    content: "";
+    opacity: 0.42;
+    transform: translateX(-50%);
+  }
+
+  .speaker-card__pending-count {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    font-family: var(--font-serif);
+    font-size: clamp(3.5rem, 12vw, 8rem);
+    font-weight: 600;
+    grid-row: 1;
+    letter-spacing: -0.03em;
+    line-height: 0.86;
+    place-items: center;
+  }
+
+  .speaker-carousel__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem clamp(1.5rem, 2.5vw, 2rem) 0;
+    gap: 1.5rem;
+  }
+
+  .speaker-carousel__pagination {
+    display: grid;
+    width: min(15rem, 42vw);
+    grid-template-columns: repeat(
+      var(--speaker-slide-count, 1),
+      minmax(0, 1fr)
+    );
+    gap: 0.2rem;
+  }
+
+  .speaker-carousel__pagination span {
+    height: 0.35rem;
+    background: var(--color-brand-cream-deep);
+    transition: background-color 180ms ease;
+  }
+
+  .speaker-carousel__pagination span[data-active="true"] {
+    background: var(--color-brand-blue);
+  }
+
+  @media (max-width: 47.999rem) {
+    .speaker-section__heading {
+      display: grid;
+      align-items: start;
+    }
+
+    .speaker-carousel__controls {
+      justify-content: flex-end;
+    }
+
+    .speaker-card {
+      flex-basis: 86%;
+    }
+
+    .speaker-card > a,
+    .speaker-card__pending-surface {
+      height: 25rem;
+    }
+
+    .speaker-card img {
+      object-position: 50% 24%;
+    }
+
+    .speaker-carousel__footer {
+      display: grid;
+    }
+
+    .speaker-carousel__pagination {
+      width: 100%;
+    }
+  }
+
+  @media (min-width: 48rem) and (max-width: 63.999rem) {
+    .speaker-card {
+      flex-basis: calc((100% - 1px) / 2);
+    }
+  }
+
+  @media (max-width: 63.999rem) {
+    .issue-index__topics > li[data-active="true"] .issue-index__mobile-visual {
+      display: block;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .manifesto-section__inner {
+      width: min(
+        calc(100% - 2 * var(--layout-gutter)),
+        var(--layout-editorial)
+      );
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: center;
+      padding: clamp(4rem, 7svh, 4.75rem) 0 var(--space-section-close);
+      gap: 0;
+    }
+
+    .manifesto-section__visual,
+    .manifesto-section__copy {
+      margin-inline: clamp(2rem, 4vw, 4rem);
+    }
+
+    .manifesto-section__visual {
+      aspect-ratio: 6 / 5;
+    }
+
+    .manifesto-section__copy h2 {
+      font-size: clamp(2.75rem, 3.65vw, 3.5rem);
+    }
+
+    .speaker-section {
+      scroll-margin-top: calc(
+        var(--site-header-height) + clamp(5rem, 10svh, 6rem)
+      );
+    }
+
+    .speaker-section__inner {
+      padding: var(--space-section-compact) 0 var(--space-section-close);
+    }
+
+    .speaker-section__heading h2 {
+      color: var(--color-brand-black);
+    }
+
+    .speaker-section__heading p {
+      max-width: 70ch;
+      margin-top: 0.625rem;
+    }
+
+    .issue-index__inner {
+      display: grid;
+      width: min(
+        calc(100% - 2 * var(--layout-gutter)),
+        var(--layout-editorial)
+      );
+      grid-template-columns: minmax(0, 61.25fr) minmax(0, 38.75fr);
+      grid-template-rows: auto auto;
+      align-content: start;
+      align-items: stretch;
+      padding: clamp(4rem, 7svh, 4.75rem) 0 var(--space-section-close);
+      gap: 0;
+    }
+
+    .issue-index__heading {
+      grid-row: 1;
+      grid-column: 1 / -1;
+      gap: 0.625rem;
+      padding-inline: clamp(1.5rem, 2.5vw, 2rem);
+      padding-bottom: clamp(1.5rem, 3svh, 2rem);
+    }
+
+    .issue-index__heading h2 {
+      max-width: none;
+      font-size: clamp(3rem, 3.6vw, 3.5rem);
+      white-space: nowrap;
+    }
+
+    .issue-index__heading p {
+      max-width: none;
+      white-space: nowrap;
+    }
+
+    .issue-index__topic {
+      padding: clamp(0.85rem, 1.5svh, 1.15rem) clamp(1.5rem, 2.5vw, 2rem);
+    }
+
+    .issue-index__topics {
+      grid-row: 2;
+      grid-column: 1;
+      border-top: 0;
+    }
+
+    .issue-index__topics
+      > li[data-active="true"]
+      .issue-index__topic-copy
+      strong {
+      color: var(--color-brand-blue);
+    }
+
+    .issue-index__topic-copy strong {
+      transition: color 240ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .issue-index__visual-frame {
+      display: grid;
+      grid-row: 2;
+      grid-column: 2;
+      min-width: 0;
+      min-height: 0;
+      border-bottom: 1px solid rgb(57 54 54 / 18%);
+      place-items: center;
+      container-type: size;
+    }
+
+    .issue-index__visual-rail {
+      position: relative;
+      width: min(100%, 100cqh);
+      aspect-ratio: 1;
+      overflow: hidden;
+      background: var(--color-brand-white);
+      isolation: isolate;
+    }
+
+    .issue-index__row-guide {
+      position: relative;
+      z-index: 4;
+      display: block;
+      grid-row: 2;
+      grid-column: 1 / -1;
+      align-self: stretch;
+      pointer-events: none;
+    }
+
+    .issue-index__visual {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      background: var(--color-brand-white);
+      clip-path: inset(0 0 100% 0);
+      pointer-events: none;
+      transition: clip-path 620ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .issue-index[data-issue-direction="backward"]
+      .issue-index__visual:not([data-active="true"]) {
+      clip-path: inset(100% 0 0 0);
+    }
+
+    .issue-index__visual[data-active="true"] {
+      z-index: 2;
+      clip-path: inset(0);
+    }
+
+    .issue-index__visual-image {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      filter: saturate(0.78) contrast(0.96);
+      mix-blend-mode: multiply;
+      object-fit: cover;
+      object-position: 50% 50%;
+      transform: scale(1.015);
+    }
+
+    .issue-index__visual.is-entering .issue-index__visual-image {
+      animation: issue-image-develop 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
+      will-change: filter, transform;
+    }
+
+    .issue-index__scan-line {
+      position: absolute;
+      z-index: 4;
+      inset: 0;
+      height: 100%;
+      border-top: 2px solid var(--color-brand-blue);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .issue-index[data-issue-direction="forward"].is-transitioning
+      .issue-index__scan-line {
+      animation:
+        issue-scan-forward 620ms cubic-bezier(0.16, 1, 0.3, 1) both,
+        issue-scan-opacity 620ms linear both;
+      will-change: opacity, transform;
+    }
+
+    .issue-index[data-issue-direction="backward"].is-transitioning
+      .issue-index__scan-line {
+      animation:
+        issue-scan-backward 620ms cubic-bezier(0.16, 1, 0.3, 1) both,
+        issue-scan-opacity 620ms linear both;
+      will-change: opacity, transform;
+    }
+
+    @keyframes issue-image-develop {
+      from {
+        filter: saturate(0.52) contrast(0.9);
+        transform: scale(1.04);
+      }
+
+      to {
+        filter: saturate(0.78) contrast(0.96);
+        transform: scale(1.015);
+      }
+    }
+
+    @keyframes issue-scan-forward {
+      from {
+        transform: translateY(0);
+      }
+
+      to {
+        transform: translateY(100%);
+      }
+    }
+
+    @keyframes issue-scan-backward {
+      from {
+        transform: translateY(100%);
+      }
+
+      to {
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes issue-scan-opacity {
+      0%,
+      100% {
+        opacity: 0;
+      }
+
+      7%,
+      93% {
+        opacity: 1;
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .manifesto-section__visual img,
+    .issue-index__topics > li,
+    .issue-index__topic-copy strong,
+    .issue-index__visual {
+      transition: none;
+    }
+
+    .manifesto-section__visual:hover img {
+      transform: none;
+    }
+
+    .issue-index__scan-line,
+    .issue-index__visual.is-entering .issue-index__visual-image {
+      animation: none;
+    }
+
+    .speaker-card img,
+    .speaker-carousel__pagination span,
+    .speaker-carousel__control {
+      transition: none;
+      transform: none;
+    }
+
+    /* Sans cette remise a auto, le behavior: 'auto' de speaker-carousel.ts se resout
+       sur le scroll-behavior calcule du viewport et le glissement anime revient. */
+    .speaker-carousel__viewport {
+      scroll-behavior: auto;
+    }
+  }
+</style>

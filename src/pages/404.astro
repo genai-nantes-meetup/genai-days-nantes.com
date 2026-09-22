@@ -1,0 +1,85 @@
+---
+import EventName from '../components/EventName.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { formatEventDateLabel } from '../lib/event';
+import EVENT from '../content/event.json';
+---
+
+<BaseLayout
+  title="Page introuvable · GenAI Days"
+  description="Cette page n’existe pas ou a été déplacée. Retrouvez toutes les informations de GenAI Days depuis l’accueil."
+  robots="noindex, follow, noarchive"
+>
+  <main class="error-page relative flex min-h-svh flex-col overflow-hidden bg-brand-blue px-6 text-white">
+    <div class="error-page__halo error-page__halo--top" aria-hidden="true"></div>
+    <div class="error-page__halo error-page__halo--bottom" aria-hidden="true"></div>
+
+    <header class="relative z-10 mx-auto flex w-full max-w-6xl items-center justify-between gap-6 py-6">
+      <a href="/" class="text-lg font-bold tracking-wide"><EventName showLocation /></a>
+      <p class="text-subtitle text-right text-base text-white/80 sm:text-lg">
+        {formatEventDateLabel()} · {EVENT.venue.city}
+      </p>
+    </header>
+
+    <section class="relative z-10 mx-auto flex w-full max-w-6xl flex-1 items-center py-16 sm:py-24">
+      <div class="max-w-4xl">
+        <p class="text-subtitle text-xl text-brand-cream">Erreur 404</p>
+        <h1 class="mt-6 text-[clamp(3.25rem,10vw,8.5rem)] font-black leading-[0.88] tracking-[-0.055em]">
+          Cette page n’est pas au programme.
+        </h1>
+        <p class="mt-8 max-w-xl text-lg leading-relaxed text-white/80 sm:text-xl">
+          Le contenu que vous cherchez a peut-être été déplacé. Revenez à l’accueil ou consultez directement le
+          planning de <EventName />.
+        </p>
+        <div class="mt-10 flex flex-wrap gap-4">
+          <a
+            href="/"
+            class="rounded border-2 border-white bg-white px-6 py-3 text-sm font-bold uppercase tracking-wide text-brand-blue transition-colors hover:bg-white/90"
+          >
+            Retour à l’accueil
+          </a>
+          <a
+            href="/programme"
+            class="inline-flex min-h-11 items-center py-2 text-sm font-bold uppercase tracking-wide text-brand-cream underline decoration-brand-cream/50 underline-offset-4 transition-colors hover:text-white hover:decoration-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-orange"
+          >
+            Voir le programme
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="relative z-10 mx-auto flex w-full max-w-6xl justify-between gap-6 border-t border-white/15 py-6 text-xs text-white/80">
+      <span><EventName /> {EVENT.year}</span>
+      <span>{EVENT.venue.name}</span>
+    </footer>
+  </main>
+</BaseLayout>
+
+<style>
+  .error-page {
+    isolation: isolate;
+  }
+
+  .error-page__halo {
+    position: absolute;
+    z-index: -1;
+    border-radius: 999px;
+    pointer-events: none;
+  }
+
+  .error-page__halo--top {
+    top: -24rem;
+    right: -18rem;
+    width: 52rem;
+    height: 52rem;
+    border: 8rem solid rgb(255 255 255 / 4%);
+  }
+
+  .error-page__halo--bottom {
+    bottom: -17rem;
+    left: -12rem;
+    width: 34rem;
+    height: 34rem;
+    background: rgb(255 75 43 / 16%);
+  }
+</style>

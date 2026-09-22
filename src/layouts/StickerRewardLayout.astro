@@ -1,0 +1,93 @@
+---
+import EventName from '../components/EventName.astro';
+import BaseLayout from './BaseLayout.astro';
+import { formatEventDateLabel } from '../lib/event';
+import EVENT from '../content/event.json';
+
+interface Props {
+  title: string;
+  description: string;
+  step: string;
+}
+
+const { title, description, step } = Astro.props;
+---
+
+<BaseLayout title={title} description={description} robots="noindex, follow, noarchive">
+  <div class="sticker-reward-layout">
+    <header class="sticker-reward-layout__header">
+      <a href="/" class="sticker-reward-layout__brand"><EventName /></a>
+      <span>{step}</span>
+    </header>
+    <main class="sticker-reward-layout__main">
+      <slot />
+    </main>
+    <footer class="sticker-reward-layout__footer">
+      <span>{formatEventDateLabel()} · {EVENT.venue.city}</span>
+      <a href="/">Retour à l’accueil</a>
+    </footer>
+  </div>
+</BaseLayout>
+
+<style>
+  .sticker-reward-layout {
+    min-height: 100dvh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    background:
+      linear-gradient(rgb(255 255 255 / 9%) 1px, transparent 1px) 0 0 / 4.5rem 4.5rem,
+      linear-gradient(90deg, rgb(255 255 255 / 9%) 1px, transparent 1px) 0 0 / 4.5rem 4.5rem,
+      linear-gradient(135deg, #0d1020 0%, #1b2b69 55%, #3d43ce 100%);
+    color: #fff;
+  }
+
+  .sticker-reward-layout__header,
+  .sticker-reward-layout__footer {
+    display: flex;
+    width: min(74rem, 100%);
+    margin: 0 auto;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.2rem clamp(1rem, 4vw, 2.5rem);
+    font-family: var(--font-label-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .sticker-reward-layout__header {
+    border-bottom: 1px solid rgb(255 255 255 / 18%);
+  }
+
+  .sticker-reward-layout__brand {
+    color: #fff;
+    font-size: 1.25rem;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+  }
+
+  .sticker-reward-layout__main {
+    display: grid;
+    width: 100%;
+    place-items: center;
+    padding: clamp(1.25rem, 5vw, 4rem) clamp(1rem, 4vw, 2.5rem);
+  }
+
+  .sticker-reward-layout__footer {
+    border-top: 1px solid rgb(255 255 255 / 18%);
+    color: rgb(255 255 255 / 70%);
+  }
+
+  .sticker-reward-layout__footer a {
+    color: inherit;
+  }
+
+  @media (max-width: 35rem) {
+    .sticker-reward-layout__footer {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+</style>

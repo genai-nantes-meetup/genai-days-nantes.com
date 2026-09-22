@@ -1,0 +1,551 @@
+---
+import EditorialCta from './EditorialCta.astro';
+import EditorialGrid from './EditorialGrid.astro';
+import { EVENT, formatEventDateLabel } from '../lib/event';
+
+const venueIllustration = '/images/hotel-region-banner-genai-days-web-optimized.webp';
+const mapDestination = [
+  EVENT.venue.name,
+  EVENT.venue.address,
+  `${EVENT.venue.postalCode} ${EVENT.venue.city}`,
+].join(', ');
+const mapUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(mapDestination)}`;
+---
+
+<section id="lieu" class="venue-spotlight" aria-labelledby="venue-spotlight-title">
+  <EditorialGrid />
+  <div class="venue-spotlight__shell">
+    <header class="venue-spotlight__copy">
+      <h2 id="venue-spotlight-title" class="type-section-title">
+        Au bord de la Loire, au cœur de Nantes.
+      </h2>
+      <p>
+        L’{EVENT.venue.shortName} accueille les conférences, les rencontres et les temps communs de la journée.
+      </p>
+    </header>
+
+    <div class="venue-spotlight__inner">
+      <div class="venue-spotlight__media">
+        <figure class="venue-spotlight__visual">
+          <img
+            src={venueIllustration}
+            alt={`L’${EVENT.venue.shortName} à ${EVENT.venue.city}, illustré en bleu et orange`}
+            width="1774"
+            height="886"
+            loading="lazy"
+            decoding="async"
+          />
+        </figure>
+      </div>
+
+      <div class="venue-spotlight__card">
+
+      <dl class="venue-spotlight__facts">
+        <div>
+          <dt>Date</dt>
+          <dd>{formatEventDateLabel()}</dd>
+        </div>
+        <div>
+          <dt>Accueil</dt>
+          <dd>{EVENT.startTime}</dd>
+        </div>
+        <div>
+          <dt>Adresse</dt>
+          <dd>{EVENT.venue.address}<br />{EVENT.venue.postalCode} {EVENT.venue.city}</dd>
+        </div>
+      </dl>
+
+        <div class="venue-spotlight__cta">
+          <EditorialCta href="/infos-pratiques">Préparer ma venue</EditorialCta>
+        </div>
+
+        <figure class="venue-spotlight__map">
+          <div
+            class="venue-spotlight__map-canvas"
+            data-venue-map
+            aria-hidden="true"
+          >
+            <span data-venue-map-fallback>Plan d’accès</span>
+          </div>
+          <figcaption>
+            <span>Entrée côté rue de la Loire</span>
+            <a href={mapUrl} target="_blank" rel="noopener noreferrer">Itinéraire ↗</a>
+          </figcaption>
+        </figure>
+
+        <aside class="venue-spotlight__logistics" aria-label="Accès au lieu">
+          <dl class="venue-spotlight__access">
+            <div>
+              <dt>Transports</dt>
+              <dd>Busway 5 · arrêt Pompidou<br />Bus 26 · terminus Hôtel de Région</dd>
+            </div>
+            <div>
+              <dt>Parking</dt>
+              <dd>Parking du parc de Beaulieu et voirie alentour · stationnement payant</dd>
+            </div>
+            <div>
+              <dt>Entrée</dt>
+              <dd>Rue de la Loire · portail côté œuvre de François Morellet</dd>
+            </div>
+          </dl>
+
+        </aside>
+      </div>
+    </div>
+  </div>
+</section>
+
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css" />
+<script is:inline src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
+<script is:inline>
+  (() => {
+    const mapContainer = document.querySelector('[data-venue-map]');
+    if (!mapContainer || !window.maplibregl || mapContainer.dataset.mapReady === 'true') return;
+
+    mapContainer.dataset.mapReady = 'true';
+
+    const rootStyles = getComputedStyle(document.documentElement);
+    const color = (name) => rootStyles.getPropertyValue(name).trim();
+    const mapTheme = {
+      land: color('--color-brand-cream'),
+      landDeep: color('--color-brand-cream-deep'),
+      water: color('--color-brand-blue'),
+      ink: color('--color-brand-black'),
+      route: color('--color-brand-blue'),
+      accent: color('--color-brand-orange'),
+      paper: color('--color-brand-white'),
+    };
+    const streetAccess = [-1.526327, 47.211736];
+    const venueParvis = [-1.525261, 47.211925];
+    const venueEntrance = [-1.525113, 47.211681];
+
+    const map = new window.maplibregl.Map({
+      container: mapContainer,
+      style: 'https://tiles.openfreemap.org/styles/positron',
+      center: [-1.52548, 47.21178],
+      zoom: 15.5,
+      bearing: 158,
+      pitch: 38,
+      interactive: false,
+      attributionControl: false,
+    });
+
+    map.addControl(new window.maplibregl.AttributionControl({ compact: true }), 'bottom-right');
+
+    map.on('load', () => {
+      mapContainer.querySelector('[data-venue-map-fallback]')?.remove();
+      const attribution = mapContainer.querySelector('details.maplibregl-ctrl-attrib');
+      if (attribution) {
+        attribution.open = false;
+        attribution.classList.remove('maplibregl-compact-show');
+      }
+
+      for (const layer of map.getStyle().layers ?? []) {
+        const id = layer.id.toLowerCase();
+
+        try {
+          if (layer.type === 'background') {
+            map.setPaintProperty(layer.id, 'background-color', mapTheme.land);
+          }
+
+          if (layer.type === 'fill') {
+            const isWater = id.includes('water');
+            const isBuilding = id.includes('building');
+            map.setPaintProperty(
+              layer.id,
+              'fill-color',
+              isWater ? mapTheme.water : isBuilding ? mapTheme.landDeep : mapTheme.land,
+            );
+            map.setPaintProperty(layer.id, 'fill-opacity', isWater ? 0.18 : isBuilding ? 0.88 : 1);
+          }
+
+          if (layer.type === 'line') {
+            map.setPaintProperty(layer.id, 'line-color', mapTheme.paper);
+          }
+
+          if (layer.type === 'symbol') {
+            if (/(poi|airport|aeroway|transit)/.test(id)) {
+              map.setLayoutProperty(layer.id, 'visibility', 'none');
+            } else {
+              map.setPaintProperty(layer.id, 'text-color', mapTheme.ink);
+              map.setPaintProperty(layer.id, 'text-halo-color', mapTheme.land);
+              map.setPaintProperty(layer.id, 'text-halo-width', 1.5);
+            }
+          }
+        } catch {
+          /* Certaines couches utilisent des motifs. Leur rendu natif reste en place. */
+        }
+      }
+
+      map.addSource('venue-route', {
+        type: 'geojson',
+        data: {
+          type: 'Feature',
+          properties: {},
+          geometry: {
+            type: 'LineString',
+            coordinates: [streetAccess, venueParvis, venueEntrance],
+          },
+        },
+      });
+
+      map.addLayer({
+        id: 'venue-route-casing',
+        type: 'line',
+        source: 'venue-route',
+        layout: { 'line-cap': 'round', 'line-join': 'round' },
+        paint: { 'line-color': mapTheme.paper, 'line-width': 8 },
+      });
+
+      map.addLayer({
+        id: 'venue-route-line',
+        type: 'line',
+        source: 'venue-route',
+        layout: { 'line-cap': 'round', 'line-join': 'round' },
+        paint: { 'line-color': mapTheme.route, 'line-width': 4 },
+      });
+
+      map.addSource('venue-points', {
+        type: 'geojson',
+        data: {
+          type: 'FeatureCollection',
+          features: [streetAccess, venueEntrance].map((coordinates, index) => ({
+            type: 'Feature',
+            properties: { kind: index === 0 ? 'street' : 'entrance' },
+            geometry: { type: 'Point', coordinates },
+          })),
+        },
+      });
+
+      map.addLayer({
+        id: 'venue-points-halo',
+        type: 'circle',
+        source: 'venue-points',
+        paint: { 'circle-radius': 8, 'circle-color': mapTheme.paper },
+      });
+
+      map.addLayer({
+        id: 'venue-points-fill',
+        type: 'circle',
+        source: 'venue-points',
+        paint: {
+          'circle-radius': 4.5,
+          'circle-color': ['match', ['get', 'kind'], 'entrance', mapTheme.route, mapTheme.accent],
+        },
+      });
+
+      map.fitBounds(
+        [
+          [-1.52655, 47.21152],
+          [-1.52488, 47.21208],
+        ],
+        {
+          padding: { top: 26, right: 26, bottom: 26, left: 26 },
+          maxZoom: 16.6,
+          duration: 0,
+        },
+      );
+
+      map.jumpTo({ bearing: 158, pitch: 38, zoom: map.getZoom() - 0.3 });
+    });
+  })();
+</script>
+
+<style>
+  .venue-spotlight {
+    position: relative;
+    padding: var(--space-section-compact) 0;
+    background: var(--color-brand-cream);
+    color: var(--color-brand-black);
+  }
+
+  .venue-spotlight__shell {
+    position: relative;
+    z-index: 3;
+    display: grid;
+    width: min(calc(100% - 2 * var(--layout-gutter)), var(--layout-editorial));
+    margin-inline: auto;
+    gap: clamp(1.75rem, 4vw, 3rem);
+  }
+
+  .venue-spotlight__inner {
+    display: grid;
+    overflow: hidden;
+    border: 1px solid rgb(from var(--color-brand-black) r g b / 16%);
+    background: var(--color-brand-cream-deep);
+  }
+
+  .venue-spotlight__media {
+    min-width: 0;
+    background: var(--color-brand-night);
+  }
+
+  .venue-spotlight__visual {
+    position: relative;
+    height: 100%;
+    min-height: clamp(15rem, 58vw, 22rem);
+    margin: 0;
+    background: var(--color-brand-night);
+  }
+
+  .venue-spotlight__visual img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 50%;
+  }
+
+  .venue-spotlight__map {
+    display: grid;
+    margin: 0;
+    overflow: hidden;
+    border: 1px solid rgb(from var(--color-brand-black) r g b / 16%);
+    background: var(--color-brand-cream);
+    grid-template-rows: minmax(0, 1fr) auto;
+  }
+
+  .venue-spotlight__map-canvas {
+    position: relative;
+    min-height: 13rem;
+  }
+
+  .venue-spotlight__map-canvas > span {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: rgb(from var(--color-brand-black) r g b / 58%);
+    font-family: var(--font-nav);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .venue-spotlight__map figcaption {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.65rem 0.9rem;
+    border-top: 1px solid rgb(from var(--color-brand-black) r g b / 14%);
+    background: var(--color-brand-cream);
+    color: rgb(from var(--color-brand-black) r g b / 72%);
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    gap: 1rem;
+  }
+
+  .venue-spotlight__map figcaption a {
+    flex: none;
+    color: var(--color-brand-blue);
+    font-family: var(--font-nav);
+    font-weight: 700;
+    letter-spacing: 0.025em;
+    text-transform: uppercase;
+    text-underline-offset: 0.2em;
+  }
+
+  .venue-spotlight__map figcaption a:hover,
+  .venue-spotlight__map figcaption a:focus-visible {
+    text-decoration: underline;
+  }
+
+  .venue-spotlight__map :global(.maplibregl-canvas) {
+    outline: none;
+  }
+
+  .venue-spotlight__map :global(.maplibregl-ctrl-attrib) {
+    color: rgb(from var(--color-brand-black) r g b / 64%);
+    font-size: 0.75rem;
+  }
+
+  .venue-spotlight__card {
+    display: grid;
+    min-width: 0;
+    align-content: space-between;
+    padding: clamp(1.75rem, 3.5vw, 2.5rem);
+    gap: clamp(1.5rem, 3vw, 2rem);
+  }
+
+  .venue-spotlight__copy {
+    display: grid;
+    max-width: 100%;
+    justify-items: start;
+    padding-inline: clamp(1.5rem, 2.5vw, 2rem);
+    gap: 1rem;
+    text-align: left;
+  }
+
+  .venue-spotlight__copy h2 {
+    max-width: none;
+  }
+
+  .venue-spotlight__copy p {
+    max-width: 62ch;
+    color: rgb(from var(--color-brand-black) r g b / 72%);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    text-wrap: balance;
+  }
+
+  .venue-spotlight__facts {
+    display: grid;
+    margin: 0;
+    gap: 1.5rem;
+  }
+
+  .venue-spotlight__facts > div {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .venue-spotlight__facts > div + div {
+    border-top: 0;
+  }
+
+  .venue-spotlight__facts dt {
+    color: rgb(from var(--color-brand-black) r g b / 58%);
+    font-family: var(--font-nav);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  .venue-spotlight__facts dd {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.45;
+  }
+
+  .venue-spotlight__cta,
+  .venue-spotlight__logistics {
+    display: grid;
+    align-content: stretch;
+    gap: 1rem;
+  }
+
+  .venue-spotlight__cta :global(.editorial-cta) {
+    justify-self: start;
+  }
+
+  .venue-spotlight__access {
+    display: grid;
+    height: 100%;
+    margin: 0;
+    grid-template-rows: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+
+  .venue-spotlight__access > div {
+    display: grid;
+    align-content: start;
+    gap: 0.3rem;
+  }
+
+  .venue-spotlight__access > div + div {
+    padding-top: 1.25rem;
+    border-top: 1px solid rgb(from var(--color-brand-black) r g b / 12%);
+  }
+
+  .venue-spotlight__access dt {
+    color: rgb(from var(--color-brand-black) r g b / 58%);
+    font-family: var(--font-nav);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  .venue-spotlight__access dd {
+    margin: 0;
+    color: rgb(from var(--color-brand-black) r g b / 76%);
+    font-family: var(--font-sans);
+    font-size: 0.8125rem;
+    line-height: 1.45;
+  }
+
+  @media (min-width: 52rem) {
+    .venue-spotlight__inner {
+      grid-template-columns: minmax(15rem, 1fr) minmax(0, 2fr);
+    }
+
+    .venue-spotlight__media {
+      min-height: clamp(23rem, 26vw, 27rem);
+    }
+
+    .venue-spotlight__visual {
+      min-height: 0;
+    }
+
+    .venue-spotlight__facts > div {
+      grid-template-columns: 5rem minmax(0, 1fr);
+      align-items: baseline;
+      gap: 1rem;
+    }
+
+    .venue-spotlight__copy p {
+      max-width: none;
+      text-wrap: nowrap;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .venue-spotlight__card {
+      grid-template-columns: minmax(0, 1.45fr) minmax(14rem, 0.55fr);
+      grid-template-areas:
+        'facts facts'
+        'cta cta'
+        'map logistics';
+      column-gap: clamp(2rem, 4vw, 3.5rem);
+      row-gap: 1.5rem;
+    }
+
+    .venue-spotlight__facts {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-area: facts;
+    }
+
+    .venue-spotlight__facts > div {
+      display: block;
+      padding-inline: 0;
+    }
+
+    .venue-spotlight__facts > div + div {
+      border-top: 0;
+      padding-left: clamp(1rem, 2vw, 1.5rem);
+      border-left: 1px solid rgb(from var(--color-brand-black) r g b / 12%);
+    }
+
+    .venue-spotlight__facts dd {
+      margin-top: 0.45rem;
+    }
+
+    .venue-spotlight__cta {
+      grid-area: cta;
+    }
+
+    .venue-spotlight__map {
+      grid-area: map;
+    }
+
+    .venue-spotlight__logistics {
+      grid-area: logistics;
+    }
+  }
+
+  @media (max-width: 29.999rem) {
+    .venue-spotlight__copy {
+      padding-inline: 0;
+    }
+  }
+</style>

@@ -1,0 +1,1173 @@
+---
+import { getCollection } from 'astro:content';
+import { SPEAKER_EVENT_ROLE_SHORT_LABELS } from '../lib/speakers';
+import CoverLabel from './CoverLabel.astro';
+import EventName from './EventName.astro';
+import ImagePlaceholder from './ImagePlaceholder.astro';
+import Label from './Label.astro';
+
+const sessions = (await getCollection('sessions')).sort((a, b) => a.data.startTime.localeCompare(b.data.startTime));
+const speakers = (await getCollection('speakers')).sort((a, b) => a.data.name.localeCompare(b.data.name));
+const partners = await getCollection('partners');
+const tracks = await getCollection('tracks');
+const speakerById = new Map(speakers.map((speaker) => [speaker.id, speaker]));
+const companyLogoByName = new Map(partners.map((partner) => [partner.data.name, partner.data.logo]));
+const trackById = new Map(tracks.map((track) => [track.id, track.data]));
+/* Le `room` de la plupart des sessions ne fait que répéter le nom de son
+ * parcours : quand il est vide, on retombe sur ce nom plutôt que d'afficher
+ * une salle vide. */
+const roomFor = (session: (typeof sessions)[number]) =>
+  session.data.room ||
+  (trackById.get(session.data.track)?.name ?? (session.data.track === 'commun' ? 'Temps commun' : session.data.track));
+const presentersFor = (session: (typeof sessions)[number]) => [
+  ...session.data.speakerSlugs
+    .map((slug) => speakerById.get(slug))
+    .filter((speaker) => Boolean(speaker))
+    .map((speaker) => ({
+      name: speaker!.data.name,
+      company: speaker!.data.company,
+      companyLogo: speaker!.data.companyLogo ?? companyLogoByName.get(speaker!.data.company),
+    })),
+  ...(session.data.presentedBy
+    ? [{
+        name: session.data.presentedBy.name,
+        company: session.data.presentedBy.name,
+        companyLogo: session.data.presentedBy.logo ?? companyLogoByName.get(session.data.presentedBy.name),
+      }]
+    : []),
+];
+const sessionFormatLabels = {
+  keynote: 'Keynote',
+  talk: 'Talk',
+  'table-ronde': 'Table ronde',
+  atelier: 'Atelier',
+  concours: 'Startup Contest',
+  podcast: 'Podcast en public',
+};
+const totalLabels = sessions.length + speakers.length + 1;
+const requiredLabelIds = [
+  'landing-day-manifesto',
+  ...speakers.map((speaker) => `speaker-${speaker.id}`),
+  ...sessions.map((session) => `session-${session.id}`),
+];
+
+---
+
+<aside
+  class="label-archive"
+  data-label-archive
+  data-total-labels={totalLabels}
+  data-required-labels={JSON.stringify(requiredLabelIds)}
+  aria-label="Collection d’étiquettes"
+>
+  <button class="label-archive__tab" type="button" data-label-archive-tab aria-expanded="false">
+    <span>COLLECTION</span>
+    <b data-label-archive-count>00</b>
+  </button>
+
+  <div class="label-archive__drawer">
+    <button class="label-archive__close" type="button" data-label-archive-close aria-label="Fermer la collection">×</button>
+
+    <div class="label-archive__dropzone" data-label-dropzone>
+      <span class="label-archive__target" aria-hidden="true"></span>
+      <strong>Déposer l’étiquette ici</strong>
+      <small>Relâcher pour collectionner</small>
+    </div>
+
+    <div class="label-archive__inventory">
+      <p class="label-archive__empty" data-label-archive-empty>
+        Collection vide.
+      </p>
+
+      <ol>
+        <li data-label-archive-item data-label-id="landing-day-manifesto" hidden>
+          <Label
+            size="compact"
+            format="rectangle-a"
+            elevation="flat"
+            rotation={-0.35}
+            href="/"
+            ariaLabel="Ouvrir la page d’accueil"
+            class="label-archive__card"
+            contentClass="label-archive__card-content"
+          >
+            <span>00</span>
+            <div>
+              <small>ACCUEIL · MANIFESTE</small>
+              <strong>Une journée pour comprendre, décider et construire avec l'IA</strong>
+            </div>
+          </Label>
+          <button
+            class="label-archive__restick"
+            type="button"
+            data-label-archive-restick
+            data-label-restick-name="Accueil · Manifeste"
+            aria-label="Recoller l’étiquette sur la page"
+            aria-disabled="true"
+            title="Recoller sur la page"
+            disabled
+          >
+            <span aria-hidden="true">↖</span>
+          </button>
+        </li>
+
+        {speakers.map((speaker, index) => (
+          <li data-label-archive-item data-label-id={`speaker-${speaker.id}`} hidden>
+            <Label
+              size="compact"
+              format="rectangle-a"
+              elevation="flat"
+              rotation={-0.35}
+              href={`/speakers/${speaker.id}`}
+              ariaLabel={`Ouvrir la page de ${speaker.data.name}`}
+              class="label-archive__card"
+              contentClass="label-archive__card-content"
+            >
+              <span>{String(index + 1).padStart(2, '0')}</span>
+              <div>
+                <small>
+                  {speaker.data.eventRole
+                    ? SPEAKER_EVENT_ROLE_SHORT_LABELS[speaker.data.eventRole].toUpperCase()
+                    : 'SPEAKER'} · {speaker.data.company}
+                </small>
+                <strong>{speaker.data.name}</strong>
+              </div>
+            </Label>
+            <button
+              class="label-archive__restick"
+              type="button"
+              data-label-archive-restick
+              data-label-restick-name={speaker.data.name}
+              aria-label="Recoller l’étiquette sur la page"
+              aria-disabled="true"
+              title="Recoller sur la page"
+              disabled
+            >
+              <span aria-hidden="true">↖</span>
+            </button>
+          </li>
+        ))}
+
+        {sessions.map((session, index) => (
+          <li
+            data-label-archive-item
+            data-label-id={`session-${session.id}`}
+            data-session-id={session.id}
+            data-session-start={session.data.startTime}
+            data-session-track={session.data.track}
+            data-session-title={session.data.title}
+            hidden
+          >
+            <Label
+              size="compact"
+              format="rectangle-a"
+              elevation="flat"
+              rotation={-0.35}
+              href={`/programme/${session.id}`}
+              ariaLabel={`Ouvrir la page : ${session.data.title}`}
+              class="label-archive__card"
+              contentClass="label-archive__card-content"
+            >
+              <span>{String(speakers.length + index + 1).padStart(2, '0')}</span>
+              <div>
+                <small>{session.data.startTime} · {roomFor(session)}</small>
+                <strong>
+                  {session.data.quoteTitle ? `"${session.data.title}"` : session.data.title}
+                </strong>
+                <em data-my-day-choice-marker hidden>Ma journée</em>
+              </div>
+            </Label>
+            <template data-label-restick-template>
+              <CoverLabel
+                labelId={`session-${session.id}`}
+                format={sessionFormatLabels[session.data.format]}
+                room={roomFor(session)}
+                startTime={session.data.startTime}
+                durationMinutes={session.data.durationMinutes}
+                title={session.data.title}
+                quoted={session.data.quoteTitle}
+                speakers={presentersFor(session)}
+              />
+            </template>
+            <button
+              class="label-archive__restick"
+              type="button"
+              data-label-archive-restick
+              data-label-restick-name={session.data.title}
+              aria-label="Recoller l’étiquette sur la page"
+              aria-disabled="true"
+              title="Recoller sur la page"
+              disabled
+            >
+              <span aria-hidden="true">↖</span>
+            </button>
+          </li>
+        ))}
+      </ol>
+    </div>
+
+    <footer class="label-archive__footer">
+      <button
+        class="label-archive__shiny"
+        data-label-shine-permission
+        type="button"
+        aria-live="polite"
+        hidden
+      >
+        Activer l'effet shiny
+      </button>
+      <a
+        class="label-archive__reward-link"
+        href="/stickers/felicitations"
+        data-label-archive-reward
+        hidden
+      >
+        Voir ma récompense
+      </a>
+      <button class="label-archive__reset" type="button" data-label-archive-reset>
+        Vider la collection
+      </button>
+    </footer>
+  </div>
+</aside>
+
+<div class="label-archive-live sr-only" data-label-archive-live aria-live="polite"></div>
+
+<dialog
+  class="label-completion-modal"
+  data-label-completion-modal
+  aria-labelledby="label-completion-title"
+>
+  <div class="label-completion-modal__sheet">
+    <div class="label-completion-modal__cover">
+      <ImagePlaceholder label="Image de récompense à venir" />
+      <form method="dialog" class="label-completion-modal__close-form">
+        <button
+          class="label-completion-modal__close"
+          type="submit"
+          data-label-completion-close
+          aria-label="Fermer la fenêtre"
+        >
+          ×
+        </button>
+      </form>
+    </div>
+    <div class="label-completion-modal__content">
+      <p class="label-completion-modal__eyebrow">COLLECTION COMPLÈTE</p>
+      <h2 id="label-completion-title">Tu les as tous trouvés.</h2>
+      <p>
+        Bravo&nbsp;! Tu viens de compléter l’easter egg des stickers <EventName />.
+        Une récompense spéciale t’attend le jour de l’événement.
+        Elle est réservée aux participants de <EventName /> et sera remise uniquement sur place.
+      </p>
+      <a class="label-completion-modal__cta" href="/stickers/recompense">
+        Accéder à ma récompense
+      </a>
+      <form method="dialog">
+        <button class="label-completion-modal__later" type="submit" data-label-completion-close>
+          Plus tard
+        </button>
+      </form>
+    </div>
+  </div>
+</dialog>
+
+<style>
+  /* Le classeur revient dans la matière du site : papier crème, encre
+   * courante, bleu de marque pour l'action et orange réservé au seul signal
+   * de ciblage. Les valeurs vivent ici pour que les deux surfaces du
+   * composant, le tiroir et la fenêtre de fin de collection, partagent
+   * exactement la même palette. */
+  .label-archive,
+  .label-completion-modal {
+    --archive-paper: var(--color-brand-cream);
+    --archive-paper-deep: var(--color-brand-cream-deep);
+    --archive-sheet: var(--color-brand-white);
+    --archive-ink: var(--color-brand-black);
+    /* Encre secondaire à 72% : 4,82:1 sur crème et 4,61:1 sur crème
+     * approfondi, le plancher qui tient encore le texte courant. */
+    --archive-ink-muted: color-mix(in srgb, var(--color-brand-black) 72%, transparent);
+    /* Filets de papier : décor de cahier, jamais seuls porteurs d'une
+     * information, donc hors exigence de contraste. */
+    --archive-rule: color-mix(in srgb, var(--color-brand-black) 26%, transparent);
+    /* Bordures qui portent un état, zone de dépôt en tête : 3,56:1 sur crème
+     * approfondi. */
+    --archive-edge: color-mix(in srgb, var(--color-brand-black) 62%, transparent);
+    --archive-accent: var(--color-brand-blue);
+    --archive-accent-strong: color-mix(in srgb, var(--color-brand-blue) 86%, var(--color-brand-night));
+    /* Orange de signal déjà composé pour le site (#CD411F) : 4,03:1 sur crème
+     * approfondi et 4,00:1 sur son propre lavis de ciblage. L'orange pur n'y
+     * tenait que 2,80:1, sous le plancher des éléments d'interface. */
+    --archive-signal: var(--color-action-ticket);
+    --archive-shadow: color-mix(in srgb, var(--color-brand-night) 22%, transparent);
+  }
+
+  .label-archive {
+    position: fixed;
+    /* Le centre de la fenêtre utile, header exclu : centrer sur le viewport
+     * entier faisait remonter le classeur sous la barre en paysage. */
+    top: calc(var(--site-header-height) + (100dvh - var(--site-header-height)) / 2);
+    right: 0;
+    z-index: 60;
+    display: grid;
+    grid-template-columns: 2.65rem minmax(16rem, 20rem);
+    width: calc(2.65rem + min(20rem, 82vw));
+    /* La réserve du header collant fait partie du calcul : sans elle, le
+     * classeur centré démarrait 48px au-dessus du bas du header en paysage
+     * et posait son papier sous le bouton MENU, crème sur crème à 1,01:1. */
+    max-height: min(38rem, calc(100dvh - var(--site-header-height) - 2rem));
+    font-family: var(--font-sans);
+    /* Encre courante sur papier crème : 10,93:1. */
+    color: var(--archive-ink);
+    opacity: 0;
+    /* pointer-events ne retire pas la focusabilité : sans visibility, le
+     * classeur invisible donnait des arrêts de tabulation fantômes, dont
+     * une action destructive. */
+    visibility: hidden;
+    pointer-events: none;
+    transform: translate(calc(100% - 2.65rem), -50%);
+    transition:
+      transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 160ms ease,
+      visibility 0s linear 160ms;
+  }
+
+  .label-archive.is-available,
+  .label-archive.is-open,
+  .label-archive.is-reveal-ready,
+  .label-archive.is-revealed,
+  .label-archive.is-shine-available {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    /* Seul le retard de masquage est annulé : redéclarer la liste complète
+     * écraserait la durée propre à la feuille basse mobile. */
+    transition-delay: 0s;
+  }
+
+  .label-archive.is-open,
+  .label-archive.is-revealed {
+    transform: translate(0, -50%);
+  }
+
+  .label-archive__tab {
+    align-self: start;
+    display: flex;
+    width: 2.65rem;
+    min-height: 8.8rem;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem 0.4rem;
+    border: 1px solid var(--archive-rule);
+    border-right: 0;
+    background:
+      radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--color-brand-black) 5%, transparent) 0 0.5px, transparent 0.7px) 0 0 / 4px 4px,
+      var(--archive-paper);
+    box-shadow: -0.35rem 0.5rem 0.8rem var(--archive-shadow);
+    color: var(--archive-ink);
+    cursor: pointer;
+  }
+
+  .label-archive__tab:focus-visible {
+    outline: 2px solid var(--archive-accent);
+    outline-offset: -3px;
+  }
+
+  .label-archive__tab span {
+    font-family: var(--font-nav);
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: var(--tracking-label);
+    line-height: 1;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+  }
+
+  .label-archive__tab b {
+    font-family: var(--font-label-mono);
+    font-size: 0.58rem;
+    letter-spacing: var(--tracking-ui);
+    /* Le compteur change en direct : chiffres à chasse fixe, zéro reflow. */
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Tiroir hors écran = hors parcours clavier : ses fiches et ses boutons ne
+   * redeviennent tabulables qu'une fois le tiroir sorti. */
+  .label-archive__drawer {
+    position: relative;
+    display: flex;
+    min-width: 0;
+    max-height: min(38rem, calc(100dvh - var(--site-header-height) - 2rem));
+    flex-direction: column;
+    visibility: hidden;
+    transition: visibility 0s linear 320ms;
+    border: 1px solid var(--archive-rule);
+    /* Papier réglé : marge orange et lignes nuit, les deux encres du site
+     * posées à faible densité. Le filet de marge est le seul orange au
+     * repos, il reste un trait d'un pixel. */
+    background:
+      linear-gradient(
+        90deg,
+        transparent 1.8rem,
+        color-mix(in srgb, var(--color-brand-orange) 30%, transparent) 1.8rem 1.85rem,
+        transparent 1.85rem
+      ),
+      repeating-linear-gradient(
+        0deg,
+        transparent 0 1.65rem,
+        color-mix(in srgb, var(--color-brand-night) 9%, transparent) 1.65rem 1.7rem
+      ),
+      var(--archive-paper);
+    box-shadow: -1.2rem 1.3rem 2rem var(--archive-shadow);
+  }
+
+  .label-archive.is-open .label-archive__drawer,
+  .label-archive.is-revealed .label-archive__drawer {
+    visibility: visible;
+    transition: visibility 0s linear 0s;
+  }
+
+  .label-archive__close {
+    position: absolute;
+    z-index: 3;
+    top: 0.35rem;
+    right: 0.35rem;
+    display: grid;
+    width: 1.65rem;
+    height: 1.65rem;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--archive-ink);
+    font: 1.3rem/1 var(--font-sans);
+    cursor: pointer;
+  }
+
+  .label-archive__close:focus-visible {
+    outline: 2px solid var(--archive-accent);
+    outline-offset: 2px;
+  }
+
+  /* Gabarit de dépôt : papier approfondi et filet pointillé, la logique de
+   * calque vierge du site. Le pointillé porte l'état de la cible, il tient
+   * donc 3,56:1 au repos et 4,00:1 une fois visé. Le passage d'un état à
+   * l'autre ne repose pas sur la seule teinte : l'épaisseur double et le
+   * papier se réchauffe en même temps. */
+  .label-archive__dropzone {
+    position: relative;
+    display: grid;
+    min-height: 7.5rem;
+    place-content: center;
+    margin: 2.65rem 0.85rem 0 2.1rem;
+    border: 1px dashed var(--archive-edge);
+    background: var(--archive-paper-deep);
+    text-align: center;
+    transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+  }
+
+  .label-archive__dropzone.is-targeted {
+    border: 2px dashed var(--archive-signal);
+    background: color-mix(in srgb, var(--color-brand-orange) 8%, var(--color-brand-cream));
+    transform: scale(1.02);
+  }
+
+  /* Emplacement vide : une étiquette en attente, feuille de papier et deux
+   * lignes réglées, plutôt qu'un aplat gris barré d'une croix. Le gabarit
+   * annonce ce qui va s'y ranger sans inventer de contenu. */
+  .label-archive__target {
+    position: relative;
+    width: 3.2rem;
+    height: 2.1rem;
+    margin: 0 auto 0.6rem;
+    border: 1px solid var(--archive-rule);
+    border-radius: 0.2rem;
+    background: var(--archive-sheet);
+    box-shadow: 0.12rem 0.16rem 0 color-mix(in srgb, var(--color-brand-black) 12%, transparent);
+    transform: rotate(-2.5deg);
+    transition: transform 160ms ease;
+  }
+
+  .label-archive__target::before,
+  .label-archive__target::after {
+    content: "";
+    position: absolute;
+    left: 0.45rem;
+    height: 1px;
+    background: var(--archive-rule);
+  }
+
+  .label-archive__target::before {
+    top: 0.72rem;
+    right: 1.25rem;
+  }
+
+  .label-archive__target::after {
+    top: 1.15rem;
+    right: 0.45rem;
+  }
+
+  .label-archive__dropzone.is-targeted .label-archive__target {
+    border-color: var(--archive-signal);
+    transform: rotate(1.5deg);
+  }
+
+  .label-archive__dropzone strong {
+    font-family: var(--font-nav);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+
+  .label-archive__dropzone small {
+    margin-top: 0.28rem;
+    font-family: var(--font-label-mono);
+    font-size: 0.5rem;
+    letter-spacing: var(--tracking-ui);
+    /* 4,61:1 sur crème approfondi. */
+    color: var(--archive-ink-muted);
+  }
+
+  .label-archive__inventory {
+    min-height: 5rem;
+    overflow-y: auto;
+    padding: 0.9rem 0.85rem 1rem 2.1rem;
+  }
+
+  .label-archive__empty {
+    padding: 1rem 0.7rem;
+    font-family: var(--font-label-mono);
+    font-size: 0.58rem;
+    letter-spacing: var(--tracking-ui);
+    line-height: 1.55;
+    /* 4,82:1 sur crème. */
+    color: var(--archive-ink-muted);
+  }
+
+  .label-archive__inventory ol {
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .label-archive__inventory li {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .label-archive__inventory li:not([hidden]) {
+    display: block;
+  }
+
+  /* Poignée de reprise, posée en absolu sur le coin de la fiche : elle rejoue
+   * le coin décollé de l'étiquette sans rogner la largeur de la carte ni son
+   * lien. C'est un bouton, jamais le lien : un geste qui finirait sur la carte
+   * déclencherait sinon une navigation. */
+  .label-archive__restick {
+    position: absolute;
+    z-index: 2;
+    top: -0.35rem;
+    right: -0.35rem;
+    display: grid;
+    width: 2.1rem;
+    height: 2.1rem;
+    place-items: center;
+    padding: 0;
+    border: 1px solid var(--archive-rule);
+    background: var(--archive-paper);
+    box-shadow: 0.1rem 0.12rem 0 color-mix(in srgb, var(--color-brand-black) 14%, transparent);
+    color: var(--archive-ink);
+    font: 700 0.85rem/1 var(--font-label-mono);
+    cursor: grab;
+    /* L'inventaire défile : sans cette règle le premier déplacement partait en
+     * défilement et l'étiquette ne quittait jamais le classeur. */
+    touch-action: none;
+    user-select: none;
+  }
+
+  /* Glyphe crème sur bleu de marque : 6,63:1. */
+  .label-archive__restick:hover,
+  .label-archive__restick:focus-visible {
+    border-color: var(--archive-accent);
+    background: var(--archive-accent);
+    color: var(--archive-paper);
+  }
+
+  .label-archive__restick:focus-visible {
+    outline: 2px solid var(--archive-accent);
+    outline-offset: 2px;
+  }
+
+  .label-archive__restick:active {
+    cursor: grabbing;
+  }
+
+  /* Poignée hors service : l'étiquette n'a pas d'origine sur cette page. Elle
+   * s'efface sans disparaître, son libellé porte l'explication. */
+  .label-archive__restick:disabled {
+    border-color: color-mix(in srgb, var(--color-brand-black) 18%, transparent);
+    background: var(--archive-paper);
+    box-shadow: none;
+    color: var(--archive-ink-muted);
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+
+  .label-archive__inventory :global(.label-archive__card) {
+    display: block;
+    width: 100%;
+  }
+
+  /* La fiche entière se saisit pour ressortir l'étiquette du classeur. Le
+   * curseur le dit, le clic simple continue d'ouvrir le lien. */
+  .label-archive__inventory li.is-restickable :global(.label-archive__card .site-label) {
+    cursor: grab;
+    /* Le geste horizontal sort l'étiquette, le geste vertical laisse
+     * l'inventaire défiler sous le doigt. */
+    touch-action: pan-y;
+    user-select: none;
+  }
+
+  .label-archive__inventory li.is-restickable :global(.label-archive__card .site-label:active) {
+    cursor: grabbing;
+  }
+
+  .label-archive__inventory :global(.site-label__body.label-archive__card-content) {
+    display: grid;
+    grid-template-columns: 1.5rem minmax(0, 1fr);
+    width: 100%;
+    min-width: 0;
+    gap: 0.5rem;
+    align-items: start;
+  }
+
+  .label-archive__inventory :global(.site-label__body.label-archive__card-content > div) {
+    min-width: 0;
+  }
+
+  .label-archive__inventory :global(.label-archive__card .site-label:focus-visible) {
+    outline: 2px solid var(--archive-accent);
+    outline-offset: 2px;
+  }
+
+  .label-archive__inventory li:hover :global(.label-archive__card .site-label) {
+    filter: drop-shadow(0.18rem 0.26rem 0 color-mix(in srgb, var(--color-brand-black) 13%, transparent));
+    transform: translateY(-1px) rotate(var(--label-rotation));
+  }
+
+  /* Rang de classement : chiffre à chasse fixe, comme le compteur de
+   * l'onglet. Encre courante sur la feuille de l'étiquette, 11,97:1. */
+  .label-archive__inventory :global(.site-label__body.label-archive__card-content > span) {
+    font-family: var(--font-label-mono);
+    font-size: 0.64rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--archive-ink);
+  }
+
+  .label-archive__inventory small {
+    display: block;
+    font-family: var(--font-nav);
+    font-size: 0.52rem;
+    font-weight: 700;
+    letter-spacing: var(--tracking-ui);
+    color: var(--archive-ink);
+  }
+
+  .label-archive__inventory strong {
+    display: block;
+    margin-top: 0.2rem;
+    font-family: var(--font-sans);
+    font-size: 0.66rem;
+    line-height: 1.15;
+    color: var(--archive-ink);
+  }
+
+  .label-archive__inventory :global([data-my-day-choice-marker]) {
+    display: inline-block;
+    margin-top: 0.3rem;
+    padding: 0.14rem 0.3rem;
+    border: 1px solid var(--archive-accent);
+    color: var(--archive-accent);
+    font-family: var(--font-nav);
+    font-size: 0.48rem;
+    font-style: normal;
+    font-weight: 700;
+    letter-spacing: var(--tracking-ui);
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .label-archive__inventory :global([data-my-day-choice-marker][hidden]) {
+    display: none;
+  }
+
+  .label-archive__footer {
+    display: grid;
+    gap: 0.45rem;
+    margin-top: auto;
+    padding: 0.75rem 0.85rem 0.85rem 2.1rem;
+    border-top: 1px solid var(--archive-rule);
+    font-family: var(--font-label-mono);
+    font-size: 0.52rem;
+    font-weight: 700;
+  }
+
+  /* Trois poids d'action dans le pied : la récompense est pleine, l'option
+   * shiny est cernée, le vidage est un lien. Deux aplats pleins côte à côte
+   * se disputaient l'attention que mérite le contenu du classeur. */
+  .label-archive__shiny {
+    width: 100%;
+    padding: 0.62rem 0.75rem;
+    border: 1px solid var(--archive-accent);
+    background: transparent;
+    /* Bleu de marque sur papier crème : 6,63:1. */
+    color: var(--archive-accent);
+    font-family: var(--font-nav);
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: var(--tracking-ui);
+    line-height: 1.1;
+    cursor: pointer;
+    transition: background 160ms ease, color 160ms ease;
+  }
+
+  .label-archive__shiny[hidden] {
+    display: none;
+  }
+
+  /* Crème sur bleu de marque : 6,63:1. */
+  .label-archive__shiny:hover,
+  .label-archive__shiny:focus-visible {
+    background: var(--archive-accent);
+    color: var(--archive-paper);
+  }
+
+  .label-archive__shiny:focus-visible {
+    outline: 2px solid var(--archive-accent);
+    outline-offset: 2px;
+  }
+
+  .label-archive__shiny:disabled {
+    cursor: wait;
+    opacity: 0.68;
+  }
+
+  .label-archive__reward-link {
+    display: inline-flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    padding: 0.68rem 0.75rem;
+    border: 1px solid var(--archive-accent);
+    background: var(--archive-accent);
+    box-shadow: 0.12rem 0.16rem 0 color-mix(in srgb, var(--color-brand-night) 22%, transparent);
+    /* Feuille sur bleu de marque : 7,26:1. */
+    color: var(--archive-sheet);
+    font-family: var(--font-nav);
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: var(--tracking-ui);
+    line-height: 1.1;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .label-archive__reward-link[hidden] {
+    display: none;
+  }
+
+  /* Bleu assombri d'une pointe de nuit : 8,42:1 avec la feuille. */
+  .label-archive__reward-link:hover,
+  .label-archive__reward-link:focus-visible {
+    border-color: var(--archive-accent-strong);
+    background: var(--archive-accent-strong);
+  }
+
+  .label-archive__reward-link:focus-visible {
+    outline: 2px solid var(--archive-accent);
+    outline-offset: 2px;
+  }
+
+  /* Action destructive : elle vit en pied de tiroir, en toutes lettres, loin
+   * du bouton de fermeture avec lequel une seconde croix se confondait. Elle
+   * reste en retrait, en encre courante soulignée : un bouton cerné pesait
+   * plus lourd que les étiquettes qu'il efface. */
+  .label-archive__reset {
+    justify-self: center;
+    min-height: 2.25rem;
+    padding: 0.5rem 0.25rem;
+    border: 0;
+    background: transparent;
+    /* 4,82:1 sur crème. */
+    color: var(--archive-ink-muted);
+    font-family: var(--font-label-mono);
+    font-size: 0.55rem;
+    font-weight: 700;
+    letter-spacing: var(--tracking-ui);
+    line-height: 1.1;
+    text-decoration: underline;
+    text-underline-offset: 0.22em;
+    cursor: pointer;
+  }
+
+  /* 10,93:1 : l'action se confirme à l'approche sans changer de matière. */
+  .label-archive__reset:hover,
+  .label-archive__reset:focus-visible {
+    color: var(--archive-ink);
+  }
+
+  .label-archive__reset:focus-visible {
+    outline: 2px solid var(--archive-accent);
+    outline-offset: 2px;
+  }
+
+  .label-completion-modal {
+    inset: 0;
+    width: min(32rem, calc(100% - 2rem));
+    max-width: none;
+    max-height: calc(100dvh - clamp(3rem, 14vh, 8rem));
+    margin: clamp(2rem, 7vh, 4.5rem) auto auto;
+    padding: 0;
+    overflow-y: auto;
+    border: 0;
+    background: transparent;
+    color: var(--archive-ink);
+  }
+
+  .label-completion-modal[open]::backdrop {
+    background: color-mix(in srgb, var(--color-brand-night) 74%, transparent);
+    backdrop-filter: blur(0.2rem);
+    animation: label-completion-backdrop-in 540ms ease-out both;
+  }
+
+  /* Même papier réglé que le tiroir, à une échelle de feuille. */
+  .label-completion-modal__sheet {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--archive-rule);
+    background:
+      linear-gradient(
+        90deg,
+        transparent 2.4rem,
+        color-mix(in srgb, var(--color-brand-orange) 30%, transparent) 2.4rem 2.46rem,
+        transparent 2.46rem
+      ),
+      repeating-linear-gradient(
+        0deg,
+        transparent 0 1.7rem,
+        color-mix(in srgb, var(--color-brand-night) 9%, transparent) 1.7rem 1.76rem
+      ),
+      var(--archive-paper);
+    box-shadow: 0.8rem 1rem 0 color-mix(in srgb, var(--color-brand-night) 24%, transparent);
+    text-align: center;
+  }
+
+  .label-completion-modal__cover {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 7;
+    overflow: hidden;
+  }
+
+  .label-completion-modal__content {
+    position: relative;
+    z-index: 1;
+    padding: clamp(1.5rem, 5vw, 2.6rem);
+  }
+
+  .label-completion-modal[open] .label-completion-modal__sheet {
+    animation: label-completion-sheet-in 480ms cubic-bezier(0.22, 1, 0.36, 1) 390ms both;
+  }
+
+  @keyframes label-completion-backdrop-in {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes label-completion-sheet-in {
+    from {
+      opacity: 0;
+      transform: translateY(-1.25rem) scale(0.985);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .label-completion-modal__close-form {
+    position: absolute;
+    z-index: 4;
+    top: 0.7rem;
+    right: 0.7rem;
+  }
+
+  .label-completion-modal__close {
+    display: grid;
+    width: 2.25rem;
+    height: 2.25rem;
+    place-items: center;
+    padding: 0;
+    border: 1px solid var(--archive-rule);
+    background: var(--archive-paper);
+    box-shadow: 0.16rem 0.2rem 0 color-mix(in srgb, var(--color-brand-night) 24%, transparent);
+    color: var(--archive-ink);
+    font: 1.7rem/1 var(--font-sans);
+    cursor: pointer;
+  }
+
+  .label-completion-modal__close:focus-visible {
+    outline: 2px solid var(--archive-accent);
+    outline-offset: 2px;
+  }
+
+  .label-completion-modal__eyebrow {
+    font-family: var(--font-nav);
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: var(--tracking-label);
+    /* 4,82:1 sur crème. */
+    color: var(--archive-ink-muted);
+  }
+
+  .label-completion-modal h2 {
+    margin-top: 0.75rem;
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 8vw, 3.4rem);
+    letter-spacing: var(--tracking-heading);
+    line-height: 0.9;
+  }
+
+  .label-completion-modal__content > p:not(.label-completion-modal__eyebrow) {
+    max-width: 25rem;
+    margin: 1rem auto 0;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.45;
+  }
+
+  /* Feuille sur bleu de marque : 7,26:1. */
+  .label-completion-modal__cta {
+    display: inline-flex;
+    margin-top: 1.4rem;
+    align-items: center;
+    justify-content: center;
+    padding: 0.85rem 1.15rem;
+    border: 2px solid var(--archive-accent);
+    border-radius: 0.25rem;
+    background: var(--archive-accent);
+    color: var(--archive-sheet);
+    font-family: var(--font-nav);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: var(--tracking-ui);
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .label-completion-modal__cta:hover,
+  .label-completion-modal__cta:focus-visible {
+    border-color: var(--archive-accent-strong);
+    background: var(--archive-accent-strong);
+  }
+
+  .label-completion-modal__cta:focus-visible {
+    outline: 2px solid var(--archive-ink);
+    outline-offset: 2px;
+  }
+
+  .label-completion-modal__later {
+    margin-top: 0.9rem;
+    padding: 0.3rem;
+    border: 0;
+    background: transparent;
+    /* 4,82:1 sur crème. */
+    color: var(--archive-ink-muted);
+    font: 0.72rem/1 var(--font-sans);
+    text-decoration: underline;
+    text-underline-offset: 0.22em;
+    cursor: pointer;
+  }
+
+  .label-completion-modal__later:hover,
+  .label-completion-modal__later:focus-visible {
+    color: var(--archive-ink);
+  }
+
+  .label-completion-modal__later:focus-visible {
+    outline: 2px solid var(--archive-accent);
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 39.999rem) {
+    .label-completion-modal {
+      max-height: calc(100dvh - max(2rem, env(safe-area-inset-top)));
+      margin-top: max(1rem, env(safe-area-inset-top));
+    }
+
+    .label-archive {
+      --archive-tab-height: 2.65rem;
+      top: auto;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      display: flex;
+      width: 100%;
+      max-height: min(46dvh, 22rem);
+      flex-direction: column;
+      transform: translateY(calc(100% - var(--archive-tab-height)));
+      transition:
+        transform 460ms cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 240ms ease,
+        visibility 0s linear 240ms;
+    }
+
+    .label-archive.is-open {
+      transform: translateY(0);
+    }
+
+    .label-archive.is-revealed {
+      max-height: 8.65rem;
+      transform: translateY(0);
+    }
+
+    .label-archive__tab {
+      width: auto;
+      min-height: var(--archive-tab-height);
+      flex-direction: row;
+      /* En rangée, la languette se réduit à son contenu : sans cet écart,
+       * space-between ne sépare plus rien et le compteur se collait au mot
+       * ARCHIVES. */
+      gap: 0.5rem;
+      padding: 0.55rem 0.85rem;
+      border-right: 1px solid var(--archive-rule);
+      border-bottom: 0;
+      transition: background-color 220ms ease, box-shadow 220ms ease;
+    }
+
+    .label-archive__tab span {
+      writing-mode: horizontal-tb;
+      transform: none;
+    }
+
+    .label-archive__drawer {
+      max-height: calc(46dvh - var(--archive-tab-height));
+      border-bottom: 0;
+      opacity: 0;
+      transform: translateY(0.8rem);
+      transition:
+        opacity 280ms ease 70ms,
+        transform 420ms cubic-bezier(0.22, 1, 0.36, 1) 50ms,
+        visibility 0s linear 470ms;
+    }
+
+    .label-archive.is-open .label-archive__drawer,
+    .label-archive.is-revealed .label-archive__drawer {
+      opacity: 1;
+      transform: translateY(0);
+      transition:
+        opacity 280ms ease 70ms,
+        transform 420ms cubic-bezier(0.22, 1, 0.36, 1) 50ms,
+        visibility 0s linear 0s;
+    }
+
+    .label-archive.is-open:not(.is-revealed) .label-archive__dropzone {
+      display: none;
+    }
+
+    .label-archive.is-revealed .label-archive__drawer {
+      min-height: 6rem;
+      max-height: 6rem;
+    }
+
+    .label-archive.is-revealed .label-archive__inventory,
+    .label-archive.is-revealed .label-archive__footer {
+      display: none;
+    }
+
+    .label-archive__dropzone {
+      min-height: 5.1rem;
+      margin: 0.45rem 0.65rem;
+    }
+
+    .label-archive.is-revealed .label-archive__dropzone {
+      grid-template-columns: 2.25rem minmax(0, 1fr);
+      grid-template-rows: auto auto;
+      column-gap: 0.7rem;
+      min-height: 5.1rem;
+      height: 5.1rem;
+      margin: 0.45rem 0.65rem;
+      padding: 0.6rem 0.8rem;
+      place-content: center stretch;
+      text-align: left;
+    }
+
+    .label-archive.is-revealed .label-archive__target {
+      grid-row: 1 / 3;
+      width: 2.25rem;
+      height: 2.25rem;
+      margin: 0;
+      align-self: center;
+    }
+
+    .label-archive.is-revealed .label-archive__dropzone strong {
+      align-self: end;
+      font-size: 0.63rem;
+    }
+
+    .label-archive.is-revealed .label-archive__dropzone small {
+      align-self: start;
+      margin-top: 0.12rem;
+    }
+
+    .label-archive__inventory {
+      min-height: 0;
+      padding: 0.65rem 0.65rem 0.7rem 1.35rem;
+    }
+
+    .label-archive__inventory ol {
+      justify-items: center;
+    }
+
+    .label-archive__inventory li {
+      width: min(14rem, 70vw);
+    }
+
+    .label-archive__restick {
+      width: 2.6rem;
+      height: 2.6rem;
+    }
+
+    .label-archive__inventory :global(.site-label__body.label-archive__card-content) {
+      padding-block: 0.55rem;
+    }
+
+    .label-archive__footer {
+      padding: 0.55rem 0.65rem 0.65rem 1.35rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .label-archive,
+    .label-archive * {
+      transition-duration: 0.01ms !important;
+    }
+
+    .label-completion-modal[open]::backdrop,
+    .label-completion-modal[open] .label-completion-modal__sheet {
+      animation: none;
+    }
+
+  }
+
+</style>

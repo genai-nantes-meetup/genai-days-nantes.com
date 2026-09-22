@@ -1,0 +1,32 @@
+---
+name: "Quentin Adam"
+role: "CEO & Cofondateur"
+company: "Clever Cloud"
+bio: "Développeur devenu entrepreneur, Quentin Adam a cofondé Clever Cloud en 2010 pour automatiser le déploiement et l’exploitation des applications. Il défend depuis une infrastructure numérique européenne, ouverte et maîtrisable."
+profile:
+  - "Développeur de formation, Quentin Adam lance ses premières entreprises dans le numérique et le jeu vidéo avant de cofonder Clever Cloud à Nantes en 2010. Son idée est de retirer aux équipes de développement une partie de la complexité d’exploitation des infrastructures."
+  - "Sous sa direction, Clever Cloud développe une plateforme cloud qui automatise le déploiement, la mise à l’échelle et le maintien en conditions opérationnelles des applications. Cette expérience lui donne une connaissance directe des choix techniques, économiques et industriels qui structurent le numérique européen."
+  - "Il est également engagé dans l’open source et la souveraineté numérique. Cofondateur du respirateur open source MakAir pendant la crise sanitaire, il est vice-président de l’Open Internet Project, qui défend une concurrence équitable sur les marchés numériques européens."
+genaiLegitimacy: "La GenAI devient un service utile lorsqu’elle peut être implémentée, observée, sécurisée et financée dans la durée. C’est précisément le terrain sur lequel Quentin Adam travaille depuis plus de quinze ans. À travers Clever Cloud et ses prises de parole sur l’implémentation de l’IA en entreprise, il relie modèles, infrastructure cloud, maîtrise des API, coûts, données et souveraineté. Sa valeur tient à cette lecture industrielle de l’IA, au-delà de la seule démonstration technologique."
+careerHighlights:
+  - period: "Depuis 2010"
+    title: "CEO et cofondateur de Clever Cloud"
+    description: "Construction d’une plateforme cloud européenne centrée sur l’automatisation, la fiabilité et l’expérience des équipes de développement."
+  - period: "Aujourd’hui"
+    title: "Vice-président de l’Open Internet Project"
+    description: "Engagement pour une concurrence libre et équitable et pour l’autonomie stratégique du numérique européen."
+  - period: "2020"
+    title: "Cofondateur de MakAir"
+    description: "Participation à un projet open source de respirateur artificiel lancé pendant la crise sanitaire."
+companies:
+  - name: "Clever Cloud"
+    relationship: "CEO et cofondateur depuis 2010"
+    description: "Clever Cloud est une entreprise nantaise qui conçoit une plateforme cloud d’automatisation du déploiement et de l’exploitation des applications. Elle développe une alternative européenne fondée sur l’open source, la fiabilité et la souveraineté des données."
+    website: "https://www.clever.cloud/"
+    logo: "/logos/clever-cloud.svg"
+photo: "/speakers/quentin-adam-optimized.webp"
+companyLogo: "/logos/clever-cloud.svg"
+linkedin: "https://www.linkedin.com/in/waxzce/"
+website: "https://www.clever.cloud/"
+x: "https://x.com/waxzce"
+---

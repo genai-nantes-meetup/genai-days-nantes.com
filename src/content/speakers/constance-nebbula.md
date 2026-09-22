@@ -1,0 +1,30 @@
+---
+name: "Constance Nebbula"
+role: "Vice-présidente Numérique et IA"
+company: "Région Pays de la Loire"
+eventRole: "jury"
+bio: "Vice-présidente de la Région Pays de la Loire en charge du numérique et de l’intelligence artificielle, Constance Nebbula porte une approche de la transformation publique fondée sur les usages, la donnée et l’impact mesurable."
+profile:
+  - "Élue locale depuis 2014, Constance Nebbula a exercé plusieurs responsabilités à Angers avant de rejoindre l’exécutif régional. Son parcours relie action publique, développement économique, enseignement supérieur et transformation numérique des territoires."
+  - "Elle est aujourd’hui 13e vice-présidente du Conseil régional des Pays de la Loire, en charge du Numérique et de l’Intelligence artificielle. Elle accompagne la Région dans la mise en place de services numériques et dans une utilisation plus structurée de la donnée au service des politiques publiques."
+  - "Elle représente également les collectivités dans les débats nationaux sur la cybersécurité et la souveraineté numérique. En 2025, elle est notamment intervenue au Sénat au nom de Régions de France sur la directive NIS 2 et les contraintes concrètes de sa mise en œuvre."
+genaiLegitimacy: "Constance Nebbula conduit la stratégie numérique et IA d’une grande collectivité. Elle aborde la GenAI comme un outil de transformation à évaluer par les usages, la qualité du service rendu, la sécurité et l’impact réel. Ce regard de décideuse publique lui permet d’interroger les projets du Startup Contest sur leur utilité, leur gouvernance et leur capacité à s’inscrire durablement dans un territoire."
+careerHighlights:
+  - period: "Mandat régional actuel"
+    title: "Vice-présidente Numérique et Intelligence artificielle"
+    description: "Pilotage politique des enjeux de donnée, de transformation numérique, de cybersécurité et d’intelligence artificielle pour la Région Pays de la Loire."
+  - period: "2025"
+    title: "Audition au Sénat sur la cybersécurité"
+    description: "Présentation du point de vue des Régions sur la directive NIS 2 et sur les exigences de sécurité applicables aux collectivités."
+  - period: "Depuis 2014"
+    title: "Élue locale et régionale"
+    description: "Engagement dans les politiques territoriales d’innovation, de développement économique, d’enseignement supérieur et de numérique."
+companies:
+  - name: "Région Pays de la Loire"
+    relationship: "13e vice-présidente du Conseil régional"
+    description: "La Région Pays de la Loire accueille GENAI DAYS à Nantes. Constance Nebbula y porte les politiques consacrées au numérique, à l’intelligence artificielle, à la donnée et à la cybersécurité."
+    website: "https://www.paysdelaloire.fr/"
+photo: "/speakers/constance-nebbula-optimized.webp"
+linkedin: "https://fr.linkedin.com/in/constance-nebbula"
+website: "https://www.paysdelaloire.fr/mon-conseil-regional/linstitution/les-elus/constance-nebbula"
+---

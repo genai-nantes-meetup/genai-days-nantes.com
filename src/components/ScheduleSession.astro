@@ -1,0 +1,225 @@
+---
+import SessionIllustration from './SessionIllustration.astro';
+import { IS_MY_DAY_ENABLED } from '../lib/features';
+
+interface Props {
+  title: string;
+  quoteTitle?: boolean;
+  subtitle?: string;
+  startTime: string;
+  durationMinutes: number;
+  room: string;
+  format: 'keynote' | 'talk' | 'table-ronde' | 'atelier' | 'concours' | 'podcast';
+  speakers: { name: string; href: string; eventRole?: 'jury' | 'animateur' }[];
+  sessionHref?: string;
+  provisional?: boolean;
+  illustration?: {
+    alt: string;
+    src?: string;
+    variant: 'governance' | 'transformation' | 'rag' | 'agents' | 'evaluation' | 'sovereignty' | 'opening' | 'closing' | 'podcast';
+    fit?: 'cover' | 'contain';
+  };
+  /* Une session annoncée peut rejoindre « Ma journée » ; sans identifiant,
+   * la carte reste une simple fiche. */
+  sessionId?: string;
+}
+
+const {
+  title,
+  quoteTitle = true,
+  subtitle,
+  startTime,
+  durationMinutes,
+  format,
+  speakers,
+  sessionHref,
+  provisional = false,
+  illustration,
+  sessionId,
+} = Astro.props;
+
+const isCollectible = IS_MY_DAY_ENABLED && Boolean(sessionId) && !provisional;
+
+const formatLabel = {
+  keynote: 'Keynote',
+  talk: 'Conférence',
+  'table-ronde': 'Table ronde',
+  atelier: 'Atelier',
+  concours: 'Concours',
+  podcast: 'Podcast',
+}[format];
+const displayTitle = quoteTitle ? `"${title}"` : title;
+const showSpeakers = speakers.length > 0 || !provisional;
+---
+
+<article
+  class:list={[
+    'schedule-session',
+    {
+      'schedule-session--no-illustration': !illustration,
+      'schedule-session--provisional': provisional,
+      'schedule-session--collectible': isCollectible,
+    },
+  ]}
+  data-reveal
+  data-my-day-session={isCollectible ? sessionId : undefined}
+>
+  {illustration && (
+    <SessionIllustration
+      class="session-illustration"
+      alt={illustration.alt}
+      src={illustration.src}
+      variant={illustration.variant}
+      fit={illustration.fit}
+    />
+  )}
+  <div class="schedule-session__content flex min-w-0 flex-1 flex-col gap-4 p-4">
+    <div class="schedule-session__top flex min-w-0 items-start justify-between gap-3">
+      <div class="schedule-session__time shrink-0 font-label text-base font-bold">{startTime}</div>
+      <p class="schedule-session__tags">
+        <span>{provisional ? 'Conférence' : formatLabel}</span>
+        <span aria-hidden="true">·</span>
+        <span>{durationMinutes} min</span>
+      </p>
+    </div>
+    <div class="min-w-0 flex-1">
+      <h4 class="schedule-session__title text-base leading-tight sm:text-lg">
+        {provisional ? (
+          title
+        ) : sessionHref ? (
+          <a class="hover:text-brand-blue" href={sessionHref}>{displayTitle}</a>
+        ) : (
+          displayTitle
+        )}
+        {provisional && <span class="sr-only"> à {startTime}</span>}
+      </h4>
+      {subtitle && <p class="schedule-session__subtitle">{subtitle}</p>}
+      {showSpeakers && (
+        <p class="schedule-session__speakers">
+          {speakers.length > 0 ? (
+            speakers.map((speaker, index) => (
+              <>
+                <a href={speaker.href}>{speaker.name}</a>
+                {index < speakers.length - 1 && <span aria-hidden="true">,</span>}
+              </>
+            ))
+          ) : (
+            <span>Speaker To Be Announced</span>
+          )}
+        </p>
+      )}
+    </div>
+  </div>
+</article>
+
+<style>
+  .schedule-session {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: minmax(7rem, 11rem) minmax(0, 1fr);
+    min-height: 10rem;
+    flex: 1;
+    border-left: 1px solid rgb(57 54 54 / 18%);
+    background: var(--color-brand-white);
+    box-shadow: 0 1px 0 rgb(13 13 18 / 8%);
+  }
+
+  :global(.session-illustration) {
+    width: 100%;
+    height: 100%;
+    min-height: 10rem;
+  }
+
+  :global(.schedule-session.schedule-session--no-illustration) {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 9rem;
+  }
+
+  :global(.schedule-session.schedule-session--provisional) {
+    background: rgb(255 255 255 / 72%);
+  }
+
+  :global(.schedule-session.schedule-session--provisional h4) {
+    color: rgb(13 13 18 / 62%);
+  }
+
+  .schedule-session__title {
+    font-family: var(--font-sans);
+    font-style: normal;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+
+  .schedule-session__time {
+    color: var(--color-action-ticket);
+  }
+
+  /* Le format et la durée forment une étiquette à part, alignée avec l'heure
+     plutôt que noyée dans la ligne des intervenant·es : les deux natures
+     d'information (qui, quoi/quand) ne se lisaient plus l'une de l'autre
+     une fois enchaînées sur une même ligne. */
+  .schedule-session__tags {
+    display: flex;
+    flex-shrink: 0;
+    gap: 0.3rem;
+    margin-top: 0.15rem;
+    color: rgb(57 54 54 / 62%);
+    font-size: 0.66rem;
+    font-weight: 800;
+    letter-spacing: var(--tracking-label);
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  .schedule-session__subtitle {
+    margin-top: 0.35rem;
+    color: rgb(57 54 54 / 68%);
+    font-size: 0.85rem;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+
+  .schedule-session__speakers {
+    display: flex;
+    min-width: 0;
+    flex-wrap: wrap;
+    gap: 0.15rem 0.3rem;
+    margin-top: 0.6rem;
+    color: rgb(57 54 54 / 76%);
+    font-size: 0.8rem;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+
+  .schedule-session__speakers a {
+    text-decoration: underline;
+    text-decoration-color: rgb(57 54 54 / 22%);
+    text-underline-offset: 0.18em;
+  }
+
+  .schedule-session__speakers a:hover {
+    color: var(--color-brand-blue);
+  }
+
+  :global(.schedule-session[data-my-day-state='chosen']) {
+    box-shadow:
+      inset 0 0 0 1px var(--color-brand-blue),
+      0 1px 0 rgb(13 13 18 / 8%);
+  }
+
+  /* Sous 40rem, deux colonnes ne laissaient que 48 % de la largeur au titre :
+     l'illustration passe en bandeau au-dessus du texte. */
+  @media (max-width: 39.999rem) {
+    .schedule-session {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    :global(.schedule-session .session-illustration) {
+      height: auto;
+      min-height: 0;
+      aspect-ratio: 16 / 7;
+    }
+
+  }
+</style>

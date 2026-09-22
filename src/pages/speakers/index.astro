@@ -1,0 +1,405 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AdmissionTicketSection from '../../components/AdmissionTicketSection.astro';
+import DirectoryHero from '../../components/DirectoryHero.astro';
+import EditorialGrid from '../../components/EditorialGrid.astro';
+import Footer from '../../components/Footer.astro';
+import Header from '../../components/Header.astro';
+import TrackMark from '../../components/TrackMark';
+import { EVENT, EVENT_YEAR } from '../../lib/event';
+import { SPEAKER_PORTRAIT_DIMENSIONS, SPEAKER_TARGET, sortSpeakersByProminence, getSpeakerPortraitSrcset, trackForSpeaker } from '../../lib/speakers';
+
+const speakers = sortSpeakersByProminence(await getCollection('speakers'));
+const sessions = await getCollection('sessions');
+const speakerTrackById = new Map(speakers.map((speaker) => [speaker.id, trackForSpeaker(speaker.id, sessions)]));
+
+/* Cadrage par portrait, propre à cette page (mur de portraits serrés) :
+ * les dimensions réelles, elles, sont partagées via lib/speakers.ts avec
+ * les autres vues qui affichent le même fichier. */
+const portraitPositions: Record<string, string> = {
+  'christelle-morancais': '50% 26%',
+  'constance-nebbula': '50% 24%',
+  'florian-herveou': '50% 22%',
+  'nicolas-martignole': '50% 27%',
+  'jean-baptiste-kempf': '50% 28%',
+  'quentin-adam': '50% 34%',
+  'sebastien-le-corfec': '50% 24%',
+  'thomas-mathieu': '50% 24%',
+  'theo-hubert': '50% 32%',
+};
+
+const futureSpeakerSlots = Math.max(0, SPEAKER_TARGET - speakers.length);
+const siteUrl = (Astro.site ?? new URL(Astro.url.origin)).href;
+const pageUrl = new URL('/speakers', siteUrl).href;
+const pageTitle = `Intervenants ${EVENT_YEAR} · GENAI DAYS`;
+const pageDescription = `Découvrez les intervenants de GENAI DAYS ${EVENT_YEAR} à ${EVENT.venue.city}, des voix choisies pour leur expertise et leur expérience du terrain.`;
+
+const collectionJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: pageTitle,
+  description: pageDescription,
+  url: pageUrl,
+  mainEntity: {
+    '@type': 'ItemList',
+    numberOfItems: speakers.length,
+    itemListElement: speakers.map((speaker, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      url: new URL(`/speakers/${speaker.id}`, siteUrl).href,
+      item: {
+        '@type': 'Person',
+        '@id': `${new URL(`/speakers/${speaker.id}`, siteUrl).href}#person`,
+        name: speaker.data.name,
+        jobTitle: speaker.data.role,
+        description: speaker.data.bio,
+        worksFor: { '@type': 'Organization', name: speaker.data.company },
+        ...(speaker.data.photo ? { image: new URL(speaker.data.photo, siteUrl).href } : {}),
+        sameAs: [speaker.data.linkedin, speaker.data.website, speaker.data.x].filter((url): url is string => Boolean(url)),
+      },
+    })),
+  },
+};
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Accueil', item: siteUrl },
+    { '@type': 'ListItem', position: 2, name: 'Intervenants', item: pageUrl },
+  ],
+};
+---
+
+<BaseLayout title={pageTitle} description={pageDescription} structuredData={[collectionJsonLd, breadcrumbJsonLd]}>
+  <Header />
+
+  <main class="speakers-page">
+    <DirectoryHero
+      title="Intervenants"
+      titleId="speakers-title"
+      lede="Des voix choisies pour leur expertise. Des expériences forgées sur le terrain."
+      image="/images/speaker_background-optimized.webp"
+      imageWidth={2544}
+      imageHeight={1904}
+      imagePosition="50% 67%"
+    />
+
+    <section class="speaker-wall" aria-labelledby="speaker-wall-title">
+      <EditorialGrid top={false} />
+      <h2 id="speaker-wall-title" class="sr-only">Intervenants annoncés</h2>
+
+      <div class="speaker-wall__track-key" aria-label="Repères des parcours">
+        <TrackMark track="decideurs" />
+        <TrackMark track="tech" />
+      </div>
+
+      <ol class="speaker-wall__grid" data-speaker-wall>
+        {speakers.map((speaker, index) => {
+          const portrait = SPEAKER_PORTRAIT_DIMENSIONS[speaker.id];
+          const portraitPosition = portraitPositions[speaker.id];
+          const speakerTrack = speakerTrackById.get(speaker.id);
+
+          return (
+            <li class="speaker-tile" data-speaker-tile={speaker.id} data-speaker-track={speakerTrack}>
+              <a href={`/speakers/${speaker.id}`} aria-label={`Découvrir le portrait de ${speaker.data.name}`}>
+                <figure class="speaker-tile__portrait">
+                  {speaker.data.photo ? (
+                    <img
+                      class="portrait-photo"
+                      src={speaker.data.photo}
+                      srcset={getSpeakerPortraitSrcset(speaker.id, speaker.data.photo)}
+                      sizes="(min-width: 64rem) 25vw, (min-width: 40rem) 50vw, 100vw"
+                      alt={`Portrait de ${speaker.data.name}`}
+                      width={portrait?.width}
+                      height={portrait?.height}
+                      loading={index < 2 ? 'eager' : 'lazy'}
+                      decoding="async"
+                      fetchpriority={index === 0 ? 'high' : 'auto'}
+                      draggable="false"
+                      style={`--portrait-position: ${portraitPosition ?? '50% 28%'};`}
+                    />
+                  ) : (
+                    <span class="speaker-tile__fallback" aria-hidden="true">{speaker.data.name.slice(0, 1)}</span>
+                  )}
+                  <figcaption class="speaker-tile__identity">
+                    {speaker.data.eventRole && (
+                      <small class="speaker-tile__status">
+                        {speaker.data.eventRole === 'jury' ? 'Jury du Startup Contest' : 'Animateur du Startup Contest'}
+                      </small>
+                    )}
+                    <h3>{speaker.data.name}</h3>
+                    <p class="speaker-tile__role">{speaker.data.role}</p>
+                    <span class="speaker-tile__company">{speaker.data.company}</span>
+                  </figcaption>
+                </figure>
+              </a>
+              {speakerTrack && (
+                <div class="speaker-tile__track-mark">
+                  <TrackMark track={speakerTrack} variant="icon" />
+                </div>
+              )}
+            </li>
+          );
+        })}
+
+        {Array.from({ length: futureSpeakerSlots }, (_, index) => (
+          <li
+            class="speaker-tile speaker-tile--future"
+            data-speaker-placeholder
+            aria-label={`Intervenant à venir ${index + 1} sur ${futureSpeakerSlots}`}
+          >
+            <div class="speaker-tile__portrait">
+              <div class="speaker-tile__placeholder" aria-hidden="true">
+                <span>À venir</span>
+              </div>
+              <div class="speaker-tile__identity">
+                <small class="speaker-tile__status">Programmation en cours</small>
+                <h3>Prochain intervenant</h3>
+                <p class="speaker-tile__role">Annonce à venir</p>
+              </div>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <AdmissionTicketSection />
+  </main>
+
+  <Footer grid />
+</BaseLayout>
+
+<style>
+  .speakers-page {
+    position: relative;
+    background: var(--color-brand-cream);
+    color: var(--color-brand-black);
+  }
+
+  .speaker-wall {
+    position: relative;
+  }
+
+  .speaker-wall__track-key,
+  .speaker-wall__grid {
+    position: relative;
+    z-index: 3;
+    width: min(calc(100% - 2 * var(--layout-gutter)), var(--layout-editorial));
+    margin-inline: auto;
+  }
+
+  .speaker-tile__status,
+  .speaker-tile__role,
+  .speaker-tile__company {
+    font-family: var(--font-nav);
+    font-size: 0.75rem;
+    line-height: 1.25;
+  }
+
+  .speaker-wall {
+    padding-block: var(--space-section-close) var(--space-section-calm);
+    background: var(--color-brand-cream);
+  }
+
+  .speaker-wall__track-key {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 clamp(1rem, 2vw, 1.5rem) 0.9rem;
+    color: rgb(57 54 54 / 58%);
+    font-family: var(--font-nav);
+    font-size: 0.75rem;
+    font-weight: 600;
+    gap: 0.75rem 1.25rem;
+    letter-spacing: 0.045em;
+    text-transform: uppercase;
+  }
+
+  .speaker-wall__grid {
+    display: grid;
+    overflow: hidden;
+    margin-block: 0;
+    padding: 0;
+    list-style: none;
+    border: 1px solid rgb(57 54 54 / 18%);
+    background: var(--color-brand-cream);
+    gap: 1px;
+  }
+
+  .speaker-tile {
+    position: relative;
+    min-width: 0;
+    background: var(--color-brand-white);
+  }
+
+  .speaker-tile a {
+    display: block;
+    height: 100%;
+    color: inherit;
+  }
+
+  .speaker-tile a:focus-visible {
+    position: relative;
+    z-index: 2;
+    outline: 3px solid var(--color-brand-blue);
+    outline-offset: -3px;
+  }
+
+  .speaker-tile__portrait {
+    position: relative;
+    display: grid;
+    overflow: hidden;
+    height: clamp(22rem, 27vw, 25rem);
+    background: var(--color-brand-night);
+    grid-template-rows: minmax(0, 1fr) 7.5rem;
+  }
+
+  .speaker-tile__portrait img {
+    grid-row: 1;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    filter: grayscale(100%) contrast(1.04);
+    object-fit: cover;
+    object-position: var(--portrait-position);
+    transition: filter 360ms ease, transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .speaker-tile a:hover .speaker-tile__portrait img,
+  .speaker-tile a:focus-visible .speaker-tile__portrait img {
+    filter: grayscale(18%) contrast(1.02);
+    transform: scale(1.025);
+  }
+
+  .speaker-tile__fallback {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    place-items: center;
+    color: var(--color-brand-cream);
+    font-family: var(--font-serif);
+    font-size: clamp(3.5rem, 12vw, 8rem);
+    font-weight: 800;
+    grid-row: 1;
+    line-height: 1;
+  }
+
+  .speaker-tile__identity {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    height: 7.5rem;
+    align-content: center;
+    padding: 0.85rem 1rem 0.95rem;
+    background: rgb(255 255 255 / 94%);
+    color: var(--color-brand-black);
+    gap: 0.25rem;
+    grid-row: 2;
+    transition: background-color 220ms ease, color 220ms ease;
+  }
+
+  .speaker-tile__track-mark {
+    position: absolute;
+    z-index: 4;
+    right: 0.7rem;
+    bottom: 4.7rem;
+  }
+
+  .speaker-tile__identity h3 {
+    overflow: hidden;
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .speaker-tile__role,
+  .speaker-tile__company {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .speaker-tile__status {
+    color: rgb(57 54 54 / 52%);
+    font-weight: 600;
+    letter-spacing: 0.055em;
+    text-transform: uppercase;
+  }
+
+  .speaker-tile__role {
+    color: rgb(57 54 54 / 76%);
+    font-weight: 500;
+  }
+
+  .speaker-tile__company {
+    color: rgb(57 54 54 / 54%);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .speaker-tile a:hover .speaker-tile__identity,
+  .speaker-tile a:focus-visible .speaker-tile__identity {
+    background: var(--color-brand-cream);
+  }
+
+  .speaker-tile--future .speaker-tile__portrait {
+    background:
+      radial-gradient(circle at 50% 34%, rgb(249 244 236 / 9%) 0 16%, transparent 16.4%),
+      radial-gradient(ellipse at 50% 82%, rgb(249 244 236 / 8%) 0 34%, transparent 34.4%),
+      var(--color-brand-night);
+  }
+
+  .speaker-tile__placeholder {
+    display: grid;
+    width: calc(100% - 3rem);
+    height: calc(100% - 3rem);
+    border: 1px solid rgb(249 244 236 / 24%);
+    color: rgb(249 244 236 / 70%);
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-style: italic;
+    grid-row: 1;
+    place-self: center;
+    place-items: center;
+  }
+
+  .speaker-tile--future .speaker-tile__identity {
+    background: var(--color-brand-cream);
+  }
+
+  @media (min-width: 40rem) {
+    .speaker-wall__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 47.999rem) {
+    .speaker-wall__track-key {
+      padding-inline: 0;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .speaker-wall__grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .speaker-tile__portrait img,
+    .speaker-tile__identity {
+      transition: none;
+    }
+
+    .speaker-tile a:hover .speaker-tile__portrait img,
+    .speaker-tile a:focus-visible .speaker-tile__portrait img {
+      transform: none;
+    }
+  }
+</style>

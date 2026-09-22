@@ -1,0 +1,786 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import Button from "../components/Button.astro";
+import EventName from "../components/EventName.astro";
+import DirectoryHero from "../components/DirectoryHero.astro";
+import EditorialGrid from "../components/EditorialGrid.astro";
+import DownloadIcon from "../components/DownloadIcon.astro";
+import PressContactAction from "../components/PressContactAction.astro";
+import PressCopyAction from "../components/PressCopyAction.astro";
+import PressDownloadAction from "../components/PressDownloadAction.astro";
+import TrackMark from "../components/TrackMark";
+import { formatEventDateLabel } from "../lib/event";
+import EVENT from "../content/event.json";
+
+const practicalDetails = [
+  { label: "Date", value: formatEventDateLabel() },
+  { label: "Horaires", value: `${EVENT.startTime} à ${EVENT.endTime}` },
+  { label: "Lieu", value: EVENT.venue.name },
+  {
+    label: "Adresse",
+    value: `${EVENT.venue.address}, ${EVENT.venue.postalCode} ${EVENT.venue.city}`,
+  },
+  {
+    label: "Format",
+    value: "Conférences, retours d’expérience et temps de rencontre",
+  },
+  { label: "Langue", value: "Français" },
+];
+
+const pressFactsText = practicalDetails
+  .map((detail) => `${detail.label} : ${detail.value}`)
+  .join("\n");
+
+const editorialAngles = [
+  {
+    title: "Décider face à l’IA.",
+    description:
+      "Coûts, gouvernance, souveraineté, conformité et retour sur investissement.",
+  },
+  {
+    title: "Passer des prototypes à la production.",
+    description: "Architectures, agents, évaluation, données et observabilité.",
+  },
+  {
+    title: "Partager ce que le terrain a appris.",
+    description:
+      "Des choix documentés, des méthodes concrètes et des retours d’expérience.",
+  },
+];
+
+const spokespeople = [
+  {
+    name: "Maxime Pitussi",
+    role: "Co-founder · Explore the Vault",
+    topics: "Growth, outbound",
+    photo: "/organisateurs/maxime-pitussi.webp",
+    photoWidth: 600,
+    photoHeight: 600,
+  },
+  {
+    name: "Samuel Berthe",
+    role: "Développeur open source · Organisateur de Generative AI Nantes",
+    topics: "Open source, communauté technique et organisation de l’événement.",
+    photo: "/organisateurs/samuel-berthe.webp",
+    photoWidth: 600,
+    photoHeight: 600,
+  },
+  {
+    name: "Aymeric de Maussion",
+    role: "Directeur de l’IA · Région Pays de la Loire",
+    topics:
+      "Écosystème régional, adoption de l’IA et dynamiques territoriales.",
+    photo: "/organisateurs/aymeric-de-maussion.webp",
+    photoWidth: 800,
+    photoHeight: 800,
+  },
+];
+
+const siteUrl = (Astro.site ?? new URL(Astro.url.origin)).href;
+const pageTitle = `Espace presse ${EVENT.year} · GenAI Days`;
+const pageDescription = `Le dossier de presse de GenAI Days ${EVENT.year} : présentation prête à publier, faits essentiels, angles éditoriaux, visuels, logos et contact presse.`;
+const pressKitJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: pageTitle,
+  description: pageDescription,
+  url: `${siteUrl}press-kit`,
+  about: { "@id": `${siteUrl}#event` },
+  publisher: { "@id": `${siteUrl}#organizer` },
+  primaryImageOfPage: {
+    "@type": "ImageObject",
+    contentUrl: `${siteUrl}images/cover_v2-optimized.webp`,
+    creditText: EVENT.name,
+  },
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  structuredData={[pressKitJsonLd]}
+>
+  <Header showTicketCta={false} />
+  <main class="press-page">
+    <DirectoryHero
+      title="Espace presse"
+      titleId="press-kit-title"
+      lede={`Textes, faits et visuels prêts à publier pour couvrir l’édition ${EVENT.year} à ${EVENT.venue.city}.`}
+      image="/images/cover_v2-optimized.webp"
+      imageWidth={2560}
+      imageHeight={1454}
+      imagePosition="50% 50%"
+    >
+      <div class="press-hero-actions">
+        <PressDownloadAction
+          href="/press/genai-days-press-kit.zip"
+          label="Télécharger le kit presse"
+          meta="ZIP · 2,1 Mo · 12 fichiers"
+        />
+        <PressContactAction tone="night">Contact presse</PressContactAction>
+      </div>
+    </DirectoryHero>
+
+    <section
+      id="essentiel"
+      class="press-section"
+      aria-labelledby="essentiel-title"
+    >
+      <EditorialGrid />
+      <div class="press-shell press-brief">
+        <article class="press-summary">
+          <h2 id="essentiel-title" class="type-section-title">En bref.</h2>
+          <p class="press-meta">Présentation prête à publier · 93 mots</p>
+          <p id="press-summary" class="press-summary__text">
+            <EventName /> est une journée-conférence consacrée à l’intelligence artificielle
+            générative, organisée le {formatEventDateLabel()} à {
+              EVENT.venue.name
+            }, à {EVENT.venue.city}. L’événement réunit celles et ceux qui
+            décident, construisent et implémentent l’IA au quotidien. Deux
+            parcours complémentaires rythment la journée&nbsp;: un parcours «
+            Pour ceux qui décident » centré sur la stratégie, la gouvernance et
+            le retour sur investissement, et un parcours « Pour ceux qui
+            implémentent » dédié aux architectures, aux outils et aux retours
+            d’expérience. Conférences, échanges concrets et rencontres composent
+            un programme intégralement présenté en français.
+          </p>
+          <PressCopyAction
+            target="press-summary"
+            label="Copier la présentation"
+          />
+        </article>
+
+        <aside class="press-fact-sheet" aria-labelledby="fact-sheet-title">
+          <h3 id="fact-sheet-title">Fiche factuelle.</h3>
+          <dl>
+            {
+              practicalDetails.map((detail) => (
+                <div>
+                  <dt>{detail.label}</dt>
+                  <dd>{detail.value}</dd>
+                </div>
+              ))
+            }
+          </dl>
+          <p id="press-facts-copy" class="sr-only">{pressFactsText}</p>
+          <PressCopyAction
+            target="press-facts-copy"
+            label="Copier les informations clés"
+          />
+        </aside>
+      </div>
+    </section>
+
+    <section id="angles" class="press-section" aria-labelledby="angles-title">
+      <EditorialGrid />
+      <div class="press-shell">
+        <div class="press-heading">
+          <h2 id="angles-title" class="type-section-title">
+            Trois angles pour raconter l’événement.
+          </h2>
+          <p>
+            Des sujets directement exploitables pour relier les enjeux de
+            direction aux réalités d’implémentation.
+          </p>
+        </div>
+
+        <div class="press-angles">
+          {
+            editorialAngles.map((angle) => (
+              <article>
+                <h3>{angle.title}</h3>
+                <p>{angle.description}</p>
+              </article>
+            ))
+          }
+        </div>
+
+        <div class="press-programme-bridge">
+          <div>
+            <p>Deux parcours complémentaires</p>
+            <div class="press-track-marks">
+              <TrackMark track="decideurs" variant="label" />
+              <TrackMark track="tech" variant="label" />
+            </div>
+          </div>
+          <Button variant="tertiary" href="/programme"
+            >Voir le programme complet</Button
+          >
+        </div>
+      </div>
+    </section>
+
+    <section
+      id="ressources"
+      class="press-section press-resources"
+      aria-labelledby="ressources-title"
+    >
+      <EditorialGrid />
+      <div class="press-shell">
+        <div class="press-heading">
+          <h2 id="ressources-title" class="type-section-title">
+            À télécharger.
+          </h2>
+          <p>
+            Les fichiers essentiels, leurs formats et les crédits à conserver
+            lors de la publication.
+          </p>
+        </div>
+
+        <article class="press-package">
+          <div class="press-package__intro">
+            <h3>Le kit presse complet.</h3>
+            <p>
+              README, visuel officiel, symbole vectoriel et neuf portraits de
+              l’équipe organisatrice.
+            </p>
+          </div>
+          <PressDownloadAction
+            href="/press/genai-days-press-kit.zip"
+            label="Télécharger le kit presse"
+            meta="ZIP · 1,9 Mo · 12 fichiers"
+          />
+        </article>
+
+        <div class="press-resource-grid">
+          <article class="press-resource">
+            <div class="press-resource__visual">
+              <img
+                src="/images/cover_v2-optimized.webp"
+                alt={`Visuel officiel de l’édition ${EVENT.year}`}
+                width="2560"
+                height="1454"
+                loading="lazy"
+              />
+            </div>
+            <div class="press-resource__body">
+              <div class="press-resource__details">
+                <h3>Visuel officiel {EVENT.year}</h3>
+                <p class="press-resource__summary">WEBP · 2560 × 1454 px · Crédit&nbsp;: <EventName /></p>
+              </div>
+              <a
+                href="/press/genai-days-press-kit/cover_v2-optimized.webp"
+                download={`genai-days-${EVENT.year}-visuel-officiel.webp`}
+                aria-label={`Télécharger le visuel officiel ${EVENT.year}`}
+              >
+                Télécharger <DownloadIcon />
+              </a>
+            </div>
+          </article>
+
+          <article class="press-resource">
+            <div class="press-resource__visual press-resource__visual--logo">
+              <img
+                src="/logos/Gen AI Logo.svg"
+                alt="Symbole de l’événement"
+                loading="lazy"
+              />
+            </div>
+            <div class="press-resource__body">
+              <div class="press-resource__details">
+                <h3>Logo et symbole</h3>
+                <p class="press-resource__summary">
+                  SVG · Fond transparent · Proportions et couleurs du symbole à
+                  respecter · Aucun effet ajouté
+                </p>
+              </div>
+              <a
+                href="/logos/Gen AI Logo.svg"
+                download="genai-days-symbole.svg"
+                aria-label="Télécharger le symbole vectoriel"
+              >
+                Télécharger <DownloadIcon />
+              </a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section
+      id="interviews"
+      class="press-section"
+      aria-labelledby="interviews-title"
+    >
+      <EditorialGrid />
+      <div class="press-shell">
+        <div class="press-heading">
+          <h2 id="interviews-title" class="type-section-title">
+            Pour une interview.
+          </h2>
+          <p>
+            Deux porte-paroles pour apporter un éclairage technique,
+            communautaire ou territorial.
+          </p>
+        </div>
+
+        <div class="press-spokespeople">
+          {
+            spokespeople.map((person) => (
+              <article class="press-spokesperson">
+                <img
+                  src={person.photo}
+                  alt={`Portrait de ${person.name}`}
+                  width={person.photoWidth}
+                  height={person.photoHeight}
+                  loading="lazy"
+                  referrerpolicy="no-referrer"
+                  draggable="false"
+                />
+                <div class="press-spokesperson__body">
+                  <h3>{person.name}</h3>
+                  <p class="press-spokesperson__role">{person.role}</p>
+                  <p>{person.topics}</p>
+                  <PressContactAction class="press-interview-action">
+                    Demander une interview
+                  </PressContactAction>
+                </div>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section
+      id="contact-presse"
+      class="press-section"
+      aria-labelledby="contact-title"
+    >
+      <EditorialGrid />
+      <div class="press-shell press-contact">
+        <div>
+          <h2 id="contact-title" class="type-section-title">
+            Une question ou une accréditation&nbsp;?
+          </h2>
+          <p>
+            L’équipe <EventName /> répond aux demandes de la presse et organise les
+            mises en relation utiles.
+          </p>
+        </div>
+        <PressContactAction class="press-final-contact"
+          >Écrire au contact presse</PressContactAction
+        >
+      </div>
+    </section>
+
+    <div class="sr-only" role="status" aria-live="polite" data-copy-live></div>
+  </main>
+  <Footer />
+  <script>
+    import { initPressKitCopy } from "../scripts/press-kit-copy";
+
+    initPressKitCopy();
+  </script>
+</BaseLayout>
+
+<style>
+  .press-shell {
+    position: relative;
+    z-index: 3;
+    width: min(calc(100% - 2 * var(--layout-gutter)), var(--layout-editorial));
+    margin-inline: auto;
+  }
+
+  .press-page :global(.directory-hero__copy) {
+    max-width: 40rem;
+  }
+
+  .press-page :global(.directory-hero__copy .type-page-title) {
+    font-size: clamp(2.25rem, 5vw, 3rem);
+    line-height: 0.95;
+  }
+
+  .press-page :global(.directory-hero__copy .type-page-lede) {
+    max-width: 32rem;
+  }
+
+  .press-page :global(.directory-hero__actions) {
+    display: block;
+    margin-top: 0.75rem;
+  }
+
+  .press-hero-actions {
+    display: grid;
+    width: min(100%, 30rem);
+    justify-items: start;
+    gap: 0.75rem;
+  }
+
+  .press-section {
+    position: relative;
+    background: var(--color-brand-cream);
+  }
+
+  .press-section > .press-shell {
+    padding: clamp(4rem, 8vw, 6.5rem) clamp(1.5rem, 3vw, 2.75rem);
+  }
+
+  .press-brief {
+    display: grid;
+    grid-template-columns: minmax(0, 1.08fr) minmax(20rem, 0.92fr);
+    gap: clamp(3rem, 7vw, 6rem);
+  }
+
+  .press-meta {
+    font-family: var(--font-label-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+
+  .press-summary .press-meta {
+    margin-top: 1.5rem;
+    color: rgb(57 54 54 / 72%);
+  }
+
+  .press-summary__text {
+    max-width: 70ch;
+    margin-top: 1.25rem;
+    color: rgb(57 54 54 / 82%);
+    font-size: 1rem;
+    line-height: 1.75;
+  }
+
+  .press-summary :global(.press-copy-action) {
+    margin-top: 1.5rem;
+  }
+
+  .press-fact-sheet {
+    align-self: start;
+    border-block: 1px solid rgb(57 54 54 / 20%);
+  }
+
+  .press-fact-sheet h3,
+  .press-angles h3,
+  .press-package h3,
+  .press-resource h3,
+  .press-spokesperson h3 {
+    font-family: var(--font-serif);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    line-height: 1.05;
+  }
+
+  .press-fact-sheet h3 {
+    padding-block: 1.25rem;
+  }
+
+  .press-fact-sheet dl {
+    border-top: 1px solid rgb(57 54 54 / 14%);
+  }
+
+  .press-fact-sheet dl div {
+    display: grid;
+    grid-template-columns: 7.5rem 1fr;
+    gap: 1rem;
+    padding-block: 0.85rem;
+  }
+
+  .press-fact-sheet dl div + div {
+    border-top: 1px solid rgb(57 54 54 / 12%);
+  }
+
+  .press-fact-sheet dt {
+    font-weight: 700;
+  }
+
+  .press-fact-sheet dd {
+    color: rgb(57 54 54 / 76%);
+    line-height: 1.55;
+  }
+
+  .press-fact-sheet :global(.press-copy-action) {
+    margin-bottom: 1.25rem;
+  }
+
+  .press-heading {
+    max-width: 46rem;
+  }
+
+  .press-heading > p,
+  .press-contact p {
+    max-width: 70ch;
+    margin-top: 1rem;
+    color: rgb(57 54 54 / 76%);
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  .press-angles {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    border-block: 1px solid rgb(57 54 54 / 18%);
+  }
+
+  .press-angles article {
+    min-height: 12rem;
+    padding: 1.5rem;
+  }
+
+  .press-angles article + article {
+    border-inline-start: 1px solid rgb(57 54 54 / 14%);
+  }
+
+  .press-angles p {
+    margin-top: 0.85rem;
+    color: rgb(57 54 54 / 76%);
+    line-height: 1.65;
+  }
+
+  .press-programme-bridge {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  .press-programme-bridge > div > p {
+    margin-bottom: 0.8rem;
+    font-weight: 700;
+  }
+
+  .press-track-marks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 1.5rem;
+  }
+
+  .press-resources {
+    color: var(--color-brand-black);
+  }
+
+  .press-package {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(20rem, 30rem);
+    align-items: center;
+    gap: clamp(2rem, 6vw, 5rem);
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    border-block: 1px solid rgb(57 54 54 / 18%);
+    padding: 2rem 1.5rem;
+  }
+
+  .press-package__intro {
+    max-width: 38rem;
+  }
+
+  .press-package__intro p {
+    max-width: 58ch;
+    margin-top: 0.85rem;
+    color: rgb(57 54 54 / 76%);
+    line-height: 1.65;
+  }
+
+  .press-resource-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    border-block-start: 1px solid rgb(57 54 54 / 18%);
+    border-inline-start: 1px solid rgb(57 54 54 / 18%);
+  }
+
+  .press-resource {
+    border-right: 1px solid rgb(57 54 54 / 18%);
+    border-bottom: 1px solid rgb(57 54 54 / 18%);
+  }
+
+  .press-resource__visual {
+    display: grid;
+    height: clamp(12rem, 22vw, 16rem);
+    overflow: hidden;
+    place-items: center;
+    padding: 1.5rem;
+    background: var(--color-brand-cream-deep);
+  }
+
+  .press-resource__visual img {
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  .press-resource__visual--logo img {
+    width: 6rem;
+    height: 6rem;
+    object-fit: contain;
+  }
+
+  .press-resource__body {
+    display: grid;
+    min-height: 8rem;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: var(--color-brand-cream);
+    color: var(--color-brand-black);
+  }
+
+  .press-resource__details {
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .press-resource__summary {
+    max-width: 62ch;
+    color: rgb(57 54 54 / 72%);
+    font-family: var(--font-label-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: 1.5;
+  }
+
+  .press-resource__body a {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--color-brand-blue);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .press-spokespeople {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    border-block: 1px solid rgb(57 54 54 / 18%);
+  }
+
+  .press-spokesperson {
+    display: grid;
+    grid-template-columns: minmax(9rem, 0.72fr) minmax(0, 1.28fr);
+    min-height: 18rem;
+  }
+
+  .press-spokesperson + .press-spokesperson {
+    border-inline-start: 1px solid rgb(57 54 54 / 14%);
+  }
+
+  .press-spokesperson > img {
+    width: 100%;
+    height: 100%;
+    filter: grayscale(1);
+    object-fit: cover;
+    object-position: center 25%;
+  }
+
+  .press-spokesperson__body {
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+  }
+
+  .press-spokesperson__role {
+    margin-top: 0.65rem;
+    font-family: var(--font-label-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: var(--tracking-label);
+    line-height: 1.45;
+    text-transform: uppercase;
+  }
+
+  .press-spokesperson__body > p:not(.press-spokesperson__role) {
+    margin-top: 1rem;
+    color: rgb(57 54 54 / 76%);
+    line-height: 1.65;
+  }
+
+  :global(.press-interview-action) {
+    align-self: flex-start;
+    margin-top: auto;
+  }
+
+  .press-contact {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 3rem;
+  }
+
+  .press-contact > div {
+    max-width: 46rem;
+  }
+
+  :global(.press-final-contact) {
+    align-self: end;
+  }
+
+  @media (max-width: 63.999rem) {
+    .press-brief,
+    .press-spokesperson {
+      grid-template-columns: 1fr;
+    }
+
+    .press-spokesperson > img {
+      aspect-ratio: 4 / 3;
+      height: auto;
+    }
+  }
+
+  @media (max-width: 47.999rem) {
+    .press-angles,
+    .press-resource-grid,
+    .press-spokespeople,
+    .press-contact {
+      grid-template-columns: 1fr;
+    }
+
+    .press-angles article {
+      min-height: auto;
+    }
+
+    .press-angles article + article,
+    .press-spokesperson + .press-spokesperson {
+      border-inline-start: 0;
+      border-top: 1px solid rgb(57 54 54 / 14%);
+    }
+
+    .press-programme-bridge,
+    .press-package {
+      display: grid;
+      align-items: start;
+    }
+
+    .press-resource__body {
+      align-items: flex-end;
+    }
+
+    .press-fact-sheet dl div {
+      grid-template-columns: 1fr;
+      gap: 0.25rem;
+    }
+
+    .press-contact {
+      align-items: start;
+    }
+
+    :global(.press-final-contact) {
+      align-self: start;
+    }
+  }
+
+  @media print {
+    :global(header),
+    :global(footer),
+    :global(.press-copy-action) {
+      display: none;
+    }
+
+    .press-section > .press-shell {
+      padding-block: 2.5rem;
+    }
+
+    section {
+      break-inside: avoid;
+    }
+  }
+</style>

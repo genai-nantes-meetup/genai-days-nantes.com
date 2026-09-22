@@ -1,0 +1,96 @@
+---
+import DownloadIcon from './DownloadIcon.astro';
+
+interface Props {
+  href: string;
+  label: string;
+  meta: string;
+  class?: string;
+  download?: boolean | string;
+}
+
+const { href, label, meta, class: className, download = true } = Astro.props;
+---
+
+<a class:list={['press-download-action', className]} href={href} download={download}>
+  <span class="press-download-action__copy">
+    <strong>{label}</strong>
+    <span>{meta}</span>
+  </span>
+  <span class="press-download-action__icon" aria-hidden="true">
+    <DownloadIcon />
+  </span>
+</a>
+
+<style>
+  .press-download-action {
+    display: grid;
+    width: min(100%, 30rem);
+    grid-template-columns: minmax(0, 1fr) 3.25rem;
+    align-items: stretch;
+    background: var(--color-brand-cream);
+    color: var(--color-brand-night);
+    text-decoration: none;
+    transition:
+      background-color 160ms ease-out,
+      box-shadow 160ms ease-out,
+      translate 160ms ease-out;
+  }
+
+  .press-download-action__copy {
+    display: grid;
+    min-width: 0;
+    align-content: center;
+    gap: 0.3rem;
+    padding: 0.85rem 1rem;
+  }
+
+  .press-download-action strong {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: var(--tracking-ui);
+    line-height: 1.35;
+    text-transform: uppercase;
+  }
+
+  .press-download-action__copy > span {
+    color: rgb(9 18 46 / 70%);
+    font-family: var(--font-label-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .press-download-action__icon {
+    display: grid;
+    place-items: center;
+    border-inline-start: 1px solid rgb(9 18 46 / 18%);
+    color: var(--color-brand-blue);
+    font-size: 1rem;
+    transition:
+      background-color 160ms ease-out,
+      color 160ms ease-out;
+  }
+
+  .press-download-action:hover {
+    background: white;
+    box-shadow: 0.3rem 0.45rem 1rem rgb(0 0 0 / 16%);
+    translate: 0 -0.12rem;
+  }
+
+  .press-download-action:hover .press-download-action__icon {
+    background: var(--color-brand-blue);
+    color: white;
+  }
+
+  .press-download-action:active {
+    box-shadow: none;
+    translate: 0 0;
+  }
+
+  .press-download-action:focus-visible {
+    outline: 2px solid var(--color-brand-orange);
+    outline-offset: 3px;
+  }
+</style>

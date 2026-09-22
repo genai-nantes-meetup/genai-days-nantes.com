@@ -1,0 +1,186 @@
+---
+import EventName from './EventName.astro';
+import Label from './Label.astro';
+
+interface Props {
+  labelId: string;
+  format: string;
+  room: string;
+  startTime: string;
+  durationMinutes: number;
+  title: string;
+  quoted?: boolean;
+  speakers?: {
+    name: string;
+    company: string;
+    companyLogo?: string;
+  }[];
+}
+
+const { labelId, format, room, startTime, durationMinutes, title, quoted = true, speakers = [] } = Astro.props;
+const displayTitle = quoted ? `"${title}"` : title;
+const speakerNames = speakers.length > 0 ? speakers.map((speaker) => speaker.name).join(' · ') : 'Speaker To Be Announced';
+const companyLogos = speakers.reduce<{ src: string; alt: string }[]>((logos, speaker) => {
+  if (speaker.companyLogo && !logos.some((logo) => logo.src === speaker.companyLogo)) {
+    logos.push({
+      src: speaker.companyLogo,
+      alt: `Logo ${speaker.company}`,
+    });
+  }
+
+  return logos;
+}, []);
+const titleStyle =
+  title.length > 60
+    ? '--cover-title-size: clamp(1.05rem, 1.45vw, 1.35rem); --cover-title-mobile-size: clamp(1.15rem, 4.8vw, 1.35rem); --cover-title-line-height: 0.98;'
+    : undefined;
+const surfaceStyle =
+  '--label-padding-x: clamp(0.65rem, 1.1vw, 0.78rem); --label-padding-y: clamp(0.42rem, 0.75vw, 0.52rem); --label-mark-size: clamp(2rem, 1.4vw, 1.1rem); height: auto;';
+---
+
+<Label
+  class="session-cover-label"
+  size="cover"
+  format="rectangle-a"
+  placement="bottom-left"
+  rotation={-0.4}
+  surfaceStyle={surfaceStyle}
+  frontStyle="height: auto;"
+  peelable
+  labelId={labelId}
+  as="article"
+  ariaLabel={`Étiquette de la session : ${title}`}
+>
+  <Fragment slot="logo">
+    {companyLogos.length > 0 ? (
+      <span class="cover-label__logos">
+        {companyLogos.map((logo) => <img src={logo.src} alt={logo.alt} loading="lazy" />)}
+      </span>
+    ) : (
+      <EventName />
+    )}
+  </Fragment>
+  <Fragment slot="overline">{speakerNames}</Fragment>
+  <Fragment slot="title">
+    <p class="cover-label__title" style={titleStyle} aria-hidden="true">{displayTitle}</p>
+  </Fragment>
+  <Fragment slot="secondary">{room} · {startTime} · {durationMinutes} min</Fragment>
+
+  <Fragment slot="back">
+    <div class="cover-label__back-copy">
+      <p class="cover-label__meta">{speakerNames} · {room} · {startTime} · {durationMinutes} min</p>
+      <strong>{displayTitle}</strong>
+    </div>
+  </Fragment>
+</Label>
+
+<style>
+  :global(.site-label-shell.site-label-shell--cover.session-cover-label) {
+    width: 44%;
+    max-width: 30rem;
+    min-height: 4.75rem;
+    aspect-ratio: auto;
+  }
+
+  :global(.site-label-shell.session-cover-label .site-label__header) {
+    gap: 0.2rem;
+  }
+
+  :global(.site-label-shell.session-cover-label .site-label__body) {
+    padding-block: 0.32rem 0.1rem;
+  }
+
+  :global(.site-label-shell.session-cover-label .site-label__overline) {
+    font-size: clamp(0.55rem, 0.9vw, 0.68rem);
+    line-height: 0.8;
+  }
+
+  :global(.site-label-shell.session-cover-label .site-label__secondary) {
+    font-size: clamp(0.5rem, 0.8vw, 0.62rem);
+  }
+
+  .cover-label__logos {
+    display: flex;
+    min-width: 0;
+    max-width: 100%;
+    height: var(--label-mark-size);
+    gap: 0.2rem;
+    align-items: center;
+  }
+
+  .cover-label__logos img {
+    width: auto;
+    max-width: 100%;
+    height: 100%;
+    flex: 0 1 auto;
+    object-fit: contain;
+  }
+
+  .cover-label__back-copy {
+    position: relative;
+    width: 100%;
+  }
+
+  .cover-label__meta {
+    position: relative;
+    font-size: clamp(0.64rem, 1.3vw, 0.77rem);
+    font-weight: 700;
+    letter-spacing: var(--tracking-label);
+    line-height: 1.15;
+    text-transform: uppercase;
+    color: rgb(13 13 18 / 47%);
+  }
+
+  /* Copie visible du titre, ce n'est plus un h1 : le titre du document vit
+   * dans le contenu, hors de l'étiquette qu'un visiteur peut archiver.
+   * text-wrap est réaffirmé ici, la feuille globale ne l'équilibrait que sur
+   * les balises de titre. */
+  .cover-label__title,
+  .cover-label__back-copy strong {
+    position: relative;
+    display: block;
+    max-width: 38rem;
+    text-wrap: balance;
+    font-size: var(--cover-title-size, clamp(1.55rem, 2.1vw, 2rem));
+    font-weight: 800;
+    letter-spacing: var(--tracking-display);
+    line-height: var(--cover-title-line-height, 0.95);
+  }
+
+  .cover-label__back-copy {
+    color: rgb(13 13 18 / 5%);
+  }
+
+  .cover-label__back-copy .cover-label__meta {
+    color: currentColor;
+  }
+
+  @media (max-width: 39.999rem) {
+    :global(.site-label-shell.site-label-shell--cover.session-cover-label) {
+      width: min(21rem, calc(100% - 3rem));
+      min-height: 7.5rem;
+      aspect-ratio: auto;
+    }
+
+    .cover-label__title,
+    .cover-label__back-copy strong {
+      padding-right: 0.3rem;
+      font-size: var(--cover-title-mobile-size, clamp(2.25rem, 8vw, 2.75rem));
+      line-height: 0.9;
+    }
+
+    .cover-label__meta {
+      padding-right: 1.6rem;
+      font-size: 0.58rem;
+    }
+
+    :global(.site-label-shell.session-cover-label .site-label__overline) {
+      font-size: 0.75rem;
+      line-height: 1.1;
+    }
+
+    :global(.site-label-shell.session-cover-label .site-label__secondary) {
+      font-size: 0.7rem;
+    }
+  }
+</style>

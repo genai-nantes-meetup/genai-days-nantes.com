@@ -1,0 +1,59 @@
+---
+import EVENT from '../content/event.json';
+
+interface Props {
+  class?: string;
+  showLocation?: boolean;
+}
+
+const { class: className, showLocation = false } = Astro.props;
+---
+
+<span
+  class:list={['event-name', { 'event-name--with-location': showLocation }, className]}
+  aria-label={showLocation ? `GENAI DAYS, NANTES ${EVENT.year}` : 'GENAI DAYS'}
+>
+  <span class="event-name__wordmark"><span class="event-name__gen">GEN</span><span class="event-name__ai">AI</span><span class="event-name__days"> DAYS</span></span>
+  {showLocation && <span class="event-name__location">NANTES {EVENT.year}</span>}
+</span>
+
+<style>
+  /* L'identité du wordmark est une structure RELATIVE : GENAI gras, DAYS
+   * léger. Posée en absolu (700/400), elle s'inverse dès que le contexte
+   * est plus gras qu'elle (un chapô en 800 la rend plus maigre que sa
+   * phrase). Les deux graisses sont donc exposées en variables : un
+   * contexte lourd les recale (--event-name-strong / --event-name-light)
+   * pour préserver le rapport fort/léger du logo. */
+  .event-name {
+    font-family: var(--font-serif);
+    font-style: normal;
+    font-weight: var(--event-name-light, 400);
+    letter-spacing: var(--tracking-wordmark);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .event-name__gen,
+  .event-name__ai {
+    font-weight: var(--event-name-strong, 700);
+  }
+
+  .event-name__ai {
+    font-style: italic;
+  }
+
+  .event-name--with-location {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 0.86;
+  }
+
+  .event-name__location {
+    align-self: flex-end;
+    margin-top: 0.16em;
+    font-size: 0.57em;
+    letter-spacing: 0.07em;
+    line-height: 1;
+  }
+</style>

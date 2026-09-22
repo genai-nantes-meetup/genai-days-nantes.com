@@ -1,0 +1,17 @@
+---
+import EventName from './EventName.astro';
+
+interface Props {
+  text: string;
+}
+
+const { text } = Astro.props;
+const parts = text.split(/genai days/gi);
+---
+
+{parts.map((part, index) => (
+  <>
+    {part}
+    {index < parts.length - 1 && <EventName />}
+  </>
+))}

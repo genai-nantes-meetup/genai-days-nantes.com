@@ -1,0 +1,33 @@
+---
+name: "Nicolas Martignole"
+role: "Principal Engineer"
+company: "Back Market"
+bio: "Principal Engineer chez Back Market et cofondateur de Devoxx France, Nicolas Martignole accompagne depuis plus de vingt-cinq ans des équipes confrontées à des enjeux d’architecture, de passage à l’échelle et d’efficacité du développement."
+profile:
+  - "Nicolas Martignole construit des logiciels depuis la fin des années 1990. Développeur Java, Scala et Web, il a exercé comme freelance, lead tech, CTO associé, dirigeant d’ESN puis Principal Engineer. Ce parcours lui a donné une lecture très concrète du numérique, du code jusqu’aux arbitrages d’organisation et d’investissement."
+  - "Avant de rejoindre Back Market en janvier 2024, il a été Principal Engineer chez Doctolib de 2021 à 2023, où il a travaillé sur des sujets d’architecture, d’observabilité et de gestion de crise à grande échelle. Il a auparavant dirigé Lunatech en France et occupé le poste de CTO associé chez CaptainDash."
+  - "Il partage ce retour d’expérience depuis de nombreuses années sur Le Touilleur Express. Cofondateur de Devoxx France, il contribue aussi depuis 2012 à l’une des principales conférences européennes dédiées aux développeuses et développeurs."
+genaiLegitimacy: "Sa légitimité sur la GenAI vient de son regard de praticien sur les outils qui transforment réellement le travail des équipes techniques. Il analyse les agents et assistants de développement à travers leurs effets mesurables sur les architectures, les usages, la productivité et les coûts. Son expérience de Principal Engineer lui permet de relier une innovation rapide à des questions très opérationnelles de gouvernance, d’observabilité et de maîtrise budgétaire."
+careerHighlights:
+  - period: "Depuis 2024"
+    title: "Principal Engineer chez Back Market"
+    description: "Architecture, accompagnement des équipes et transformation d’une plateforme numérique internationale."
+  - period: "2021 à 2023"
+    title: "Principal Engineer chez Doctolib"
+    description: "Architecture à grande échelle, observabilité, migrations et gestion de situations critiques."
+  - period: "2017 à 2020"
+    title: "Direction de Lunatech France"
+    description: "Pilotage opérationnel puis direction générale d’une société de conseil spécialisée dans les technologies logicielles."
+  - period: "Depuis 2012"
+    title: "Cofondateur de Devoxx France"
+    description: "Création et animation d’un rendez-vous majeur de la communauté des développeurs en Europe."
+companies:
+  - name: "Back Market"
+    relationship: "Principal Engineer depuis janvier 2024"
+    description: "Back Market est une place de marché internationale dédiée aux appareils électroniques reconditionnés. Nicolas y intervient au croisement de l’architecture, de la fiabilité et de l’efficacité des équipes techniques, dans un environnement numérique à grande échelle."
+    website: "https://www.backmarket.fr/"
+    logo: "/logos/back-market.jpg"
+photo: "/speakers/nicolas-martignole-wide-optimized.webp"
+companyLogo: "/logos/back-market.jpg"
+linkedin: "https://www.linkedin.com/in/nmartignole/"
+---

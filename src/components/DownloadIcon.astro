@@ -1,0 +1,30 @@
+---
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<svg
+  class:list={['download-icon', className]}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.8"
+  stroke-linecap="square"
+  stroke-linejoin="miter"
+  aria-hidden="true"
+  focusable="false"
+>
+  <path d="M12 3v12M7 10l5 5 5-5M4 21h16" />
+</svg>
+
+<style>
+  .download-icon {
+    display: inline-block;
+    width: 1.1em;
+    height: 1.1em;
+    flex: none;
+  }
+</style>

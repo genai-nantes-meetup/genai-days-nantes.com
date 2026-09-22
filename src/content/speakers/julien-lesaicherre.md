@@ -1,0 +1,33 @@
+---
+name: "Julien Lesaicherre"
+role: "General Manager France"
+company: "ElevenLabs"
+bio: "Directeur général France d’ElevenLabs, Julien Lesaicherre pilote le déploiement des agents vocaux de l’entreprise auprès des grands comptes français, après avoir construit les fonctions commerciales de Meta puis de Pigment."
+profile:
+  - "Diplômé de TBS Education, Julien Lesaicherre débute chez Microsoft en 2005, où il occupe plusieurs postes jusqu’à diriger l’activité Windows Azure en France. En 2014, il rejoint Facebook comme membre fondateur de Workplace, la plateforme collaborative du groupe, et y construit les équipes commerciales et de succès client qui font passer son chiffre d’affaires annuel de zéro à plusieurs centaines de millions de dollars. Il enseigne en parallèle à l’INSEAD entre 2017 et 2019."
+  - "En 2021, il rejoint Pigment comme Head of Business et construit sa fonction commerciale de trois à plus de cent personnes en trois ans, ouvrant des bureaux au Royaume-Uni, aux États-Unis et au Canada et lançant l’événement FP&A Week. Il occupe ensuite des postes de direction de la croissance chez YOOBIC puis chez Maki People, éditeur d’agents IA pour les fonctions RH."
+  - "En 2026, il rejoint ElevenLabs comme directeur général France pour structurer l’équipe et les partenariats de l’entreprise dans le pays. ElevenLabs franchit cette année-là les 600 millions de dollars de revenu annuel récurrent, avec près de 5 millions d’agents vocaux actifs sur sa plateforme, et noue des partenariats avec des entreprises comme Deutsche Telekom, Stripe ou TV5MONDE."
+genaiLegitimacy: "Julien Lesaicherre dirige l’implantation française d’une des entreprises les plus en vue de l’IA vocale et des agents conversationnels, qui gère plusieurs millions d’agents en production chez ses clients entreprise. Son expérience de construction de fonctions commerciales chez Meta puis Pigment lui donne une lecture directe de la façon dont les agents IA transforment concrètement les métiers de la relation client, de la vente et du support."
+careerHighlights:
+  - period: "Depuis 2026"
+    title: "General Manager France chez ElevenLabs"
+    description: "Structuration de l’équipe et des partenariats français d’une plateforme d’agents vocaux qui dépasse 600 millions de dollars de revenu annuel récurrent et 4,8 millions d’agents actifs."
+  - period: "2021-2024"
+    title: "Head of Business chez Pigment"
+    description: "Construction de la fonction commerciale de trois à plus de cent personnes, avec ouverture de bureaux au Royaume-Uni, aux États-Unis et au Canada."
+  - period: "2024-2025"
+    title: "Chief Growth Officer chez YOOBIC puis Maki People"
+    description: "Direction de la croissance d’un éditeur retail puis d’un éditeur d’agents IA pour les fonctions RH."
+  - period: "2014-2021"
+    title: "Membre fondateur de Workplace chez Meta"
+    description: "Construction des équipes commerciales et de succès client de la plateforme collaborative de Meta, avec un chiffre d’affaires passé de zéro à plusieurs centaines de millions de dollars."
+companies:
+  - name: "ElevenLabs"
+    relationship: "General Manager France depuis 2026"
+    description: "ElevenLabs est une entreprise d’origine européenne qui développe des modèles vocaux et des agents IA conversationnels, utilisés notamment par Deutsche Telekom, Stripe et TV5MONDE."
+    website: "https://elevenlabs.io/"
+photo: "/speakers/julien-lesaicherre-optimized.webp"
+linkedin: "https://www.linkedin.com/in/julien11l/"
+website: "https://elevenlabs.io/"
+x: "https://x.com/jlesaicherre"
+---

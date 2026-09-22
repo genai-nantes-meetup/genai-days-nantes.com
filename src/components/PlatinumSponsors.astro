@@ -1,0 +1,107 @@
+---
+import { getCollection } from 'astro:content';
+
+const platinumSponsors = (await getCollection('partners'))
+  .filter((partner) => partner.data.tier === 'platinum' && !partner.data.coOrganizer)
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((partner) => {
+    const logo = partner.data.monochromeLogo ?? partner.data.logo;
+    const width = partner.data.monochromeLogoWidth ?? partner.data.logoWidth;
+    const height = partner.data.monochromeLogoHeight ?? partner.data.logoHeight;
+
+    return {
+      name: partner.data.name,
+      logo,
+      width,
+      height,
+      size: width / height < 2.2 ? 'tall' : 'wide',
+    } as const;
+  });
+---
+
+<div class="platinum-sponsors" role="group" aria-label="Partenaires Platinum">
+  <ul aria-label="Logos des partenaires Platinum">
+    {platinumSponsors.map((sponsor) => (
+      <li class:list={[`platinum-sponsors__logo--${sponsor.size}`]}>
+        <img
+          src={sponsor.logo}
+          alt={`Logo ${sponsor.name}`}
+          width={sponsor.width}
+          height={sponsor.height}
+          loading="lazy"
+          decoding="async"
+        />
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .platinum-sponsors {
+    width: fit-content;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .platinum-sponsors ul {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: clamp(1.25rem, 2vw, 2rem);
+    list-style: none;
+  }
+
+  .platinum-sponsors li {
+    display: flex;
+    min-width: 0;
+    min-height: 3rem;
+    flex: 0 1 auto;
+    align-items: center;
+  }
+
+  .platinum-sponsors img {
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    max-height: 2.15rem;
+    filter: grayscale(1) brightness(0) invert(1);
+    opacity: 0.58;
+    object-fit: contain;
+  }
+
+  .platinum-sponsors__logo--tall img {
+    max-width: 5rem;
+    max-height: 2.75rem;
+  }
+
+  .platinum-sponsors__logo--wide img {
+    max-width: 8.5rem;
+  }
+
+  @media (max-width: 47.999rem) {
+    .platinum-sponsors {
+      width: min(100%, 22rem);
+    }
+
+    .platinum-sponsors ul {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem 0.75rem;
+    }
+
+    .platinum-sponsors li {
+      width: calc((100% - 1.5rem) / 3);
+      min-height: 2.5rem;
+      justify-content: center;
+    }
+
+    .platinum-sponsors img {
+      max-height: 1.75rem;
+    }
+
+    .platinum-sponsors__logo--tall img {
+      max-width: 4.5rem;
+      max-height: 2.25rem;
+    }
+  }
+</style>

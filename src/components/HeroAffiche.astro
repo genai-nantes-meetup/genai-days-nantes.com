@@ -1,0 +1,741 @@
+---
+/**
+ * Hero "affiche pleine page" de la landing : une affiche en full-bleed,
+ * le titre posé dessus, l'étiquette pratique en haut à droite.
+ *
+ * La section fait 200svh pour ouvrir une course de scroll : l'affiche est
+ * collée (sticky) et reste immobile. L'image et l'étiquette partagent le même
+ * zoom, piloté sans modifier la structure de rendu du poster. L'étiquette passe
+ * au-dessus des scrims de lisibilité, sinon recollée en bas de l'affiche elle
+ * se perdait dans l'ombre. Les deux sont découpées par la dissolution crème.
+ * Le titre et ses partenaires glissent ensemble devant la scène.
+ */
+import { getCollection } from 'astro:content';
+import Label from './Label.astro';
+import PlatinumSponsors from './PlatinumSponsors.astro';
+import { EVENT, formatEventDateLabel } from '../lib/event';
+
+const eventDate = new Date(`${EVENT.date}T00:00:00`);
+const eventWeekday = new Intl.DateTimeFormat('fr-FR', { weekday: 'long' }).format(eventDate);
+const eventDay = new Intl.DateTimeFormat('fr-FR', { day: 'numeric' }).format(eventDate);
+const eventMonth = new Intl.DateTimeFormat('fr-FR', { month: 'long' }).format(eventDate);
+const eventYear = new Intl.DateTimeFormat('fr-FR', { year: 'numeric' }).format(eventDate);
+const eventWeekdayUppercase = eventWeekday.toLocaleUpperCase('fr-FR');
+const coOrganizer = (await getCollection('partners')).find((partner) => partner.data.coOrganizer);
+const coOrganizerLogo = coOrganizer?.data.monochromeLogo ?? coOrganizer?.data.logo;
+const coOrganizerLogoWidth = coOrganizer?.data.monochromeLogoWidth ?? coOrganizer?.data.logoWidth;
+const coOrganizerLogoHeight = coOrganizer?.data.monochromeLogoHeight ?? coOrganizer?.data.logoHeight;
+---
+
+<section class="hero-affiche" data-label-surface>
+  <div class="hero-affiche__backdrop">
+    <img
+      class="hero-affiche__poster"
+      src="/images/cover_v2-optimized.webp"
+      srcset="/images/cover_v2-640-optimized.webp 640w, /images/cover_v2-1024-optimized.webp 1024w, /images/cover_v2-1920-optimized.webp 1920w, /images/cover_v2-optimized.webp 2560w"
+      sizes="100vw"
+      alt=""
+      loading="eager"
+      fetchpriority="high"
+      decoding="async"
+    />
+
+
+    <div class="hero-affiche__scrim" aria-hidden="true"></div>
+    <div class="hero-affiche__scrim-top" aria-hidden="true"></div>
+
+    <div class="hero-affiche__label" data-poster-label>
+      <Label
+        size="medium"
+        format="rectangle-b"
+        rotation={2}
+        peelable
+        labelId="landing-day-manifesto"
+        brand="CONFÉRENCES"
+        showMark={false}
+        surfaceClass="hero-meta-label"
+        contentClass="hero-meta-label__body"
+      >
+        <Fragment slot="title">
+          <div class="hero-affiche__label-data">
+            <p class="hero-affiche__label-overline">{eventWeekdayUppercase} · ACCUEIL {EVENT.startTime}</p>
+            <p class="hero-affiche__label-date">
+              <strong>{eventDay}</strong>
+              <span>
+                <b>{eventMonth}</b>
+                <b>{eventYear}</b>
+              </span>
+            </p>
+            <div class="hero-affiche__label-bottom">
+              <p class="hero-affiche__label-venue">
+                <strong>{EVENT.venue.shortName}</strong>
+                <span>{EVENT.venue.city}</span>
+              </p>
+              {coOrganizer && coOrganizerLogo && (
+                <img
+                  class="hero-affiche__label-partner"
+                  src={coOrganizerLogo}
+                  alt={`${coOrganizer.data.name}, coorganisatrice`}
+                  width={coOrganizerLogoWidth}
+                  height={coOrganizerLogoHeight}
+                  loading="eager"
+                  decoding="async"
+                />
+              )}
+            </div>
+          </div>
+        </Fragment>
+        <Fragment slot="back">
+          <p class="hero-affiche__label-back">{formatEventDateLabel()} · {EVENT.venue.city}</p>
+        </Fragment>
+      </Label>
+    </div>
+
+    <div class="hero-affiche__pin-layer" data-label-pin-host></div>
+  </div>
+
+  <canvas class="hero-affiche__trame" data-poster-trame aria-hidden="true"></canvas>
+
+  <div class="hero-affiche__overlay">
+    <div class="hero-affiche__content">
+      <div class="hero-affiche__message" data-hero-title>
+        <h1 class="hero-affiche__title">
+          {/* L'espace suit chaque <br /> : en début de ligne elle est retirée
+              au rendu, et elle redevient le séparateur de mots quand les
+              coupes forcées sont neutralisées sur les écrans étroits. */}
+          <span class="hero-affiche__title-primary">L’IA générative<br /> est déjà chez vous.</span>
+          <span class="hero-affiche__title-accent">C’est maintenant<br /> que ça se complique.</span>
+        </h1>
+        <p class="hero-affiche__practical">
+          <span>{eventWeekdayUppercase} {eventDay} {eventMonth} {eventYear}</span>
+          <span>{EVENT.venue.shortName}, {EVENT.venue.city}</span>
+          <span>ACCUEIL {EVENT.startTime}</span>
+        </p>
+        <div class="hero-affiche__sponsors">
+          <PlatinumSponsors />
+        </div>
+      </div>
+      {coOrganizer && coOrganizerLogo && (
+        <div class="hero-affiche__coorganizer hero-affiche__coorganizer--relay" data-hero-counterweight role="group" aria-label={`Co-organisé avec la ${coOrganizer.data.name}`}>
+          <img
+            src={coOrganizerLogo}
+            alt={coOrganizer.data.name}
+            width={coOrganizerLogoWidth}
+            height={coOrganizerLogoHeight}
+            loading="eager"
+            decoding="async"
+          />
+        </div>
+      )}
+    </div>
+  </div>
+</section>
+
+<style>
+  :global(html) {
+    --hero-stage-height: 100svh;
+    --hero-safe-gutter: clamp(3rem, 6svh, 5.75rem);
+    --hero-trame-top: 25svh;
+  }
+
+  /* Pas d'overflow: hidden ici, il neutraliserait le sticky de l'affiche. */
+  /* 200svh : la bande de dissolution remonte nettement plus vite que le
+   * contenu (overtake calculé côté JS) et boucle sa course au début de la
+   * piste sticky. L'intro, remontée sous la bande, occupe
+   * toujours le bas de l'écran : jamais de zone vide.
+   * La marge négative glisse la section sous le header (immergé, donc sans
+   * surface au sommet) : l'affiche occupe le viewport entier. */
+  .hero-affiche {
+    position: relative;
+    z-index: 1;
+    height: calc(200svh + 2px);
+    /* 2px de garde : la hauteur réelle du header peut dépasser la variable
+     * d'une fraction de pixel (bordure, arrondis de rendu, zoom), ce qui
+     * laissait un liseré de fond clair au-dessus de l'affiche. */
+    margin-top: calc(-1 * var(--site-header-height) - 2px);
+    background: transparent;
+  }
+
+  .hero-affiche.is-peeling-label {
+    z-index: 10;
+  }
+
+  /* L'affiche reste plaquée sous le header pendant toute la course de scroll
+   * de la section : seul le calque de contenu défile par-dessus.
+   * overflow: hidden recadre le débordement du dolly-in (sans danger ici :
+   * c'est l'élément sticky lui-même, pas un de ses ancêtres). */
+  .hero-affiche__backdrop {
+    position: sticky;
+    z-index: 1;
+    top: 0;
+    /* 100lvh et non la hauteur de scène : le décor doit couvrir le viewport
+     * même barre d'URL rétractée, sinon une bande de crème du body apparaît
+     * sous l'affiche dès les premiers pixels de scroll. */
+    height: 100lvh;
+    overflow: hidden;
+    background: #050510;
+  }
+
+  /* Le dolly-in vise le centre de l'affiche, pas le centre géométrique. */
+  .hero-affiche__poster {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transform-origin: 50% 38%;
+    will-change: transform;
+  }
+
+  @media (min-width: 48rem) and (max-aspect-ratio: 3 / 2) {
+    .hero-affiche__poster {
+      object-position: 50% center;
+    }
+
+  }
+
+  /* Réservé à la dissolution crème : la bande démarre sous le premier écran
+   * puis remonte au scroll jusque sous le titre, jamais au-dessus.
+   * Taille explicite obligatoire : un canvas est un élément remplacé, les
+   * insets seuls ne l'étirent pas (il resterait à son 300x150 intrinsèque). */
+  .hero-affiche__trame {
+    position: absolute;
+    z-index: 2;
+    top: var(--hero-trame-top);
+    left: 0;
+    width: 100%;
+    height: calc(100% - var(--hero-trame-top));
+    pointer-events: none;
+  }
+
+  /* Le calque lisible ne couvre que le premier écran, puis remonte au scroll.
+   * Pas de fondu : la bande de dissolution s'approche du titre sans jamais
+   * le rattraper, il sort par le haut à la vitesse du contenu. */
+  .hero-affiche__overlay {
+    position: absolute;
+    z-index: 3;
+    top: 0;
+    inset-inline: 0;
+    height: var(--hero-stage-height);
+    pointer-events: none;
+  }
+
+  /* Vignette haute, miroir du scrim bas : elle assoit la barre immergée
+   * (encre crème) sur le ciel clair de l'affiche. Éclairage du décor, pas
+   * du texte : elle est épinglée au poster, découpée et recouverte avec lui
+   * par la dissolution, et reste en place quand la barre s'efface, comme la
+   * vignette d'une affiche de cinéma. */
+  .hero-affiche__scrim-top {
+    position: absolute;
+    z-index: 3;
+    inset: 0 0 auto;
+    height: calc(var(--site-header-height) + 6rem);
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      rgb(5 5 16 / 52%) 0%,
+      rgb(5 5 16 / 26%) 45%,
+      transparent 100%
+    );
+  }
+
+  /* Ombre de lisibilité épinglée à l'affiche, comme un éclairage de scène :
+   * elle appartient au décor, pas au texte, donc elle ne bouge jamais au
+   * scroll (une ombre qui voyage avec le titre se lit comme une erreur de
+   * rendu). Le bas du backdrop sticky est toujours le bas du viewport : le
+   * dégradé ne montre jamais de bord net. Vivant dans le backdrop, elle est
+   * découpée puis recouverte par la dissolution en même temps que l'affiche. */
+  .hero-affiche__scrim {
+    position: absolute;
+    z-index: 2;
+    inset: 0;
+    pointer-events: none;
+    /* La portée de l'ombre grandit au scroll : poster-trame étire le scrim
+     * en scaleY depuis le bas. Le bord sombre reste ancré au bas de
+     * l'affiche, seul le dégradé monte suivre le titre. */
+    transform-origin: bottom;
+    will-change: transform;
+    background: linear-gradient(
+      to top,
+      rgb(0 0 0 / 92%) 0%,
+      rgb(0 0 0 / 72%) 26%,
+      rgb(0 0 0 / 62%) 50%,
+      rgb(0 0 0 / 35%) 68%,
+      transparent 84%
+    );
+  }
+
+  /* Décalée vers le centre et sous la zone du header : contrepoids diagonal
+   * du bloc titre (bas gauche), l'équilibre se fait autour du visuel
+   * plutôt que collé au coin de l'écran. */
+  .hero-affiche__label {
+    position: absolute;
+    z-index: 4;
+    top: clamp(6.5rem, 12svh, 10rem);
+    /* En paysage sur téléphone à encoche, l'inset latéral dépasse la borne
+     * basse du clamp : sans le max, le bord de papier passe sous la zone
+     * non sûre. */
+    right: max(clamp(2.5rem, 5svh, 5rem), env(safe-area-inset-right));
+    width: clamp(19rem, 30vw, 20rem);
+    pointer-events: auto;
+    transform-origin: 0 0;
+    will-change: transform;
+  }
+
+  .hero-affiche__label :global(.site-label-shell) {
+    width: 100%;
+    aspect-ratio: 1.46;
+  }
+
+  :global(.hero-meta-label) {
+    --label-padding-x: 6cqi;
+    --label-padding-y: 5.2cqi;
+    --label-mark-size: 13cqi;
+    --label-radius: 3.6cqi;
+    --label-brand-font-family: var(--font-sans);
+    --label-brand-font-size: var(--hero-label-meta-size);
+    --label-brand-font-style: normal;
+    --label-brand-font-weight: 700;
+    --label-brand-letter-spacing: 0.04em;
+    --label-brand-padding-top: 0.1em;
+    --hero-label-meta-size: clamp(0.75rem, 4.4cqi, 0.875rem);
+    container-type: inline-size;
+  }
+
+  :global(.hero-meta-label .site-label__front) {
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  :global(.hero-meta-label .site-label__header) {
+    gap: 4cqi;
+    align-items: start;
+  }
+
+  :global(.hero-meta-label .site-label__brand) {
+    min-height: 0;
+  }
+
+  :global(.hero-meta-label__body) {
+    align-items: stretch;
+    justify-content: center;
+    padding-block: 3.8cqi 0;
+    text-align: left;
+  }
+
+  :global(.hero-meta-label__body .site-label__title) {
+    font-size: inherit;
+    letter-spacing: 0;
+    line-height: 1;
+  }
+
+  .hero-affiche__label-data {
+    display: grid;
+    width: 100%;
+    gap: 2cqi;
+  }
+
+  .hero-affiche__label-overline {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: var(--hero-label-meta-size);
+    font-style: normal;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    line-height: 1;
+  }
+
+  .hero-affiche__label-date {
+    display: grid;
+    width: 100%;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 3.8cqi;
+    align-items: end;
+    margin: 0;
+    text-transform: uppercase;
+  }
+
+  .hero-affiche__label-date > strong {
+    font-size: max(3rem, 22cqi);
+    font-weight: 600;
+    letter-spacing: -0.055em;
+    line-height: 0.7;
+  }
+
+  .hero-affiche__label-date > span {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    padding-bottom: 0.1cqi;
+    font-size: max(1rem, 7cqi);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 0.8;
+  }
+
+  .hero-affiche__label-date b {
+    font-weight: inherit;
+  }
+
+  .hero-affiche__label-bottom {
+    display: grid;
+    min-width: 0;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 3cqi;
+    align-items: center;
+    padding-top: 2.2cqi;
+    border-top: 1px solid rgb(57 54 54 / 34%);
+  }
+
+  .hero-affiche__label-venue {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 0.65cqi;
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: var(--hero-label-meta-size);
+    font-style: normal;
+    font-weight: 700;
+    letter-spacing: 0.025em;
+    line-height: 1.08;
+    text-align: left;
+    text-transform: uppercase;
+    /* La rotation du sticker remonte optiquement la colonne gauche. */
+    translate: 0 0.25rem;
+  }
+
+  .hero-affiche__label-venue strong {
+    font-weight: 700;
+  }
+
+  .hero-affiche__label-venue span {
+    font-weight: inherit;
+  }
+
+  .hero-affiche__label-partner {
+    display: block;
+    width: clamp(6.25rem, 8vw, 7.5rem);
+    height: auto;
+    max-height: 3.5rem;
+    filter: grayscale(1) brightness(0);
+    opacity: 0.58;
+    object-fit: contain;
+  }
+
+  .hero-affiche__label-back {
+    font-family: var(--font-sans);
+    font-size: 6cqi;
+    font-weight: 800;
+    line-height: 1.1;
+    color: rgb(13 13 18 / 5%);
+  }
+
+  /* align-content plaque le titre et ses partenaires dans le tiers inférieur.
+   * Le calque reste transparent aux événements : plein écran, il masquerait
+   * le survol de l'étiquette qui vit dessous, dans le backdrop. Le titre
+   * reste transparent aux clics : il n'a aucune interaction propre. */
+  .hero-affiche__content {
+    position: relative;
+    display: grid;
+    align-content: end;
+    width: 100%;
+    height: var(--hero-stage-height);
+    padding: var(--hero-safe-gutter);
+    padding-bottom: clamp(6.5rem, 13svh, 8.75rem);
+    pointer-events: none;
+  }
+
+  .hero-affiche__sponsors {
+    width: min(100%, 70rem);
+    margin-top: clamp(1.5rem, 3svh, 2rem);
+    pointer-events: none;
+  }
+
+  .hero-affiche__coorganizer {
+    pointer-events: none;
+  }
+
+  .hero-affiche__coorganizer img {
+    display: block;
+    width: 11rem;
+    height: auto;
+    max-height: 5rem;
+    filter: grayscale(1) brightness(0) invert(1);
+    opacity: 0.58;
+    object-fit: contain;
+  }
+
+  @media (min-width: 48rem) and (max-width: 70rem) {
+    .hero-affiche__label-partner {
+      width: 6.25rem;
+    }
+  }
+
+  /* Relais de l'étiquette : quand l'objet étiquette quitte le décor, les
+   * mêmes informations pratiques reviennent en composition typographique
+   * pure, sans surface manipulable. Posé dans le bloc titre, donc effacé par
+   * le même fondu au scroll. Sur téléphone il remplace toujours l'étiquette ;
+   * au-dessus, seulement quand elle a été classée dans la collection. */
+  .hero-affiche__practical {
+    display: none;
+    border-top: 1px solid rgb(249 244 236 / 30%);
+    color: var(--color-brand-cream);
+    font-family: var(--font-label-mono);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    line-height: 1.3;
+    text-transform: uppercase;
+  }
+
+  .hero-affiche__coorganizer--relay {
+    display: none;
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent max(0px, calc(var(--hero-title-fade-depth, 0px) - var(--hero-title-fade-band, 44px))),
+      black var(--hero-title-fade-depth, 0px),
+      black 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent max(0px, calc(var(--hero-title-fade-depth, 0px) - var(--hero-title-fade-band, 44px))),
+      black var(--hero-title-fade-depth, 0px),
+      black 100%
+    );
+  }
+
+  /* Classée, l'étiquette emporte la date, le lieu et la Région. Le relais
+   * prend sa place, comme le titre d'une session révélé sous son étiquette,
+   * et le logo de la Région fait contrepoids au titre en bas à droite.
+   * Recollée depuis la collection, elle reprend la main et le relais s'efface. */
+  @media (min-width: 48rem) {
+    .hero-affiche:has(.hero-affiche__label [data-label-origin].is-collected) .hero-affiche__content {
+      grid-template-columns: minmax(0, 1fr) auto;
+      column-gap: clamp(2rem, 4vw, 4rem);
+    }
+
+    .hero-affiche:has(.hero-affiche__label [data-label-origin].is-collected) .hero-affiche__practical {
+      display: flex;
+      flex-wrap: wrap;
+      width: fit-content;
+      margin-top: clamp(1.25rem, 2.5svh, 1.75rem);
+      padding-top: 0.7rem;
+      gap: 0.3rem 0.9rem;
+      font-size: 0.8125rem;
+    }
+
+    .hero-affiche:has(.hero-affiche__label [data-label-origin].is-collected) .hero-affiche__practical span + span::before {
+      margin-inline-end: 0.9rem;
+      content: "·";
+    }
+
+    .hero-affiche:has(.hero-affiche__label [data-label-origin].is-collected) .hero-affiche__coorganizer--relay {
+      display: flex;
+      grid-row: 1;
+      grid-column: 2;
+      align-self: end;
+    }
+  }
+
+  @media (min-width: 48rem) and (prefers-reduced-motion: no-preference) {
+    .hero-affiche:has(.hero-affiche__label [data-label-origin].is-collected) .hero-affiche__practical,
+    .hero-affiche:has(.hero-affiche__label [data-label-origin].is-collected) .hero-affiche__coorganizer--relay {
+      animation: hero-relay-in 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+  }
+
+  @keyframes hero-relay-in {
+    from {
+      opacity: 0;
+      transform: translateY(0.5rem);
+    }
+  }
+
+  @media (max-width: 47.999rem) {
+    /* Le premier écran mobile n'a pas la place d'une étiquette : elle
+     * retombait dans la première ligne du titre et posait une zone morte au
+     * scroll tactile. Le bloc pratique la remplace. */
+    .hero-affiche__label {
+      display: none;
+    }
+
+    /* La taille suit la largeur pour que le nom du lieu, la plus longue des
+     * trois lignes, tienne d'un seul tenant jusque sur iPhone SE : en mono
+     * chaque glyphe avance d'environ 0.65em tracking compris, donc 40 signes
+     * demandent 26em et la colonne utile n'en offre que 335px à 375. */
+    .hero-affiche__practical {
+      display: grid;
+      gap: 0.3rem;
+      margin-top: 1.5rem;
+      padding-block: 0.7rem;
+      font-size: clamp(0.625rem, 3vw, 0.8125rem);
+    }
+
+    /* Les partenaires Platinum encombraient le premier écran mobile sans rien
+     * y ajouter : ils reviennent en pleine largeur dans PartnersShowcase, plus
+     * bas sur la même page. L'affiche garde son titre et ses informations. */
+    .hero-affiche__coorganizer {
+      width: 100%;
+      justify-content: start;
+      margin-top: 0.75rem;
+    }
+
+    .hero-affiche__coorganizer--relay {
+      display: flex;
+    }
+
+    .hero-affiche__sponsors {
+      display: none;
+    }
+
+    .hero-affiche__coorganizer img {
+      width: 7rem;
+      max-height: 3.5rem;
+    }
+
+    .hero-affiche__content {
+      padding: 0 1.25rem max(8rem, calc(7rem + env(safe-area-inset-bottom)));
+    }
+  }
+
+  /* Écrans courts : iPhone SE et 8 (553px utiles sous Safari), Android 640pt,
+   * et tout téléphone en paysage. Le bloc titre, le relais pratique et les
+   * partenaires ne tiennent plus sous la barre immergée : le titre remonte
+   * dans la bande du header et le fondu de lisibilité lui mange sa première
+   * ligne. On resserre le socle et les intervalles plutôt que de réduire le
+   * titre, qui porte l'affiche. Le socle garde de quoi dégager le CTA
+   * billetterie fixe (52px de haut, ancré à 1rem du bas). */
+  @media (max-height: 46rem) {
+    .hero-affiche__content {
+      padding-bottom: max(5.5rem, calc(4.5rem + env(safe-area-inset-bottom)));
+    }
+
+    .hero-affiche__practical {
+      margin-top: 1rem;
+      padding-block: 0.5rem;
+    }
+
+    .hero-affiche__sponsors,
+    .hero-affiche__coorganizer {
+      margin-top: 0.5rem;
+    }
+  }
+
+  @media (max-width: 47.999rem) and (max-height: 46rem) {
+    .hero-affiche__coorganizer {
+      margin-top: 0.25rem;
+    }
+  }
+
+  /* Paysage : le relais pratique est déjà masqué au-dessus de 48rem, mais la
+   * hauteur utile tombe sous 400px et le socle vertical de l'affiche doit
+   * suivre, sinon le titre passe derrière la barre. */
+  @media (max-height: 30rem) {
+    .hero-affiche__content {
+      padding-top: 0;
+      padding-bottom: max(4.5rem, calc(3.5rem + env(safe-area-inset-bottom)));
+    }
+
+    /* Le fondu de lisibilité est ancré à la navbar et s'éteint sur 44px en
+     * dessous : un titre qui repose dans cette bande se fait effacer sa
+     * première ligne, ce qui arrivait dès 375px de hauteur utile. Sur un
+     * écran aussi bas, le relais pratique cède sa place au titre, qui porte
+     * l'affiche ; la date et le lieu restent donnés juste en dessous. */
+    .hero-affiche__practical,
+    .hero-affiche__sponsors,
+    .hero-affiche__coorganizer {
+      display: none;
+    }
+  }
+
+  /* Sous 360px les deux coupes forcées du titre débordent de la colonne :
+   * on laisse la ligne couler, text-wrap: balance égalise le pavé. */
+  @media (max-width: 22.5rem) {
+    .hero-affiche__title br {
+      display: none;
+    }
+  }
+
+  /* Halo doux par lettre : seul renfort de lisibilité qui a le droit de
+   * voyager avec le titre, car collé aux glyphes il se lit comme un
+   * traitement typographique, pas comme un éclairage. Il porte le titre
+   * quand celui-ci quitte la zone d'ombre épinglée en bas de l'affiche.
+   *
+   * Voix accordée au wordmark : graisse 700 (le 800 empâte le Garamond et
+   * perd son contraste Renaissance), tracking et interligne détendus par
+   * rapport à la version d'origine (-0.02em au lieu de -0.045em, 0.9 au
+   * lieu de 0.84) pour laisser respirer les jonctions de lettres. */
+  .hero-affiche__message {
+    max-width: 70rem;
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent max(0px, calc(var(--hero-title-fade-depth, 0px) - var(--hero-title-fade-band, 44px))),
+      black var(--hero-title-fade-depth, 0px),
+      black 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent max(0px, calc(var(--hero-title-fade-depth, 0px) - var(--hero-title-fade-band, 44px))),
+      black var(--hero-title-fade-depth, 0px),
+      black 100%
+    );
+    will-change: mask-image;
+  }
+
+  .hero-affiche__title {
+    max-width: 46rem;
+    color: var(--color-brand-cream);
+    font-size: clamp(2.5rem, min(6.2vw, 7svh), 4.4rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 0.9;
+    text-shadow:
+      0 0.04em 0.24em rgb(5 5 16 / 34%),
+      0 1px 2px rgb(5 5 16 / 45%);
+    text-wrap: balance;
+  }
+
+  /* Repli pour les navigateurs sans masque CSS : le titre conserve le
+   * fondu global piloté par la même géométrie et ne traverse jamais la
+   * navbar. */
+  @supports not (mask-image: linear-gradient(to bottom, transparent, black)) {
+    .hero-affiche__message,
+    .hero-affiche__coorganizer {
+      opacity: var(--hero-title-presence, 1);
+      will-change: opacity;
+    }
+  }
+
+  /* La ligne orange reprend le geste exact du wordmark : l'italique 700 du
+   * "AI" de GENAI DAYS, amplifié à l'échelle du titre. */
+  .hero-affiche__title > span {
+    display: block;
+  }
+
+  .hero-affiche__title-accent {
+    display: block;
+    margin-top: 0.12em;
+    color: var(--color-brand-orange);
+    font-style: italic;
+  }
+
+  /* Les étiquettes recollées vivent dans ce calque, qui épouse exactement
+   * la boîte du backdrop. Transparent aux événements ; chaque étiquette
+   * redevient interactive individuellement. */
+  .hero-affiche__pin-layer {
+    position: absolute;
+    z-index: 4;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .hero-affiche__pin-layer > :global(*) {
+    pointer-events: auto;
+  }
+
+</style>

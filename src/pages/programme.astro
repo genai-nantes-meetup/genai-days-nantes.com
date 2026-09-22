@@ -1,0 +1,184 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import ScheduleSection from '../components/ScheduleSection.astro';
+import { formatEventDateLabel, buildEventJsonLd } from '../lib/event';
+import EVENT from '../content/event.json';
+import { CTA_LINKS } from '../lib/cta-links';
+import AdmissionTicketSection from '../components/AdmissionTicketSection.astro';
+import EditorialGrid from '../components/EditorialGrid.astro';
+import LabelArchive from '../components/LabelArchive.astro';
+
+const siteUrl = (Astro.site ?? new URL(Astro.url.origin)).href;
+const eventJsonLd = await buildEventJsonLd(siteUrl, CTA_LINKS.tickets);
+const pageTitle = `Programme IA générative ${EVENT.year} à ${EVENT.venue.city} · GenAI Days`;
+const pageDescription = `Programme IA générative de GenAI Days ${EVENT.year} à ${EVENT.venue.city} : deux parcours, un Startup Contest et la liberté de passer de l’un à l’autre entre les sessions.`;
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Accueil', item: siteUrl },
+    { '@type': 'ListItem', position: 2, name: 'Programme', item: `${siteUrl}programme` },
+  ],
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  structuredData={[eventJsonLd, breadcrumbJsonLd]}
+>
+  <Header />
+  <main class="programme-page">
+    <section class="programme-hero" aria-labelledby="programme-title">
+      <figure class="programme-hero__visual">
+        <img
+          src="/images/hotel-region-banner-genai-days-optimized.webp"
+          alt={`L’${EVENT.venue.name} à ${EVENT.venue.city}`}
+          width="1774"
+          height="886"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+        />
+      </figure>
+      <span class="programme-hero__shade" aria-hidden="true"></span>
+      <EditorialGrid tone="paper" top={false} />
+      <div class="programme-hero__inner">
+        <div class="programme-hero__copy">
+          <p class="type-page-kicker">{formatEventDateLabel()}</p>
+          <h1 id="programme-title" class="type-page-title type-page-title--long">Programme</h1>
+          <p class="type-page-lede">
+            Le programme IA générative de la journée : deux parcours, un Startup Contest, heure par heure. Passez librement de l’un à l’autre entre les sessions.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <ScheduleSection />
+
+    <AdmissionTicketSection />
+  </main>
+  <Footer grid />
+  <LabelArchive />
+  <script>
+    import { initLabelEasterEgg } from '../scripts/label-easter-egg';
+    import { initScrollReveal } from '../scripts/scroll-reveal';
+    import { initScheduleTabs } from '../scripts/schedule-tabs';
+
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      initScrollReveal();
+    }
+    initScheduleTabs();
+    initLabelEasterEgg();
+  </script>
+</BaseLayout>
+
+<style>
+  .programme-page {
+    background: var(--color-brand-cream);
+    color: var(--color-brand-black);
+  }
+
+  .programme-hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-brand-blue);
+    color: var(--color-brand-cream);
+    isolation: isolate;
+  }
+
+  .programme-hero__inner {
+    position: relative;
+    z-index: 3;
+    display: grid;
+    width: min(calc(100% - 2 * var(--layout-gutter)), var(--layout-editorial));
+    min-height: clamp(17rem, 23vw, 21rem);
+    margin-inline: auto;
+  }
+
+  .programme-hero__copy {
+    position: relative;
+    z-index: 3;
+    display: grid;
+    max-width: 38rem;
+    align-content: center;
+    padding: clamp(2.5rem, 4vw, 3.5rem) clamp(1.5rem, 3vw, 2.75rem);
+    gap: clamp(0.65rem, 1vw, 0.9rem);
+  }
+
+  .programme-hero__copy .type-page-kicker {
+    color: rgb(249 244 236 / 84%);
+  }
+
+  .programme-hero__copy .type-page-title {
+    max-width: 9ch;
+  }
+
+  .programme-hero__copy .type-page-lede {
+    max-width: 34rem;
+    color: rgb(249 244 236 / 86%);
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+
+  .programme-hero__visual {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    margin: 0;
+    pointer-events: none;
+  }
+
+  .programme-hero__visual img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 54%;
+  }
+
+  .programme-hero__shade {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    background:
+      linear-gradient(
+        90deg,
+        rgb(9 18 46 / 96%) 0%,
+        rgb(9 18 46 / 88%) 31%,
+        rgb(9 18 46 / 58%) 55%,
+        rgb(9 18 46 / 18%) 82%,
+        rgb(9 18 46 / 8%) 100%
+      ),
+      linear-gradient(180deg, rgb(9 18 46 / 18%) 0%, transparent 52%, rgb(9 18 46 / 42%) 100%);
+    pointer-events: none;
+  }
+
+  @media (max-width: 47.999rem) {
+    .programme-hero__inner {
+      min-height: clamp(18rem, 68vw, 21rem);
+    }
+
+    .programme-hero__copy {
+      max-width: 34rem;
+      padding: clamp(2.5rem, 11vw, 3.5rem) 0;
+    }
+
+    .programme-hero__visual img {
+      object-position: 58% center;
+    }
+
+    .programme-hero__shade {
+      background:
+        linear-gradient(
+          90deg,
+          rgb(9 18 46 / 94%) 0%,
+          rgb(9 18 46 / 78%) 68%,
+          rgb(9 18 46 / 52%) 100%
+        ),
+        linear-gradient(180deg, rgb(9 18 46 / 38%) 0%, transparent 42%, rgb(9 18 46 / 62%) 100%);
+    }
+  }
+</style>

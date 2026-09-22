@@ -1,0 +1,389 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ArrowIcon from "../components/ArrowIcon.astro";
+import Button from "../components/Button.astro";
+import DirectoryHero from "../components/DirectoryHero.astro";
+import EditorialGrid from "../components/EditorialGrid.astro";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import Label from "../components/Label.astro";
+import { EVENT, EVENT_YEAR, formatEventDateLabel } from "../lib/event";
+
+const team = (await getCollection("team")).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+
+/* Les plaques ne sont pas alignées au cordeau : chacune est posée à la main,
+ * comme sur la planche du deck sponsors. Deux séries de valeurs suffisent à
+ * casser la régularité sans donner l'impression d'un défaut de calage. */
+const PLATE_ROTATIONS = [-1.6, 1.1, -0.8, 1.5, -1.2, 0.9];
+const PLATE_OFFSETS = [
+  "0.75rem",
+  "0.45rem",
+  "0.9rem",
+  "0.5rem",
+  "0.8rem",
+  "0.4rem",
+];
+const TEAM_COLUMN_TRACKS = team
+  .map((member) => `${member.data.photoWidth}fr`)
+  .join(" ");
+
+const siteUrl = (Astro.site ?? new URL(Astro.url.origin)).href;
+const pageUrl = new URL("/equipe", siteUrl).href;
+const pageTitle = `L’équipe ${EVENT_YEAR} · GENAI DAYS`;
+const pageDescription = `Découvrez les six organisateurs bénévoles de GENAI DAYS ${EVENT_YEAR} à ${EVENT.venue.city}, issus du meetup Generative AI Nantes et du hackathon SHIFT.`;
+
+const collectionJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: pageTitle,
+  description: pageDescription,
+  url: pageUrl,
+  about: { "@id": `${siteUrl}#event` },
+  mainEntity: {
+    "@type": "ItemList",
+    numberOfItems: team.length,
+    itemListElement: team.map((member, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      item: {
+        "@type": "Person",
+        name: member.data.name,
+        jobTitle: member.data.role,
+        description: member.data.background,
+        image: new URL(member.data.photo, siteUrl).href,
+        memberOf: { "@id": `${siteUrl}#organizer` },
+        ...(member.data.linkedin ? { sameAs: [member.data.linkedin] } : {}),
+      },
+    })),
+  },
+};
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Accueil", item: siteUrl },
+    { "@type": "ListItem", position: 2, name: "L’équipe", item: pageUrl },
+  ],
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  structuredData={[collectionJsonLd, breadcrumbJsonLd]}
+>
+  <Header />
+
+  <main class="team-page">
+    <DirectoryHero
+      title="L’équipe"
+      titleId="team-title"
+      lede={`Six bénévoles de l’écosystème nantais, déjà réunis autour du meetup Generative AI Nantes et du hackathon SHIFT, qui organisent la journée du ${formatEventDateLabel()}.`}
+      image="/images/cover_v2-optimized.webp"
+      imageWidth={2560}
+      imageHeight={1454}
+      imagePosition="50% 42%"
+    />
+
+    <section class="team-roster" aria-labelledby="team-roster-title">
+      <EditorialGrid top={false} />
+
+      <div class="team-roster__inner">
+        <h2 id="team-roster-title" class="sr-only">Les membres de l’équipe</h2>
+        <ol
+          class="team-wall"
+          style={`--team-column-tracks: ${TEAM_COLUMN_TRACKS};`}
+        >
+          {
+            team.map((member, index) => (
+              <li
+                class="team-member"
+                style={`--plate-offset: ${PLATE_OFFSETS[index % PLATE_OFFSETS.length]}; --portrait-ratio: ${member.data.photoWidth} / ${member.data.photoHeight};`}
+              >
+                <div class="team-member__panel">
+                  <img
+                    class="team-member__portrait"
+                    src={member.data.photo}
+                    alt={`Portrait de ${member.data.name}`}
+                    width={member.data.photoWidth}
+                    height={member.data.photoHeight}
+                    loading={index < 3 ? "eager" : "lazy"}
+                    decoding="async"
+                    fetchpriority={index === 0 ? "high" : "auto"}
+                    draggable="false"
+                  />
+                  <span class="team-member__scrim" aria-hidden="true" />
+
+                  <div class="team-member__plate">
+                    <Label
+                      size="compact"
+                      format="rectangle-a"
+                      elevation="subtle"
+                      rotation={PLATE_ROTATIONS[index % PLATE_ROTATIONS.length]}
+                      reflective={false}
+                    >
+                      <Fragment slot="overline">{member.data.role}</Fragment>
+                      <Fragment slot="title">{member.data.name}</Fragment>
+                    </Label>
+                  </div>
+                </div>
+
+                <div class="team-member__meta">
+                  <p>{member.data.background}</p>
+                  {member.data.linkedin && (
+                    <a
+                      href={member.data.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Profil LinkedIn de ${member.data.name}, ouvre un nouvel onglet`}
+                    >
+                      LinkedIn <ArrowIcon direction="external" />
+                    </a>
+                  )}
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    <section class="team-closing" aria-labelledby="team-closing-title">
+      <EditorialGrid tone="paper" top={false} />
+
+      <div class="team-closing__inner">
+        <div>
+          <p class="type-section-kicker">Nous écrire</p>
+          <h2 id="team-closing-title" class="type-section-title">
+            Une question, une envie de contribuer&nbsp;?
+          </h2>
+          <p class="type-section-lede">
+            Chaque sujet a son interlocuteur dédié. La page contact vous oriente
+            vers la bonne personne.
+          </p>
+        </div>
+
+        <div class="team-closing__actions">
+          <Button variant="primary" href="/contact">Contacter l’équipe</Button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer grid />
+</BaseLayout>
+
+<style>
+  .team-page {
+    position: relative;
+    background: var(--color-brand-cream);
+    color: var(--color-brand-black);
+  }
+
+  .team-roster {
+    position: relative;
+    padding-block: 1.5rem var(--space-section-calm);
+  }
+
+  .team-roster__inner,
+  .team-closing__inner {
+    position: relative;
+    z-index: 3;
+    width: min(calc(100% - 2 * var(--layout-gutter)), var(--layout-editorial));
+    margin-inline: auto;
+  }
+
+  /* Les filets orange sont la matière du mur, pas une bordure posée sur chaque
+   * fiche : la gouttière laisse voir le fond, donc les rails restent continus
+   * quel que soit le nombre de colonnes du palier courant. */
+  .team-wall {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border: 1px solid var(--color-brand-orange);
+    background: var(--color-brand-orange);
+    gap: 2px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Les fiches d'une même rangée partagent la hauteur de la piste : la légende
+   * occupe ce qui reste sous le panneau, et son lien vient se caler sur la même
+   * ligne de base d'une colonne à l'autre. */
+  .team-member {
+    display: grid;
+    min-width: 0;
+    background: var(--color-brand-cream);
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  /* Hauteur explicite plutôt que ratio : le panneau n'a que des enfants en
+   * position absolue, sa contribution intrinsèque à la piste de grille est donc
+   * nulle et un aspect-ratio se résoudrait à zéro. */
+  .team-member__panel {
+    position: relative;
+    overflow: hidden;
+    height: clamp(20rem, 96vw, 25rem);
+    background: var(--color-brand-night);
+  }
+
+  /* Les portraits sont les tuiles de la planche du deck, découpées sur les
+   * filets d'origine. Elles arrivent déjà bichromes : aucun filtre à poser. */
+  .team-member__portrait {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 6%;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  /* Le dégradé n'est pas un effet : il porte le contraste de la plaque posée
+   * sur la photo, dont la valeur varie d'un portrait à l'autre. */
+  .team-member__scrim {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgb(9 18 46 / 0%) 42%,
+      rgb(9 18 46 / 48%) 68%,
+      rgb(9 18 46 / 86%) 100%
+    );
+    pointer-events: none;
+  }
+
+  .team-member__plate {
+    position: absolute;
+    z-index: 2;
+    right: 0.5rem;
+    bottom: var(--plate-offset);
+    left: 0.5rem;
+  }
+
+  /* Les slots de l'étiquette sont calibrés pour une carte de session pleine
+   * largeur. Dans une colonne de mur, l'interligne écrasé du sur-titre le
+   * ferait chevaucher le nom, et les deux corps sont trop gros. */
+  .team-member__plate :global(.site-label__overline) {
+    font-size: 0.58rem;
+    letter-spacing: var(--tracking-ui);
+    line-height: 1.25;
+  }
+
+  /* Le corps du titre est déjà redéfini par la variante compacte de
+   * l'étiquette : il faut reprendre sa spécificité pour passer devant. */
+  .team-member__plate :global(.site-label--compact .site-label__title) {
+    font-size: clamp(0.95rem, 1.35vw, 1.15rem);
+    letter-spacing: var(--tracking-heading);
+    line-height: 1.05;
+  }
+
+  .team-member__plate :global(.site-label__front) {
+    gap: 2px;
+  }
+
+  .team-member__meta {
+    display: grid;
+    align-content: space-between;
+    justify-items: start;
+    padding: 0.9rem 0.95rem 1.05rem;
+    gap: 0.7rem;
+  }
+
+  /* Encre secondaire sur crème : 5,3:1. Le lien bleu tient 6,6:1. */
+  .team-member__meta p {
+    color: rgb(57 54 54 / 76%);
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    line-height: 1.4;
+    text-wrap: balance;
+  }
+
+  .team-member__meta a {
+    display: inline-flex;
+    align-items: center;
+    color: var(--color-brand-blue);
+    font-family: var(--font-nav);
+    font-size: 0.68rem;
+    font-weight: 600;
+    gap: 0.4rem;
+    letter-spacing: var(--tracking-ui);
+    text-transform: uppercase;
+  }
+
+  .team-member__meta a :global(svg) {
+    width: 0.85em;
+    height: 0.85em;
+    transition: transform 200ms ease;
+  }
+
+  .team-member__meta a:hover {
+    color: var(--color-brand-orange);
+  }
+
+  .team-member__meta a:hover :global(svg) {
+    transform: translate(0.12rem, -0.12rem);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .team-member__meta a :global(svg) {
+      transition: none;
+    }
+
+    .team-member__meta a:hover :global(svg) {
+      transform: none;
+    }
+  }
+
+  .team-closing {
+    position: relative;
+    padding-block: var(--space-section-calm);
+    border-top: 1px solid rgb(57 54 54 / 15%);
+    background: var(--color-brand-cream-deep);
+  }
+
+  .team-closing__inner {
+    display: grid;
+    align-items: end;
+    gap: clamp(1.75rem, 4vw, 3rem);
+  }
+
+  .team-closing__inner > div:first-child {
+    display: grid;
+    max-width: 40rem;
+    gap: 0.75rem;
+  }
+
+  .team-closing__inner .type-section-lede {
+    color: rgb(57 54 54 / 72%);
+  }
+
+  @media (min-width: 48rem) {
+    .team-wall {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .team-member__panel {
+      height: clamp(23rem, 44vw, 31rem);
+    }
+  }
+
+  @media (min-width: 64rem) {
+    /* Les pistes reprennent la largeur native de chaque tuile du deck. Chaque
+     * panneau retrouve ainsi son ratio source et montre le portrait entier. */
+    .team-wall {
+      grid-template-columns: var(--team-column-tracks);
+    }
+
+    .team-member__panel {
+      height: auto;
+      aspect-ratio: var(--portrait-ratio);
+    }
+  }
+</style>

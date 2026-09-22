@@ -1,0 +1,595 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BrandText from '../../components/BrandText.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import TrackMark from '../../components/TrackMark';
+import EVENT from '../../content/event.json';
+import { SPEAKER_EVENT_ROLE_LABELS, SPEAKER_PORTRAIT_DIMENSIONS, getSpeakerPortraitSrcset, trackForSpeaker } from '../../lib/speakers';
+import { stripMarkdownToPlainText } from '../../lib/markdown';
+
+export async function getStaticPaths() {
+  const speakers = await getCollection('speakers');
+  const sessions = await getCollection('sessions');
+
+  return speakers.map((speaker) => ({
+    params: { speaker: speaker.id },
+    props: {
+      speaker,
+      sessions: sessions.filter((session) => session.data.speakerSlugs.includes(speaker.id)),
+    },
+  }));
+}
+
+const { speaker, sessions } = Astro.props as {
+  speaker: CollectionEntry<'speakers'>;
+  sessions: CollectionEntry<'sessions'>[];
+};
+
+const siteUrl = (Astro.site ?? new URL(Astro.url.origin)).href;
+const speakerUrl = `${siteUrl}speakers/${speaker.id}`;
+const portrait = SPEAKER_PORTRAIT_DIMENSIONS[speaker.id];
+const eventRoleLabel = speaker.data.eventRole ? SPEAKER_EVENT_ROLE_LABELS[speaker.data.eventRole] : undefined;
+const speakerTrack = trackForSpeaker(speaker.id, sessions);
+
+const tracks = await getCollection('tracks');
+const trackById = new Map(tracks.map((track) => [track.id, track.data]));
+/* Le `room` de la plupart des sessions ne fait que répéter le nom de son
+ * parcours : quand il est vide, on retombe sur ce nom plutôt que d'afficher
+ * une salle vide. */
+const roomFor = (session: CollectionEntry<'sessions'>) =>
+  session.data.room ||
+  (trackById.get(session.data.track)?.name ?? (session.data.track === 'commun' ? 'Temps commun' : session.data.track));
+
+// Tronque au dernier espace avant la limite pour ne jamais couper un mot en deux.
+function truncateAtWordBoundary(text: string, maxLength: number): string {
+  if (text.length <= maxLength) return text;
+  const truncated = text.slice(0, maxLength);
+  const lastSpace = truncated.lastIndexOf(' ');
+  return `${(lastSpace > 0 ? truncated.slice(0, lastSpace) : truncated).trimEnd()}…`;
+}
+
+// Dérivée de la bio (unique par intervenant·e) plutôt que du gabarit nom/rôle/entreprise,
+// identique à quelques mots près d'une fiche à l'autre.
+const pageDescriptionSuffix = ` ${eventRoleLabel ?? 'Intervenant'} à GENAI DAYS ${EVENT.year} à ${EVENT.venue.city}.`;
+const pageDescription = `${truncateAtWordBoundary(speaker.data.bio, 155 - pageDescriptionSuffix.length)}${pageDescriptionSuffix}`;
+
+const speakerJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  '@id': `${speakerUrl}#person`,
+  name: speaker.data.name,
+  url: speakerUrl,
+  jobTitle: speaker.data.role,
+  description: speaker.data.bio,
+  worksFor: { '@type': 'Organization', name: speaker.data.company },
+  ...(speaker.data.photo ? { image: new URL(speaker.data.photo, siteUrl).href } : {}),
+  sameAs: [speaker.data.linkedin, speaker.data.website, speaker.data.x].filter((url): url is string => Boolean(url)),
+};
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Accueil', item: siteUrl },
+    { '@type': 'ListItem', position: 2, name: 'Intervenants', item: `${siteUrl}speakers` },
+    { '@type': 'ListItem', position: 3, name: speaker.data.name, item: speakerUrl },
+  ],
+};
+
+const socialLinks = [
+  speaker.data.linkedin && { label: 'LinkedIn', href: speaker.data.linkedin },
+  speaker.data.website && { label: 'Site web', href: speaker.data.website },
+  speaker.data.x && { label: 'X', href: speaker.data.x },
+].filter((link): link is { label: string; href: string } => Boolean(link));
+---
+
+<BaseLayout
+  title={`${speaker.data.name} · ${eventRoleLabel ?? 'Intervenant'} GENAI DAYS ${EVENT.year}`}
+  description={pageDescription}
+  structuredData={[speakerJsonLd, breadcrumbJsonLd]}
+>
+  <Header />
+  <main>
+    <section class="speaker-hero bg-brand-black px-6 py-14 text-white sm:py-18">
+      <div class="mx-auto max-w-5xl">
+        {/* Le lien nomme sa destination au lieu de revendiquer une provenance :
+            on arrive ici depuis le carrousel de la landing, depuis /speakers,
+            depuis le planning ou depuis une fiche session, et « Retour au
+            programme » mentait dans trois cas sur quatre. Même geste que
+            « Tous les partenaires » sur la fiche partenaire. */}
+        <a href="/speakers" class="speaker-back-link">
+          <span aria-hidden="true">←</span>
+          Tous les intervenants
+        </a>
+        <div class="mt-10 grid gap-9 sm:grid-cols-[14rem_1fr] sm:items-end lg:gap-14">
+          <div class="speaker-page-photo">
+            {speaker.data.photo ? (
+              <img
+                class="portrait-photo"
+                src={speaker.data.photo}
+                srcset={getSpeakerPortraitSrcset(speaker.id, speaker.data.photo)}
+                sizes="(min-width: 40rem) 14rem, min(15rem, 76vw)"
+                alt={`Portrait de ${speaker.data.name}`}
+                width={portrait?.width}
+                height={portrait?.height}
+                draggable="false"
+              />
+            ) : (
+              <span class="speaker-page-photo__fallback" aria-hidden="true">{speaker.data.name.slice(0, 1)}</span>
+            )}
+            {speaker.data.companyLogo && (
+              <span class="speaker-page-company-logo">
+                <img
+                  src={speaker.data.companyLogo}
+                  alt={speaker.data.companyLogoAlt ?? `Logo ${speaker.data.company}`}
+                  width="56"
+                  height="56"
+                />
+              </span>
+            )}
+          </div>
+          <div>
+            <div class="speaker-kicker">
+              {eventRoleLabel && <span>{eventRoleLabel}</span>}
+              {eventRoleLabel && <span aria-hidden="true">·</span>}
+              {speakerTrack && <TrackMark track={speakerTrack} />}
+            </div>
+            <h1 class="mt-4 text-4xl font-black leading-none tracking-tight sm:text-6xl">{speaker.data.name}</h1>
+            <p class="mt-5 text-lg font-bold text-white/78 sm:text-xl">{speaker.data.role} · {speaker.data.company}</p>
+            {socialLinks.length > 0 && (
+              <nav class="speaker-social-links mt-7" aria-label={`Liens de ${speaker.data.name}`}>
+                {socialLinks.map((link) => (
+                  <a href={link.href} rel="noopener noreferrer" target="_blank">{link.label}</a>
+                ))}
+              </nav>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-5xl px-6 py-14 sm:py-20">
+      <div class="speaker-story-grid">
+        <article>
+          <p class="type-section-kicker text-brand-blue">Portrait</p>
+          <h2 class="type-section-title mt-3">Son parcours</h2>
+          <div class="speaker-prose mt-6">
+            {speaker.data.profile.map((paragraph) => (
+              <p><BrandText text={paragraph} /></p>
+            ))}
+          </div>
+
+          <section class="speaker-legitimacy mt-12" aria-labelledby="speaker-legitimacy-title">
+            <p class="type-section-kicker text-brand-blue">Son regard</p>
+            <h2 id="speaker-legitimacy-title" class="type-section-title mt-3">Sa légitimité numérique et GenAI</h2>
+            <p class="mt-5 text-lg leading-relaxed text-black/72">
+              <BrandText text={speaker.data.genaiLegitimacy} />
+            </p>
+          </section>
+        </article>
+
+        <aside class="speaker-timeline" aria-labelledby="speaker-timeline-title">
+          <p class="type-section-kicker text-brand-blue">Repères</p>
+          <h2 id="speaker-timeline-title" class="mt-2 text-2xl font-extrabold">Parcours en bref</h2>
+          <ol class="mt-7 space-y-7">
+            {speaker.data.careerHighlights.map((highlight) => (
+              <li>
+                <p class="speaker-timeline__period">{highlight.period}</p>
+                <h3 class="mt-1 text-lg font-extrabold leading-tight">{highlight.title}</h3>
+                <p class="mt-2 text-sm leading-relaxed text-black/62">
+                  <BrandText text={highlight.description} />
+                </p>
+              </li>
+            ))}
+          </ol>
+        </aside>
+      </div>
+    </section>
+
+    <section class="speaker-companies px-6 py-14 sm:py-20" aria-labelledby="speaker-companies-title">
+      <div class="mx-auto max-w-5xl">
+        <p class="type-section-kicker text-brand-blue">Écosystème</p>
+        <h2 id="speaker-companies-title" class="type-section-title mt-3">
+          {speaker.data.companies.length > 1 ? 'Les entreprises qui jalonnent son parcours' : 'L’entreprise associée à son parcours'}
+        </h2>
+        <div class:list={['mt-8 grid gap-5', speaker.data.companies.length > 1 && 'md:grid-cols-2 xl:grid-cols-3']}>
+          {speaker.data.companies.map((company, index) => (
+            <article class:list={['company-profile-card', index % 2 === 1 && 'company-profile-card--blue']}>
+              <div class="company-profile-card__heading">
+                <div class="company-profile-card__logo">
+                  {company.logo ? (
+                    <img src={company.logo} alt={`Logo ${company.name}`} loading="lazy" />
+                  ) : (
+                    <span aria-hidden="true">{company.name.slice(0, 1)}</span>
+                  )}
+                </div>
+                <div>
+                  <h3>{company.name}</h3>
+                  <p>{company.relationship}</p>
+                </div>
+              </div>
+              <p class="mt-5 text-sm leading-relaxed text-black/68">
+                <BrandText text={company.description} />
+              </p>
+              <a class="company-profile-card__link" href={company.website} rel="noopener noreferrer" target="_blank">
+                Découvrir {company.name}
+                <span aria-hidden="true">↗</span>
+              </a>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    {sessions.length > 0 && (
+      <section class="mx-auto max-w-5xl px-6 py-14 sm:py-20" aria-labelledby="speaker-sessions-title">
+        <p class="type-section-kicker text-brand-blue">Au programme</p>
+        <h2 id="speaker-sessions-title" class="type-section-title mt-3">
+          {sessions.length > 1 ? 'Ses sessions' : 'Sa session'}
+        </h2>
+        <div class="mt-8 grid gap-5">
+          {sessions.map((session) => (
+            <a class="speaker-session-card" href={`/programme/${session.id}`}>
+              <div class="speaker-session-card__meta">
+                <span>{session.data.startTime}</span>
+                <span>{roomFor(session)}</span>
+                <span>{session.data.durationMinutes} min</span>
+              </div>
+              <div>
+                <h3>{session.data.quoteTitle ? `"${session.data.title}"` : session.data.title}</h3>
+                {session.body?.trim() && (
+                  <p><BrandText text={stripMarkdownToPlainText(session.body)} /></p>
+                )}
+                {session.data.themes && (
+                  <ul aria-label="Thématiques">
+                    {session.data.themes.map((theme) => <li>{theme}</li>)}
+                  </ul>
+                )}
+              </div>
+              <span class="speaker-session-card__arrow" aria-hidden="true">→</span>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+  </main>
+  <Footer />
+</BaseLayout>
+
+<style>
+  .speaker-hero {
+    background:
+      radial-gradient(circle at 82% 16%, rgb(26 84 255 / 30%), transparent 28rem),
+      radial-gradient(circle at 15% 90%, rgb(255 98 0 / 18%), transparent 24rem),
+      var(--color-brand-black);
+  }
+
+  .speaker-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-height: 1.5rem;
+    color: rgb(255 255 255 / 62%);
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    transition: color 160ms ease;
+  }
+
+  .speaker-back-link:hover {
+    color: var(--color-brand-white);
+  }
+
+  .speaker-kicker {
+    display: flex;
+    align-items: baseline;
+    gap: 0.35rem;
+    color: rgb(255 255 255 / 68%);
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+
+  .speaker-page-photo {
+    position: relative;
+    display: grid;
+    aspect-ratio: 1;
+    place-items: center;
+    overflow: hidden;
+    border: 1px solid rgb(255 255 255 / 72%);
+    background:
+      linear-gradient(135deg, rgb(255 255 255 / 12%), transparent),
+      linear-gradient(135deg, var(--color-brand-blue), var(--color-brand-orange));
+    box-shadow: 0.65rem 0.65rem 0 rgb(255 255 255 / 12%);
+    transform: rotate(-1.5deg);
+  }
+
+  .speaker-page-photo > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .speaker-page-photo__fallback {
+    color: var(--color-brand-white);
+    font-size: clamp(4rem, 10vw, 7rem);
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .speaker-page-photo .speaker-page-company-logo {
+    position: absolute;
+    right: 0.8rem;
+    bottom: 0.8rem;
+    display: grid;
+    overflow: hidden;
+    width: 3.5rem;
+    height: 3.5rem;
+    place-items: center;
+    border: 3px solid var(--color-brand-white);
+    border-radius: 0.4rem;
+    background: var(--color-brand-white);
+    box-shadow: 0 0.3rem 0.8rem rgb(13 13 18 / 20%);
+  }
+
+  .speaker-page-company-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .speaker-social-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+  }
+
+  .speaker-social-links a {
+    border: 1px solid rgb(255 255 255 / 34%);
+    padding: 0.55rem 0.8rem;
+    font-size: 0.7rem;
+    font-weight: 900;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    transition:
+      border-color 160ms ease,
+      background 160ms ease,
+      color 160ms ease;
+  }
+
+  .speaker-social-links a:hover {
+    border-color: var(--color-brand-orange);
+    background: var(--color-brand-orange);
+    color: var(--color-brand-black);
+  }
+
+  .speaker-story-grid {
+    display: grid;
+    gap: 3rem;
+  }
+
+  .speaker-prose {
+    display: grid;
+    gap: 1.15rem;
+    max-width: 44rem;
+    color: rgb(13 13 18 / 72%);
+    font-size: 1.05rem;
+    line-height: 1.75;
+  }
+
+  .speaker-legitimacy {
+    max-width: 46rem;
+    border-left: 0.35rem solid var(--color-brand-blue);
+    padding: 0.25rem 0 0.25rem clamp(1.1rem, 3vw, 2rem);
+  }
+
+  .speaker-timeline {
+    align-self: start;
+    border: 1px solid rgb(13 13 18 / 12%);
+    background: var(--color-brand-white);
+    box-shadow: 0.45rem 0.45rem 0 var(--color-brand-blue);
+    padding: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .speaker-timeline li {
+    position: relative;
+    border-left: 2px solid rgb(13 13 18 / 12%);
+    padding-left: 1.15rem;
+  }
+
+  .speaker-timeline li::before {
+    position: absolute;
+    top: 0.25rem;
+    left: -0.4rem;
+    width: 0.7rem;
+    height: 0.7rem;
+    border: 2px solid var(--color-brand-white);
+    border-radius: 999px;
+    background: var(--color-brand-orange);
+    box-shadow: 0 0 0 1px var(--color-brand-orange);
+    content: '';
+  }
+
+  .speaker-timeline__period {
+    color: var(--color-brand-blue);
+    font-size: 0.68rem;
+    font-weight: 900;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+
+  .speaker-companies {
+    background:
+      linear-gradient(135deg, rgb(255 98 0 / 8%), transparent 32rem),
+      rgb(13 13 18 / 3%);
+  }
+
+  .company-profile-card {
+    display: flex;
+    flex-direction: column;
+    border-top: 0.35rem solid var(--color-brand-orange);
+    background: var(--color-brand-white);
+    box-shadow: 0 0.7rem 1.8rem rgb(13 13 18 / 8%);
+    padding: clamp(1.2rem, 3vw, 1.65rem);
+  }
+
+  .company-profile-card--blue {
+    border-color: var(--color-brand-blue);
+  }
+
+  .company-profile-card__heading {
+    display: grid;
+    grid-template-columns: 3.5rem minmax(0, 1fr);
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .company-profile-card__logo {
+    display: grid;
+    overflow: hidden;
+    width: 3.5rem;
+    height: 3.5rem;
+    place-items: center;
+    border: 1px solid rgb(13 13 18 / 12%);
+    border-radius: 0.45rem;
+    background: var(--color-brand-white);
+    color: var(--color-brand-black);
+    font-family: var(--font-serif);
+    font-size: 1.8rem;
+    font-weight: 800;
+  }
+
+  .company-profile-card__logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .company-profile-card__heading h3 {
+    font-family: var(--font-serif);
+    font-size: 1.45rem;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .company-profile-card__heading p {
+    margin-top: 0.35rem;
+    color: rgb(13 13 18 / 68%);
+    font-size: 0.72rem;
+    font-weight: 800;
+    line-height: 1.35;
+  }
+
+  .company-profile-card__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    align-self: flex-start;
+    margin-top: auto;
+    padding-top: 1.35rem;
+    color: var(--color-brand-blue);
+    font-size: 0.7rem;
+    font-weight: 900;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+
+  .company-profile-card__link:hover {
+    color: var(--color-brand-orange);
+  }
+
+  .speaker-session-card {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(8rem, 11rem) minmax(0, 1fr) auto;
+    gap: clamp(1.25rem, 4vw, 2.5rem);
+    align-items: center;
+    border: 1px solid rgb(13 13 18 / 12%);
+    border-left: 0.45rem solid var(--color-brand-blue);
+    background: var(--color-brand-white);
+    padding: clamp(1.25rem, 4vw, 2rem);
+    transition:
+      transform 160ms ease,
+      box-shadow 160ms ease;
+  }
+
+  .speaker-session-card:hover {
+    box-shadow: 0.45rem 0.45rem 0 var(--color-brand-orange);
+    transform: translate(-0.15rem, -0.15rem);
+  }
+
+  .speaker-session-card__meta {
+    display: grid;
+    gap: 0.35rem;
+    color: rgb(13 13 18 / 68%);
+    font-size: 0.7rem;
+    font-weight: 900;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+
+  .speaker-session-card h3 {
+    font-family: var(--font-serif);
+    font-size: clamp(1.5rem, 4vw, 2.15rem);
+    font-weight: 800;
+    line-height: 1.05;
+  }
+
+  .speaker-session-card p {
+    margin-top: 0.7rem;
+    max-width: 44rem;
+    color: rgb(13 13 18 / 66%);
+    font-size: 0.92rem;
+    line-height: 1.55;
+  }
+
+  .speaker-session-card ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.9rem;
+  }
+
+  .speaker-session-card li {
+    background: rgb(26 84 255 / 10%);
+    padding: 0.35rem 0.55rem;
+    color: var(--color-brand-blue);
+    font-size: 0.65rem;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  .speaker-session-card__arrow {
+    color: var(--color-brand-orange);
+    font-size: 1.8rem;
+    font-weight: 900;
+  }
+
+  @media (min-width: 64rem) {
+    .speaker-story-grid {
+      grid-template-columns: minmax(0, 1fr) 19rem;
+      gap: 4.5rem;
+    }
+  }
+
+  @media (max-width: 39.999rem) {
+    .speaker-page-photo {
+      width: min(15rem, 76vw);
+    }
+
+    .speaker-session-card {
+      grid-template-columns: 1fr auto;
+    }
+
+    .speaker-session-card__meta {
+      grid-column: 1 / -1;
+      grid-template-columns: repeat(3, auto);
+      justify-content: start;
+      gap: 0.7rem;
+    }
+  }
+</style>

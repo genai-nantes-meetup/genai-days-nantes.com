@@ -1,0 +1,78 @@
+---
+interface Props {
+  tone?: 'ink' | 'paper';
+  insetStart?: string;
+  top?: boolean;
+}
+
+const { tone = 'ink', insetStart = '0px', top = true } = Astro.props;
+---
+
+<div
+  class:list={['editorial-grid', `editorial-grid--${tone}`]}
+  style={`--editorial-grid-inset-start: ${insetStart};`}
+  aria-hidden="true"
+>
+  {top && <span class="editorial-grid__top-rule"></span>}
+  <span class="editorial-grid__guide editorial-grid__guide--start">
+    {top && <span class="editorial-grid__node"></span>}
+  </span>
+  <span class="editorial-grid__guide editorial-grid__guide--end">
+    {top && <span class="editorial-grid__node"></span>}
+  </span>
+</div>
+
+<style>
+  .editorial-grid {
+    --editorial-grid-line: rgb(57 54 54 / 11%);
+    --editorial-grid-node: rgb(254 77 27 / 58%);
+    position: absolute;
+    z-index: 2;
+    top: var(--editorial-grid-inset-start);
+    bottom: 0;
+    left: 50%;
+    width: min(calc(100% - 2 * var(--layout-gutter)), var(--layout-editorial));
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  .editorial-grid--paper {
+    --editorial-grid-line: rgb(249 244 236 / 20%);
+    --editorial-grid-node: rgb(254 77 27 / 76%);
+  }
+
+  .editorial-grid__top-rule {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 100vw;
+    height: 1px;
+    background: var(--editorial-grid-line);
+    transform: translateX(-50%);
+  }
+
+  .editorial-grid__guide {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    border-inline-start: 1px solid var(--editorial-grid-line);
+  }
+
+  .editorial-grid__guide--start {
+    left: 0;
+  }
+
+  .editorial-grid__guide--end {
+    right: 0;
+  }
+
+  .editorial-grid__node {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0.3125rem;
+    height: 0.3125rem;
+    background: var(--editorial-grid-node);
+    transform: translateX(-50%);
+  }
+</style>

@@ -1,0 +1,693 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import { PROGRAMME_SLOTS, type ProgrammeSlot, type ProgrammeSlotKind } from '../lib/programme';
+import EditorialGrid from './EditorialGrid.astro';
+import ScheduleSession from './ScheduleSession.astro';
+import TrackMark from './TrackMark';
+import { stripMarkdownToPlainText } from '../lib/markdown';
+
+const sessions = await getCollection('sessions');
+const speakers = await getCollection('speakers');
+const tracks = await getCollection('tracks');
+
+const speakerById = new Map(speakers.map((speaker) => [speaker.id, speaker]));
+const trackById = new Map(tracks.map((track) => [track.id, track.data]));
+const trackIds = ['decideurs', 'tech'] as const;
+const parallelSessionColumns = new Map<string, (typeof trackIds)[number]>([['podcast-maci', 'tech']]);
+
+function sessionAt(time: string, track: (typeof trackIds)[number]) {
+  return sessions.find((session) => session.data.startTime === time && session.data.track === track);
+}
+
+function commonSessionAt(time: string) {
+  return sessions.find((session) => session.data.startTime === time && session.data.track === 'commun');
+}
+
+function parallelSessionAt(time: string) {
+  return sessions.find(
+    (session) => session.data.startTime === time && session.data.track === 'commun' && parallelSessionColumns.has(session.id),
+  );
+}
+
+function toMinutes(time: string) {
+  const [hours, minutes] = time.split(':').map(Number);
+  return hours * 60 + minutes;
+}
+
+type ConferenceCell =
+  | { kind: 'session'; session: CollectionEntry<'sessions'>; span: number }
+  | { kind: 'placeholder' }
+  | { kind: 'consumed' };
+
+/* Un talk peut durer plus longtemps qu'un créneau (l'atelier GPU de 80 min
+ * occupe les créneaux de 09:40 et 10:20 côté tech) alors que l'autre parcours
+ * garde deux talks distincts sur ces mêmes créneaux. On calcule ici, créneau
+ * par créneau, la carte à afficher pour ce parcours (avec sa hauteur en
+ * nombre de créneaux) ou si la case est déjà couverte par la carte du
+ * créneau précédent. */
+function conferenceCells(times: string[], track: (typeof trackIds)[number]): ConferenceCell[] {
+  const cells: ConferenceCell[] = times.map(() => ({ kind: 'placeholder' }));
+  let index = 0;
+
+  while (index < times.length) {
+    const session = sessionAt(times[index], track);
+
+    if (!session) {
+      index += 1;
+      continue;
+    }
+
+    const sessionEnd = toMinutes(session.data.startTime) + session.data.durationMinutes;
+    let span = 1;
+
+    while (index + span < times.length && toMinutes(times[index + span]) < sessionEnd) {
+      cells[index + span] = { kind: 'consumed' };
+      span += 1;
+    }
+
+    cells[index] = { kind: 'session', session, span };
+    index += span;
+  }
+
+  return cells;
+}
+
+/* Regroupe les créneaux « conference » consécutifs (séparés par des
+ * interludes, pauses ou keynotes) pour qu'ils partagent une seule grille CSS
+ * et puissent porter une carte en rowspan. Les autres créneaux restent seuls. */
+function groupConferenceSlots(slots: ProgrammeSlot[]): (ProgrammeSlot | ProgrammeSlot[])[] {
+  const groups: (ProgrammeSlot | ProgrammeSlot[])[] = [];
+  let run: ProgrammeSlot[] = [];
+
+  for (const slot of slots) {
+    if (slot.kind === 'conference') {
+      run.push(slot);
+      continue;
+    }
+    if (run.length > 0) {
+      groups.push(run);
+      run = [];
+    }
+    groups.push(slot);
+  }
+  if (run.length > 0) groups.push(run);
+
+  return groups;
+}
+
+function sessionSpeakers(session: CollectionEntry<'sessions'>) {
+  const sessionPeople = session.data.speakerSlugs.map((slug) => {
+    const speaker = speakerById.get(slug);
+    return {
+      name: speaker?.data.name ?? slug,
+      href: `/speakers/${slug}`,
+      eventRole: speaker?.data.eventRole,
+    };
+  });
+
+  return session.data.presentedBy
+    ? [...sessionPeople, { name: session.data.presentedBy.name, href: session.data.presentedBy.website }]
+    : sessionPeople;
+}
+
+const commonKindLabels: Record<Exclude<ProgrammeSlotKind, 'conference'>, string> = {
+  arrival: 'Accueil',
+  keynote: 'Keynote',
+  transition: 'Interlude',
+  meal: 'Pause déjeuner',
+  social: 'Temps de rencontre',
+  closing: 'Fin de journée',
+};
+
+const mealIndex = PROGRAMME_SLOTS.findIndex((slot) => slot.kind === 'meal');
+const socialIndex = PROGRAMME_SLOTS.findIndex((slot) => slot.kind === 'social');
+const morningEnd = mealIndex === -1 ? PROGRAMME_SLOTS.length : mealIndex;
+const afternoonStart = mealIndex === -1 ? morningEnd : mealIndex + 1;
+const afternoonEnd = socialIndex === -1 ? PROGRAMME_SLOTS.length : socialIndex;
+
+const dayparts = [
+  { id: 'matin', label: 'Matin', slots: PROGRAMME_SLOTS.slice(0, morningEnd) },
+  { id: 'dejeuner', label: 'Déjeuner', slots: mealIndex === -1 ? [] : PROGRAMME_SLOTS.slice(mealIndex, mealIndex + 1) },
+  { id: 'apres-midi', label: 'Après-midi', slots: PROGRAMME_SLOTS.slice(afternoonStart, afternoonEnd) },
+  { id: 'soiree', label: 'Soirée', slots: PROGRAMME_SLOTS.slice(afternoonEnd) },
+]
+  .filter((daypart) => daypart.slots.length > 0)
+  .map((daypart) => ({ ...daypart, groups: groupConferenceSlots(daypart.slots) }));
+---
+
+<section
+  id="planning"
+  class="schedule-section"
+  aria-label="Programme heure par heure"
+  data-active-track="decideurs"
+  data-schedule-tabs
+>
+  <EditorialGrid />
+
+  <div class="schedule-section__inner">
+    <div class="schedule-track-guide">
+      <div class="schedule-track-headings" aria-label="Parcours du programme">
+        <h3 class="schedule-track-heading schedule-track-heading--decideurs"><TrackMark track="decideurs" /></h3>
+        <h3 class="schedule-track-heading schedule-track-heading--tech"><TrackMark track="tech" /></h3>
+      </div>
+
+      <div class="schedule-tabs" role="group" aria-label="Filtrer par parcours">
+        <button
+          id="schedule-tab-decideurs"
+          class="schedule-tab schedule-tab--decideurs"
+          type="button"
+          aria-controls="schedule-track-sessions"
+          aria-pressed="true"
+          data-schedule-tab="decideurs"
+        >
+          <TrackMark track="decideurs" />
+        </button>
+        <button
+          id="schedule-tab-tech"
+          class="schedule-tab schedule-tab--tech"
+          type="button"
+          aria-controls="schedule-track-sessions"
+          aria-pressed="false"
+          data-schedule-tab="tech"
+        >
+          <TrackMark track="tech" />
+        </button>
+      </div>
+    </div>
+
+    <div
+      id="schedule-track-sessions"
+      class="schedule-panel"
+      role="group"
+      aria-label="Déroulé de la journée"
+      aria-describedby="schedule-notice"
+      data-schedule-panel
+    >
+      {dayparts.map((daypart) => {
+        return (
+          <section class="schedule-daypart" aria-labelledby={`schedule-daypart-${daypart.id}`}>
+            <header class="schedule-daypart__heading">
+              <div class="schedule-daypart__title">
+                <h3 id={`schedule-daypart-${daypart.id}`} class="type-subsection-title">{daypart.label}</h3>
+              </div>
+            </header>
+
+            <div class="schedule-daypart__slots">
+              {daypart.groups.map((group) => {
+                if (Array.isArray(group)) {
+                  const times = group.map((slot) => slot.time);
+                  const cellsByTrack = new Map(trackIds.map((trackId) => [trackId, conferenceCells(times, trackId)]));
+
+                  return (
+                    <div
+                      class="schedule-conference-row schedule-conference-row--grouped"
+                      id={`creneau-${times[0].replace(':', '')}`}
+                      data-schedule-slot={times[0]}
+                      style={`--row-count: ${times.length};`}
+                    >
+                      {times.map((time, rowIndex) =>
+                        trackIds.map((trackId, colIndex) => {
+                          const cell = cellsByTrack.get(trackId)![rowIndex];
+
+                          if (cell.kind === 'consumed') return null;
+
+                          const placementStyle = `--col: ${colIndex + 1}; --row: ${rowIndex + 1}; --span: ${
+                            cell.kind === 'session' ? cell.span : 1
+                          };`;
+
+                          return (
+                            <div class="schedule-track-slot" data-schedule-track={trackId} style={placementStyle}>
+                              {cell.kind === 'session' ? (
+                                <ScheduleSession
+                                  title={cell.session.data.title}
+                                  quoteTitle={cell.session.data.quoteTitle}
+                                  subtitle={cell.session.data.subtitle}
+                                  startTime={cell.session.data.startTime}
+                                  durationMinutes={cell.session.data.durationMinutes}
+                                  room={cell.session.data.room}
+                                  format={cell.session.data.format}
+                                  speakers={sessionSpeakers(cell.session)}
+                                  sessionHref={`/programme/${cell.session.id}`}
+                                  illustration={cell.session.data.illustration}
+                                  sessionId={cell.session.id}
+                                />
+                              ) : (
+                                <ScheduleSession
+                                  title="Programmation à venir"
+                                  startTime={time}
+                                  durationMinutes={group[rowIndex].durationMinutes ?? 0}
+                                  room={trackById.get(trackId)?.name ?? ''}
+                                  format="talk"
+                                  speakers={[]}
+                                  provisional
+                                />
+                              )}
+                            </div>
+                          );
+                        }),
+                      )}
+                    </div>
+                  );
+                }
+
+                const slot = group;
+                const parallelSession = slot.kind === 'social' ? parallelSessionAt(slot.time) : undefined;
+
+                if (parallelSession) {
+                  const sessionColumn = parallelSessionColumns.get(parallelSession.id) ?? 'tech';
+                  const otherColumn = sessionColumn === 'tech' ? 'decideurs' : 'tech';
+
+                  return (
+                    <div
+                      class="schedule-conference-row schedule-conference-row--social"
+                      id={`creneau-${slot.time.replace(':', '')}`}
+                      data-schedule-slot={slot.time}
+                    >
+                      {trackIds.map((trackId) => (
+                        <div class="schedule-track-slot" data-schedule-track={trackId}>
+                          {trackId === sessionColumn ? (
+                            <ScheduleSession
+                              title={parallelSession.data.title}
+                              quoteTitle={parallelSession.data.quoteTitle}
+                              subtitle={parallelSession.data.subtitle}
+                              startTime={parallelSession.data.startTime}
+                              durationMinutes={parallelSession.data.durationMinutes}
+                              room={parallelSession.data.room}
+                              format={parallelSession.data.format}
+                              speakers={sessionSpeakers(parallelSession)}
+                              sessionHref={`/programme/${parallelSession.id}`}
+                              illustration={parallelSession.data.illustration}
+                              sessionId={parallelSession.id}
+                            />
+                          ) : trackId === otherColumn ? (
+                            <article class="schedule-common schedule-common--social" data-reveal>
+                              <time class="schedule-common__time" datetime={slot.time}>{slot.time}</time>
+                              <div>
+                                <p class="schedule-common__meta">{commonKindLabels[slot.kind]}</p>
+                                <h4 class="schedule-common__title">
+                                  {slot.title}<span class="sr-only"> à {slot.time}</span>
+                                </h4>
+                              </div>
+                            </article>
+                          ) : null}
+                        </div>
+                      ))}
+                    </div>
+                  );
+                }
+
+                /* Les keynotes et les temps de rencontre peuvent porter une fiche de session
+                 * commune aux deux parcours. */
+                const commonSession = slot.kind === 'keynote' || slot.kind === 'social'
+                  ? commonSessionAt(slot.time)
+                  : undefined;
+                const commonSpeakers = commonSession ? sessionSpeakers(commonSession) : [];
+                const durationMinutes = commonSession?.data.durationMinutes ?? slot.durationMinutes;
+
+                return (
+                  <article
+                    class:list={[
+                      'schedule-common',
+                      {
+                        'schedule-common--arrival': slot.kind === 'arrival',
+                        'schedule-common--keynote': slot.kind === 'keynote',
+                        'schedule-common--transition': slot.kind === 'transition',
+                        'schedule-common--meal': slot.kind === 'meal',
+                        'schedule-common--social': slot.kind === 'social',
+                        'schedule-common--closing': slot.kind === 'closing',
+                      },
+                    ]}
+                    data-reveal
+                  >
+                    <time class="schedule-common__time" datetime={slot.time}>{slot.time}</time>
+                    <div>
+                      <p class="schedule-common__meta">
+                        {commonKindLabels[slot.kind]}
+                        {durationMinutes ? ` · ${durationMinutes} min` : ''}
+                      </p>
+                      <h4 class="schedule-common__title">
+                        {commonSession ? (
+                          <a href={`/programme/${commonSession.id}`}>
+                            {commonSession.data.quoteTitle
+                              ? `"${commonSession.data.title}"`
+                              : commonSession.data.title}
+                            <span class="sr-only"> à {slot.time}</span>
+                          </a>
+                        ) : (
+                          <>
+                            {slot.title}
+                            <span class="sr-only"> à {slot.time}</span>
+                          </>
+                        )}
+                      </h4>
+                      {commonSession?.data.subtitle && (
+                        <p class="schedule-common__subtitle">{commonSession.data.subtitle}</p>
+                      )}
+                      {commonSession?.body?.trim() && (
+                        <p class="schedule-common__detail">{stripMarkdownToPlainText(commonSession.body)}</p>
+                      )}
+                      {commonSpeakers.length > 0 && (
+                        <p class="schedule-common__speakers">
+                          {commonSpeakers.map((speaker, index) => (
+                            <Fragment>
+                              <a href={speaker.href}>{speaker.name}</a>
+                              {index < commonSpeakers.length - 1 && <span aria-hidden="true">·</span>}
+                            </Fragment>
+                          ))}
+                        </p>
+                      )}
+                      {!commonSession && slot.detail && <p class="schedule-common__detail">{slot.detail}</p>}
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </section>
+        );
+      })}
+    </div>
+
+    <p id="schedule-notice" class="schedule-section__notice">
+      Horaires et contenus susceptibles d’évoluer.
+    </p>
+  </div>
+</section>
+
+<style>
+  .schedule-section {
+    position: relative;
+    background: var(--color-brand-cream);
+    color: var(--color-brand-black);
+    isolation: isolate;
+  }
+
+  .schedule-section__inner {
+    position: relative;
+    z-index: 3;
+    width: min(calc(100% - 2 * var(--layout-gutter)), var(--layout-editorial));
+    margin-inline: auto;
+    padding-block: var(--space-section-close) var(--space-section-calm);
+  }
+
+  .schedule-track-guide {
+    position: sticky;
+    z-index: 6;
+    top: var(--site-header-height);
+    padding-block: 0.5rem;
+    background: var(--color-brand-cream);
+  }
+
+  .schedule-track-headings {
+    display: none;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .schedule-track-heading {
+    display: flex;
+    padding-block: 0.7rem 0.6rem;
+    border-top: 1px solid rgb(57 54 54 / 18%);
+    color: var(--color-brand-black);
+    font-family: var(--font-serif);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-style: normal;
+    font-weight: 800;
+    letter-spacing: var(--tracking-heading);
+    line-height: 1;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .schedule-track-heading--decideurs {
+    border-top-color: var(--color-brand-blue);
+  }
+
+  .schedule-track-heading--tech {
+    border-top-color: var(--color-brand-orange);
+  }
+
+  .schedule-panel {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3rem);
+    margin-top: 1.5rem;
+  }
+
+  .schedule-daypart {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .schedule-daypart__heading {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .schedule-daypart__title {
+    display: grid;
+    grid-template-columns: auto minmax(2rem, 1fr);
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .schedule-daypart__title::after {
+    height: 1px;
+    background: rgb(57 54 54 / 18%);
+    content: '';
+  }
+
+  .schedule-daypart__title h3 {
+    color: var(--color-brand-black);
+  }
+
+  .schedule-daypart__slots {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .schedule-conference-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  /* `align-items: stretch` only sizes this grid item's own box to its
+     (possibly row-spanning) grid area; the card inside still needs a flex
+     parent to actually grow into that height instead of hugging its content. */
+  .schedule-track-slot {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* In the afterwork row, the "Temps de rencontre" card sits next to the
+     podcast session card, which stretches to the row height via its own
+     `flex: 1`. Match that here so both cards end up the same height instead
+     of the common card hugging its `min-height`. */
+  .schedule-track-slot > .schedule-common {
+    flex: 1;
+  }
+
+  .schedule-section__notice {
+    margin-top: clamp(1.5rem, 3vw, 2.25rem);
+    color: rgb(57 54 54 / 72%);
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.45;
+  }
+
+  .schedule-common {
+    display: grid;
+    grid-template-columns: 4.75rem minmax(0, 1fr);
+    gap: 0.75rem;
+    align-items: center;
+    min-height: 5.5rem;
+    padding: 1rem;
+    border-left: 1px solid rgb(13 13 18 / 14%);
+    background: rgb(255 255 255 / 72%);
+    box-shadow: 0 1px 0 rgb(13 13 18 / 8%);
+  }
+
+  .schedule-common--keynote {
+    background: var(--color-brand-black);
+    color: var(--color-brand-white);
+  }
+
+  .schedule-common--transition {
+    min-height: 4.5rem;
+    border-left-style: dashed;
+    background: rgb(13 13 18 / 4%);
+  }
+
+  .schedule-common--meal {
+    background: var(--color-brand-cream-deep);
+  }
+
+  .schedule-common--social {
+    background: var(--color-brand-night);
+    color: var(--color-brand-cream);
+  }
+
+  .schedule-common--social .schedule-common__meta {
+    opacity: 1;
+  }
+
+  .schedule-common--closing {
+    min-height: 4.5rem;
+    background: rgb(13 13 18 / 8%);
+  }
+
+  .schedule-common__time {
+    font-family: var(--font-label);
+    font-size: 1rem;
+    font-weight: 800;
+  }
+
+  .schedule-common__meta {
+    color: currentColor;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: var(--tracking-label);
+    opacity: 0.76;
+    text-transform: uppercase;
+  }
+
+  .schedule-common__title {
+    margin-top: 0.2rem;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 800;
+    letter-spacing: var(--tracking-heading);
+    line-height: 1.2;
+  }
+
+  .schedule-common__title a {
+    text-decoration: underline;
+    text-decoration-color: currentColor;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+
+  .schedule-common__title a:hover {
+    text-decoration-thickness: 2px;
+  }
+
+  .schedule-common__subtitle {
+    margin-top: 0.2rem;
+    color: currentColor;
+    font-size: 0.82rem;
+    font-weight: 700;
+    opacity: 0.85;
+  }
+
+  .schedule-common__detail {
+    margin-top: 0.3rem;
+    color: currentColor;
+    font-size: 0.75rem;
+    opacity: 0.78;
+  }
+
+  .schedule-common__speakers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.55rem;
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
+
+  .schedule-common__speakers a {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .schedule-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    border: 1px solid rgb(13 13 18 / 10%);
+    border-radius: 0.5rem;
+    background: rgb(255 255 255 / 70%);
+  }
+
+  .schedule-tab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: 0;
+    color: rgb(13 13 18 / 62%);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: var(--tracking-ui);
+    line-height: 1.15;
+    text-transform: uppercase;
+    transition:
+      color 160ms ease,
+      background-color 160ms ease,
+      box-shadow 160ms ease;
+  }
+
+  .schedule-tab:focus-visible {
+    outline: 2px solid var(--color-brand-black);
+    outline-offset: 2px;
+  }
+
+  .schedule-tab[aria-pressed='true'] {
+    background: var(--color-brand-blue);
+    color: var(--color-brand-white);
+    box-shadow: 0 0.25rem 0.75rem rgb(34 53 125 / 20%);
+  }
+
+  @media (min-width: 40rem) {
+    .schedule-tabs {
+      display: none;
+    }
+
+    .schedule-track-headings {
+      display: grid;
+    }
+
+    .schedule-panel {
+      margin-top: var(--space-section-close);
+    }
+
+    .schedule-conference-row {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    /* Un talk plus long qu'un créneau (ex. l'atelier GPU de 80 min) porte une
+     * carte en rowspan pendant que l'autre parcours garde une ligne par
+     * créneau : la grille explicite ses lignes, chaque carte se positionne
+     * via les variables posées en style inline. */
+    .schedule-conference-row--grouped {
+      grid-template-rows: repeat(var(--row-count, 1), minmax(0, 1fr));
+    }
+
+    .schedule-conference-row--grouped .schedule-track-slot {
+      grid-column: var(--col, auto);
+      grid-row: var(--row, auto) / span var(--span, 1);
+    }
+  }
+
+  @media (min-width: 48rem) {
+    .schedule-section__inner {
+      padding-inline: clamp(1.5rem, 3vw, 2.75rem);
+    }
+  }
+
+  @media (max-width: 39.999rem) {
+    [data-schedule-tabs][data-active-track='decideurs'] [data-schedule-track='tech'],
+    [data-schedule-tabs][data-active-track='tech'] [data-schedule-track='decideurs'] {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .schedule-tab {
+      transition: none;
+    }
+  }
+</style>

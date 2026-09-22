@@ -1,0 +1,250 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-cream: #F9F4EC;
+  --color-brand-cream-deep: #F2EADF;
+  --color-brand-white: #FFFFFF;
+  --color-brand-blue: #3D43CE;
+  --color-brand-orange: #FE4D1B;
+  --color-brand-black: #393636;
+  --color-brand-night: #09122E;
+
+  --font-sans: "Arial MT Pro", Arial, Helvetica, sans-serif;
+  --font-serif: "EB Garamond Variable", "EB Garamond", Georgia, serif;
+  --font-label: "Arial MT Pro", Arial, Helvetica, sans-serif;
+  --font-label-mono: "Arial MT Pro", Arial, Helvetica, sans-serif;
+  --font-nav: "Arial MT Pro", Arial, Helvetica, sans-serif;
+}
+
+:root {
+  --hero-transition-color: var(--color-brand-cream);
+  --color-action-ticket: color-mix(in srgb, var(--color-brand-orange) 80%, var(--color-brand-night));
+  --color-action-ticket-hover: color-mix(in srgb, var(--color-brand-orange) 72%, var(--color-brand-night));
+  --color-action-ticket-ink: var(--color-brand-white);
+  --layout-gutter: clamp(1.25rem, 4vw, 3.5rem);
+  --layout-reading: 46rem;
+  --layout-editorial: 78rem;
+  --space-section-calm: clamp(4.5rem, 8vw, 7.5rem);
+  --space-section-compact: clamp(2.75rem, 5vw, 4.5rem);
+  --space-section-close: clamp(1.5rem, 3vw, 2rem);
+  --tracking-display: -0.04em;
+  --tracking-heading: -0.02em;
+  --tracking-label: 0.12em;
+  --tracking-ui: 0.04em;
+  --tracking-wordmark: 0.015em;
+}
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+.portrait-photo {
+  filter: grayscale(100%);
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Sur macOS le texte rend plus gras que dessiné ; l'antialiasing ramène
+ * toutes les graisses à leur poids voulu. Les autres plateformes ignorent
+ * ces propriétés. */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Répartition équilibrée des lignes sur tous les titres, y compris ceux
+ * composés en utilitaires Tailwind hors classes type-*. */
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+/* Arrivée d'ancre : la section atterrit sous le header sticky, jamais
+ * dessous. Vaut pour les sauts natifs inter-pages comme pour l'inertie
+ * Lenis sur la landing. */
+section[id] {
+  scroll-margin-top: calc(var(--site-header-height) + 0.75rem);
+}
+
+/* Même réserve pour tout élément focalisable : le défilement de mise en vue
+ * déclenché par Tab aligne la cible sur le bord du viewport, où le header
+ * collant la recouvre en haut et le CTA billetterie fixe en bas. La réserve
+ * est posée en statique, pas sur :focus-visible : le navigateur fait défiler
+ * avant que la pseudo-classe ne s'applique. */
+a[href],
+area[href],
+button,
+input,
+select,
+textarea,
+summary,
+[tabindex]:not([tabindex="-1"]) {
+  scroll-margin-top: calc(var(--site-header-height) + 0.75rem);
+  scroll-margin-bottom: 5rem;
+}
+
+/* Au-dessus de 48rem le CTA billetterie fixe disparaît : la réserve basse
+ * redevient une simple marge de confort. */
+@media (min-width: 48rem) {
+  a[href],
+  area[href],
+  button,
+  input,
+  select,
+  textarea,
+  summary,
+  [tabindex]:not([tabindex="-1"]) {
+    scroll-margin-bottom: 0.75rem;
+  }
+}
+
+/*
+ * Anneau de focus par défaut, pour tout ce qu'aucun composant ne traite.
+ * Aucune couleur unique ne tient 3:1 à la fois sur le papier crème et sur
+ * l'aplat bleu : l'anneau est donc à deux tons, encre nuit sur halo crème.
+ * Sur crème c'est la nuit qui porte le contraste (15,7:1), sur bleu c'est le
+ * halo crème (6,63:1).
+ *
+ * La règle vit dans @layer base pour que le halo ne remplace jamais une ombre
+ * déjà portée : les utilitaires shadow-* de Tailwind vivent dans @layer
+ * utilities et les styles scopés Astro hors de toute couche, deux positions
+ * qui priment sur base. Sans cette couche, un CTA primary (src/lib/button.ts)
+ * perdait son décalage d'encre nuit dès qu'il recevait le focus clavier.
+ * Le :where() garde en plus le sélecteur à zéro à l'intérieur de la couche.
+ */
+@layer base {
+  :where(a[href], area[href], button, input, select, textarea, summary, [tabindex]:not([tabindex="-1"])):focus-visible {
+    outline: 2px solid var(--color-brand-night);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 6px var(--color-brand-cream);
+  }
+}
+
+/* La preflight Tailwind supprime le flash natif au tap. Sans pointeur fin,
+ * le doigt n'a plus aucun accusé de réception : on rend un halo discret, plus
+ * un affaiblissement bref sur les liens le temps de l'appui. Les boutons sont
+ * laissés de côté : celui du coin d'étiquette garde l'état actif pendant tout
+ * le glissement du décollement. */
+html {
+  -webkit-tap-highlight-color: rgb(61 67 206 / 12%);
+}
+
+@media (hover: none) {
+  a:active {
+    opacity: 0.72;
+  }
+}
+
+/*
+ * Hauteur stable du header sticky. La surface change au scroll, jamais ses
+ * dimensions, afin que le contenu ne saute pas entre le hero et la page.
+ */
+:root {
+  --site-header-height: 3.65rem;
+}
+
+@media (min-width: 40rem) {
+  :root {
+    --site-header-height: 4rem;
+  }
+}
+
+/* Titre: EB Garamond Très gras (800), upright */
+h1,
+h2,
+.text-title {
+  font-family: var(--font-serif);
+  font-style: normal;
+  font-weight: 800;
+}
+
+/* Les titres de bloc restent droits. L’italique est réservé aux classes de
+ * sur-titre et de sous-titre ci-dessous. */
+h3,
+h4,
+.text-subtitle {
+  font-family: var(--font-serif);
+  font-style: normal;
+  font-weight: 800;
+}
+
+.text-subtitle {
+  font-style: italic;
+  font-weight: 600;
+}
+
+/*
+ * Hiérarchie éditoriale
+ *
+ * 1. Page: un sur-titre, un titre display, puis un chapô.
+ * 2. Section: un sur-titre, un titre, puis un texte d'introduction facultatif.
+ * 3. Sous-section: un titre Garamond italique, réservé aux blocs internes.
+ *
+ * Les couleurs, alignements et largeurs restent contextuels. Les tailles,
+ * graisses, interlignages et espacements entre rôles restent communs.
+ */
+.type-page-kicker,
+.type-section-kicker {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.type-page-kicker {
+  font-size: clamp(1.125rem, 2vw, 1.25rem);
+}
+
+.type-page-title {
+  font-family: var(--font-serif);
+  font-size: clamp(3.5rem, 12vw, 8rem);
+  font-style: normal;
+  font-weight: 800;
+  letter-spacing: var(--tracking-display);
+  line-height: 0.86;
+  text-wrap: balance;
+}
+
+.type-page-title--long {
+  font-size: clamp(2.75rem, 7vw, 5rem);
+  line-height: 0.92;
+}
+
+.type-page-lede {
+  font-size: clamp(1.125rem, 2vw, 1.25rem);
+  line-height: 1.65;
+  text-wrap: pretty;
+}
+
+.type-section-kicker {
+  font-size: 1.125rem;
+}
+
+.type-section-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2.25rem, 5vw, 3rem);
+  font-style: normal;
+  font-weight: 800;
+  letter-spacing: var(--tracking-heading);
+  line-height: 0.95;
+  text-wrap: balance;
+}
+
+.type-section-lede {
+  font-size: clamp(1.0625rem, 2vw, 1.25rem);
+  line-height: 1.65;
+  text-wrap: pretty;
+}
+
+.type-subsection-title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-style: italic;
+  font-weight: 600;
+  line-height: 1.05;
+  text-wrap: balance;
+}

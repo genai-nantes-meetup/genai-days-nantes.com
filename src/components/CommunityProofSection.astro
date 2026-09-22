@@ -1,0 +1,452 @@
+---
+import ArrowIcon from './ArrowIcon.astro';
+import EditorialGrid from './EditorialGrid.astro';
+import EventName from './EventName.astro';
+import communityData from '../content/community.json';
+
+const communities = communityData.communities;
+
+---
+
+<section class="community-proof" aria-labelledby="community-proof-title" data-community-proof>
+  <EditorialGrid />
+  <div class="community-proof__inner">
+    <header class="community-proof__heading">
+      <h2 id="community-proof-title" class="type-section-title">La communauté est déjà là.</h2>
+      <p><EventName /> arrive à Nantes, porté par une équipe qui y rassemble déjà celles et ceux qui font l’IA générative.</p>
+      <a class="community-proof__team-link" href="/equipe">
+        Rencontrer l’équipe <ArrowIcon />
+      </a>
+    </header>
+
+    <div class="community-proof__stage">
+      <div class="community-index" role="group" aria-label="Choisir un rendez-vous de l’équipe">
+        {communities.map((community, index) => (
+          <button
+            class:list={['community-index__tab', `community-index__tab--${community.id}`]}
+            id={`community-tab-${community.id}`}
+            type="button"
+            aria-pressed={index === 0 ? 'true' : 'false'}
+            aria-controls={`community-panel-${community.id}`}
+            data-community-tab={community.id}
+          >
+            <span class="community-index__logo">
+              <img
+                src={community.logo}
+                alt=""
+                width={community.logoWidth}
+                height={community.logoHeight}
+                loading="lazy"
+                decoding="async"
+              />
+            </span>
+            <span class="community-index__copy">
+              <strong>{community.name}</strong>
+              <small>{community.indexLabel}</small>
+            </span>
+            <ArrowIcon />
+          </button>
+        ))}
+      </div>
+
+      <div class="community-proof__panels">
+        {communities.map((community, index) => (
+          <article
+            class:list={['community-panel', `community-panel--${community.id}`]}
+            id={`community-panel-${community.id}`}
+            aria-label={`Détails de ${community.name}`}
+            data-community-panel={community.id}
+            hidden={index !== 0}
+          >
+            <header class="community-panel__identity">
+              <div>
+                <h3>{community.title}</h3>
+                <p>{community.description}</p>
+              </div>
+            </header>
+
+            <dl class="community-panel__stats" aria-label={`Chiffres clés de ${community.name}`}>
+              {community.stats.map((stat) => (
+                <div><dt>{stat.value}</dt><dd>{stat.label}</dd></div>
+              ))}
+            </dl>
+
+            <a class="community-panel__link" href={community.href} target="_blank" rel="noopener">
+              {community.linkLabel} <ArrowIcon direction="external" />
+            </a>
+          </article>
+        ))}
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  import { initCommunityProof } from '../scripts/community-proof';
+
+  initCommunityProof();
+</script>
+
+<style>
+  .community-proof {
+    position: relative;
+    isolation: isolate;
+    background: var(--color-brand-cream);
+    color: var(--color-brand-black);
+  }
+
+  .community-proof__inner {
+    position: relative;
+    z-index: 3;
+    width: min(100%, 82rem);
+    max-width: 100%;
+    margin-inline: auto;
+    padding: var(--space-section-compact) var(--layout-gutter) var(--space-section-close);
+  }
+
+  .community-proof__heading h2 {
+    max-width: 22ch;
+  }
+
+  .community-proof__heading p {
+    max-width: 72ch;
+    margin-top: 0.625rem;
+    color: rgb(57 54 54 / 76%);
+    font-family: var(--font-sans);
+    line-height: 1.5;
+  }
+
+  .community-proof__team-link {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 1rem;
+    color: var(--color-brand-blue);
+    font-family: var(--font-nav);
+    font-size: 0.75rem;
+    font-weight: 600;
+    gap: 0.5rem;
+    letter-spacing: var(--tracking-ui);
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
+  }
+
+  .community-proof__team-link:hover {
+    color: var(--color-brand-orange);
+  }
+
+  .community-proof__stage {
+    display: grid;
+    min-width: 0;
+    margin-top: 2rem;
+    border-block: 1px solid rgb(57 54 54 / 11%);
+  }
+
+  .community-proof__panels {
+    min-width: 0;
+  }
+
+  .community-panel {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 1.5rem 1.75rem;
+    background: var(--color-brand-cream-deep);
+  }
+
+  .community-panel[hidden] {
+    display: none;
+  }
+
+  .community-panel__identity {
+    display: grid;
+    min-height: 4.5rem;
+    align-content: center;
+  }
+
+  .community-panel__identity h3 {
+    color: rgb(57 54 54 / 82%);
+    font-size: 1.5rem;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    line-height: 1.1;
+  }
+
+  .community-panel__identity p {
+    max-width: 44ch;
+    margin-top: 0.375rem;
+    color: rgb(57 54 54 / 78%);
+    font-family: var(--font-sans);
+    line-height: 1.45;
+  }
+
+  .community-panel__stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-top: 1.5rem;
+    border-block: 1px solid rgb(57 54 54 / 11%);
+  }
+
+  .community-panel__stats > div {
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    min-height: 5.25rem;
+    padding: 0.75rem 0.5rem;
+    text-align: center;
+  }
+
+  .community-panel__stats > div:not(:first-child) {
+    border-inline-start: 1px solid rgb(57 54 54 / 11%);
+  }
+
+  .community-panel__stats dt {
+    color: var(--color-brand-blue);
+    font-family: var(--font-serif);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 0.9;
+  }
+
+  .community-panel__stats dd {
+    margin-top: 0.375rem;
+    color: rgb(57 54 54 / 78%);
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    line-height: 1.25;
+  }
+
+  .community-panel__link {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    align-self: flex-end;
+    gap: 0.625rem;
+    margin: auto 0 0 auto;
+    padding-top: 0.75rem;
+    color: var(--color-brand-blue);
+    font-family: var(--font-nav);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.025em;
+    text-transform: uppercase;
+  }
+
+  .community-panel__link :global(svg) {
+    transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .community-panel__link:hover :global(svg),
+  .community-panel__link:focus-visible :global(svg) {
+    transform: translate(0.15rem, -0.15rem);
+  }
+
+  .community-panel__link:focus-visible,
+  .community-index__tab:focus-visible {
+    outline: 2px solid var(--color-brand-orange);
+    outline-offset: 3px;
+  }
+
+  .community-index {
+    display: grid;
+    align-content: stretch;
+    min-height: 19rem;
+    min-width: 0;
+    grid-template-rows: repeat(3, 1fr);
+  }
+
+  .community-index__tab {
+    position: relative;
+    display: grid;
+    grid-template-columns: 4.5rem minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 1rem;
+    min-height: 4.75rem;
+    min-width: 0;
+    padding: 0.75rem 1.5rem;
+    border: 0;
+    border-bottom: 1px solid rgb(57 54 54 / 11%);
+    background: transparent;
+    color: var(--color-brand-black);
+    text-align: left;
+    cursor: pointer;
+    transition: color 180ms ease;
+  }
+
+  .community-index__tab:last-child {
+    border-bottom: 0;
+  }
+
+  .community-index__tab::before {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 0.1875rem;
+    background: var(--color-brand-blue);
+    content: '';
+    opacity: 0;
+    transform: scaleY(0.35);
+    transition: opacity 180ms ease, transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .community-index__tab[aria-pressed='true'] {
+    background: var(--color-brand-cream-deep);
+    color: var(--color-brand-blue);
+  }
+
+  .community-index__tab[aria-pressed='true']::before {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+
+  .community-index__tab:hover {
+    background: color-mix(in srgb, var(--color-brand-cream-deep) 62%, transparent);
+  }
+
+  .community-index__logo {
+    display: grid;
+    width: 4.5rem;
+    height: 3rem;
+    place-items: center;
+  }
+
+  .community-index__logo img {
+    width: 2.5rem;
+    height: 2.5rem;
+    object-fit: contain;
+    object-position: center;
+  }
+
+  .community-index__tab--shift .community-index__logo img {
+    width: 2.5rem;
+    height: auto;
+  }
+
+  .community-index__copy {
+    display: grid;
+    min-width: 0;
+    gap: 0.125rem;
+  }
+
+  .community-index__copy strong {
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.05;
+  }
+
+  .community-index__copy small {
+    color: rgb(57 54 54 / 78%);
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    line-height: 1.25;
+  }
+
+  .community-index__tab[aria-pressed='true'] .community-index__copy small {
+    color: var(--color-brand-blue);
+  }
+
+  /* La flèche est le seul indice visuel qu'un item de l'index est actionnable :
+   * elle doit tenir le seuil non-textuel de 3:1 sur crème comme sur crème
+   * profond, d'où 58% plutôt que la valeur strictement minimale sur crème. */
+  .community-index__tab :global(svg) {
+    color: rgb(57 54 54 / 58%);
+    transition: color 180ms ease, transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .community-index__tab[aria-pressed='true'] :global(svg) {
+    color: var(--color-brand-blue);
+    transform: translateX(0.2rem);
+  }
+
+  .community-panel:not([hidden]) > * {
+    animation: community-proof-content-arrival 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes community-proof-content-arrival {
+    from {
+      opacity: 0;
+      transform: translateY(0.25rem);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .community-proof__inner {
+      width: min(calc(100% - 2 * var(--layout-gutter)), var(--layout-editorial));
+      padding: var(--space-section-compact) 0 var(--space-section-close);
+    }
+
+    .community-proof__heading {
+      padding-inline: clamp(1.5rem, 2.5vw, 2rem);
+    }
+
+    .community-proof__heading p {
+      max-width: none;
+      white-space: nowrap;
+    }
+
+    .community-proof__stage {
+      width: 100%;
+      grid-template-columns: minmax(0, 56%) minmax(0, 44%);
+      min-height: 19rem;
+      margin-top: clamp(1.25rem, 2.5vh, 2rem);
+    }
+
+    .community-index {
+      grid-column: 2;
+      grid-row: 1;
+    }
+
+    .community-proof__panels {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .community-proof__panels {
+      border-inline-end: 1px solid rgb(57 54 54 / 11%);
+    }
+
+    .community-panel {
+      padding: clamp(1.25rem, 2.5vh, 1.75rem) clamp(1.5rem, 2.5vw, 2rem);
+    }
+
+  }
+
+  @media (max-width: 39.999rem) {
+    .community-index {
+      min-height: 18rem;
+    }
+
+    .community-panel {
+      padding-inline: 1.25rem;
+    }
+
+    .community-panel__stats > div {
+      padding-inline: 0.25rem;
+    }
+
+    .community-panel__stats dt {
+      font-size: clamp(1.5rem, 3vw, 2rem);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .community-panel:not([hidden]) > * {
+      animation: none;
+    }
+
+    .community-panel__link :global(svg),
+    .community-index__tab,
+    .community-index__tab::before,
+    .community-index__tab :global(svg) {
+      transition: none;
+    }
+  }
+</style>
