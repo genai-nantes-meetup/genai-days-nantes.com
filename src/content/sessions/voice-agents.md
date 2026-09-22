@@ -9,6 +9,10 @@ room: ""
 speakerSlugs: ["julien-lesaicherre"]
 format: "talk"
 themes: ["Agents vocaux", "Stratégie IA", "Transformation"]
+illustration:
+  alt: "Une onde vocale lumineuse perce un mur d'écrans et d'icônes pour révéler une enceinte"
+  src: "/talks/voice-agents-optimized.webp"
+  variant: "agents"
 ---
 
 Comment repenser sa feuille de route IA quand la voix s'impose comme la prochaine interface par défaut entre l'entreprise et ses clients, après le texte des chatbots et des copilotes.
