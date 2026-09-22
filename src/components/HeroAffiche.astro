@@ -12,7 +12,10 @@
  */
 import { getCollection } from 'astro:content';
 import Label from './Label.astro';
-import PlatinumSponsors from './PlatinumSponsors.astro';
+import HeroSponsorsMarquee from './HeroSponsorsMarquee.astro';
+import Button from './Button.astro';
+import { CTA_LINKS } from '../lib/cta-links';
+import PRICING from '../content/pricing.json';
 import { EVENT, formatEventDateLabel } from '../lib/event';
 
 const eventDate = new Date(`${EVENT.date}T00:00:00`);
@@ -51,14 +54,13 @@ const coOrganizerLogoHeight = coOrganizer?.data.monochromeLogoHeight ?? coOrgani
         rotation={2}
         peelable
         labelId="landing-day-manifesto"
-        brand="CONFÉRENCES"
+        brand={false}
         showMark={false}
         surfaceClass="hero-meta-label"
         contentClass="hero-meta-label__body"
       >
         <Fragment slot="title">
           <div class="hero-affiche__label-data">
-            <p class="hero-affiche__label-overline">{eventWeekdayUppercase} · ACCUEIL {EVENT.startTime}</p>
             <p class="hero-affiche__label-date">
               <strong>{eventDay}</strong>
               <span>
@@ -100,19 +102,19 @@ const coOrganizerLogoHeight = coOrganizer?.data.monochromeLogoHeight ?? coOrgani
     <div class="hero-affiche__content">
       <div class="hero-affiche__message" data-hero-title>
         <h1 class="hero-affiche__title">
-          {/* L'espace suit chaque <br /> : en début de ligne elle est retirée
-              au rendu, et elle redevient le séparateur de mots quand les
-              coupes forcées sont neutralisées sur les écrans étroits. */}
-          <span class="hero-affiche__title-primary">L’IA générative<br /> est déjà chez vous.</span>
-          <span class="hero-affiche__title-accent">C’est maintenant<br /> que ça se complique.</span>
+          <span class="hero-affiche__title-primary">LA Conf Gen AI dédiée aux décideurs et leurs équipes techs</span>
+          <span class="hero-affiche__title-accent">2 tracks pour décider où investir et comprendre comment déployer</span>
         </h1>
         <p class="hero-affiche__practical">
           <span>{eventWeekdayUppercase} {eventDay} {eventMonth} {eventYear}</span>
           <span>{EVENT.venue.shortName}, {EVENT.venue.city}</span>
-          <span>ACCUEIL {EVENT.startTime}</span>
+          <span>{`+ ${PRICING.capacity} PARTICIPANTS`}</span>
         </p>
+        <div class="hero-affiche__cta">
+          <Button variant="accent" href={CTA_LINKS.tickets}>Réserver ma place</Button>
+        </div>
         <div class="hero-affiche__sponsors">
-          <PlatinumSponsors />
+          <HeroSponsorsMarquee />
         </div>
       </div>
       {coOrganizer && coOrganizerLogo && (
@@ -294,33 +296,24 @@ const coOrganizerLogoHeight = coOrganizer?.data.monochromeLogoHeight ?? coOrgani
     --label-padding-y: 5.2cqi;
     --label-mark-size: 13cqi;
     --label-radius: 3.6cqi;
-    --label-brand-font-family: var(--font-sans);
-    --label-brand-font-size: var(--hero-label-meta-size);
-    --label-brand-font-style: normal;
-    --label-brand-font-weight: 700;
-    --label-brand-letter-spacing: 0.04em;
-    --label-brand-padding-top: 0.1em;
     --hero-label-meta-size: clamp(0.75rem, 4.4cqi, 0.875rem);
     container-type: inline-size;
   }
 
+  /* Ni marque ni pastille : l'en-tête vide est retiré pour que la date
+   * récupère toute la hauteur de l'étiquette. */
   :global(.hero-meta-label .site-label__front) {
-    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
   }
 
   :global(.hero-meta-label .site-label__header) {
-    gap: 4cqi;
-    align-items: start;
-  }
-
-  :global(.hero-meta-label .site-label__brand) {
-    min-height: 0;
+    display: none;
   }
 
   :global(.hero-meta-label__body) {
     align-items: stretch;
     justify-content: center;
-    padding-block: 3.8cqi 0;
+    padding-block: 0;
     text-align: left;
   }
 
@@ -336,46 +329,44 @@ const coOrganizerLogoHeight = coOrganizer?.data.monochromeLogoHeight ?? coOrgani
     gap: 2cqi;
   }
 
-  .hero-affiche__label-overline {
-    margin: 0;
-    font-family: var(--font-sans);
-    font-size: var(--hero-label-meta-size);
-    font-style: normal;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    line-height: 1;
-  }
-
+  /* Le mois et l'année forment un bloc ferré à gauche, exactement de la
+   * hauteur du "17" : text-box rogne chaque ligne à la hauteur de capitale
+   * et à la ligne de base, les deux colonnes s'étirent à la même hauteur et
+   * space-between cale "NOVEMBRE" sur le haut du 17, l'année sur son pied. */
   .hero-affiche__label-date {
     display: grid;
     width: 100%;
     grid-template-columns: auto minmax(0, 1fr);
     gap: 3.8cqi;
-    align-items: end;
+    align-items: stretch;
     margin: 0;
     text-transform: uppercase;
   }
 
   .hero-affiche__label-date > strong {
-    font-size: max(3rem, 22cqi);
+    font-size: max(4rem, 28cqi);
     font-weight: 600;
     letter-spacing: -0.055em;
-    line-height: 0.7;
+    line-height: 1;
+    text-box: trim-both cap alphabetic;
   }
 
   .hero-affiche__label-date > span {
     display: flex;
     min-width: 0;
     flex-direction: column;
-    padding-bottom: 0.1cqi;
-    font-size: max(1rem, 7cqi);
+    align-items: flex-start;
+    justify-content: space-between;
+    font-size: max(1.5rem, 10.5cqi);
     font-weight: 600;
     letter-spacing: -0.025em;
     line-height: 0.8;
+    text-align: left;
   }
 
   .hero-affiche__label-date b {
     font-weight: inherit;
+    text-box: trim-both cap alphabetic;
   }
 
   .hero-affiche__label-bottom {
@@ -447,6 +438,24 @@ const coOrganizerLogoHeight = coOrganizer?.data.monochromeLogoHeight ?? coOrgani
     pointer-events: none;
   }
 
+  /* Seul élément cliquable du bloc titre : le calque reste transparent aux
+   * événements, le bouton reprend la main. */
+  .hero-affiche__cta {
+    margin-top: clamp(1.25rem, 2.8svh, 1.75rem);
+  }
+
+  /* Pas de décalage d'encre bleu : sur l'affiche sombre il se lisait comme
+   * un défaut, le bouton reste un aplat orange comme celui du header. */
+  .hero-affiche__cta :global(a),
+  .hero-affiche__cta :global(a:hover) {
+    box-shadow: none;
+    translate: 0 0;
+  }
+
+  .hero-affiche__cta :global(a) {
+    pointer-events: auto;
+  }
+
   .hero-affiche__sponsors {
     width: min(100%, 70rem);
     margin-top: clamp(1.5rem, 3svh, 2rem);
@@ -473,11 +482,9 @@ const coOrganizerLogoHeight = coOrganizer?.data.monochromeLogoHeight ?? coOrgani
     }
   }
 
-  /* Relais de l'étiquette : quand l'objet étiquette quitte le décor, les
-   * mêmes informations pratiques reviennent en composition typographique
-   * pure, sans surface manipulable. Posé dans le bloc titre, donc effacé par
-   * le même fondu au scroll. Sur téléphone il remplace toujours l'étiquette ;
-   * au-dessus, seulement quand elle a été classée dans la collection. */
+  /* Ligne pratique sous le titre : date, lieu et jauge, en composition
+   * typographique pure. Toujours affichée, étiquette présente ou non. Posée
+   * dans le bloc titre, donc effacée par le même fondu au scroll. */
   .hero-affiche__practical {
     display: none;
     border-top: 1px solid rgb(249 244 236 / 30%);
@@ -507,17 +514,16 @@ const coOrganizerLogoHeight = coOrganizer?.data.monochromeLogoHeight ?? coOrgani
     );
   }
 
-  /* Classée, l'étiquette emporte la date, le lieu et la Région. Le relais
-   * prend sa place, comme le titre d'une session révélé sous son étiquette,
-   * et le logo de la Région fait contrepoids au titre en bas à droite.
-   * Recollée depuis la collection, elle reprend la main et le relais s'efface. */
+  /* Classée, l'étiquette emporte la Région : son logo revient faire
+   * contrepoids au titre en bas à droite. Recollée depuis la collection,
+   * elle reprend la main et le logo s'efface. */
   @media (min-width: 48rem) {
     .hero-affiche:has(.hero-affiche__label [data-label-origin].is-collected) .hero-affiche__content {
       grid-template-columns: minmax(0, 1fr) auto;
       column-gap: clamp(2rem, 4vw, 4rem);
     }
 
-    .hero-affiche:has(.hero-affiche__label [data-label-origin].is-collected) .hero-affiche__practical {
+    .hero-affiche__practical {
       display: flex;
       flex-wrap: wrap;
       width: fit-content;
@@ -527,7 +533,7 @@ const coOrganizerLogoHeight = coOrganizer?.data.monochromeLogoHeight ?? coOrgani
       font-size: 0.8125rem;
     }
 
-    .hero-affiche:has(.hero-affiche__label [data-label-origin].is-collected) .hero-affiche__practical span + span::before {
+    .hero-affiche__practical span + span::before {
       margin-inline-end: 0.9rem;
       content: "·";
     }
@@ -541,7 +547,6 @@ const coOrganizerLogoHeight = coOrganizer?.data.monochromeLogoHeight ?? coOrgani
   }
 
   @media (min-width: 48rem) and (prefers-reduced-motion: no-preference) {
-    .hero-affiche:has(.hero-affiche__label [data-label-origin].is-collected) .hero-affiche__practical,
     .hero-affiche:has(.hero-affiche__label [data-label-origin].is-collected) .hero-affiche__coorganizer--relay {
       animation: hero-relay-in 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
     }
@@ -587,7 +592,9 @@ const coOrganizerLogoHeight = coOrganizer?.data.monochromeLogoHeight ?? coOrgani
       display: flex;
     }
 
-    .hero-affiche__sponsors {
+    /* Le CTA billetterie fixe du header couvre déjà le mobile. */
+    .hero-affiche__sponsors,
+    .hero-affiche__cta {
       display: none;
     }
 
@@ -651,14 +658,6 @@ const coOrganizerLogoHeight = coOrganizer?.data.monochromeLogoHeight ?? coOrgani
     }
   }
 
-  /* Sous 360px les deux coupes forcées du titre débordent de la colonne :
-   * on laisse la ligne couler, text-wrap: balance égalise le pavé. */
-  @media (max-width: 22.5rem) {
-    .hero-affiche__title br {
-      display: none;
-    }
-  }
-
   /* Halo doux par lettre : seul renfort de lisibilité qui a le droit de
    * voyager avec le titre, car collé aux glyphes il se lit comme un
    * traitement typographique, pas comme un éclairage. Il porte le titre
@@ -669,7 +668,6 @@ const coOrganizerLogoHeight = coOrganizer?.data.monochromeLogoHeight ?? coOrgani
    * rapport à la version d'origine (-0.02em au lieu de -0.045em, 0.9 au
    * lieu de 0.84) pour laisser respirer les jonctions de lettres. */
   .hero-affiche__message {
-    max-width: 70rem;
     -webkit-mask-image: linear-gradient(
       to bottom,
       transparent 0,
@@ -688,9 +686,8 @@ const coOrganizerLogoHeight = coOrganizer?.data.monochromeLogoHeight ?? coOrgani
   }
 
   .hero-affiche__title {
-    max-width: 46rem;
     color: var(--color-brand-cream);
-    font-size: clamp(2.5rem, min(6.2vw, 7svh), 4.4rem);
+    font-size: clamp(2rem, min(4.6vw, 5.6svh), 3.6rem);
     font-weight: 700;
     letter-spacing: -0.02em;
     line-height: 0.9;
@@ -717,9 +714,13 @@ const coOrganizerLogoHeight = coOrganizer?.data.monochromeLogoHeight ?? coOrgani
     display: block;
   }
 
+  /* Le sous-titre orange est une phrase complète : un cran sous la ligne
+   * blanche pour que la hiérarchie reste lisible sur deux phrases longues. */
   .hero-affiche__title-accent {
     display: block;
-    margin-top: 0.12em;
+    margin-top: 0.3em;
+    font-size: 0.72em;
+    line-height: 0.95;
     color: var(--color-brand-orange);
     font-style: italic;
   }

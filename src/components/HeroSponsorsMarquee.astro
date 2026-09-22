@@ -1,0 +1,181 @@
+---
+/**
+ * Défilé des logos partenaires sous le titre du hero : tous les niveaux
+ * (Platinum, Gold, Silver) dans l'ordre de la collection. La Région,
+ * coorganisatrice, a déjà sa place sur l'étiquette et n'y figure pas.
+ *
+ * Chaque logo est teinté en crème par un masque CSS, comme dans
+ * PartnersShowcase : un seul traitement quel que soit le fichier source
+ * (couleur, noir, blanc). Le groupe est dupliqué pour boucler sans saut.
+ */
+import { getCollection } from 'astro:content';
+
+const sponsors = (await getCollection('partners'))
+  .filter((partner) => !partner.data.coOrganizer)
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((partner) => {
+    const logo = partner.data.monochromeLogo ?? partner.data.logo;
+    const width = partner.data.monochromeLogoWidth ?? partner.data.logoWidth;
+    const height = partner.data.monochromeLogoHeight ?? partner.data.logoHeight;
+    const ratio = width / height;
+
+    return {
+      name: partner.data.name,
+      logo,
+      width,
+      height,
+      format: ratio >= 2.8 ? 'wide' : ratio <= 1.8 ? 'compact' : 'standard',
+    } as const;
+  });
+---
+
+<div class="hero-sponsors" role="group" aria-label="Partenaires">
+  <div class="hero-sponsors__track">
+    {[false, true].map((duplicate) => (
+      <ul
+        class="hero-sponsors__group"
+        aria-label={duplicate ? undefined : 'Logos des partenaires'}
+        aria-hidden={duplicate ? 'true' : undefined}
+        data-marquee-copy={duplicate ? 'duplicate' : 'primary'}
+      >
+        {sponsors.map((sponsor) => (
+          <li
+            class:list={['hero-sponsors__logo', `hero-sponsors__logo--${sponsor.format}`]}
+            style={`--sponsor-logo: url("${sponsor.logo}");`}
+          >
+            <img
+              src={sponsor.logo}
+              alt={duplicate ? '' : `Logo ${sponsor.name}`}
+              width={sponsor.width}
+              height={sponsor.height}
+              loading="lazy"
+              decoding="async"
+            />
+          </li>
+        ))}
+      </ul>
+    ))}
+  </div>
+</div>
+
+<style>
+  /* Le calque du hero est transparent aux événements : le bandeau reprend
+   * la main pour que le survol mette le défilé en pause. */
+  .hero-sponsors {
+    --sponsor-gap: clamp(2.25rem, 3.5vw, 3.5rem);
+    --sponsor-fade: clamp(2rem, 6vw, 5rem);
+    width: 100%;
+    overflow: hidden;
+    pointer-events: auto;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 var(--sponsor-fade),
+      #000 calc(100% - var(--sponsor-fade)),
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 var(--sponsor-fade),
+      #000 calc(100% - var(--sponsor-fade)),
+      transparent
+    );
+  }
+
+  .hero-sponsors__track {
+    display: flex;
+    width: max-content;
+    animation: hero-sponsors-scroll 40s linear infinite;
+  }
+
+  .hero-sponsors:hover .hero-sponsors__track {
+    animation-play-state: paused;
+  }
+
+  .hero-sponsors__group {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--sponsor-gap);
+    padding-inline-end: var(--sponsor-gap);
+    list-style: none;
+  }
+
+  .hero-sponsors__logo {
+    position: relative;
+    display: grid;
+    width: 7.5rem;
+    height: 3rem;
+    flex: none;
+    place-items: center;
+  }
+
+  .hero-sponsors__logo--wide {
+    width: 8.5rem;
+  }
+
+  .hero-sponsors__logo--compact {
+    width: 4.5rem;
+  }
+
+  /* L'image garde l'alternative textuelle, le masque dessine le logo. */
+  .hero-sponsors__logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    opacity: 0;
+  }
+
+  .hero-sponsors__logo::before {
+    position: absolute;
+    inset: 0.3rem 0;
+    background: var(--color-brand-cream);
+    content: '';
+    opacity: 0.62;
+    -webkit-mask: var(--sponsor-logo) center / contain no-repeat;
+    mask: var(--sponsor-logo) center / contain no-repeat;
+    pointer-events: none;
+  }
+
+  .hero-sponsors__logo--wide::before {
+    inset: 0.55rem 0;
+  }
+
+  /* Les logos carrés portent souvent leur propre marge : pleine hauteur. */
+  .hero-sponsors__logo--compact::before {
+    inset: 0;
+  }
+
+  @keyframes hero-sponsors-scroll {
+    from {
+      transform: translateX(0);
+    }
+
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* Sans animation, les logos se rangent sur plusieurs lignes, sans doublon. */
+  @media (prefers-reduced-motion: reduce) {
+    .hero-sponsors {
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+
+    .hero-sponsors__track {
+      width: 100%;
+      animation: none;
+    }
+
+    .hero-sponsors__group {
+      flex-wrap: wrap;
+      row-gap: 0.5rem;
+    }
+
+    .hero-sponsors__group[data-marquee-copy='duplicate'] {
+      display: none;
+    }
+  }
+</style>
