@@ -9,6 +9,10 @@ room: ""
 speakerSlugs: []
 format: "talk"
 themes: ["Agentic coding", "Revue de code", "Qualité logicielle"]
+illustration:
+  alt: "Une silhouette se tient la tête, dépassée, face à un écran de code et une page blanche marquée d'un point d'interrogation"
+  src: "/talks/agentic-coding-optimized.webp"
+  variant: "agents"
 ---
 
 Comment reprendre confiance dans le code généré par les agents IA, entre revue de code, tests automatisés et garde-fous à mettre en place dans le workflow de développement.

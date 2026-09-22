@@ -9,6 +9,10 @@ room: ""
 speakerSlugs: []
 format: "talk"
 themes: ["Cybersécurité", "Agents autonomes", "Défense adaptative"]
+illustration:
+  alt: "Un soldat robotique fait face à une nuée d'agents autonomes fonçant vers lui en formation"
+  src: "/talks/cyber-ai-optimized.webp"
+  variant: "transformation"
 ---
 
 Comment adapter ses dispositifs de sécurité pour répondre à la vitesse et à l'autonomie des attaques menées par des agents IA, plutôt que par des attaquants humains.

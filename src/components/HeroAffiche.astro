@@ -430,6 +430,12 @@ const coOrganizerLogoHeight = coOrganizer?.data.monochromeLogoHeight ?? coOrgani
   .hero-affiche__content {
     position: relative;
     display: grid;
+    /* Sans piste explicite, la colonne implicite unique se dimensionne sur le
+     * max-content du titre (sa largeur sur une seule ligne, text-wrap: balance
+     * ne change pas cette contribution intrinsèque) et peut dépasser le
+     * conteneur : minmax(0, 1fr) la force à rester dans la largeur
+     * disponible, comme la piste de gauche en état « collecté » plus bas. */
+    grid-template-columns: minmax(0, 1fr);
     align-content: end;
     width: 100%;
     height: var(--hero-stage-height);

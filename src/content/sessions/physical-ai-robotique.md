@@ -9,6 +9,10 @@ room: ""
 speakerSlugs: []
 format: "talk"
 themes: ["Physical AI", "Temps réel", "Sécurité fonctionnelle"]
+illustration:
+  alt: "Un modèle et un robot versent chacun un liquide sur un damier, l'un l'échoue sans conséquence, l'autre le renverse"
+  src: "/talks/physical-ai-optimized.webp"
+  variant: "transformation"
 ---
 
 Comment valider et sécuriser un modèle avant de le déployer sur un robot physique, entre contraintes temps réel, latence et tests de sécurité fonctionnelle.

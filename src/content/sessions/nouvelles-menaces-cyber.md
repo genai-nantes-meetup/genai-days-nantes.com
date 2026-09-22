@@ -9,6 +9,10 @@ room: ""
 speakerSlugs: []
 format: "talk"
 themes: ["Cybersécurité", "IA générative", "Exfiltration de données"]
+illustration:
+  alt: "Une silhouette de dos regarde un flot de données défiler en surimpression d'une ville nocturne"
+  src: "/talks/nouvelles-menaces-cyber-optimized.webp"
+  variant: "sovereignty"
 ---
 
 Comment l'IA générative abaisse la barrière technique des cyberattaques et permet à des attaquants novices de mener des attaques sophistiquées et autonomes, et ce que cela change pour la sécurité des entreprises.
