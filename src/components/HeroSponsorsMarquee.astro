@@ -2,7 +2,7 @@
 /**
  * Défilé des logos partenaires sous le titre du hero : tous les niveaux
  * (Platinum, Gold, Silver) dans l'ordre de la collection. La Région,
- * coorganisatrice, a déjà sa place sur l'étiquette et n'y figure pas.
+ * coorganisatrice, rejoint cette ligne sur mobile uniquement.
  *
  * Chaque logo est teinté en crème par un masque CSS, comme dans
  * PartnersShowcase : un seul traitement quel que soit le fichier source
@@ -11,7 +11,6 @@
 import { getCollection } from 'astro:content';
 
 const sponsors = (await getCollection('partners'))
-  .filter((partner) => !partner.data.coOrganizer)
   .sort((a, b) => a.data.order - b.data.order)
   .map((partner) => {
     const logo = partner.data.monochromeLogo ?? partner.data.logo;
@@ -21,6 +20,8 @@ const sponsors = (await getCollection('partners'))
 
     return {
       name: partner.data.name,
+      coOrganizer: partner.data.coOrganizer,
+      website: partner.data.website,
       logo,
       width,
       height,
@@ -29,34 +30,54 @@ const sponsors = (await getCollection('partners'))
   });
 ---
 
-<div class="hero-sponsors" role="group" aria-label="Partenaires">
-  <div class="hero-sponsors__track">
-    {[false, true].map((duplicate) => (
-      <ul
-        class="hero-sponsors__group"
-        aria-label={duplicate ? undefined : 'Logos des partenaires'}
-        aria-hidden={duplicate ? 'true' : undefined}
-        data-marquee-copy={duplicate ? 'duplicate' : 'primary'}
-      >
-        {sponsors.map((sponsor) => (
-          <li
-            class:list={['hero-sponsors__logo', `hero-sponsors__logo--${sponsor.format}`]}
-            style={`--sponsor-logo: url("${sponsor.logo}");`}
-          >
-            <img
-              src={sponsor.logo}
-              alt={duplicate ? '' : `Logo ${sponsor.name}`}
-              width={sponsor.width}
-              height={sponsor.height}
-              loading="lazy"
-              decoding="async"
-            />
-          </li>
-        ))}
-      </ul>
-    ))}
+<div class="hero-sponsors" role="group" aria-label="Partenaires" data-logo-marquee>
+  <button class="hero-sponsors__toggle" type="button" aria-pressed="false" aria-label="Mettre en pause le défilement des logos" data-logo-marquee-toggle>
+    <svg class="hero-sponsors__pause-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 5v14M16 5v14" /></svg>
+    <svg class="hero-sponsors__play-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m8 5 11 7-11 7z" /></svg>
+  </button>
+  <div class="hero-sponsors__viewport" tabindex="0" aria-label="Logos des partenaires, défilement horizontal">
+    <div class="hero-sponsors__track">
+      {[false, true].map((duplicate) => (
+        <ul
+          class="hero-sponsors__group"
+          aria-label={duplicate ? undefined : 'Logos des partenaires'}
+          aria-hidden={duplicate ? 'true' : undefined}
+          data-marquee-copy={duplicate ? 'duplicate' : 'primary'}
+        >
+          {sponsors.map((sponsor) => (
+            <li
+              class:list={['hero-sponsors__logo', `hero-sponsors__logo--${sponsor.format}`, sponsor.coOrganizer && 'hero-sponsors__logo--coorganizer']}
+              style={`--sponsor-logo: url("${sponsor.logo}");`}
+            >
+              <a
+                href={sponsor.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={duplicate ? undefined : `Visiter le site de ${sponsor.name}`}
+                tabindex={duplicate ? '-1' : undefined}
+              >
+                <img
+                  src={sponsor.logo}
+                  alt={duplicate ? '' : `Logo ${sponsor.name}`}
+                  width={sponsor.width}
+                  height={sponsor.height}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </a>
+            </li>
+          ))}
+        </ul>
+      ))}
+    </div>
   </div>
 </div>
+
+<script>
+  import { initLogoMarquees } from '../scripts/logo-marquee';
+
+  initLogoMarquees();
+</script>
 
 <style>
   /* Le calque du hero est transparent aux événements : le bandeau reprend
@@ -64,9 +85,58 @@ const sponsors = (await getCollection('partners'))
   .hero-sponsors {
     --sponsor-gap: clamp(2.25rem, 3.5vw, 3.5rem);
     --sponsor-fade: clamp(2rem, 6vw, 5rem);
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 2.75rem;
+    align-items: center;
     width: 100%;
-    overflow: hidden;
     pointer-events: auto;
+  }
+
+  .hero-sponsors__toggle {
+    grid-column: 2;
+    grid-row: 1;
+    display: grid;
+    width: 2.75rem;
+    height: 2.75rem;
+    place-items: center;
+    border: 0;
+    background: transparent;
+    color: var(--color-brand-cream);
+    opacity: 0.62;
+    cursor: pointer;
+  }
+
+  .hero-sponsors__toggle:hover,
+  .hero-sponsors__toggle:focus-visible {
+    opacity: 1;
+  }
+
+  .hero-sponsors__toggle:focus-visible,
+  .hero-sponsors__viewport:focus-visible {
+    outline: 2px solid var(--color-brand-cream);
+    outline-offset: 2px;
+  }
+
+  .hero-sponsors__toggle svg {
+    width: 0.9rem;
+    height: 0.9rem;
+  }
+
+  .hero-sponsors__play-icon,
+  .hero-sponsors[data-paused='true'] .hero-sponsors__pause-icon {
+    display: none;
+  }
+
+  .hero-sponsors[data-paused='true'] .hero-sponsors__play-icon {
+    display: block;
+  }
+
+  .hero-sponsors__viewport {
+    grid-column: 1;
+    grid-row: 1;
+    min-width: 0;
+    overflow: hidden;
     -webkit-mask-image: linear-gradient(
       to right,
       transparent,
@@ -86,10 +156,12 @@ const sponsors = (await getCollection('partners'))
   .hero-sponsors__track {
     display: flex;
     width: max-content;
-    animation: hero-sponsors-scroll 40s linear infinite;
+    animation: hero-sponsors-scroll 32s linear infinite;
   }
 
-  .hero-sponsors:hover .hero-sponsors__track {
+  .hero-sponsors[data-paused='true'] .hero-sponsors__track,
+  .hero-sponsors__viewport:hover .hero-sponsors__track,
+  .hero-sponsors__viewport:focus-within .hero-sponsors__track {
     animation-play-state: paused;
   }
 
@@ -117,6 +189,50 @@ const sponsors = (await getCollection('partners'))
 
   .hero-sponsors__logo--compact {
     width: 4.5rem;
+  }
+
+  .hero-sponsors__logo--coorganizer {
+    display: none;
+  }
+
+  @media (max-width: 47.999rem) {
+    .hero-sponsors {
+      --sponsor-gap: 1.25rem;
+      --sponsor-fade: 1rem;
+    }
+
+    .hero-sponsors__logo {
+      width: 5.5rem;
+      height: 2.5rem;
+    }
+
+    .hero-sponsors__logo--wide {
+      width: 6.25rem;
+    }
+
+    .hero-sponsors__logo--compact {
+      width: 3.75rem;
+    }
+
+    .hero-sponsors__logo--coorganizer {
+      display: grid;
+    }
+  }
+
+  .hero-sponsors__logo a {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    place-items: center;
+  }
+
+  .hero-sponsors__logo a:focus-visible {
+    outline: 2px solid var(--color-brand-cream);
+    outline-offset: 2px;
+  }
+
+  .hero-sponsors__group[data-marquee-copy='duplicate'] {
+    pointer-events: none;
   }
 
   /* L'image garde l'alternative textuelle, le masque dessine le logo. */
@@ -157,21 +273,20 @@ const sponsors = (await getCollection('partners'))
     }
   }
 
-  /* Sans animation, les logos se rangent sur plusieurs lignes, sans doublon. */
+  /* Sans animation, les logos restent sur une ligne que l'on peut parcourir. */
   @media (prefers-reduced-motion: reduce) {
-    .hero-sponsors {
+    .hero-sponsors__toggle {
+      display: none;
+    }
+
+    .hero-sponsors__viewport {
+      overflow-x: auto;
       -webkit-mask-image: none;
       mask-image: none;
     }
 
     .hero-sponsors__track {
-      width: 100%;
       animation: none;
-    }
-
-    .hero-sponsors__group {
-      flex-wrap: wrap;
-      row-gap: 0.5rem;
     }
 
     .hero-sponsors__group[data-marquee-copy='duplicate'] {
