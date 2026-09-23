@@ -7,7 +7,7 @@ describe('press-kit.astro', () => {
     const container = await createAstroContainer();
     const html = await container.renderToString(PressKitPage);
 
-    expect(html).toContain('<title>Espace presse 2026 · GenAI Days</title>');
+    expect(html).toContain('<title>Espace presse 2026 · GENAI DAYS</title>');
     expect(html).toContain('contentUrl":"https://example.com/images/cover_v2-optimized.webp"');
     expect(html).toContain('En bref.');
     expect(html).toContain('Trois angles pour raconter l’événement.');
@@ -30,7 +30,7 @@ describe('press-kit.astro', () => {
     expect(html).toContain('data-copy-target="press-summary"');
     expect(html).toContain('id="press-facts-copy"');
     expect(html).toContain('data-copy-target="press-facts-copy"');
-    expect(html).toContain('Présentation prête à publier · 93 mots');
+    expect(html).toContain('Présentation prête à publier');
     expect(html).toContain('Fiche factuelle.');
     expect(html).toContain('href="/programme"');
     expect(html).not.toContain('data-copy-target="press-hashtag"');
@@ -41,8 +41,8 @@ describe('press-kit.astro', () => {
     const container = await createAstroContainer();
     const html = await container.renderToString(PressKitPage);
 
-    expect(html).toContain('ZIP · 1,9 Mo · 12 fichiers');
-    expect(html).toContain('README, visuel officiel, symbole vectoriel et neuf portraits');
+    expect(html).toContain('ZIP · 9 fichiers');
+    expect(html).toContain('Dossier PDF, visuel officiel, symbole vectoriel et 6 portraits');
     expect(html).toContain('href="/press/genai-days-press-kit.zip"');
     expect(html).toContain('href="/press/genai-days-press-kit/cover_v2-optimized.webp"');
     expect(html).toContain('href="/logos/Gen AI Logo.svg"');
@@ -58,17 +58,17 @@ describe('press-kit.astro', () => {
 
     expect(html).toContain('Samuel Berthe');
     expect(html).toContain('Aymeric de Maussion');
-    expect(html).toContain('Open source, communauté technique et organisation de l’événement.');
+    expect(html).toContain('Développeur open source et organisateur du meetup Generative AI Nantes');
     expect(html).toContain('Écosystème régional, adoption de l’IA et dynamiques territoriales.');
-    expect(html).toContain('src="/organisateurs/samuel-berthe.webp"');
-    expect(html).not.toContain('Maxime Pitussi');
+    expect(html).toContain('src="/organisateurs/samuel-berthe-optimized.webp"');
+    expect(html).toContain('Maxime Pitussi');
     expect(html).not.toContain('Simon Timssale');
     expect(html).not.toContain('Hugo Rémusat');
     expect(html).not.toContain('Judie Boulissiere');
     expect(html).not.toContain('Dorian Ouvrard');
     expect(html).not.toContain('Rémi Wetteren');
     expect(html).not.toContain('Emilie Blum');
-    expect(html.match(/Demander une interview/g)).toHaveLength(2);
+    expect(html.match(/Demander une interview/g)).toHaveLength(3);
     expect(html).toContain('data-contact-topic="press"');
     expect(html).not.toContain('Afficher et copier les coordonnées');
     expect(html).not.toContain('mailto:');
