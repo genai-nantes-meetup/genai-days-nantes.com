@@ -1183,6 +1183,7 @@ export function initLabelEasterEgg(root: ParentNode = document): number {
     };
 
     const startPeel = (point: Point, pointerId: number, timestamp: number) => {
+      capture('sticker_grabbed', { label_id: labelId, method: 'pointer' });
       stopTease();
       state.mode = 'peeling';
       state.pointerId = pointerId;
@@ -1392,6 +1393,7 @@ export function initLabelEasterEgg(root: ParentNode = document): number {
         archive?.classList.add('is-open', 'is-available');
         archive?.querySelector('[data-label-archive-tab]')?.setAttribute('aria-expanded', 'true');
         if (live) live.textContent = 'Étiquette ajoutée à la collection.';
+        capture('sticker_collected', { label_id: labelId, method: archiveMethod });
         document.dispatchEvent(
           new CustomEvent(ARCHIVE_CHANGE_EVENT, { detail: { labelId, method: archiveMethod } }),
         );

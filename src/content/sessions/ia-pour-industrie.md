@@ -3,7 +3,7 @@ title: "Mon concurrent utilise des humanoïdes dans sa chaine de production"
 subtitle: "L'IA appliquée à l'industrie"
 seoTitle: "Mon concurrent utilise des humanoïdes dans sa chaine de production"
 track: "decideurs"
-startTime: "13:45"
+startTime: "16:00"
 durationMinutes: 40
 room: ""
 speakerSlugs: []
