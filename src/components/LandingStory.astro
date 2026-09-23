@@ -93,7 +93,7 @@ const initialVisibleSlides = Math.min(3, speakerSlides.length);
     </figure>
 
     <div class="manifesto-section__copy">
-      <h2 id="manifesto-title" class="type-section-title">
+      <h2 id="manifesto-title">
         Une journée pour parler tech et faire des rencontres business.
       </h2>
       <div>
@@ -118,7 +118,7 @@ const initialVisibleSlides = Math.min(3, speakerSlides.length);
     <EditorialGrid />
     <div class="issue-index__inner">
       <header class="issue-index__heading">
-        <h2 id="issue-index-title" class="type-section-title">Du discours au terrain.</h2>
+        <h2 id="issue-index-title">Du discours au terrain.</h2>
         <p>
           Sur scène, responsables et ingénieurs partagent les décisions prises
           et ce qu’ils ont réellement implémenté.
@@ -454,6 +454,12 @@ const initialVisibleSlides = Math.min(3, speakerSlides.length);
   .manifesto-section__copy h2 {
     max-width: 17ch;
     color: var(--color-brand-black);
+    font-size: clamp(2.75rem, 8vw, 4rem);
+    font-style: normal;
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    line-height: 0.94;
+    text-wrap: balance;
   }
 
   .manifesto-section__copy > div {
@@ -495,6 +501,11 @@ const initialVisibleSlides = Math.min(3, speakerSlides.length);
   .issue-index__heading h2 {
     max-width: 9ch;
     color: var(--color-brand-black);
+    font-size: clamp(3.5rem, 9vw, 5rem);
+    font-style: normal;
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 0.86;
   }
 
   .issue-index__heading p {
@@ -907,12 +918,22 @@ const initialVisibleSlides = Math.min(3, speakerSlides.length);
     }
   }
 
-  @media (max-width: 63.999rem) {
+  @media (max-width: 47.999rem) {
     .manifesto-section__copy,
     .issue-index__heading {
       padding-inline: clamp(1.5rem, 2.5vw, 2rem);
     }
 
+    .manifesto-section__copy h2,
+    .issue-index__heading h2 {
+      font-size: clamp(2.25rem, 5vw, 3rem);
+      font-weight: 800;
+      letter-spacing: var(--tracking-heading);
+      line-height: 0.95;
+    }
+  }
+
+  @media (max-width: 63.999rem) {
     .issue-index__topics > li[data-active="true"] .issue-index__mobile-visual {
       display: block;
     }
@@ -941,9 +962,6 @@ const initialVisibleSlides = Math.min(3, speakerSlides.length);
 
     .manifesto-section__copy h2 {
       font-size: clamp(2.75rem, 3.65vw, 3.5rem);
-      font-weight: 600;
-      letter-spacing: -0.035em;
-      line-height: 0.94;
     }
 
     .speaker-section {
@@ -989,6 +1007,7 @@ const initialVisibleSlides = Math.min(3, speakerSlides.length);
 
     .issue-index__heading h2 {
       max-width: none;
+      font-size: clamp(3rem, 3.6vw, 3.5rem);
       white-space: nowrap;
     }
 
