@@ -14,6 +14,21 @@ import PressDownloadAction from "../components/PressDownloadAction.astro";
 import TrackMark from "../components/TrackMark";
 import { formatEventDateLabel } from "../lib/event";
 import EVENT from "../content/event.json";
+import PRICING from "../content/pricing.json";
+
+const partners = await getCollection("partners");
+// Le drapeau `coOrganizer` met en avant la Région, qui soutient l’événement
+// et l’accueille à l’Hôtel de Région : elle ne le co-organise pas.
+const supporter = partners.find((partner) => partner.data.coOrganizer)?.data;
+const sessions = await getCollection("sessions");
+const speakers = await getCollection("speakers");
+const openingKeynote = sessions.find((session) => session.data.format === "keynote");
+const keynoteSpeaker = speakers.find(
+  (speaker) => speaker.id === openingKeynote?.data.speakerSlugs[0],
+)?.data;
+const podcast = sessions.find((session) => session.data.format === "podcast");
+const podcastName = podcast?.data.title.replace(/^Podcast\s+/, "");
+const illustrationCount = sessions.filter((session) => session.data.illustration?.src).length;
 
 const practicalDetails = [
   { label: "Date", value: formatEventDateLabel() },
@@ -23,6 +38,9 @@ const practicalDetails = [
     label: "Adresse",
     value: `${EVENT.venue.address}, ${EVENT.venue.postalCode} ${EVENT.venue.city}`,
   },
+  { label: "Organisation", value: `Association ${EVENT.organizer.name}` },
+  ...(supporter ? [{ label: "Soutien", value: supporter.name }] : []),
+  { label: "Jauge", value: `${PRICING.capacity} participants` },
   {
     label: "Format",
     value: "Conférences, retours d’expérience et temps de rencontre",
@@ -89,10 +107,12 @@ const spokespeople = [
 ];
 
 const pressTeamCount = pressTeam.length;
-const pressKitFileCount = pressTeamCount + 3;
+// README.pdf, visuel officiel, wordmark et symbole, plus les dossiers
+// générés par scripts/build-press-kit.py.
+const pressKitFileCount = 4 + illustrationCount + pressTeamCount;
 const siteUrl = (Astro.site ?? new URL(Astro.url.origin)).href;
 const pageTitle = `Espace presse ${EVENT.year} · GENAI DAYS`;
-const pageDescription = `Dossier de presse GENAI DAYS ${EVENT.year} à ${EVENT.venue.city} : faits clés, deux parcours, visuel officiel, ${pressTeamCount} portraits de l’équipe et contact presse.`;
+const pageDescription = `Dossier de presse GENAI DAYS ${EVENT.year} à ${EVENT.venue.city} : faits clés, deux parcours, programme, visuel officiel, ${illustrationCount} illustrations des conférences, ${pressTeamCount} portraits de l’équipe et contact presse.`;
 const pressKitJsonLd = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
@@ -129,7 +149,7 @@ const pressKitJsonLd = {
         <PressDownloadAction
           href="/press/genai-days-press-kit.zip"
           label="Télécharger le kit presse"
-          meta="ZIP · PDF, visuel et portraits"
+          meta="ZIP · PDF, visuels, illustrations et portraits"
         />
         <PressContactAction tone="night">Contact presse</PressContactAction>
       </div>
@@ -147,14 +167,22 @@ const pressKitJsonLd = {
           <p class="press-meta">Présentation prête à publier</p>
           <p id="press-summary" class="press-summary__text">
             <EventName /> est une journée-conférence consacrée à l’intelligence artificielle
-            générative, organisée le {formatEventDateLabel()} à {EVENT.venue.city}
+            générative, dédiée aux décideurs et à leurs équipes techniques. Organisée
+            par l’association {EVENT.organizer.name}{supporter && ` avec le soutien de la ${supporter.name}`},
+            elle se tient le {formatEventDateLabel()} à {EVENT.venue.city}{" "}
             ({EVENT.venue.name}). L’événement réunit celles et ceux qui
             décident, construisent et implémentent l’IA au quotidien. Deux
             parcours complémentaires rythment la journée&nbsp;: un parcours «
             Pour ceux qui décident » centré sur la stratégie, la gouvernance et
             le retour sur investissement, et un parcours « Pour ceux qui
             implémentent » dédié aux architectures, aux outils et aux retours
-            d’expérience. Conférences, échanges concrets et rencontres composent
+            d’expérience.{keynoteSpeaker && (
+              <>
+                {" "}Au programme&nbsp;: une keynote d’ouverture de {keynoteSpeaker.name},
+                {" "}{keynoteSpeaker.role.charAt(0).toLowerCase() + keynoteSpeaker.role.slice(1)} de la {keynoteSpeaker.company},
+                une table ronde sur la souveraineté numérique, un Startup Contest{podcastName && ` et l’enregistrement en public du podcast ${podcastName}`}.
+              </>
+            )} Conférences, échanges concrets et rencontres composent
             un programme intégralement présenté en français.
           </p>
           <PressCopyAction
@@ -244,8 +272,9 @@ const pressKitJsonLd = {
           <div class="press-package__intro">
             <h3>Le kit presse complet.</h3>
             <p>
-              Dossier PDF, visuel officiel, symbole vectoriel et {pressTeamCount} portraits de
-              l’équipe organisatrice.
+              Dossier PDF avec programme, intervenants et partenaires, visuel
+              officiel, wordmark et symbole vectoriels, {illustrationCount} illustrations
+              des conférences et {pressTeamCount} portraits de l’équipe organisatrice.
             </p>
           </div>
           <PressDownloadAction
