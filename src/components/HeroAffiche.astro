@@ -16,7 +16,7 @@ import HeroSponsorsMarquee from './HeroSponsorsMarquee.astro';
 import Button from './Button.astro';
 import { CTA_LINKS } from '../lib/cta-links';
 import PRICING from '../content/pricing.json';
-import { EVENT, formatEventDateLabel } from '../lib/event';
+import { EVENT, formatEventDateCompact, formatEventDateLabel } from '../lib/event';
 
 const eventDate = new Date(`${EVENT.date}T00:00:00`);
 const eventWeekday = new Intl.DateTimeFormat('fr-FR', { weekday: 'long' }).format(eventDate);
@@ -106,9 +106,12 @@ const coOrganizerLogoHeight = coOrganizer?.data.monochromeLogoHeight ?? coOrgani
           <span class="hero-affiche__title-accent">2 tracks pour décider où investir et comprendre comment déployer</span>
         </h1>
         <p class="hero-affiche__practical">
-          <span>{eventWeekdayUppercase} {eventDay} {eventMonth} {eventYear}</span>
-          <span>{EVENT.venue.shortName}, {EVENT.venue.city}</span>
-          <span>{`+ ${PRICING.capacity} PARTICIPANTS`}</span>
+          <time datetime={EVENT.date}>
+            <span class="hero-affiche__date-long">{eventWeekdayUppercase} {eventDay} {eventMonth} {eventYear}</span>
+            <span class="hero-affiche__date-short">{formatEventDateCompact()}</span>
+          </time>
+          <span class="hero-affiche__venue">{EVENT.venue.shortName}<span class="hero-affiche__city">, {EVENT.venue.city}</span></span>
+          <span class="hero-affiche__capacity">{`+ ${PRICING.capacity} PARTICIPANTS`}</span>
         </p>
         <div class="hero-affiche__cta">
           <Button variant="accent" href={CTA_LINKS.tickets}>Réserver ma place</Button>
@@ -502,6 +505,10 @@ const coOrganizerLogoHeight = coOrganizer?.data.monochromeLogoHeight ?? coOrgani
     text-transform: uppercase;
   }
 
+  .hero-affiche__date-short {
+    display: none;
+  }
+
   .hero-affiche__coorganizer--relay {
     display: none;
     -webkit-mask-image: linear-gradient(
@@ -539,7 +546,7 @@ const coOrganizerLogoHeight = coOrganizer?.data.monochromeLogoHeight ?? coOrgani
       font-size: 0.8125rem;
     }
 
-    .hero-affiche__practical span + span::before {
+    .hero-affiche__practical > * + *::before {
       margin-inline-end: 0.9rem;
       content: "·";
     }
@@ -573,35 +580,44 @@ const coOrganizerLogoHeight = coOrganizer?.data.monochromeLogoHeight ?? coOrgani
       display: none;
     }
 
-    /* La taille suit la largeur pour que le nom du lieu, la plus longue des
-     * trois lignes, tienne d'un seul tenant jusque sur iPhone SE : en mono
-     * chaque glyphe avance d'environ 0.65em tracking compris, donc 40 signes
-     * demandent 26em et la colonne utile n'en offre que 335px à 375. */
+    /* Les trois informations restent sur une ligne jusque sur les écrans étroits. */
     .hero-affiche__practical {
-      display: grid;
-      gap: 0.3rem;
+      display: flex;
+      flex-wrap: nowrap;
+      column-gap: 0.35rem;
       margin-top: 1.5rem;
       padding-block: 0.7rem;
       font-size: clamp(0.625rem, 3vw, 0.8125rem);
+      letter-spacing: 0.02em;
+      white-space: nowrap;
     }
 
-    /* Les partenaires Platinum encombraient le premier écran mobile sans rien
-     * y ajouter : ils reviennent en pleine largeur dans PartnersShowcase, plus
-     * bas sur la même page. L'affiche garde son titre et ses informations. */
+    .hero-affiche__date-long,
+    .hero-affiche__city {
+      display: none;
+    }
+
+    .hero-affiche__date-short {
+      display: inline;
+    }
+
+    .hero-affiche__venue::before {
+      margin-inline-end: 0.35rem;
+      content: "·";
+    }
+
+    /* Sur mobile, la Région rejoint les autres logos dans le bandeau. */
     .hero-affiche__coorganizer {
-      width: 100%;
-      justify-content: start;
-      margin-top: 0.75rem;
-    }
-
-    .hero-affiche__coorganizer--relay {
-      display: flex;
+      display: none;
     }
 
     /* Le CTA billetterie fixe du header couvre déjà le mobile. */
-    .hero-affiche__sponsors,
     .hero-affiche__cta {
       display: none;
+    }
+
+    .hero-affiche__sponsors {
+      margin-top: 0.75rem;
     }
 
     .hero-affiche__coorganizer img {

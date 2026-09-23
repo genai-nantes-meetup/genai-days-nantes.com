@@ -33,6 +33,11 @@ export function formatEventDateShort(): string {
   return `${day}.${month}.${year}`;
 }
 
+export function formatEventDateCompact(): string {
+  const [year, month, day] = eventData.date.split('-');
+  return `${day}/${month}/${year.slice(-2)}`;
+}
+
 export function formatEventDateUppercase(): string {
   return formatEventDateLabel().toUpperCase();
 }

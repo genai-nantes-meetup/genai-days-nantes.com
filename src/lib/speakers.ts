@@ -19,6 +19,7 @@ export const SPEAKER_PROMINENCE_ORDER = [
   'quentin-adam',
   'theo-hubert',
   'nicolas-martignole',
+  'gael-brisson',
 ] as const;
 
 /* Dimensions réelles des fichiers portrait, non dérivables du schéma de la

@@ -1,6 +1,5 @@
 ---
 import { getCollection } from 'astro:content';
-import EditorialCta from './EditorialCta.astro';
 import EditorialGrid from './EditorialGrid.astro';
 import TrackMark from './TrackMark';
 import { EVENT } from '../lib/event';
@@ -32,14 +31,16 @@ const conferenceCount = PROGRAMME_SLOTS.filter((slot) => slot.kind === 'conferen
     </header>
 
     <figure class="tracks-programme__visual">
-      <img
-        src="/images/affiche-decide-implemente-optimized.webp"
-        alt="Deux voies, l’une bleue et l’autre orange, convergent vers un même horizon, entre boussole et rouages"
-        width="2560"
-        height="1072"
-        loading="lazy"
-        decoding="async"
-      />
+      <a href="/programme">
+        <img
+          src="/images/affiche-decide-implemente-optimized.webp"
+          alt="Deux voies, l’une bleue et l’autre orange, convergent vers un même horizon, entre boussole et rouages"
+          width="2560"
+          height="1072"
+          loading="lazy"
+          decoding="async"
+        />
+      </a>
     </figure>
 
     <div class="tracks-programme__tracks">
@@ -52,7 +53,7 @@ const conferenceCount = PROGRAMME_SLOTS.filter((slot) => slot.kind === 'conferen
       </article>
 
       <article class="tracks-programme__track tracks-programme__track--delivery">
-        <h3><a class="tracks-programme__track-link" href="/programme?parcours=tech#planning"><TrackMark track="tech" /></a></h3>
+        <h3><TrackMark track="tech" /></h3>
         <p class="tracks-programme__meta">{deliveryTrack.data.formats.join(' · ')}</p>
         <ul>
           {deliveryTrack.data.themes.map((theme) => <li>{theme}</li>)}
@@ -61,7 +62,12 @@ const conferenceCount = PROGRAMME_SLOTS.filter((slot) => slot.kind === 'conferen
     </div>
 
     <div class="tracks-programme__programme-link">
-      <EditorialCta href="/programme">Voir le programme complet</EditorialCta>
+      <a
+        class="inline-flex items-center gap-2 font-sans font-bold uppercase text-sm tracking-wide transition-[background-color,scale] duration-150 ease-out bg-[var(--color-action-ticket)] text-[var(--color-action-ticket-ink)] px-6 py-3 hover:bg-[var(--color-action-ticket-hover)] active:scale-[0.96]"
+        href="/programme"
+      >
+        Voir le programme complet
+      </a>
     </div>
 
     <div class="tracks-programme__day">
@@ -136,6 +142,10 @@ const conferenceCount = PROGRAMME_SLOTS.filter((slot) => slot.kind === 'conferen
     margin-block: clamp(1.5rem, 2.5vw, 2.25rem) 0;
   }
 
+  .tracks-programme__visual a {
+    display: block;
+  }
+
   .tracks-programme__visual img {
     display: block;
     width: 100%;
@@ -167,34 +177,6 @@ const conferenceCount = PROGRAMME_SLOTS.filter((slot) => slot.kind === 'conferen
     font-weight: 800;
     letter-spacing: -0.03em;
     line-height: 0.95;
-  }
-
-  /* Le nom du parcours mène à son planning : soulignement discret au repos,
-     repris par le filet d'encre du parcours au survol. Le TrackMark est un
-     inline-flex, où la décoration du lien ne se propage pas : elle est posée
-     sur le span de texte. */
-  .tracks-programme__track-link {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  .tracks-programme__track-link :global(.track-mark > span) {
-    text-decoration: underline;
-    text-decoration-color: rgb(57 54 54 / 28%);
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.16em;
-    transition: text-decoration-color 180ms ease;
-  }
-
-  .tracks-programme__track-link:hover :global(.track-mark > span),
-  .tracks-programme__track-link:focus-visible :global(.track-mark > span) {
-    text-decoration-color: var(--color-brand-blue);
-    text-decoration-thickness: 2px;
-  }
-
-  .tracks-programme__track--delivery .tracks-programme__track-link:hover :global(.track-mark > span),
-  .tracks-programme__track--delivery .tracks-programme__track-link:focus-visible :global(.track-mark > span) {
-    text-decoration-color: var(--color-brand-orange);
   }
 
   .tracks-programme__track ul {

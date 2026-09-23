@@ -1,4 +1,5 @@
 ---
+import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
@@ -50,20 +51,29 @@ const editorialAngles = [
   },
 ];
 
+const pressTeam = await getCollection("team");
+const teamMember = (id: string) => {
+  const member = pressTeam.find((entry) => entry.id === id);
+  if (!member) throw new Error(`Membre de l’équipe introuvable : ${id}`);
+  return member.data;
+};
+const maxime = teamMember("maxime-pitussi");
+const samuel = teamMember("samuel-berthe");
+
 const spokespeople = [
   {
-    name: "Maxime Pitussi",
-    role: "Co-founder · Explore the Vault",
-    topics: "Growth, outbound",
-    photo: "/organisateurs/maxime-pitussi.webp",
+    name: maxime.name,
+    role: maxime.role,
+    topics: maxime.background,
+    photo: "/organisateurs/maxime-pitussi-optimized.webp",
     photoWidth: 600,
     photoHeight: 600,
   },
   {
-    name: "Samuel Berthe",
-    role: "Développeur open source · Organisateur de Generative AI Nantes",
-    topics: "Open source, communauté technique et organisation de l’événement.",
-    photo: "/organisateurs/samuel-berthe.webp",
+    name: samuel.name,
+    role: samuel.role,
+    topics: samuel.background,
+    photo: "/organisateurs/samuel-berthe-optimized.webp",
     photoWidth: 600,
     photoHeight: 600,
   },
@@ -72,15 +82,17 @@ const spokespeople = [
     role: "Directeur de l’IA · Région Pays de la Loire",
     topics:
       "Écosystème régional, adoption de l’IA et dynamiques territoriales.",
-    photo: "/organisateurs/aymeric-de-maussion.webp",
+    photo: "/organisateurs/aymeric-de-maussion-optimized.webp",
     photoWidth: 800,
     photoHeight: 800,
   },
 ];
 
+const pressTeamCount = pressTeam.length;
+const pressKitFileCount = pressTeamCount + 3;
 const siteUrl = (Astro.site ?? new URL(Astro.url.origin)).href;
-const pageTitle = `Espace presse ${EVENT.year} · GenAI Days`;
-const pageDescription = `Le dossier de presse de GenAI Days ${EVENT.year} : présentation prête à publier, faits essentiels, angles éditoriaux, visuels, logos et contact presse.`;
+const pageTitle = `Espace presse ${EVENT.year} · GENAI DAYS`;
+const pageDescription = `Dossier de presse GENAI DAYS ${EVENT.year} à ${EVENT.venue.city} : faits clés, deux parcours, visuel officiel, ${pressTeamCount} portraits de l’équipe et contact presse.`;
 const pressKitJsonLd = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
@@ -117,7 +129,7 @@ const pressKitJsonLd = {
         <PressDownloadAction
           href="/press/genai-days-press-kit.zip"
           label="Télécharger le kit presse"
-          meta="ZIP · 2,1 Mo · 12 fichiers"
+          meta="ZIP · PDF, visuel et portraits"
         />
         <PressContactAction tone="night">Contact presse</PressContactAction>
       </div>
@@ -132,12 +144,11 @@ const pressKitJsonLd = {
       <div class="press-shell press-brief">
         <article class="press-summary">
           <h2 id="essentiel-title" class="type-section-title">En bref.</h2>
-          <p class="press-meta">Présentation prête à publier · 93 mots</p>
+          <p class="press-meta">Présentation prête à publier</p>
           <p id="press-summary" class="press-summary__text">
             <EventName /> est une journée-conférence consacrée à l’intelligence artificielle
-            générative, organisée le {formatEventDateLabel()} à {
-              EVENT.venue.name
-            }, à {EVENT.venue.city}. L’événement réunit celles et ceux qui
+            générative, organisée le {formatEventDateLabel()} à {EVENT.venue.city}
+            ({EVENT.venue.name}). L’événement réunit celles et ceux qui
             décident, construisent et implémentent l’IA au quotidien. Deux
             parcours complémentaires rythment la journée&nbsp;: un parcours «
             Pour ceux qui décident » centré sur la stratégie, la gouvernance et
@@ -233,14 +244,14 @@ const pressKitJsonLd = {
           <div class="press-package__intro">
             <h3>Le kit presse complet.</h3>
             <p>
-              README, visuel officiel, symbole vectoriel et neuf portraits de
+              Dossier PDF, visuel officiel, symbole vectoriel et {pressTeamCount} portraits de
               l’équipe organisatrice.
             </p>
           </div>
           <PressDownloadAction
             href="/press/genai-days-press-kit.zip"
             label="Télécharger le kit presse"
-            meta="ZIP · 1,9 Mo · 12 fichiers"
+            meta={`ZIP · ${pressKitFileCount} fichiers`}
           />
         </article>
 
@@ -280,7 +291,7 @@ const pressKitJsonLd = {
             </div>
             <div class="press-resource__body">
               <div class="press-resource__details">
-                <h3>Logo et symbole</h3>
+                <h3>Symbole vectoriel</h3>
                 <p class="press-resource__summary">
                   SVG · Fond transparent · Proportions et couleurs du symbole à
                   respecter · Aucun effet ajouté
@@ -311,7 +322,7 @@ const pressKitJsonLd = {
             Pour une interview.
           </h2>
           <p>
-            Deux porte-paroles pour apporter un éclairage technique,
+            Trois porte-paroles pour apporter un éclairage technique,
             communautaire ou territorial.
           </p>
         </div>

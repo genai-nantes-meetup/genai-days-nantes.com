@@ -918,6 +918,21 @@ const initialVisibleSlides = Math.min(3, speakerSlides.length);
     }
   }
 
+  @media (max-width: 47.999rem) {
+    .manifesto-section__copy,
+    .issue-index__heading {
+      padding-inline: clamp(1.5rem, 2.5vw, 2rem);
+    }
+
+    .manifesto-section__copy h2,
+    .issue-index__heading h2 {
+      font-size: clamp(2.25rem, 5vw, 3rem);
+      font-weight: 800;
+      letter-spacing: var(--tracking-heading);
+      line-height: 0.95;
+    }
+  }
+
   @media (max-width: 63.999rem) {
     .issue-index__topics > li[data-active="true"] .issue-index__mobile-visual {
       display: block;
