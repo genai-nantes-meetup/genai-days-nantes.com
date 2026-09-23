@@ -197,17 +197,13 @@ const breadcrumbJsonLd = {
     margin-inline: auto;
   }
 
-  /* Les filets orange sont la matière du mur, pas une bordure posée sur chaque
-   * fiche : la gouttière laisse voir le fond, donc les rails restent continus
-   * quel que soit le nombre de colonnes du palier courant. */
   .team-wall {
     display: grid;
     margin: 0;
     padding: 0;
     list-style: none;
-    border: 1px solid var(--color-brand-orange);
-    background: var(--color-brand-orange);
-    gap: 2px;
+    background: var(--color-brand-cream);
+    gap: 1px;
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
