@@ -1,9 +1,11 @@
 ---
+import { Picture } from 'astro:assets';
 import EventName from './EventName.astro';
 import EditorialFrame from './EditorialFrame.astro';
 import EditorialGrid from './EditorialGrid.astro';
 import EVENT from '../content/event.json';
 import { SOCIAL_PROFILES } from '../lib/event';
+import footerPoster from '../assets/images/affiche-chateau-nantes.webp';
 
 interface Props {
   grid?: boolean;
@@ -40,14 +42,13 @@ const utilityLinks = [
   {lead && (
     <div class="site-footer__visual" data-footer-coda aria-hidden="true">
       <div class="site-footer__frame">
-        <img
+        <Picture
           class="site-footer__poster"
-          src="/images/affiche-chateau-nantes-1600.webp"
-          srcset="/images/affiche-chateau-nantes-800.webp 800w, /images/affiche-chateau-nantes-1600.webp 1600w, /images/affiche-chateau-nantes-2306.webp 2306w"
+          src={footerPoster}
+          widths={[800, 1600, 2306]}
           sizes="100vw"
+          formats={['avif', 'webp']}
           alt=""
-          width="2306"
-          height="1269"
           loading="lazy"
           decoding="async"
         />
@@ -160,8 +161,11 @@ const utilityLinks = [
     background: var(--color-brand-cream);
   }
 
+  /* <Picture> (astro:assets) renders its own <picture>/<img>, outside this
+   * component's scoped-style reach, so .site-footer__poster is also targeted
+   * through :global() below. */
   .site-footer__frame,
-  .site-footer__poster,
+  :global(.site-footer__poster),
   .site-footer__grade {
     position: absolute;
     inset: 0;
@@ -211,7 +215,7 @@ const utilityLinks = [
     transform: translateY(0) scale(1);
   }
 
-  .site-footer__poster {
+  :global(.site-footer__poster) {
     z-index: 0;
     filter: saturate(0.94) contrast(1.06) brightness(0.98);
     object-fit: cover;
@@ -384,7 +388,7 @@ const utilityLinks = [
       --footer-coda-height: clamp(18rem, 34svh, 22rem);
     }
 
-    .site-footer__poster {
+    :global(.site-footer__poster) {
       object-position: 54% 50%;
     }
 

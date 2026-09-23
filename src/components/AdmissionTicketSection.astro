@@ -1,5 +1,6 @@
 ---
 import '@fontsource/special-elite/400.css';
+import { Picture } from 'astro:assets';
 import ArrowIcon from './ArrowIcon.astro';
 import EditorialCta from './EditorialCta.astro';
 import EditorialGrid from './EditorialGrid.astro';
@@ -7,6 +8,7 @@ import EventName from './EventName.astro';
 import { CTA_LINKS } from '../lib/cta-links';
 import { EVENT, formatEventDateLabel } from '../lib/event';
 import { formatPriceAmount, PRICING } from '../lib/pricing';
+import ticketPaper from '../assets/images/admission-ticket-blank-brick-v1.png';
 
 const ticketDate = new Date(`${EVENT.date}T00:00:00`);
 const ticketDateDay = new Intl.DateTimeFormat('fr-FR', { day: '2-digit' }).format(ticketDate);
@@ -28,9 +30,10 @@ const ticketDateYear = new Intl.DateTimeFormat('fr-FR', { year: 'numeric' }).for
     </header>
     <div class="ticket-field__stage">
       <article class="admission-ticket" aria-label={`${PRICING.name} · ${formatPriceAmount()}`}>
-        <img
+        <Picture
           class="admission-ticket__paper"
-          src="/da/admission-ticket-blank-brick-v1-optimized.webp"
+          src={ticketPaper}
+          formats={['avif', 'webp']}
           alt=""
           loading="lazy"
           decoding="async"
@@ -177,7 +180,10 @@ const ticketDateYear = new Intl.DateTimeFormat('fr-FR', { year: 'numeric' }).for
     transform: rotate(var(--ticket-rotation));
   }
 
-  .admission-ticket__paper {
+  /* <Picture> (astro:assets) renders its own <picture>/<img>, outside this
+   * component's scoped-style reach, so the class is targeted through
+   * :global() on the img itself. */
+  :global(.admission-ticket__paper) {
     display: none;
   }
 
@@ -465,7 +471,7 @@ const ticketDateYear = new Intl.DateTimeFormat('fr-FR', { year: 'numeric' }).for
       aspect-ratio: 1991 / 790;
     }
 
-    .admission-ticket__paper {
+    :global(.admission-ticket__paper) {
       position: absolute;
       inset: 0;
       display: block;

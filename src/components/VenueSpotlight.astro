@@ -1,9 +1,10 @@
 ---
+import { Picture } from 'astro:assets';
 import EditorialCta from './EditorialCta.astro';
 import EditorialGrid from './EditorialGrid.astro';
 import { EVENT, formatEventDateLabel } from '../lib/event';
+import venueIllustration from '../assets/images/hotel-region-banner-genai-days-web.webp';
 
-const venueIllustration = '/images/hotel-region-banner-genai-days-web-optimized.webp';
 const mapDestination = [
   EVENT.venue.name,
   EVENT.venue.address,
@@ -27,11 +28,12 @@ const mapUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURICo
     <div class="venue-spotlight__inner">
       <div class="venue-spotlight__media">
         <figure class="venue-spotlight__visual">
-          <img
+          <Picture
             src={venueIllustration}
+            widths={[480, 900, 1774]}
+            sizes="(min-width: 52rem) 33vw, 100vw"
+            formats={['avif', 'webp']}
             alt={`L’${EVENT.venue.shortName} à ${EVENT.venue.city}, illustré en bleu et orange`}
-            width="1774"
-            height="886"
             loading="lazy"
             decoding="async"
           />
@@ -95,160 +97,12 @@ const mapUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURICo
   </div>
 </section>
 
-<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css" />
-<script is:inline src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
-<script is:inline>
-  (() => {
-    const mapContainer = document.querySelector('[data-venue-map]');
-    if (!mapContainer || !window.maplibregl || mapContainer.dataset.mapReady === 'true') return;
+<script>
+  // maplibre-gl (~270 KiB) and the openfreemap tiles it fetches only load once this
+  // card nears the viewport: see src/scripts/venue-map.ts.
+  import { initVenueMapOnScroll } from '../scripts/venue-map';
 
-    mapContainer.dataset.mapReady = 'true';
-
-    const rootStyles = getComputedStyle(document.documentElement);
-    const color = (name) => rootStyles.getPropertyValue(name).trim();
-    const mapTheme = {
-      land: color('--color-brand-cream'),
-      landDeep: color('--color-brand-cream-deep'),
-      water: color('--color-brand-blue'),
-      ink: color('--color-brand-black'),
-      route: color('--color-brand-blue'),
-      accent: color('--color-brand-orange'),
-      paper: color('--color-brand-white'),
-    };
-    const streetAccess = [-1.526327, 47.211736];
-    const venueParvis = [-1.525261, 47.211925];
-    const venueEntrance = [-1.525113, 47.211681];
-
-    const map = new window.maplibregl.Map({
-      container: mapContainer,
-      style: 'https://tiles.openfreemap.org/styles/positron',
-      center: [-1.52548, 47.21178],
-      zoom: 15.5,
-      bearing: 158,
-      pitch: 38,
-      interactive: false,
-      attributionControl: false,
-    });
-
-    map.addControl(new window.maplibregl.AttributionControl({ compact: true }), 'bottom-right');
-
-    map.on('load', () => {
-      mapContainer.querySelector('[data-venue-map-fallback]')?.remove();
-      const attribution = mapContainer.querySelector('details.maplibregl-ctrl-attrib');
-      if (attribution) {
-        attribution.open = false;
-        attribution.classList.remove('maplibregl-compact-show');
-      }
-
-      for (const layer of map.getStyle().layers ?? []) {
-        const id = layer.id.toLowerCase();
-
-        try {
-          if (layer.type === 'background') {
-            map.setPaintProperty(layer.id, 'background-color', mapTheme.land);
-          }
-
-          if (layer.type === 'fill') {
-            const isWater = id.includes('water');
-            const isBuilding = id.includes('building');
-            map.setPaintProperty(
-              layer.id,
-              'fill-color',
-              isWater ? mapTheme.water : isBuilding ? mapTheme.landDeep : mapTheme.land,
-            );
-            map.setPaintProperty(layer.id, 'fill-opacity', isWater ? 0.18 : isBuilding ? 0.88 : 1);
-          }
-
-          if (layer.type === 'line') {
-            map.setPaintProperty(layer.id, 'line-color', mapTheme.paper);
-          }
-
-          if (layer.type === 'symbol') {
-            if (/(poi|airport|aeroway|transit)/.test(id)) {
-              map.setLayoutProperty(layer.id, 'visibility', 'none');
-            } else {
-              map.setPaintProperty(layer.id, 'text-color', mapTheme.ink);
-              map.setPaintProperty(layer.id, 'text-halo-color', mapTheme.land);
-              map.setPaintProperty(layer.id, 'text-halo-width', 1.5);
-            }
-          }
-        } catch {
-          /* Certaines couches utilisent des motifs. Leur rendu natif reste en place. */
-        }
-      }
-
-      map.addSource('venue-route', {
-        type: 'geojson',
-        data: {
-          type: 'Feature',
-          properties: {},
-          geometry: {
-            type: 'LineString',
-            coordinates: [streetAccess, venueParvis, venueEntrance],
-          },
-        },
-      });
-
-      map.addLayer({
-        id: 'venue-route-casing',
-        type: 'line',
-        source: 'venue-route',
-        layout: { 'line-cap': 'round', 'line-join': 'round' },
-        paint: { 'line-color': mapTheme.paper, 'line-width': 8 },
-      });
-
-      map.addLayer({
-        id: 'venue-route-line',
-        type: 'line',
-        source: 'venue-route',
-        layout: { 'line-cap': 'round', 'line-join': 'round' },
-        paint: { 'line-color': mapTheme.route, 'line-width': 4 },
-      });
-
-      map.addSource('venue-points', {
-        type: 'geojson',
-        data: {
-          type: 'FeatureCollection',
-          features: [streetAccess, venueEntrance].map((coordinates, index) => ({
-            type: 'Feature',
-            properties: { kind: index === 0 ? 'street' : 'entrance' },
-            geometry: { type: 'Point', coordinates },
-          })),
-        },
-      });
-
-      map.addLayer({
-        id: 'venue-points-halo',
-        type: 'circle',
-        source: 'venue-points',
-        paint: { 'circle-radius': 8, 'circle-color': mapTheme.paper },
-      });
-
-      map.addLayer({
-        id: 'venue-points-fill',
-        type: 'circle',
-        source: 'venue-points',
-        paint: {
-          'circle-radius': 4.5,
-          'circle-color': ['match', ['get', 'kind'], 'entrance', mapTheme.route, mapTheme.accent],
-        },
-      });
-
-      map.fitBounds(
-        [
-          [-1.52655, 47.21152],
-          [-1.52488, 47.21208],
-        ],
-        {
-          padding: { top: 26, right: 26, bottom: 26, left: 26 },
-          maxZoom: 16.6,
-          duration: 0,
-        },
-      );
-
-      map.jumpTo({ bearing: 158, pitch: 38, zoom: map.getZoom() - 0.3 });
-    });
-  })();
+  initVenueMapOnScroll();
 </script>
 
 <style>
@@ -288,7 +142,9 @@ const mapUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURICo
     background: var(--color-brand-night);
   }
 
-  .venue-spotlight__visual img {
+  /* <Picture> (astro:assets) renders its own <picture>/<img>, outside this
+   * component's scoped-style reach, so it's targeted through :global(). */
+  .venue-spotlight__visual :global(img) {
     position: absolute;
     inset: 0;
     width: 100%;

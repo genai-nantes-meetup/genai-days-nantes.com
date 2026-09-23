@@ -230,16 +230,31 @@ const analyticsEnabled = import.meta.env.PROD && Boolean(posthogKey);
 
           /* Le site Astro effectue un chargement complet à chaque page. Ces
            * options restent explicites pour éviter une interprétation SPA. */
-          posthog.init(posthogKey, {
-            api_host: apiHost,
-            ui_host: uiHost,
-            defaults: '2026-05-30',
-            capture_pageview: true,
-            capture_pageleave: true,
-            autocapture: true,
-            persistence: 'cookie',
-          });
-          posthog.register({ edition: edition });
+          function initPostHog() {
+            posthog.init(posthogKey, {
+              api_host: apiHost,
+              ui_host: uiHost,
+              defaults: '2026-05-30',
+              capture_pageview: true,
+              capture_pageleave: true,
+              autocapture: true,
+              persistence: 'cookie',
+              // Le site n'utilise ni sondages ni suivi des clics morts : ces deux
+              // extensions restent désactivées pour ne pas télécharger leur bundle
+              // (surveys.js, dead-clicks-autocapture.js) sur chaque page.
+              disable_surveys: true,
+              capture_dead_clicks: false,
+            });
+            posthog.register({ edition: edition });
+          }
+
+          // L'initialisation n'a rien à peindre : elle attend un moment libre du
+          // thread principal plutôt que de concurrencer le rendu initial.
+          if ('requestIdleCallback' in window) {
+            window.requestIdleCallback(initPostHog, { timeout: 2000 });
+          } else {
+            window.setTimeout(initPostHog, 200);
+          }
         </script>
       )
     }

@@ -1,10 +1,12 @@
 ---
 import { getCollection } from 'astro:content';
+import { Picture } from 'astro:assets';
 import EditorialCta from './EditorialCta.astro';
 import EditorialGrid from './EditorialGrid.astro';
 import TrackMark from './TrackMark';
 import { EVENT } from '../lib/event';
 import { PROGRAMME_SLOTS } from '../lib/programme';
+import tracksVisual from '../assets/images/affiche-decide-implemente.webp';
 
 const tracks = await getCollection('tracks');
 const sessions = await getCollection('sessions');
@@ -32,11 +34,12 @@ const conferenceCount = PROGRAMME_SLOTS.filter((slot) => slot.kind === 'conferen
     </header>
 
     <figure class="tracks-programme__visual">
-      <img
-        src="/images/affiche-decide-implemente-optimized.webp"
+      <Picture
+        src={tracksVisual}
+        widths={[640, 1024, 1600, 2560]}
+        sizes="(min-width: 48rem) 52rem, 118vw"
+        formats={['avif', 'webp']}
         alt="Deux voies, l’une bleue et l’autre orange, convergent vers un même horizon, entre boussole et rouages"
-        width="2560"
-        height="1072"
         loading="lazy"
         decoding="async"
       />
@@ -136,7 +139,17 @@ const conferenceCount = PROGRAMME_SLOTS.filter((slot) => slot.kind === 'conferen
     margin-block: clamp(1.5rem, 2.5vw, 2.25rem) 0;
   }
 
-  .tracks-programme__visual img {
+  /* <Picture> (astro:assets) renders its own <picture>/<img>, outside this
+   * component's scoped-style reach, so both are targeted through :global().
+   * mix-blend-mode stays on <img> only: applying it to both would blend the
+   * element twice (picture, then img again) and darken the result. */
+  .tracks-programme__visual :global(picture) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .tracks-programme__visual :global(img) {
     display: block;
     width: 100%;
     height: auto;

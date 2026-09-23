@@ -18,8 +18,8 @@ describe('AdmissionTicketSection.astro', () => {
     expect(html).not.toMatch(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
     expect(html).toContain('admission-ticket');
     expect(html).toContain('admission-ticket__stub');
-    expect(html).toContain('/da/admission-ticket-blank-brick-v1-optimized.webp');
-    expect(html).not.toContain('/da/admission-ticket-blank-v1-optimized.webp');
+    expect(html).toContain('<picture');
+    expect(html).toContain('class="admission-ticket__paper"');
     expect(html).toContain('editorial-cta--conversion');
   });
 });

@@ -23,6 +23,14 @@ export default defineConfig({
     }),
   ],
   adapter: vercel(),
+  build: {
+    // Every page's CSS ships inside its HTML instead of a separate render-blocking
+    // <link rel="stylesheet"> request. Astro's default ('auto') only inlines bundles
+    // under 4 KB; homepage component styles run 10-36 KB each, so in practice none of
+    // them qualified and the mobile PageSpeed audit measured 450 ms lost to six blocking
+    // stylesheet requests.
+    inlineStylesheets: 'always',
+  },
   vite: {
     plugins: [tailwindcss()],
   },

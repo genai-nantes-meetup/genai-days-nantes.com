@@ -39,7 +39,8 @@ describe('Footer.astro', () => {
   it('closes the page with a filtered Nantes cityscape', async () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(Footer);
-    expect(html).toContain('/images/affiche-chateau-nantes-1600.webp');
+    expect(html).toContain('<picture');
+    expect(html).toContain('class="site-footer__poster"');
     expect(html).toContain('data-footer-coda');
     expect(html).toContain('site-footer__frame');
     expect(html).not.toContain('data-footer-trame');

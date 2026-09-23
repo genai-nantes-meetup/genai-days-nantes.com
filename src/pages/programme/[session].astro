@@ -8,11 +8,9 @@ import CoverLabel from "../../components/CoverLabel.astro";
 import TrackMark from "../../components/TrackMark";
 import LabelArchive from "../../components/LabelArchive.astro";
 import BrandText from "../../components/BrandText.astro";
-import {
-  SPEAKER_EVENT_ROLE_LABELS,
-  SPEAKER_PORTRAIT_DIMENSIONS,
-  getSpeakerPortraitSrcset,
-} from "../../lib/speakers";
+import { Picture } from "astro:assets";
+import { SPEAKER_EVENT_ROLE_LABELS } from "../../lib/speakers";
+import { getSpeakerPortrait, getSpeakerPortraitWidths } from "../../lib/speaker-portraits";
 import { toISODateTime } from "../../lib/event";
 import EVENT from "../../content/event.json";
 import { getSocialImageUrl } from "../../lib/social-image";
@@ -367,7 +365,9 @@ const breadcrumbJsonLd = {
             >
               <h2 class="session-eyebrow">Sur scène</h2>
               <aside class="mt-6 grid gap-4">
-                {speakers.map((speaker, index) => (
+                {speakers.map((speaker, index) => {
+                  const portrait = getSpeakerPortrait(speaker.id);
+                  return (
                   <article
                     class={`speaker-feature-card ${index % 2 === 1 ? "speaker-feature-card--tilt-right" : ""}`}
                   >
@@ -383,24 +383,15 @@ const breadcrumbJsonLd = {
                         >
                           {speaker.data.name.slice(0, 1)}
                         </span>
-                        {speaker.data.photo ? (
-                          <img
+                        {portrait ? (
+                          <Picture
                             class="portrait-photo"
-                            src={speaker.data.photo}
-                            srcset={getSpeakerPortraitSrcset(
-                              speaker.id,
-                              speaker.data.photo,
-                            )}
+                            src={portrait}
+                            widths={getSpeakerPortraitWidths(portrait)}
                             sizes="(min-width: 40rem) 12rem, 45vw"
+                            formats={["avif", "webp"]}
                             alt=""
-                            width={
-                              SPEAKER_PORTRAIT_DIMENSIONS[speaker.id]?.width
-                            }
-                            height={
-                              SPEAKER_PORTRAIT_DIMENSIONS[speaker.id]?.height
-                            }
                             loading="lazy"
-                            onerror="this.remove()"
                             draggable="false"
                           />
                         ) : null}
@@ -458,7 +449,8 @@ const breadcrumbJsonLd = {
                       </div>
                     </div>
                   </article>
-                ))}
+                  );
+                })}
               </aside>
             </section>
           )
@@ -811,7 +803,11 @@ const breadcrumbJsonLd = {
     transform: rotate(1.1deg);
   }
 
-  .speaker-feature-card__cover img {
+  /* <Picture> (astro:assets) renders its own <picture>/<img>, outside this
+   * component's scoped-style reach, so it's targeted through :global(). The
+   * absolute positioning still resolves against .speaker-feature-card__cover
+   * regardless of the <picture> wrapper in between. */
+  .speaker-feature-card__cover :global(img) {
     position: absolute;
     inset: 0;
     width: 100%;

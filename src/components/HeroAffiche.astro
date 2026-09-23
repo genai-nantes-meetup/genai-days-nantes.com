@@ -11,9 +11,11 @@
  * Le titre et ses partenaires glissent ensemble devant la scène.
  */
 import { getCollection } from 'astro:content';
+import { Picture } from 'astro:assets';
 import Label from './Label.astro';
 import PlatinumSponsors from './PlatinumSponsors.astro';
 import { EVENT, formatEventDateLabel } from '../lib/event';
+import coverPoster from '../assets/images/cover-v2.webp';
 
 const eventDate = new Date(`${EVENT.date}T00:00:00`);
 const eventWeekday = new Intl.DateTimeFormat('fr-FR', { weekday: 'long' }).format(eventDate);
@@ -29,11 +31,12 @@ const coOrganizerLogoHeight = coOrganizer?.data.monochromeLogoHeight ?? coOrgani
 
 <section class="hero-affiche" data-label-surface>
   <div class="hero-affiche__backdrop">
-    <img
+    <Picture
       class="hero-affiche__poster"
-      src="/images/cover_v2-optimized.webp"
-      srcset="/images/cover_v2-640-optimized.webp 640w, /images/cover_v2-1024-optimized.webp 1024w, /images/cover_v2-1920-optimized.webp 1920w, /images/cover_v2-optimized.webp 2560w"
+      src={coverPoster}
+      widths={[640, 1024, 1920, 2560]}
       sizes="100vw"
+      formats={['avif', 'webp']}
       alt=""
       loading="eager"
       fetchpriority="high"
@@ -176,8 +179,10 @@ const coOrganizerLogoHeight = coOrganizer?.data.monochromeLogoHeight ?? coOrgani
     background: #050510;
   }
 
-  /* Le dolly-in vise le centre de l'affiche, pas le centre géométrique. */
-  .hero-affiche__poster {
+  /* Le dolly-in vise le centre de l'affiche, pas le centre géométrique.
+   * <Picture> (astro:assets) renders its own <img>, outside this component's
+   * scoped-style reach, so the rule is targeted through :global(). */
+  .hero-affiche__backdrop :global(.hero-affiche__poster) {
     position: absolute;
     z-index: 0;
     inset: 0;
@@ -190,7 +195,7 @@ const coOrganizerLogoHeight = coOrganizer?.data.monochromeLogoHeight ?? coOrgani
   }
 
   @media (min-width: 48rem) and (max-aspect-ratio: 3 / 2) {
-    .hero-affiche__poster {
+    .hero-affiche__backdrop :global(.hero-affiche__poster) {
       object-position: 50% center;
     }
 

@@ -26,6 +26,12 @@ interface Props {
   brand?: string | false;
   logoSrc?: string;
   logoAlt?: string;
+  /* Nullable : les tailles réelles ne sont pas toujours connues à l'appel.
+   * Sans elles l'image se réserve un espace via `aspect-ratio: auto`, donc un
+   * décalage de mise en page reste possible tant qu'aucun appelant ne les
+   * fournit. */
+  logoWidth?: number;
+  logoHeight?: number;
   showMark?: boolean;
   class?: string;
   surfaceClass?: string;
@@ -51,6 +57,8 @@ const {
   brand = 'GENAI DAYS',
   logoSrc,
   logoAlt = '',
+  logoWidth,
+  logoHeight,
   showMark = true,
   class: className = '',
   surfaceClass = '',
@@ -136,7 +144,7 @@ const hasStructuredContent = hasOverlineSlot || hasTitleSlot || hasSubtitleSlot 
       <header class="site-label__header">
         <div class="site-label__brand">
           {logoSrc ? (
-            <img src={logoSrc} alt={logoAlt} loading="lazy" />
+            <img src={logoSrc} alt={logoAlt} width={logoWidth} height={logoHeight} loading="lazy" />
           ) : hasLogoSlot ? (
             <slot name="logo" />
           ) : brand !== false ? (

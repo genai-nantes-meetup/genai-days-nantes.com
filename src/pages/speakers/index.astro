@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { Picture } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import AdmissionTicketSection from '../../components/AdmissionTicketSection.astro';
 import DirectoryHero from '../../components/DirectoryHero.astro';
@@ -8,7 +9,8 @@ import Footer from '../../components/Footer.astro';
 import Header from '../../components/Header.astro';
 import TrackMark from '../../components/TrackMark';
 import { EVENT, EVENT_YEAR } from '../../lib/event';
-import { SPEAKER_PORTRAIT_DIMENSIONS, SPEAKER_TARGET, sortSpeakersByProminence, getSpeakerPortraitSrcset, trackForSpeaker } from '../../lib/speakers';
+import { SPEAKER_TARGET, sortSpeakersByProminence, trackForSpeaker } from '../../lib/speakers';
+import { getSpeakerPortrait, getSpeakerPortraitWidths } from '../../lib/speaker-portraits';
 
 const speakers = sortSpeakersByProminence(await getCollection('speakers'));
 const sessions = await getCollection('sessions');
@@ -97,7 +99,7 @@ const breadcrumbJsonLd = {
 
       <ol class="speaker-wall__grid" data-speaker-wall>
         {speakers.map((speaker, index) => {
-          const portrait = SPEAKER_PORTRAIT_DIMENSIONS[speaker.id];
+          const portrait = getSpeakerPortrait(speaker.id);
           const portraitPosition = portraitPositions[speaker.id];
           const speakerTrack = speakerTrackById.get(speaker.id);
 
@@ -105,15 +107,14 @@ const breadcrumbJsonLd = {
             <li class="speaker-tile" data-speaker-tile={speaker.id} data-speaker-track={speakerTrack}>
               <a href={`/speakers/${speaker.id}`} aria-label={`Découvrir le portrait de ${speaker.data.name}`}>
                 <figure class="speaker-tile__portrait">
-                  {speaker.data.photo ? (
-                    <img
+                  {portrait ? (
+                    <Picture
                       class="portrait-photo"
-                      src={speaker.data.photo}
-                      srcset={getSpeakerPortraitSrcset(speaker.id, speaker.data.photo)}
+                      src={portrait}
+                      widths={getSpeakerPortraitWidths(portrait)}
                       sizes="(min-width: 64rem) 25vw, (min-width: 40rem) 50vw, 100vw"
+                      formats={['avif', 'webp']}
                       alt={`Portrait de ${speaker.data.name}`}
-                      width={portrait?.width}
-                      height={portrait?.height}
                       loading={index < 2 ? 'eager' : 'lazy'}
                       decoding="async"
                       fetchpriority={index === 0 ? 'high' : 'auto'}
@@ -255,19 +256,29 @@ const breadcrumbJsonLd = {
     grid-template-rows: minmax(0, 1fr) 7.5rem;
   }
 
-  .speaker-tile__portrait img {
+  /* <Picture> (astro:assets) renders its own <picture>/<img>, outside this
+   * component's scoped-style reach, so both are targeted through :global().
+   * <picture> becomes the actual grid item (grid-row: 1); the filter/crop
+   * treatment stays on the nested <img>, the element that paints pixels. */
+  .speaker-tile__portrait :global(picture) {
+    display: block;
     grid-row: 1;
     width: 100%;
     height: 100%;
     min-height: 0;
+  }
+
+  .speaker-tile__portrait :global(picture img) {
+    width: 100%;
+    height: 100%;
     filter: grayscale(100%) contrast(1.04);
     object-fit: cover;
     object-position: var(--portrait-position);
     transition: filter 360ms ease, transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  .speaker-tile a:hover .speaker-tile__portrait img,
-  .speaker-tile a:focus-visible .speaker-tile__portrait img {
+  .speaker-tile a:hover .speaker-tile__portrait :global(picture img),
+  .speaker-tile a:focus-visible .speaker-tile__portrait :global(picture img) {
     filter: grayscale(18%) contrast(1.02);
     transform: scale(1.025);
   }
@@ -324,8 +335,12 @@ const breadcrumbJsonLd = {
     white-space: nowrap;
   }
 
+  /* 52%/54% mesuraient sous 3.1:1 sur le fond quasi blanc de
+   * .speaker-tile__identity, sous le seuil WCAG AA (4.5:1) pour du texte de
+   * cette taille (0.75rem). 72% donne 5.04:1, tout en restant plus clair que
+   * .speaker-tile__role (76%) pour garder la hiérarchie visuelle. */
   .speaker-tile__status {
-    color: rgb(57 54 54 / 52%);
+    color: rgb(57 54 54 / 72%);
     font-weight: 600;
     letter-spacing: 0.055em;
     text-transform: uppercase;
@@ -337,7 +352,7 @@ const breadcrumbJsonLd = {
   }
 
   .speaker-tile__company {
-    color: rgb(57 54 54 / 54%);
+    color: rgb(57 54 54 / 72%);
     font-weight: 500;
     letter-spacing: 0.05em;
     text-transform: uppercase;
@@ -392,13 +407,13 @@ const breadcrumbJsonLd = {
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .speaker-tile__portrait img,
+    .speaker-tile__portrait :global(picture img),
     .speaker-tile__identity {
       transition: none;
     }
 
-    .speaker-tile a:hover .speaker-tile__portrait img,
-    .speaker-tile a:focus-visible .speaker-tile__portrait img {
+    .speaker-tile a:hover .speaker-tile__portrait :global(picture img),
+    .speaker-tile a:focus-visible .speaker-tile__portrait :global(picture img) {
       transform: none;
     }
   }

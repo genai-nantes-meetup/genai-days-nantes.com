@@ -7,7 +7,9 @@ describe('HeroAffiche.astro', () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(HeroAffiche);
     expect(html).toContain('hero-affiche');
-    expect(html).toContain('src="/images/cover_v2-optimized.webp"');
+    expect(html).toContain('<picture');
+    expect(html).toContain('class="hero-affiche__poster"');
+    expect(html).toContain('fetchpriority="high"');
     expect(html).toContain('L’IA générative');
     expect(html).toContain('est déjà chez vous.');
     expect(html).toContain('C’est maintenant');

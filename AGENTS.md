@@ -14,7 +14,18 @@ Don't add a unit test for every new content collection entry (speaker, session, 
 
 Every image must be optimized/compressed before it is referenced anywhere on the site (components, pages, content collections): never publish a reference to an unoptimized source file.
 
-When optimizing/compressing an image (new or existing), never overwrite the original file. Keep the original filename untouched and add the optimized version alongside it with an `-optimized` suffix before the extension (e.g. `photo.jpg` + `photo-optimized.jpg`). Point performance-sensitive references (OG/Twitter meta tags, JSON-LD `image`, on-page thumbnails) at the `-optimized` file; keep references meant for full-quality downloads (press kit downloadable assets, etc.) on the original.
+Two optimization paths coexist, pick by consumer:
+
+- **`src/assets/` via `astro:assets`** (`<Image>` / `<Picture>`): the default for any image rendered by a component or page, including speaker portraits, illustrations and posters. Sharp resizes and re-encodes (AVIF/WebP) at build time and the output ships as content-hashed `/_astro/` files, which is what the immutable cache header in `vercel.json` targets. Import the source file directly (e.g. `import poster from '../assets/images/cover-v2.webp'`) and pass it as `src`; never keep a hand-written `srcset`. Speaker portraits resolve through `src/lib/speaker-portraits.ts` (`getSpeakerPortrait(speakerId)`), which keys off `import.meta.glob('../assets/speakers/*')`: a new speaker's photo must be added to `src/assets/speakers/` with a filename matching the speaker's id, or the portrait silently falls back to a letter-avatar on all 4 pages that render it (speakers index, speaker detail, programme session, homepage carousel), with no build error.
+- **Manual `-optimized` suffix under `public/`**: kept for references that must stay a stable, directly-fetchable URL outside the build pipeline: press kit downloadable assets (full-quality originals, deliberately not touched by the `-optimized` step), favicons, `robots.txt`/`llms.txt`, audio. When optimizing/compressing one of these (new or existing), never overwrite the original file; keep the original filename untouched and add the optimized version alongside it with an `-optimized` suffix before the extension (e.g. `photo.jpg` + `photo-optimized.jpg`). Point performance-sensitive references (OG/Twitter meta tags, JSON-LD `image`, on-page thumbnails) at the `-optimized` file; keep references meant for full-quality downloads on the original.
+
+Originals that aren't referenced by either path (an old master superseded by a `src/assets/` migration, an abandoned draft) don't belong in the deployed `public/` bundle; move them to `src/assets/` (kept in git, out of the deploy) if their optimized companion is still in use, or flag them for deletion rather than moving them if nothing references them at all.
+
+## Build and caching
+
+`astro.config.mjs` sets `build.inlineStylesheets: 'always'`: every page's CSS ships inside its HTML instead of a separate render-blocking `<link rel="stylesheet">`. Component style blocks on this site run well past Astro's default 4&nbsp;KB auto-inline threshold, so leaving this on `auto` left every page loading six-plus blocking stylesheet requests.
+
+`vercel.json` sets cache headers: `max-age=31536000, immutable` on `/_astro/(.*)` (content-hashed, safe to cache forever), and a shorter `stale-while-revalidate` header on the un-hashed `public/` subdirectories that still get requested directly (`audio`, `da`, `images`, `logos`, `organisateurs`, `press`, `speakers`, `talks`, `textures`). Add a new `public/` top-level directory to that second rule's `source` pattern when creating one, or it serves with Vercel's default caching instead.
 
 ## Site configuration
 

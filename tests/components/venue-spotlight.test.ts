@@ -13,7 +13,7 @@ describe('VenueSpotlight.astro', () => {
     expect(html).toContain(formatEventDateLabel());
     expect(html).toContain(EVENT.venue.address);
     expect(html).toContain('accueille les conférences, les rencontres et les temps communs');
-    expect(html).toContain('/images/hotel-region-banner-genai-days-web-optimized.webp');
+    expect(html).toMatch(/class="venue-spotlight__visual"[^>]*>\s*<picture/);
     expect(html).toContain('data-venue-map');
     expect(html).toContain('Entrée côté rue de la Loire');
     expect(html).toContain('Busway 5 · arrêt Pompidou');

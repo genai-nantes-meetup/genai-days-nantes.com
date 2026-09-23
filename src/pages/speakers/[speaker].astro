@@ -1,12 +1,14 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { Picture } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import BrandText from '../../components/BrandText.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import TrackMark from '../../components/TrackMark';
 import EVENT from '../../content/event.json';
-import { SPEAKER_EVENT_ROLE_LABELS, SPEAKER_PORTRAIT_DIMENSIONS, getSpeakerPortraitSrcset, trackForSpeaker } from '../../lib/speakers';
+import { SPEAKER_EVENT_ROLE_LABELS, trackForSpeaker } from '../../lib/speakers';
+import { getSpeakerPortrait, getSpeakerPortraitWidths } from '../../lib/speaker-portraits';
 import { stripMarkdownToPlainText } from '../../lib/markdown';
 
 export async function getStaticPaths() {
@@ -29,7 +31,7 @@ const { speaker, sessions } = Astro.props as {
 
 const siteUrl = (Astro.site ?? new URL(Astro.url.origin)).href;
 const speakerUrl = `${siteUrl}speakers/${speaker.id}`;
-const portrait = SPEAKER_PORTRAIT_DIMENSIONS[speaker.id];
+const portrait = getSpeakerPortrait(speaker.id);
 const eventRoleLabel = speaker.data.eventRole ? SPEAKER_EVENT_ROLE_LABELS[speaker.data.eventRole] : undefined;
 const speakerTrack = trackForSpeaker(speaker.id, sessions);
 
@@ -105,15 +107,14 @@ const socialLinks = [
         </a>
         <div class="mt-10 grid gap-9 sm:grid-cols-[14rem_1fr] sm:items-end lg:gap-14">
           <div class="speaker-page-photo">
-            {speaker.data.photo ? (
-              <img
+            {portrait ? (
+              <Picture
                 class="portrait-photo"
-                src={speaker.data.photo}
-                srcset={getSpeakerPortraitSrcset(speaker.id, speaker.data.photo)}
+                src={portrait}
+                widths={getSpeakerPortraitWidths(portrait)}
                 sizes="(min-width: 40rem) 14rem, min(15rem, 76vw)"
+                formats={['avif', 'webp']}
                 alt={`Portrait de ${speaker.data.name}`}
-                width={portrait?.width}
-                height={portrait?.height}
                 draggable="false"
               />
             ) : (
@@ -308,7 +309,15 @@ const socialLinks = [
     transform: rotate(-1.5deg);
   }
 
-  .speaker-page-photo > img {
+  /* <Picture> (astro:assets) renders its own <picture>/<img>, outside this
+   * component's scoped-style reach, so both are targeted through :global(). */
+  .speaker-page-photo :global(picture) {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .speaker-page-photo :global(img) {
     width: 100%;
     height: 100%;
     object-fit: cover;

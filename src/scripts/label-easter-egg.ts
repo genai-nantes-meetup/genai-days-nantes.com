@@ -1,4 +1,3 @@
-import confetti from '@hiseb/confetti';
 import { capture } from '../lib/analytics';
 import type { LabelPlacement } from '../lib/label-collection';
 import * as labelCollection from '../lib/label-collection';
@@ -270,8 +269,15 @@ function moveConfettiCanvasIntoModal(modal: HTMLDialogElement): void {
   if (canvas) modal.append(canvas);
 }
 
-function scheduleCompletionConfetti(modal: HTMLDialogElement): void {
+/* La libairie confetti (~68 Ko de source) ne sert qu'à cette unique animation
+ * de complétion, déclenchée seulement quand quelqu'un termine la collection
+ * d'étiquettes : un événement rare que la plupart des visiteurs ne
+ * déclenchent jamais. Un import dynamique la sort du bundle initial. */
+async function scheduleCompletionConfetti(modal: HTMLDialogElement): Promise<void> {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const { default: confetti } = await import('@hiseb/confetti');
+  if (!modal.open) return;
 
   const timers = createModalConfettiSequence().map((burst) =>
     window.setTimeout(() => {
@@ -309,7 +315,7 @@ function openCompletionModal(root: ParentNode): void {
   } else {
     modal.setAttribute('open', '');
   }
-  scheduleCompletionConfetti(modal);
+  void scheduleCompletionConfetti(modal);
   labelCollection.markCompletionModalSeen();
 }
 

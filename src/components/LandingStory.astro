@@ -1,5 +1,6 @@
 ---
 import { getCollection } from "astro:content";
+import { Picture } from "astro:assets";
 import AdmissionTicketSection from "./AdmissionTicketSection.astro";
 import EditorialCta from "./EditorialCta.astro";
 import EditorialFrame from "./EditorialFrame.astro";
@@ -11,12 +12,16 @@ import TracksProgramme from "./TracksProgramme.astro";
 import VenueSpotlight from "./VenueSpotlight.astro";
 import {
   SPEAKER_EVENT_ROLE_LABELS,
-  SPEAKER_PORTRAIT_DIMENSIONS,
   SPEAKER_TARGET,
   sortSpeakersByProminence,
-  getSpeakerPortraitSrcset,
   trackForSpeaker,
 } from "../lib/speakers";
+import { getSpeakerPortrait, getSpeakerPortraitWidths } from "../lib/speaker-portraits";
+import manifestoCivic from "../assets/images/manifesto-civic.webp";
+import issueCosts from "../assets/images/issue-costs.webp";
+import issueShadowAi from "../assets/images/issue-shadow-ai.webp";
+import issueSovereignty from "../assets/images/issue-sovereignty.webp";
+import issueProduction from "../assets/images/issue-production.webp";
 
 const speakers = sortSpeakersByProminence(await getCollection("speakers"));
 const sessions = await getCollection("sessions");
@@ -26,28 +31,28 @@ const issues = [
     title: "Coûts",
     description:
       "Prioriser les usages, choisir les modèles et garder la facture sous contrôle.",
-    image: "/da/issue-costs-optimized.webp",
+    image: issueCosts,
     alt: "Une architecture monumentale composée de nombreuses colonnes bleues",
   },
   {
     title: "Shadow AI",
     description:
       "Repérer les usages hors cadre avant que les données et les risques ne vous échappent.",
-    image: "/da/issue-shadow-ai-optimized.webp",
+    image: issueShadowAi,
     alt: "Une personne travaille au centre d’un labyrinthe d’infrastructures bleues",
   },
   {
     title: "Souveraineté",
     description:
       "Arbitrer entre performance, dépendance technologique et maîtrise des données.",
-    image: "/da/issue-sovereignty-optimized.webp",
+    image: issueSovereignty,
     alt: "Un arc monumental entouré de serveurs sous des champs bleu et orange",
   },
   {
     title: "Production",
     description:
       "Transformer les prototypes en systèmes fiables, supervisés et capables de tenir la charge.",
-    image: "/da/issue-production-optimized.webp",
+    image: issueProduction,
     alt: "Une usine rétrofuturiste se dresse entre deux aplats bleu et orange",
   },
 ];
@@ -82,11 +87,12 @@ const initialVisibleSlides = Math.min(3, speakerSlides.length);
   <EditorialGrid top={false} />
   <div class="manifesto-section__inner">
     <figure class="manifesto-section__visual">
-      <img
-        src="/da/manifesto-civic-optimized.webp"
+      <Picture
+        src={manifestoCivic}
+        widths={[600, 900, 1200, 1800]}
+        sizes="(min-width: 64rem) 38rem, 100vw"
+        formats={["avif", "webp"]}
         alt="Un auditoire réuni face à un portail monumental bleu et orange"
-        width="1200"
-        height="667"
         loading="lazy"
         decoding="async"
       />
@@ -146,11 +152,10 @@ const initialVisibleSlides = Math.min(3, speakerSlides.length);
                 id={`issue-visual-inline-${index + 1}`}
                 class="issue-index__mobile-visual"
               >
-                <img
+                <Picture
                   src={issue.image}
+                  formats={["avif", "webp"]}
                   alt={issue.alt}
-                  width="900"
-                  height="560"
                   loading="lazy"
                   decoding="async"
                 />
@@ -174,12 +179,11 @@ const initialVisibleSlides = Math.min(3, speakerSlides.length);
                 data-active={index === 0 ? "true" : "false"}
                 aria-hidden={index === 0 ? "false" : "true"}
               >
-                <img
+                <Picture
                   class="issue-index__visual-image"
                   src={issue.image}
+                  formats={["avif", "webp"]}
                   alt={issue.alt}
-                  width="900"
-                  height="560"
                   loading="lazy"
                   decoding="async"
                 />
@@ -253,7 +257,9 @@ const initialVisibleSlides = Math.min(3, speakerSlides.length);
     >
       <div class="speaker-carousel__track">
         {
-          speakerSlides.map((slide, index) => (
+          speakerSlides.map((slide, index) => {
+            const portrait = slide.kind === "speaker" ? getSpeakerPortrait(slide.speaker.id) : undefined;
+            return (
             <article
               class="speaker-card"
               data-speaker-slide
@@ -269,22 +275,14 @@ const initialVisibleSlides = Math.min(3, speakerSlides.length);
                   href={`/speakers/${slide.speaker.id}`}
                   aria-label={`Découvrir ${slide.speaker.data.name}`}
                 >
-                  {slide.speaker.data.photo ? (
-                    <img
+                  {portrait ? (
+                    <Picture
                       class="portrait-photo"
-                      src={slide.speaker.data.photo}
-                      srcset={getSpeakerPortraitSrcset(
-                        slide.speaker.id,
-                        slide.speaker.data.photo,
-                      )}
+                      src={portrait}
+                      widths={getSpeakerPortraitWidths(portrait)}
                       sizes="(min-width: 48rem) 22rem, 90vw"
+                      formats={["avif", "webp"]}
                       alt={`Portrait de ${slide.speaker.data.name}`}
-                      width={
-                        SPEAKER_PORTRAIT_DIMENSIONS[slide.speaker.id]?.width
-                      }
-                      height={
-                        SPEAKER_PORTRAIT_DIMENSIONS[slide.speaker.id]?.height
-                      }
                       loading="lazy"
                       decoding="async"
                       draggable="false"
@@ -334,7 +332,8 @@ const initialVisibleSlides = Math.min(3, speakerSlides.length);
                 </div>
               )}
             </article>
-          ))
+            );
+          })
         }
       </div>
     </div>
@@ -428,7 +427,17 @@ const initialVisibleSlides = Math.min(3, speakerSlides.length);
     background: var(--color-brand-white);
   }
 
-  .manifesto-section__visual img {
+  /* <Picture> (astro:assets) renders its own <picture>/<img>, outside this
+   * component's scoped-style reach, so both are targeted through :global().
+   * <picture> only fills the box; the filter/crop treatment stays on the
+   * nested <img> so it is not applied twice (filter would otherwise stack). */
+  .manifesto-section__visual :global(picture) {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .manifesto-section__visual :global(img) {
     width: 100%;
     height: 100%;
     filter: saturate(0.86) contrast(0.98);
@@ -439,7 +448,7 @@ const initialVisibleSlides = Math.min(3, speakerSlides.length);
       transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  .manifesto-section__visual:hover img {
+  .manifesto-section__visual:hover :global(img) {
     filter: saturate(0.96) contrast(1);
     transform: scale(1.015);
   }
@@ -589,7 +598,17 @@ const initialVisibleSlides = Math.min(3, speakerSlides.length);
     background: var(--color-brand-white);
   }
 
-  .issue-index__mobile-visual img {
+  /* <Picture> (astro:assets) renders its own <picture>/<img>, outside this
+   * component's scoped-style reach, so both are targeted through :global().
+   * filter/mix-blend-mode stay on <img> only: applying them to <picture> too
+   * would compound the effect (each element blends/filters independently). */
+  .issue-index__mobile-visual :global(picture) {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .issue-index__mobile-visual :global(img) {
     width: 100%;
     height: 100%;
     filter: saturate(0.78) contrast(0.96);
@@ -732,15 +751,22 @@ const initialVisibleSlides = Math.min(3, speakerSlides.length);
     grid-template-rows: minmax(0, 1fr) 7.5rem;
   }
 
-  .speaker-card img,
+  /* <Picture> (astro:assets) renders its own <picture>/<img>, outside this
+   * component's scoped-style reach, so both are targeted through :global().
+   * <picture> becomes the actual grid item (grid-row: 1); the filter/crop
+   * treatment stays on the nested <img>, the element that paints pixels. */
+  .speaker-card :global(picture),
   .speaker-card__fallback {
+    display: block;
     width: 100%;
     height: 100%;
     min-height: 0;
     grid-row: 1;
   }
 
-  .speaker-card img {
+  .speaker-card :global(picture img) {
+    width: 100%;
+    height: 100%;
     filter: grayscale(0.5) sepia(0.08) saturate(0.72) contrast(1.04);
     object-fit: cover;
     object-position: 50% 28%;
@@ -749,8 +775,8 @@ const initialVisibleSlides = Math.min(3, speakerSlides.length);
       transform 500ms cubic-bezier(0.2, 0.75, 0.25, 1);
   }
 
-  .speaker-card > a:hover img,
-  .speaker-card > a:focus-visible img {
+  .speaker-card > a:hover :global(picture img),
+  .speaker-card > a:focus-visible :global(picture img) {
     filter: grayscale(0.12) sepia(0.04) saturate(0.94) contrast(1.04);
     transform: scale(1.018);
   }
@@ -804,7 +830,11 @@ const initialVisibleSlides = Math.min(3, speakerSlides.length);
   }
 
   .speaker-card__company {
-    color: rgb(57 54 54 / 54%);
+    /* 54% mesurait 3.08:1 sur le fond quasi blanc de .speaker-card__identity,
+     * sous le seuil WCAG AA (4.5:1) pour du texte de cette taille (0.75rem).
+     * 72% donne 5.04:1, tout en restant plus clair que .speaker-card__role
+     * (76%) pour garder la hiérarchie visuelle. */
+    color: rgb(57 54 54 / 72%);
     font-weight: 500;
     letter-spacing: 0.05em;
     text-transform: uppercase;
@@ -899,7 +929,7 @@ const initialVisibleSlides = Math.min(3, speakerSlides.length);
       height: 25rem;
     }
 
-    .speaker-card img {
+    .speaker-card :global(picture img) {
       object-position: 50% 24%;
     }
 
@@ -1072,7 +1102,11 @@ const initialVisibleSlides = Math.min(3, speakerSlides.length);
       clip-path: inset(0);
     }
 
-    .issue-index__visual-image {
+    /* <Picture> (astro:assets) renders its own <picture>/<img>, outside this
+     * component's scoped-style reach, so the class is targeted through
+     * :global() on the img itself; :global()'s scope stays this component's
+     * generated CSS module, not the site's public CSS namespace. */
+    :global(.issue-index__visual-image) {
       position: absolute;
       inset: 0;
       width: 100%;
@@ -1084,7 +1118,7 @@ const initialVisibleSlides = Math.min(3, speakerSlides.length);
       transform: scale(1.015);
     }
 
-    .issue-index__visual.is-entering .issue-index__visual-image {
+    .issue-index__visual.is-entering :global(.issue-index__visual-image) {
       animation: issue-image-develop 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
       will-change: filter, transform;
     }
@@ -1161,23 +1195,23 @@ const initialVisibleSlides = Math.min(3, speakerSlides.length);
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .manifesto-section__visual img,
+    .manifesto-section__visual :global(img),
     .issue-index__topics > li,
     .issue-index__topic-copy strong,
     .issue-index__visual {
       transition: none;
     }
 
-    .manifesto-section__visual:hover img {
+    .manifesto-section__visual:hover :global(img) {
       transform: none;
     }
 
     .issue-index__scan-line,
-    .issue-index__visual.is-entering .issue-index__visual-image {
+    .issue-index__visual.is-entering :global(.issue-index__visual-image) {
       animation: none;
     }
 
-    .speaker-card img,
+    .speaker-card :global(picture img),
     .speaker-carousel__pagination span,
     .speaker-carousel__control {
       transition: none;
