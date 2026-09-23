@@ -59,12 +59,12 @@ const isCurrentPage = (href: string) =>
   class:list={[
     'site-header',
     { 'is-immersed': immersive },
-    'sticky top-0 z-100 grid w-full min-w-0 grid-cols-[1fr_auto_1fr] items-center gap-3',
+    'sticky top-0 z-100 grid w-full min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 md:grid-cols-[1fr_auto_1fr]',
   ]}
 >
   <a href="/" class="site-header__brand justify-self-start shrink-0 whitespace-nowrap text-lg font-bold tracking-wide sm:text-xl" data-scroll-top><EventName showLocation /></a>
 
-  <div class="site-header__navigation col-start-2 justify-self-center">
+  <div class="site-header__navigation col-start-2 justify-self-end md:justify-self-center">
     <nav class="site-header__nav items-center" aria-label="Navigation principale">
       {primaryLinks.map((link) => (
         <a
@@ -603,28 +603,7 @@ const isCurrentPage = (href: string) =>
     font-size: 0.8rem;
   }
 
-  /* Sous 40rem le classeur d'étiquettes pose son onglet de 2.65rem au ras du
-   * bas : le CTA remonte d'autant pour lui rendre son compteur et sa cible. */
-  @media (max-width: 39.999rem) {
-    :global(body:has(.label-archive.is-available)) {
-      --mobile-cta-reserve: calc(3.25rem + max(1rem, env(safe-area-inset-bottom)) + 2.65rem + 1rem);
-    }
-
-    :global(body:has(.label-archive.is-available) .mobile-ticket-cta) {
-      bottom: calc(max(1rem, env(safe-area-inset-bottom)) + 2.65rem);
-    }
-  }
-
-  /* Remonter de 2,65rem suffit tant que le classeur est réduit à son onglet.
-   * Dès qu'il sort, il occupe 264px de haut et le CTA le traversait en son
-   * milieu : deux fiches sur quatre entièrement masquées et la ligne de
-   * progression coupée. Pendant un glissé c'est pire, la barre couvre 62% de
-   * la zone de dépôt et ses deux consignes, et c'est elle qui reçoit le doigt.
-   * Le CTA s'efface donc le temps de la manipulation : le classeur est un
-   * geste court et volontaire, et la billetterie revient dès la fermeture. */
-  :global(body:has(.label-archive.is-open) .mobile-ticket-cta),
-  :global(body:has(.label-archive.is-revealed) .mobile-ticket-cta),
-  :global(body:has(.label-archive.is-reveal-ready) .mobile-ticket-cta),
+  /* Le menu ouvert remplace temporairement l'action de billetterie fixe. */
   :global(body:has([data-menu-panel][data-menu-state='open']) .mobile-ticket-cta) {
     opacity: 0;
     pointer-events: none;
