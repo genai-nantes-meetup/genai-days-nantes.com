@@ -129,6 +129,20 @@ const headingDescription = coOrganizer
   import { initLogoMarquees } from '../scripts/logo-marquee';
 
   initLogoMarquees();
+
+  document.querySelectorAll<HTMLElement>('[data-partner-showcase]').forEach((showcase) => {
+    const syncDocumentVisibility = () => {
+      showcase.classList.toggle('is-document-visible', !document.hidden);
+    };
+
+    const observer = new IntersectionObserver(([entry]) => {
+      showcase.classList.toggle('is-in-view', entry?.isIntersecting ?? false);
+    });
+
+    syncDocumentVisibility();
+    observer.observe(showcase);
+    document.addEventListener('visibilitychange', syncDocumentVisibility);
+  });
 </script>
 
 <style>
@@ -315,16 +329,26 @@ const headingDescription = coOrganizer
     display: flex;
     width: max-content;
     animation: partner-marquee-scroll var(--partner-duration) linear infinite;
+    animation-play-state: paused;
   }
 
   .partner-showcase__row--remaining .partner-showcase__track {
     animation-name: partner-marquee-scroll-reverse;
   }
 
-  .partner-showcase__marquee[data-paused='true'] .partner-showcase__track,
-  .partner-showcase__viewport:hover .partner-showcase__track,
-  .partner-showcase__viewport:focus-within .partner-showcase__track {
+  .partner-showcase.is-in-view.is-document-visible .partner-showcase__track {
+    animation-play-state: running;
+  }
+
+  .partner-showcase.is-in-view.is-document-visible .partner-showcase__marquee[data-paused='true'] .partner-showcase__track,
+  .partner-showcase.is-in-view.is-document-visible .partner-showcase__row:focus-within .partner-showcase__track {
     animation-play-state: paused;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .partner-showcase.is-in-view.is-document-visible .partner-showcase__row:hover .partner-showcase__track {
+      animation-play-state: paused;
+    }
   }
 
   .partner-showcase__group {
@@ -334,10 +358,6 @@ const headingDescription = coOrganizer
     gap: var(--partner-gap);
     padding-inline-end: var(--partner-gap);
     list-style: none;
-  }
-
-  .partner-showcase__group[data-marquee-copy='duplicate'] {
-    pointer-events: none;
   }
 
   .partner-showcase__logo {
@@ -443,6 +463,102 @@ const headingDescription = coOrganizer
   }
 
   @media (min-width: 48rem) {
+    .partner-showcase__marquee {
+      display: block;
+      width: 100vw;
+      margin-inline: calc(50% - 50vw);
+    }
+
+    .partner-showcase__toggle {
+      display: none;
+    }
+
+    .partner-showcase__viewport {
+      display: block;
+      overflow: visible;
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+
+    .partner-showcase__row {
+      --marquee-fade: clamp(2.5rem, 8vw, 8rem);
+      -webkit-mask-image: linear-gradient(to right, transparent, #000 var(--marquee-fade), #000 calc(100% - var(--marquee-fade)), transparent);
+      mask-image: linear-gradient(to right, transparent, #000 var(--marquee-fade), #000 calc(100% - var(--marquee-fade)), transparent);
+    }
+
+    .partner-showcase__row--remaining {
+      margin-top: 0.35rem;
+    }
+
+    .partner-showcase__row--platinum {
+      --partner-duration: 34s;
+    }
+
+    .partner-showcase__row--remaining {
+      --partner-duration: 42s;
+    }
+
+    .partner-showcase__group {
+      min-width: 100vw;
+      justify-content: space-around;
+    }
+
+    .partner-showcase__logo {
+      min-height: var(--partner-cell-height);
+      height: auto;
+      padding-block: 0.65rem;
+    }
+
+    .partner-showcase__logo--wide,
+    .partner-showcase__logo--compact {
+      width: var(--partner-cell-width);
+    }
+
+    .partner-showcase__logo > a {
+      min-height: inherit;
+    }
+
+    .partner-showcase__logo img {
+      width: auto;
+      max-width: 82%;
+      height: auto;
+      max-height: 3.8rem;
+    }
+
+    .partner-showcase__logo::before {
+      inset: auto;
+      width: 82%;
+      height: 3.8rem;
+    }
+
+    .partner-showcase__row--platinum .partner-showcase__logo::before {
+      height: 4.65rem;
+    }
+
+    .partner-showcase__row--remaining .partner-showcase__logo::before {
+      height: 2.8rem;
+    }
+
+    .partner-showcase__row--platinum .partner-showcase__logo--wide::before {
+      width: 88%;
+      height: 4rem;
+    }
+
+    .partner-showcase__row--remaining .partner-showcase__logo--wide::before {
+      width: 88%;
+      height: 2.4rem;
+    }
+
+    .partner-showcase__row--platinum .partner-showcase__logo--compact::before {
+      width: 62%;
+      height: 5.65rem;
+    }
+
+    .partner-showcase__row--remaining .partner-showcase__logo--compact::before {
+      width: 62%;
+      height: 3.4rem;
+    }
+
     .partner-showcase__heading:not(.partner-showcase__heading--with-coorganizer) h2,
     .partner-showcase__heading:not(.partner-showcase__heading--with-coorganizer) p {
       max-width: none;

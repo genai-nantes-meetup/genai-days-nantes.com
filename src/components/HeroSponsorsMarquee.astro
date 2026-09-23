@@ -155,6 +155,12 @@ const sponsors = (await getCollection('partners'))
     animation: hero-sponsors-scroll 40s linear infinite;
   }
 
+  @media (hover: hover) and (pointer: fine) {
+    .hero-sponsors__viewport:hover .hero-sponsors__track {
+      animation-play-state: paused;
+    }
+  }
+
   .hero-sponsors__group {
     display: flex;
     flex: none;
@@ -235,10 +241,6 @@ const sponsors = (await getCollection('partners'))
   .hero-sponsors__logo a:focus-visible {
     outline: 2px solid var(--color-brand-cream);
     outline-offset: 2px;
-  }
-
-  .hero-sponsors__group[data-marquee-copy='duplicate'] {
-    pointer-events: none;
   }
 
   /* L'image garde l'alternative textuelle, le masque dessine le logo. */
