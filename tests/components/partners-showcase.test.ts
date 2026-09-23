@@ -3,17 +3,20 @@ import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import PartnersShowcase from '../../src/components/PartnersShowcase.astro';
 
 describe('PartnersShowcase.astro', () => {
-  it('keeps the co-organizer fixed while the other partners scroll on one line', async () => {
+  it('keeps the co-organizer fixed while the other partners scroll on two rows', async () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(PartnersShowcase);
 
     expect(html).toContain('Ils rendent la journée possible.');
     expect(html).toContain('aria-label="Aperçu des partenaires"');
-    expect(html).toContain('data-partner-layout="single-row"');
+    expect(html).toContain('data-partner-layout="two-rows"');
+    expect(html.match(/data-marquee-row/g)).toHaveLength(2);
+    expect(html).toContain('data-partner-emphasis="platinum"');
+    expect(html).toContain('data-partner-emphasis="remaining"');
     expect(html).toContain('data-logo-marquee-toggle');
     expect(html).toContain('aria-pressed="false"');
-    expect(html.match(/data-marquee-copy="primary"/g)).toHaveLength(1);
-    expect(html.match(/data-marquee-copy="duplicate"/g)).toHaveLength(1);
+    expect(html.match(/data-marquee-copy="primary"/g)).toHaveLength(2);
+    expect(html.match(/data-marquee-copy="duplicate"/g)).toHaveLength(2);
     expect(html.match(/data-partner-logo=/g)).toHaveLength(14);
     expect(html).toContain('class="partner-showcase__coorganizer"');
     expect(html).toContain(

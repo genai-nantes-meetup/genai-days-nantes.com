@@ -20,12 +20,18 @@ const showcasePartners = (await getCollection('partners'))
       width,
       height,
       format,
+      tier: partner.data.tier,
       coOrganizer: partner.data.coOrganizer,
     } as const;
   });
 
 const coOrganizer = showcasePartners.find((partner) => partner.coOrganizer);
-const scrollingPartners = showcasePartners.filter((partner) => !partner.coOrganizer);
+const platinumPartners = showcasePartners.filter((partner) => partner.tier === 'platinum' && !partner.coOrganizer);
+const remainingPartners = showcasePartners.filter((partner) => partner.tier !== 'platinum' && !partner.coOrganizer);
+const partnerRows = [
+  { partners: platinumPartners, emphasis: 'platinum' },
+  ...(remainingPartners.length > 0 ? [{ partners: remainingPartners, emphasis: 'remaining' }] : []),
+] as const;
 const headingDescription = coOrganizer
   ? `La ${coOrganizer.name} co-organise cette édition et nous ouvre les portes de l’${EVENT.venue.shortName}.`
   : 'Entreprises, réseaux et acteurs du territoire réunis autour de cette première édition.';
@@ -66,46 +72,50 @@ const headingDescription = coOrganizer
       )}
     </header>
 
-    <div class="partner-showcase__marquee" data-logo-marquee data-partner-layout="single-row" role="group" aria-label="Aperçu des partenaires">
+    <div class="partner-showcase__marquee" data-logo-marquee data-partner-layout="two-rows" role="group" aria-label="Aperçu des partenaires">
       <button class="partner-showcase__toggle" type="button" aria-pressed="false" aria-label="Mettre en pause le défilement des logos" data-logo-marquee-toggle>
         <svg class="partner-showcase__pause-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 5v14M16 5v14" /></svg>
         <svg class="partner-showcase__play-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m8 5 11 7-11 7z" /></svg>
       </button>
-      <div class="partner-showcase__viewport" tabindex="0" aria-label="Logos des partenaires, défilement horizontal">
-        <div class="partner-showcase__track">
-          {[false, true].map((duplicate) => (
-            <ul
-              class="partner-showcase__group"
-              data-marquee-copy={duplicate ? 'duplicate' : 'primary'}
-              aria-hidden={duplicate ? 'true' : undefined}
-            >
-              {scrollingPartners.map((partner) => (
-                <li
-                  class:list={['partner-showcase__logo', `partner-showcase__logo--${partner.format}`]}
-                  data-partner-logo={duplicate ? undefined : partner.name}
-                  style={`--partner-logo: url("${partner.logo}");`}
+      <div class="partner-showcase__viewport" tabindex="0" aria-label="Logos des partenaires, deux lignes défilantes">
+        {partnerRows.map((row) => (
+          <div class:list={['partner-showcase__row', `partner-showcase__row--${row.emphasis}`]} data-marquee-row data-partner-emphasis={row.emphasis}>
+            <div class="partner-showcase__track">
+              {[false, true].map((duplicate) => (
+                <ul
+                  class="partner-showcase__group"
+                  data-marquee-copy={duplicate ? 'duplicate' : 'primary'}
+                  aria-hidden={duplicate ? 'true' : undefined}
                 >
-                  <a
-                    href={partner.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={duplicate ? undefined : `Visiter le site de ${partner.name}`}
-                    tabindex={duplicate ? '-1' : undefined}
-                  >
-                    <img
-                      src={partner.logo}
-                      alt={duplicate ? '' : `Logo ${partner.name}`}
-                      width={partner.width}
-                      height={partner.height}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </a>
-                </li>
+                  {row.partners.map((partner) => (
+                    <li
+                      class:list={['partner-showcase__logo', `partner-showcase__logo--${partner.format}`]}
+                      data-partner-logo={duplicate ? undefined : partner.name}
+                      style={`--partner-logo: url("${partner.logo}");`}
+                    >
+                      <a
+                        href={partner.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={duplicate ? undefined : `Visiter le site de ${partner.name}`}
+                        tabindex={duplicate ? '-1' : undefined}
+                      >
+                        <img
+                          src={partner.logo}
+                          alt={duplicate ? '' : `Logo ${partner.name}`}
+                          width={partner.width}
+                          height={partner.height}
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      </a>
+                    </li>
+                  ))}
+                </ul>
               ))}
-            </ul>
-          ))}
-        </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
 
@@ -218,7 +228,7 @@ const headingDescription = coOrganizer
 
   .partner-showcase__marquee {
     --partner-gap: clamp(1.75rem, 3vw, 3rem);
-    --marquee-fade: clamp(0.75rem, 2vw, 1.5rem);
+    --marquee-fade: clamp(2rem, 5vw, 4rem);
     position: relative;
     display: grid;
     grid-template-columns: minmax(0, 1fr) 2.75rem;
@@ -270,16 +280,45 @@ const headingDescription = coOrganizer
   .partner-showcase__viewport {
     grid-column: 1;
     grid-row: 1;
+    display: grid;
     min-width: 0;
     overflow: hidden;
+    gap: 0.35rem;
     -webkit-mask-image: linear-gradient(to right, transparent, #000 var(--marquee-fade), #000 calc(100% - var(--marquee-fade)), transparent);
     mask-image: linear-gradient(to right, transparent, #000 var(--marquee-fade), #000 calc(100% - var(--marquee-fade)), transparent);
+  }
+
+  .partner-showcase__row {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .partner-showcase__row--platinum {
+    --partner-ink: color-mix(in srgb, var(--color-brand-orange) 52%, var(--color-brand-black));
+    --partner-cell-width: clamp(11rem, 16.5vw, 15.5rem);
+    --partner-cell-height: clamp(5.75rem, 8vw, 7.25rem);
+    --partner-gap: clamp(3rem, 5.5vw, 5.75rem);
+    --partner-duration: 24s;
+    --partner-mark-inset: 0.75rem;
+  }
+
+  .partner-showcase__row--remaining {
+    --partner-ink: color-mix(in srgb, var(--color-brand-orange) 42%, var(--color-brand-black));
+    --partner-cell-width: clamp(8rem, 11.5vw, 10.5rem);
+    --partner-cell-height: clamp(3.75rem, 5vw, 4.5rem);
+    --partner-gap: clamp(2.25rem, 4vw, 4rem);
+    --partner-duration: 36s;
+    --partner-mark-inset: 0.45rem;
   }
 
   .partner-showcase__track {
     display: flex;
     width: max-content;
-    animation: partner-marquee-scroll 38s linear infinite;
+    animation: partner-marquee-scroll var(--partner-duration) linear infinite;
+  }
+
+  .partner-showcase__row--remaining .partner-showcase__track {
+    animation-name: partner-marquee-scroll-reverse;
   }
 
   .partner-showcase__marquee[data-paused='true'] .partner-showcase__track,
@@ -304,18 +343,18 @@ const headingDescription = coOrganizer
   .partner-showcase__logo {
     position: relative;
     display: grid;
-    width: 9.5rem;
-    height: 5.75rem;
+    width: var(--partner-cell-width);
+    height: var(--partner-cell-height);
     flex: none;
     place-items: center;
   }
 
   .partner-showcase__logo--wide {
-    width: 11rem;
+    width: calc(var(--partner-cell-width) * 1.15);
   }
 
   .partner-showcase__logo--compact {
-    width: 6.5rem;
+    width: calc(var(--partner-cell-width) * 0.7);
   }
 
   .partner-showcase__logo > a {
@@ -339,7 +378,7 @@ const headingDescription = coOrganizer
 
   .partner-showcase__logo::before {
     position: absolute;
-    inset: 0.75rem 0.35rem;
+    inset: var(--partner-mark-inset) 0.35rem;
     background: var(--partner-ink);
     content: '';
     -webkit-mask: var(--partner-logo) center / contain no-repeat;
@@ -372,23 +411,34 @@ const headingDescription = coOrganizer
     }
   }
 
+  @keyframes partner-marquee-scroll-reverse {
+    from {
+      transform: translateX(-50%);
+    }
+
+    to {
+      transform: translateX(0);
+    }
+  }
+
   @media (max-width: 47.999rem) {
     .partner-showcase__marquee {
       --partner-gap: 1.25rem;
-      --marquee-fade: 0.75rem;
+      --marquee-fade: 1.25rem;
     }
 
-    .partner-showcase__logo {
-      width: 6.75rem;
-      height: 4.25rem;
+    .partner-showcase__row--platinum {
+      --partner-cell-width: 7.75rem;
+      --partner-cell-height: 4.5rem;
+      --partner-gap: 1.5rem;
+      --partner-duration: 16s;
     }
 
-    .partner-showcase__logo--wide {
-      width: 8rem;
-    }
-
-    .partner-showcase__logo--compact {
-      width: 4.75rem;
+    .partner-showcase__row--remaining {
+      --partner-cell-width: 6.25rem;
+      --partner-cell-height: 3.75rem;
+      --partner-gap: 1.25rem;
+      --partner-duration: 28s;
     }
   }
 

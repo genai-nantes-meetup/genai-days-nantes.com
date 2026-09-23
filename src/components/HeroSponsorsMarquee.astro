@@ -80,15 +80,11 @@ const sponsors = (await getCollection('partners'))
 </script>
 
 <style>
-  /* Le calque du hero est transparent aux événements : le bandeau reprend
-   * la main pour que le survol mette le défilé en pause. */
+  /* Le calque du hero est transparent aux événements : les logos restent cliquables. */
   .hero-sponsors {
     --sponsor-gap: clamp(2.25rem, 3.5vw, 3.5rem);
     --sponsor-fade: clamp(2rem, 6vw, 5rem);
     position: relative;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 2.75rem;
-    align-items: center;
     width: 100%;
     pointer-events: auto;
   }
@@ -96,7 +92,7 @@ const sponsors = (await getCollection('partners'))
   .hero-sponsors__toggle {
     grid-column: 2;
     grid-row: 1;
-    display: grid;
+    display: none;
     width: 2.75rem;
     height: 2.75rem;
     place-items: center;
@@ -156,13 +152,7 @@ const sponsors = (await getCollection('partners'))
   .hero-sponsors__track {
     display: flex;
     width: max-content;
-    animation: hero-sponsors-scroll 32s linear infinite;
-  }
-
-  .hero-sponsors[data-paused='true'] .hero-sponsors__track,
-  .hero-sponsors__viewport:hover .hero-sponsors__track,
-  .hero-sponsors__viewport:focus-within .hero-sponsors__track {
-    animation-play-state: paused;
+    animation: hero-sponsors-scroll 40s linear infinite;
   }
 
   .hero-sponsors__group {
@@ -199,6 +189,22 @@ const sponsors = (await getCollection('partners'))
     .hero-sponsors {
       --sponsor-gap: 1.25rem;
       --sponsor-fade: 1rem;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 2.75rem;
+      align-items: center;
+    }
+
+    .hero-sponsors__toggle {
+      display: grid;
+    }
+
+    .hero-sponsors__track {
+      animation-duration: 32s;
+    }
+
+    .hero-sponsors[data-paused='true'] .hero-sponsors__track,
+    .hero-sponsors__viewport:focus-within .hero-sponsors__track {
+      animation-play-state: paused;
     }
 
     .hero-sponsors__logo {
