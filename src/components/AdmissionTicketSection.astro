@@ -453,6 +453,110 @@ const ticketDateYear = new Intl.DateTimeFormat('fr-FR', { year: 'numeric' }).for
     opacity: 0.9;
   }
 
+  @media (max-width: 47.999rem) {
+    .ticket-field__heading {
+      justify-items: start;
+      padding-inline: clamp(1.5rem, 2.5vw, 2rem);
+      text-align: left;
+    }
+
+    .ticket-field__stage {
+      padding-inline: clamp(1.5rem, 2.5vw, 2rem);
+      gap: 1.5rem;
+    }
+
+    .ticket-field__cta {
+      justify-items: start;
+    }
+
+    .admission-ticket {
+      width: 100%;
+      filter: none;
+    }
+
+    .admission-ticket__body {
+      padding: 0;
+      background: transparent;
+    }
+
+    .admission-ticket__header,
+    .admission-ticket__barcode,
+    .admission-ticket__stub {
+      display: none;
+    }
+
+    .admission-ticket__price {
+      padding: 0 0 1.5rem;
+      border-bottom: 0;
+    }
+
+    .admission-ticket__price > p {
+      font-size: clamp(3rem, 12vw, 4rem);
+      font-weight: 700;
+    }
+
+    .admission-ticket__facts,
+    .admission-ticket__includes {
+      border-top: 1px solid rgb(from var(--color-brand-black) r g b / 18%);
+      border-bottom: 0;
+    }
+
+    .admission-ticket__facts > div,
+    .admission-ticket__includes li {
+      grid-template-columns: 5rem minmax(0, 1fr);
+      padding: 0.85rem 0;
+      border-bottom: 1px solid rgb(from var(--color-brand-black) r g b / 18%);
+      gap: 1rem;
+    }
+
+    .admission-ticket__facts > div + div,
+    .admission-ticket__includes li + li {
+      border-top: 0;
+    }
+
+    .admission-ticket__facts dt,
+    .admission-ticket__includes span {
+      font-family: var(--font-nav);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: var(--tracking-ui);
+    }
+
+    .admission-ticket__facts dd,
+    .admission-ticket__includes strong {
+      font-family: var(--font-sans);
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+
+    .admission-ticket__admit {
+      margin: 1rem 0;
+      padding: 0;
+      background: transparent;
+      color: var(--color-brand-black);
+      font-family: var(--font-sans);
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-align: left;
+      text-transform: none;
+    }
+
+    .admission-ticket__footer {
+      margin-top: 1rem;
+      padding: 0;
+    }
+
+    .admission-ticket__policy {
+      font-family: var(--font-sans);
+      font-size: 0.875rem;
+      line-height: 1.5;
+    }
+
+    .admission-ticket__practical-link {
+      font-family: var(--font-nav);
+    }
+  }
+
   @media (min-width: 64rem) {
     .ticket-field__heading {
       padding-inline: clamp(1.5rem, 2.5vw, 2rem);
