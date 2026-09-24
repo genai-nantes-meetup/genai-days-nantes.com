@@ -1,71 +1,73 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import ArrowIcon from '../components/ArrowIcon.astro';
-import DirectoryHero from '../components/DirectoryHero.astro';
-import EditorialGrid from '../components/EditorialGrid.astro';
-import EventName from '../components/EventName.astro';
-import Footer from '../components/Footer.astro';
-import Header from '../components/Header.astro';
-import { EVENT, formatEventDateLabel } from '../lib/event';
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ArrowIcon from "../components/ArrowIcon.astro";
+import DirectoryHero from "../components/DirectoryHero.astro";
+import EditorialGrid from "../components/EditorialGrid.astro";
+import EventName from "../components/EventName.astro";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import { EVENT, formatEventDateLabel } from "../lib/event";
 
-const venuePhoto = '/images/hotel-region-banner-genai-days-optimized.webp';
+const venuePhoto = "/images/hotel-region-banner-genai-days-optimized.webp";
 const mapDestination = [
   EVENT.venue.name,
   EVENT.venue.address,
   `${EVENT.venue.postalCode} ${EVENT.venue.city}`,
-].join(', ');
+].join(", ");
 const mapUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(mapDestination)}`;
 
 const accessOptions = [
   {
-    mode: 'Train + Busway',
-    details: 'Gare SNCF, sortie Sud · Ligne 5 direction Hangar à bananes · Arrêt Pompidou',
+    mode: "Train + Busway",
+    details:
+      "Gare SNCF, sortie Sud · Ligne 5 direction Hangar à bananes · Arrêt Pompidou",
   },
   {
-    mode: 'Bus',
+    mode: "Bus",
     details: `Ligne 26 direction ${EVENT.venue.name} · Terminus ${EVENT.venue.name}`,
   },
   {
-    mode: 'E-Busway',
-    details: 'Ligne 4 jusqu’à Île de Nantes, puis ligne 5 jusqu’à Pompidou',
+    mode: "E-Busway",
+    details: "Ligne 4 jusqu’à Île de Nantes, puis ligne 5 jusqu’à Pompidou",
   },
   {
-    mode: 'Vélo',
+    mode: "Vélo",
     details: `Station Naolib vélos place Gaston-Defferre, devant ${EVENT.venue.name}`,
   },
   {
-    mode: 'Voiture',
-    details: 'Stationnement payant aux abords du campus et sur le parking du CRAPA',
+    mode: "Voiture",
+    details:
+      "Stationnement payant aux abords du campus et sur le parking du CRAPA",
   },
 ] as const;
 
 const partnerHotels = [
   {
-    name: 'Novotel Nantes Centre Bord de Loire',
-    meta: 'Île de Nantes · 1 boulevard des Martyrs Nantais',
-    href: 'https://all.accor.com/hotel/7296/index.fr.shtml',
+    name: "Appart Hôtel - Residhome Nantes Berges de la Loire",
+    meta: "3 All. Jacques Berque",
+    href: "https://myresidhome.com/nantes/residhome-nantes-berges-de-la-loire/apparthotel-residence-hoteliere.html",
   },
   {
-    name: 'Seven Urban Suites Nantes Centre',
-    meta: 'Quartier Euronantes · 10 rue Konrad-Adenauer',
-    href: 'https://www.7urbansuites.fr/',
+    name: "Mercure Nantes Centre Gare",
+    meta: "Accès direct gare TGV · 50-51 quai Malakoff",
+    href: "https://all.accor.com/hotel/3448/index.fr.shtml",
   },
   {
-    name: 'Mercure Nantes Centre Gare',
-    meta: 'Accès direct gare TGV · 50-51 quai Malakoff',
-    href: 'https://all.accor.com/hotel/3448/index.fr.shtml',
+    name: "Novotel Nantes Centre Gare",
+    meta: "3 Rue de Valmy",
+    href: "https://all.accor.com/hotel/1571/index.en.shtml",
   },
 ] as const;
 
 const siteUrl = Astro.site ?? new URL(Astro.url.origin);
-const pageUrl = new URL('/infos-pratiques', siteUrl).href;
+const pageUrl = new URL("/infos-pratiques", siteUrl).href;
 const pageTitle = `Infos pratiques · ${EVENT.name}`;
 const pageDescription = `Adresse, transports, accessibilité et hébergements pour préparer votre venue à ${EVENT.name}, le ${formatEventDateLabel()} à ${EVENT.venue.name} à ${EVENT.venue.city}.`;
 
 const structuredData = [
   {
-    '@context': 'https://schema.org',
-    '@type': 'WebPage',
+    "@context": "https://schema.org",
+    "@type": "WebPage",
     name: pageTitle,
     description: pageDescription,
     url: pageUrl,
@@ -73,21 +75,29 @@ const structuredData = [
      * (buildEventJsonLd, lib/event.ts), sous le même @id : même pattern que
      * les références organizer/superEvent réutilisées depuis les fiches
      * session, plutôt que dupliquer l'adresse ici. */
-    about: { '@id': `${siteUrl.href}#venue` },
+    about: { "@id": `${siteUrl.href}#venue` },
   },
   {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Accueil', item: siteUrl.href },
-      { '@type': 'ListItem', position: 2, name: 'Infos pratiques', item: pageUrl },
+      { "@type": "ListItem", position: 1, name: "Accueil", item: siteUrl.href },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Infos pratiques",
+        item: pageUrl,
+      },
     ],
   },
 ];
-
 ---
 
-<BaseLayout title={pageTitle} description={pageDescription} structuredData={structuredData}>
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  structuredData={structuredData}
+>
   <Header />
 
   <main class="practical-page">
@@ -118,75 +128,116 @@ const structuredData = [
         </div>
         <div>
           <dt>Adresse</dt>
-          <dd>{EVENT.venue.address}, {EVENT.venue.postalCode} {EVENT.venue.city}</dd>
+          <dd>
+            {EVENT.venue.address}, {EVENT.venue.postalCode}
+            {EVENT.venue.city}
+          </dd>
         </div>
       </dl>
     </section>
 
-    <section class="practical-guide" aria-label="Préparer le trajet et le séjour">
+    <section
+      class="practical-guide"
+      aria-label="Préparer le trajet et le séjour"
+    >
       <EditorialGrid top={false} />
       <div class="practical-guide__inner">
-        <section class="practical-section practical-section--arrival" aria-labelledby="arrival-title">
+        <section
+          class="practical-section practical-section--arrival"
+          aria-labelledby="arrival-title"
+        >
           <div class="practical-section__intro">
-            <h2 id="arrival-title" class="type-section-title">Rejoindre {EVENT.venue.name}.</h2>
+            <h2 id="arrival-title" class="type-section-title">
+              Rejoindre {EVENT.venue.name}.
+            </h2>
             <p>
-              {EVENT.venue.address}, {EVENT.venue.postalCode} {EVENT.venue.city}. L’accès <EventName /> se fait côté rue de la Loire.
+              {EVENT.venue.address}, {EVENT.venue.postalCode}
+              {EVENT.venue.city}. L’accès <EventName /> se fait côté rue de la Loire.
             </p>
-            <a class="practical-link" href={mapUrl} target="_blank" rel="noopener noreferrer">
+            <a
+              class="practical-link"
+              href={mapUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Calculer mon itinéraire <ArrowIcon direction="external" />
             </a>
           </div>
 
           <dl class="access-ledger">
-            {accessOptions.map((option) => (
-              <div>
-                <dt>{option.mode}</dt>
-                <dd>{option.details}</dd>
-              </div>
-            ))}
+            {
+              accessOptions.map((option) => (
+                <div>
+                  <dt>{option.mode}</dt>
+                  <dd>{option.details}</dd>
+                </div>
+              ))
+            }
           </dl>
         </section>
 
-        <section class="practical-section practical-section--entrance" aria-labelledby="entrance-title">
+        <section
+          class="practical-section practical-section--entrance"
+          aria-labelledby="entrance-title"
+        >
           <div class="practical-section__intro">
-            <h2 id="entrance-title" class="type-section-title">Entrée et accessibilité.</h2>
+            <h2 id="entrance-title" class="type-section-title">
+              Entrée et accessibilité.
+            </h2>
           </div>
 
           <div class="practical-section__body">
             <p>
-              Depuis la rue de la Loire, passez le portail côté œuvre de François Morellet, puis suivez le parvis
-              jusqu’à l’entrée <EventName /> indiquée sur place.
+              Depuis la rue de la Loire, passez le portail côté œuvre de
+              François Morellet, puis suivez le parvis jusqu’à l’entrée <EventName
+              /> indiquée sur place.
             </p>
             <aside class="access-note">
               <strong>Accès PMR</strong>
-              <span>Le cheminement jusqu’à l’entrée est accessible sans emprunter les marches.</span>
+              <span
+                >Le cheminement jusqu’à l’entrée est accessible sans emprunter
+                les marches.</span
+              >
             </aside>
           </div>
         </section>
 
-        <section class="practical-section practical-section--hotels" aria-labelledby="hotels-title">
+        <section
+          class="practical-section practical-section--hotels"
+          aria-labelledby="hotels-title"
+        >
           <div class="practical-section__intro">
-            <h2 id="hotels-title" class="type-section-title">Dormir à proximité.</h2>
+            <h2 id="hotels-title" class="type-section-title">
+              Dormir à proximité.
+            </h2>
             <p>
-              Trois solutions bien reliées à {EVENT.venue.name}, sur l’Île de Nantes ou à proximité immédiate de la gare.
+              Trois solutions bien reliées à {EVENT.venue.name}, sur l’Île de
+              Nantes ou à proximité immédiate de la gare.
             </p>
           </div>
 
           <div>
             <div class="hotel-ledger">
-              {partnerHotels.map((hotel) => (
-                <a href={hotel.href} target="_blank" rel="noopener noreferrer">
-                  <span>
-                    <strong>{hotel.name}</strong>
-                    <small>{hotel.meta}</small>
-                  </span>
-                  <ArrowIcon direction="external" />
-                </a>
-              ))}
+              {
+                partnerHotels.map((hotel) => (
+                  <a
+                    href={hotel.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span>
+                      <strong>{hotel.name}</strong>
+                      <small>{hotel.meta}</small>
+                    </span>
+                    <ArrowIcon direction="external" />
+                  </a>
+                ))
+              }
             </div>
             <p class="hotel-note">
-              Les tarifs et conditions restent ceux affichés par chaque établissement. Les éventuels codes
-              partenaires seront publiés ici dès leur ouverture.
+              Les tarifs et conditions restent ceux affichés par chaque
+              établissement. Les éventuels codes partenaires seront publiés ici
+              dès leur ouverture.
             </p>
           </div>
         </section>
@@ -372,7 +423,9 @@ const structuredData = [
     padding: 1.15rem 0;
     border-bottom: 1px solid rgb(57 54 54 / 18%);
     gap: 1.5rem;
-    transition: color 180ms ease, transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+    transition:
+      color 180ms ease,
+      transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .hotel-ledger a:hover,
