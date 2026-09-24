@@ -32,6 +32,11 @@ describe('press-kit.astro', () => {
     expect(html).toContain('data-copy-target="press-facts-copy"');
     expect(html).toContain('Présentation prête à publier');
     expect(html).toContain('Fiche factuelle.');
+    expect(html).toContain('Association Naomakers');
+    expect(html).toContain('avec le soutien de la Région Pays de la Loire');
+    expect(html).not.toMatch(/co-?organis/i);
+    expect(html).toContain('400 participants');
+    expect(html).toContain('keynote d’ouverture de Christelle Morançais');
     expect(html).toContain('href="/programme"');
     expect(html).not.toContain('data-copy-target="press-hashtag"');
     expect(html).not.toContain('#GenAIDaysNantes');
@@ -41,8 +46,8 @@ describe('press-kit.astro', () => {
     const container = await createAstroContainer();
     const html = await container.renderToString(PressKitPage);
 
-    expect(html).toContain('ZIP · 9 fichiers');
-    expect(html).toContain('Dossier PDF, visuel officiel, symbole vectoriel et 6 portraits');
+    expect(html).toContain('ZIP · 29 fichiers');
+    expect(html).toMatch(/19 illustrations\s+des conférences et 6 portraits/);
     expect(html).toContain('href="/press/genai-days-press-kit.zip"');
     expect(html).toContain('href="/press/genai-days-press-kit/cover_v2-optimized.webp"');
     expect(html).toContain('href="/logos/Gen AI Logo.svg"');

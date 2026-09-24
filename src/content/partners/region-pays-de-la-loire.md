@@ -10,5 +10,5 @@ monochromeLogoWidth: 314
 monochromeLogoHeight: 154
 coOrganizer: true
 order: 1
-description: "La Région Pays de la Loire co-organise GENAI DAYS 2026 à l’Hôtel de Région, à Nantes. Elle accompagne le développement d’un écosystème régional de l’intelligence artificielle, au service des entreprises, de l’innovation et de l’emploi."
+description: "La Région Pays de la Loire soutient GENAI DAYS 2026 et accueille la journée à l’Hôtel de Région, à Nantes. Elle accompagne le développement d’un écosystème régional de l’intelligence artificielle, au service des entreprises, de l’innovation et de l’emploi."
 ---
