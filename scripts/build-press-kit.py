@@ -1052,12 +1052,6 @@ def build_context(tmp: Path) -> dict:
             "name": member["name"], "role": member["role"], "topics": member["background"],
             "photo": f"/organisateurs/{member_id}-optimized.webp",
         })
-    spokespeople.append({
-        "name": "Aymeric de Maussion",
-        "role": "Directeur de l’IA · Région Pays de la Loire",
-        "topics": "Écosystème régional, adoption de l’IA et dynamiques territoriales.",
-        "photo": "/organisateurs/aymeric-de-maussion-optimized.webp",
-    })
 
     kit_contents = (
         ("README.pdf", "Ce dossier de presse"),

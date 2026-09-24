@@ -34,7 +34,7 @@ GENAI DAYS est le rendez-vous qui met dans la même salle celles et ceux qui dé
 
 - Capacité maximale confirmée : 400 places.
 - Tarif confirmé du Pass Participant : 147 € HT.
-- Le pass est non remboursable et transférable à un·e collègue jusqu’à huit jours avant l’événement.
+- Le pass est transférable à un·e collègue depuis la billetterie, jusqu’au dernier moment : c’est l’option à mettre en avant. Le remboursement reste possible sur demande.
 - La date, le lieu, les deux parcours, les intervenants annoncés, les partenaires et la publication des captations sont confirmés.
 - Les informations factuelles doivent provenir des constantes, collections de contenu et assets du dépôt. Ne pas inventer d’intervenant, de partenaire, de témoignage, de chiffre ou de disponibilité.
 
