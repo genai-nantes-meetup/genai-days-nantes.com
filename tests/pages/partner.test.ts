@@ -9,7 +9,7 @@ describe('partner directory', () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(PartnersIndexPage);
 
-    expect(confirmedPartners).toHaveLength(15);
+    expect(confirmedPartners).toHaveLength(16);
     expect(html).toContain('partner-board__group--with-coorganizer');
     expect(html).toContain('partner-tile--coorganizer');
     expect(html).toContain('La Région Pays de la Loire co-organise cette édition à l’Hôtel de Région');

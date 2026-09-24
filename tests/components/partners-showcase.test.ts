@@ -17,7 +17,7 @@ describe('PartnersShowcase.astro', () => {
     expect(html).toContain('aria-pressed="false"');
     expect(html.match(/data-marquee-copy="primary"/g)).toHaveLength(2);
     expect(html.match(/data-marquee-copy="duplicate"/g)).toHaveLength(2);
-    expect(html.match(/data-partner-logo=/g)).toHaveLength(14);
+    expect(html.match(/data-partner-logo=/g)).toHaveLength(15);
     expect(html).toContain('class="partner-showcase__coorganizer"');
     expect(html).toContain(
       'La Région Pays de la Loire co-organise cette édition et nous ouvre les portes de l’Hôtel de Région',
@@ -63,7 +63,7 @@ describe('PartnersShowcase.astro', () => {
     expect(html).toContain('aria-label="Visiter le site de Région Pays de la Loire"');
     expect(html).toContain('target="_blank"');
     expect(html).toContain('rel="noopener noreferrer"');
-    expect(html.match(/tabindex="-1"/g)).toHaveLength(14);
+    expect(html.match(/tabindex="-1"/g)).toHaveLength(15);
     expect(html).toContain('href="/partenaires"');
     expect(html).toContain('Découvrir tous les partenaires');
   });
