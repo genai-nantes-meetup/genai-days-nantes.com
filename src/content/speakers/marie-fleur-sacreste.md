@@ -1,0 +1,33 @@
+---
+name: "Marie-Fleur Sacreste"
+role: "Consultante IA"
+company: "Marie-Fleur Sacreste Consulting"
+bio: "Consultante en intelligence artificielle à Nantes, Marie-Fleur Sacreste orchestre GENAI DAYS en tant que maîtresse de cérémonie de la journée."
+profile:
+  - "Ingénieure diplômée de Centrale Lille, Marie-Fleur Sacreste construit depuis douze ans une carrière de product manager, dont neuf ans consacrés à l’intelligence artificielle : robotique autonome, vision par ordinateur et prédiction des ventes. Elle occupe notamment le poste de Head of Product IA & Data chez Preligens, spécialiste français de la détection sur imagerie satellite (racheté par Safran en 2024 et devenu Safran.AI), avant de rejoindre Veesion, dont les modèles de vision analysent les flux de vidéosurveillance en magasin."
+  - "Elle est aujourd’hui consultante indépendante et accompagne les entreprises qui veulent passer de l’expérimentation à l’usage concret de l’IA générative : détection et priorisation des cas d’usage, cadrage produit, mesure de la valeur et conduite du changement, pour des secteurs comme l’industrie, le retail ou la défense."
+  - "Basée à Nantes, elle est une figure active de l’écosystème IA local, entre La Cantine Nantes et le hackathon SHIFT Gen AI. Elle partage aussi régulièrement son expertise sous forme de contenus : pour NaonedIA, elle a notamment écrit sur le rôle du product manager IA et sur les biais cognitifs qui influencent les systèmes d’intelligence artificielle, et elle intervient dans des événements comme le West Data Festival."
+genaiLegitimacy: "Marie-Fleur Sacreste a passé neuf ans à construire et déployer des produits d’intelligence artificielle : robotique autonome, vision par ordinateur, prédiction des ventes, chez des éditeurs comme Preligens (aujourd’hui Safran.AI) et Veesion. Consultante indépendante, elle aide aujourd’hui les directions à transformer l’IA générative en usages mesurables plutôt qu’en expérimentations isolées. Sa pratique régulière de la prise de parole publique, entre contenus pour NaonedIA et interventions dans des événements tech nantais comme le West Data Festival, en fait une maîtresse de cérémonie à l’aise aussi bien avec le fond qu’avec le rythme de la scène."
+careerHighlights:
+  - period: "Aujourd’hui"
+    title: "Consultante IA indépendante"
+    description: "Accompagne les directions dans la détection et la priorisation des cas d’usage IA/data, le cadrage produit et la conduite du changement, dans des secteurs comme l’industrie, le retail et la défense."
+  - period: "Chez Preligens"
+    title: "Head of Product · IA & Data Stack"
+    description: "Pilotage des briques produit IA et data d’une entreprise spécialisée dans la détection d’objets et d’activités sur imagerie satellite, au service notamment d’acteurs de la défense (rachetée par Safran en 2024, devenue Safran.AI)."
+  - period: "Chez Veesion"
+    title: "Product management IA"
+    description: "Développement de modèles de vision par ordinateur pour l’analyse de flux de vidéosurveillance et la détection de comportements suspects en magasin."
+  - period: "Formation"
+    title: "Ingénieure, Centrale Lille"
+    description: "Diplômée de Centrale Lille, elle complète sa formation initiale par des cours de machine learning et de robotique, notamment à l’université Columbia."
+companies:
+  - name: "Veesion"
+    relationship: "Product management IA"
+    description: "Veesion développe des modèles de vision par ordinateur qui analysent les flux de vidéosurveillance en magasin pour détecter les comportements suspects et réduire la démarque inconnue."
+    website: "https://www.veesion.io/"
+    logo: "/logos/veesion-optimized.svg"
+photo: "/speakers/marie-fleur-sacreste-optimized.webp"
+linkedin: "https://www.linkedin.com/in/marie-fleur-sacreste/"
+website: "https://mariefleursacreste.medium.com/"
+---
