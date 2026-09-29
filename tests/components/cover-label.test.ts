@@ -59,8 +59,8 @@ describe('CoverLabel.astro', () => {
       },
     });
 
-    expect(html).toContain('--cover-title-size: clamp(1.05rem, 1.45vw, 1.35rem)');
-    expect(html).toContain('--cover-title-mobile-size: clamp(1.15rem, 4.8vw, 1.35rem)');
+    expect(html).toContain('--cover-title-size: clamp(1.35rem, 1.9vw, 1.75rem)');
+    expect(html).toContain('--cover-title-mobile-size: clamp(1.3rem, 5.4vw, 1.6rem)');
     expect(html).toContain('--label-mark-size: clamp(2rem, 1.4vw, 1.1rem)');
     expect(html).toContain('--label-padding-x: clamp(0.65rem, 1.1vw, 0.78rem)');
   });

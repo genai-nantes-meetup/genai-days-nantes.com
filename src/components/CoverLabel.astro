@@ -32,7 +32,7 @@ const companyLogos = speakers.reduce<{ src: string; alt: string }[]>((logos, spe
 }, []);
 const titleStyle =
   title.length > 60
-    ? '--cover-title-size: clamp(1.05rem, 1.45vw, 1.35rem); --cover-title-mobile-size: clamp(1.15rem, 4.8vw, 1.35rem); --cover-title-line-height: 0.98;'
+    ? '--cover-title-size: clamp(1.35rem, 1.9vw, 1.75rem); --cover-title-mobile-size: clamp(1.3rem, 5.4vw, 1.6rem); --cover-title-line-height: 0.98;'
     : undefined;
 const surfaceStyle =
   '--label-padding-x: clamp(0.65rem, 1.1vw, 0.78rem); --label-padding-y: clamp(0.42rem, 0.75vw, 0.52rem); --label-mark-size: clamp(2rem, 1.4vw, 1.1rem); height: auto;';
@@ -76,9 +76,9 @@ const surfaceStyle =
 
 <style>
   :global(.site-label-shell.site-label-shell--cover.session-cover-label) {
-    width: 44%;
-    max-width: 30rem;
-    min-height: 4.75rem;
+    width: 58%;
+    max-width: 40rem;
+    min-height: 6rem;
     aspect-ratio: auto;
   }
 
@@ -91,12 +91,12 @@ const surfaceStyle =
   }
 
   :global(.site-label-shell.session-cover-label .site-label__overline) {
-    font-size: clamp(0.55rem, 0.9vw, 0.68rem);
+    font-size: clamp(0.68rem, 1.1vw, 0.85rem);
     line-height: 0.8;
   }
 
   :global(.site-label-shell.session-cover-label .site-label__secondary) {
-    font-size: clamp(0.5rem, 0.8vw, 0.62rem);
+    font-size: clamp(0.62rem, 1vw, 0.78rem);
   }
 
   .cover-label__logos {
@@ -141,7 +141,7 @@ const surfaceStyle =
     display: block;
     max-width: 38rem;
     text-wrap: balance;
-    font-size: var(--cover-title-size, clamp(1.55rem, 2.1vw, 2rem));
+    font-size: var(--cover-title-size, clamp(2rem, 2.8vw, 2.6rem));
     font-weight: 800;
     letter-spacing: var(--tracking-display);
     line-height: var(--cover-title-line-height, 0.95);
@@ -157,8 +157,8 @@ const surfaceStyle =
 
   @media (max-width: 39.999rem) {
     :global(.site-label-shell.site-label-shell--cover.session-cover-label) {
-      width: min(21rem, calc(100% - 3rem));
-      min-height: 7.5rem;
+      width: min(26rem, calc(100% - 2rem));
+      min-height: 9rem;
       aspect-ratio: auto;
     }
 
