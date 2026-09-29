@@ -20,6 +20,7 @@ companies:
     relationship: "Expert robotique Next Gen et IA physique"
     description: "Renault Group est un constructeur automobile français qui expérimente la robotique humanoïde sur ses lignes de production, en partenariat avec Wandercraft."
     website: "https://www.renaultgroup.com/"
+    logo: "/logos/renault-square-optimized.svg"
 photo: "/speakers/laurent-duthoit-optimized.webp"
 companyLogo: "/logos/renault-square-optimized.svg"
 companyLogoAlt: "Logo Renault Group"

@@ -30,6 +30,7 @@ companies:
     relationship: "Cofondateur, Président et CTO depuis 2023"
     description: "AlphaEdge développe des systèmes d’IA experts et efficients pour des usages professionnels. Son approche associe modèles spécialisés, faible latence, sobriété de l’infrastructure et maîtrise des données."
     website: "https://alphaedge-ai.com/"
+    logo: "/logos/alphaedge-square-optimized.svg"
 photo: "/speakers/theo-hubert-optimized.webp"
 companyLogo: "/logos/alphaedge-square-optimized.svg"
 companyLogoOnDark: "/logos/alphaedge-square-white.svg"
