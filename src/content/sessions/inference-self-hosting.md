@@ -1,7 +1,7 @@
 ---
 title: "Je veux internaliser mes GPUs mais c'est cher et lent"
 subtitle: "Self-hosting, inference & infrastructure"
-seoTitle: "Je veux internaliser mes GPUs mais c'est cher et lent"
+seoTitle: "Je veux internaliser mon inférence, mais c'est cher et lent"
 track: "tech"
 startTime: "09:40"
 durationMinutes: 80
