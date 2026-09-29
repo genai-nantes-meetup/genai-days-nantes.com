@@ -22,6 +22,13 @@ export const SPEAKER_PROMINENCE_ORDER = [
   'gael-brisson',
 ] as const;
 
+/* MC de la journée : toujours en fin de liste, après tous les autres speakers. */
+export const SPEAKER_LAST_ORDER = [
+  'annabelle-koster',
+  'marie-fleur-sacreste',
+  'florian-herveou',
+] as const;
+
 /* Dimensions réelles des fichiers portrait, non dérivables du schéma de la
  * collection speakers (pas de champ photoWidth/photoHeight en frontmatter).
  * Partagées entre toutes les vues qui affichent un portrait, pour réserver
@@ -72,6 +79,16 @@ export function sortSpeakersByProminence<T extends { id: string; data: { name: s
   return [...speakers].sort((left, right) => {
     const leftIndex = SPEAKER_PROMINENCE_ORDER.indexOf(left.id as (typeof SPEAKER_PROMINENCE_ORDER)[number]);
     const rightIndex = SPEAKER_PROMINENCE_ORDER.indexOf(right.id as (typeof SPEAKER_PROMINENCE_ORDER)[number]);
+    const leftLastIndex = SPEAKER_LAST_ORDER.indexOf(left.id as (typeof SPEAKER_LAST_ORDER)[number]);
+    const rightLastIndex = SPEAKER_LAST_ORDER.indexOf(right.id as (typeof SPEAKER_LAST_ORDER)[number]);
+
+    // Les MC passent après tout le monde, dans l'ordre de SPEAKER_LAST_ORDER.
+    if (leftLastIndex !== -1 || rightLastIndex !== -1) {
+      if (leftLastIndex === -1) return -1;
+      if (rightLastIndex === -1) return 1;
+      return leftLastIndex - rightLastIndex;
+    }
+
     const leftRank = leftIndex === -1 ? Number.MAX_SAFE_INTEGER : leftIndex;
     const rightRank = rightIndex === -1 ? Number.MAX_SAFE_INTEGER : rightIndex;
 
