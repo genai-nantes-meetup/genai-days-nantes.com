@@ -48,9 +48,8 @@ describe('content collections', () => {
       expect(speaker.data.profile.length).toBeGreaterThanOrEqual(2);
       expect(speaker.data.genaiLegitimacy.length).toBeGreaterThan(180);
       expect(speaker.data.careerHighlights.length).toBeGreaterThanOrEqual(2);
-      expect(speaker.data.companies.length).toBeGreaterThanOrEqual(1);
 
-      for (const company of speaker.data.companies) {
+      for (const company of speaker.data.companies ?? []) {
         expect(company.relationship.length).toBeGreaterThan(4);
         expect(company.description.length).toBeGreaterThan(80);
         expect(company.website).toMatch(/^https:\/\//);
@@ -58,7 +57,7 @@ describe('content collections', () => {
     }
 
     const jeanBaptiste = speakers.find((speaker) => speaker.id === 'jean-baptiste-kempf');
-    expect(jeanBaptiste?.data.companies.map((company) => company.name)).toEqual([
+    expect(jeanBaptiste?.data.companies?.map((company) => company.name)).toEqual([
       'VideoLAN et VLC',
       'Scaleway',
       'Kyber',

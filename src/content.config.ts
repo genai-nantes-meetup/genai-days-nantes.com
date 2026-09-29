@@ -42,7 +42,8 @@ const speakers = defineCollection({
           logo: z.string().optional(),
         }),
       )
-      .min(1),
+      .min(1)
+      .optional(),
     photo: z.string().optional(),
     companyLogo: z.string().optional(),
     companyLogoAlt: z.string().optional(),

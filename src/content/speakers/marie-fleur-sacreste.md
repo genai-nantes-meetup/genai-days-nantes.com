@@ -21,12 +21,6 @@ careerHighlights:
   - period: "Formation"
     title: "Ingénieure, Centrale Lille"
     description: "Diplômée de Centrale Lille, elle complète sa formation initiale par des cours de machine learning et de robotique, notamment à l’université Columbia."
-companies:
-  - name: "Veesion"
-    relationship: "Product management IA"
-    description: "Veesion développe des modèles de vision par ordinateur qui analysent les flux de vidéosurveillance en magasin pour détecter les comportements suspects et réduire la démarque inconnue."
-    website: "https://www.veesion.io/"
-    logo: "/logos/veesion-optimized.svg"
 photo: "/speakers/marie-fleur-sacreste-optimized.webp"
 linkedin: "https://www.linkedin.com/in/marie-fleur-sacreste/"
 website: "https://mariefleursacreste.medium.com/"
