@@ -311,6 +311,31 @@ const pressKitJsonLd = {
           </article>
 
           <article class="press-resource">
+            <div class="press-resource__visual">
+              <img
+                src="/images/cover-poster-optimized.webp"
+                alt={`Affiche officielle ${EVENT.year} avec titre, date et lieu`}
+                width="1920"
+                height="1080"
+                loading="lazy"
+              />
+            </div>
+            <div class="press-resource__body">
+              <div class="press-resource__details">
+                <h3>Affiche officielle {EVENT.year}</h3>
+                <p class="press-resource__summary">PNG · 1920 × 1080 px · Titre, date et lieu inclus · Crédit&nbsp;: <EventName /></p>
+              </div>
+              <a
+                href="/images/cover-poster.png"
+                download={`genai-days-${EVENT.year}-affiche-officielle.png`}
+                aria-label={`Télécharger l’affiche officielle ${EVENT.year}`}
+              >
+                Télécharger <DownloadIcon />
+              </a>
+            </div>
+          </article>
+
+          <article class="press-resource">
             <div class="press-resource__visual press-resource__visual--logo">
               <img
                 src="/logos/Gen AI Logo.svg"
