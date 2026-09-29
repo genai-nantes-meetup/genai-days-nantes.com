@@ -9,7 +9,7 @@ describe('AdmissionTicketSection.astro', () => {
 
     expect(html).toContain('id="pass-participant"');
     expect(html).toContain('Un pass pour toute la journée.');
-    expect(html).toContain('147 € HT');
+    expect(html).toContain('147 € TTC');
     expect(html).toContain('Réserver ma place');
     expect(html).toContain('href="https://www.billetweb.fr/genai-days-nantes-2026"');
     expect(html).toContain('target="_blank"');

@@ -7,7 +7,7 @@ describe('Header.astro', () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(Header);
     expect(html.match(/Réserver ma place/g)).toHaveLength(2);
-    expect(html).not.toContain('147 € HT');
+    expect(html).not.toContain('147 € TTC');
     expect(html.match(/bg-\[var\(--color-action-ticket\)\]/g)).toHaveLength(2);
     expect(html).not.toContain('Devenir partenaire');
     expect(html).not.toContain('data-contact-topic="partner"');

@@ -92,6 +92,12 @@ export async function buildEventJsonLd(siteUrl: string, ticketUrl: string) {
             url: ticketUrl,
             price: PRICING.amount,
             priceCurrency: 'EUR',
+            priceSpecification: {
+              '@type': 'PriceSpecification',
+              price: PRICING.amount,
+              priceCurrency: 'EUR',
+              valueAddedTaxIncluded: true,
+            },
             availability: 'https://schema.org/InStock',
           },
         }

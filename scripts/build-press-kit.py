@@ -1034,7 +1034,7 @@ def build_context(tmp: Path) -> dict:
         ("Organisation", f"Association {event['organizer']['name']}"),
         ("Soutien", supporter["name"]),
         ("Jauge", f"{pricing['capacity']} participants"),
-        ("Billet", f"{pricing['name']} · {pricing['amount']}{NBSP}€{NBSP}HT"),
+        ("Billet", f"{pricing['name']} · {pricing['amount']}{NBSP}€{NBSP}TTC"),
         ("Langue", "Français"),
     )
 
