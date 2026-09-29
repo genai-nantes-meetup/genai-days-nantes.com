@@ -23,5 +23,6 @@ companies:
     relationship: "Business Development Manager, robots humanoïdes"
     description: "Wandercraft est une société française de robotique, pionnière de l’exosquelette auto-équilibré, qui développe aussi le robot humanoïde Calvin pour l’industrie, en partenariat avec Renault."
     website: "https://www.wandercraft.eu/"
+photo: "/speakers/camille-croze-optimized.webp"
 linkedin: "https://www.linkedin.com/in/camille-croze-294015141/"
 ---
