@@ -294,6 +294,25 @@ const initialVisibleSlides = Math.min(3, speakerSlides.length);
                       {slide.speaker.data.name.slice(0, 1)}
                     </span>
                   )}
+                  {slide.speaker.data.companyLogo && (
+                    <span class="speaker-card__company-logo">
+                      <img
+                        src={
+                          slide.speaker.data.companyLogoOnDark ??
+                          slide.speaker.data.companyLogo
+                        }
+                        alt={
+                          slide.speaker.data.companyLogoAlt ??
+                          `Logo ${slide.speaker.data.company}`
+                        }
+                        width="56"
+                        height="56"
+                        loading="lazy"
+                        decoding="async"
+                        draggable="false"
+                      />
+                    </span>
+                  )}
                   <span class="speaker-card__identity">
                     {slide.speaker.data.eventRole && (
                       <small class="speaker-card__status">
@@ -753,6 +772,28 @@ const initialVisibleSlides = Math.min(3, speakerSlides.length);
   .speaker-card > a:focus-visible img {
     filter: grayscale(0.12) sepia(0.04) saturate(0.94) contrast(1.04);
     transform: scale(1.018);
+  }
+
+  /* 7.5rem is the identity strip height: the logo sits on the photo row, above it. */
+  .speaker-card__company-logo {
+    position: absolute;
+    z-index: 3;
+    right: 0.85rem;
+    bottom: calc(7.5rem + 0.85rem);
+    display: grid;
+    overflow: hidden;
+    width: 3.25rem;
+    height: 3.25rem;
+    place-items: center;
+    border-radius: 0.3rem;
+  }
+
+  .speaker-card > a .speaker-card__company-logo img {
+    width: 100%;
+    height: 100%;
+    filter: none;
+    object-fit: contain;
+    transform: none;
   }
 
   .speaker-card__fallback {
