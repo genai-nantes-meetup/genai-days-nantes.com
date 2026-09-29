@@ -1,5 +1,5 @@
 ---
-title: "Je veux internaliser mes GPUs mais c'est cher et lent"
+title: "Je veux internaliser mon inference mais c'est cher et lent"
 subtitle: "Self-hosting, inference & infrastructure"
 seoTitle: "Je veux internaliser mon inférence, mais c'est cher et lent"
 track: "tech"
