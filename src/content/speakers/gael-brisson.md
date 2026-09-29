@@ -26,9 +26,9 @@ companies:
     relationship: "Cofondateur depuis 2024"
     description: "Swiftask est une plateforme nantaise d’IA d’entreprise sans code qui permet de créer, orchestrer et gouverner une flotte d’agents IA autonomes connectés aux outils métier, avec sécurité et conformité RGPD."
     website: "https://swiftask.ai/"
-    logo: "/logos/swiftask-optimized.svg"
+    logo: "/logos/swiftask-square-optimized.svg"
 photo: "/speakers/gael-brisson-optimized.webp"
-companyLogo: "/logos/swiftask-optimized.svg"
+companyLogo: "/logos/swiftask-square-optimized.svg"
 linkedin: "https://www.linkedin.com/in/gaelbrisson/"
 website: "https://swiftask.ai/"
 ---

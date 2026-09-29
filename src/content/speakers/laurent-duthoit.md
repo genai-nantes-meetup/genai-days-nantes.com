@@ -21,6 +21,9 @@ companies:
     description: "Renault Group est un constructeur automobile français qui expérimente la robotique humanoïde sur ses lignes de production, en partenariat avec Wandercraft."
     website: "https://www.renaultgroup.com/"
 photo: "/speakers/laurent-duthoit-optimized.webp"
+companyLogo: "/logos/renault-square-optimized.svg"
+companyLogoAlt: "Logo Renault Group"
+companyLogoOnDark: "/logos/renault-square-white.svg"
 linkedin: "https://www.linkedin.com/in/laurent-duthoit-137414166/"
 x: "https://x.com/duthoit92"
 ---

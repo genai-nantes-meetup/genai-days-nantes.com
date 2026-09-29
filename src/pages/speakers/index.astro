@@ -123,6 +123,19 @@ const breadcrumbJsonLd = {
                   ) : (
                     <span class="speaker-tile__fallback" aria-hidden="true">{speaker.data.name.slice(0, 1)}</span>
                   )}
+                  {speaker.data.companyLogo && (
+                    <span class="speaker-tile__company-logo">
+                      <img
+                        src={speaker.data.companyLogoOnDark ?? speaker.data.companyLogo}
+                        alt={speaker.data.companyLogoAlt ?? `Logo ${speaker.data.company}`}
+                        width="56"
+                        height="56"
+                        loading="lazy"
+                        decoding="async"
+                        draggable="false"
+                      />
+                    </span>
+                  )}
                   <figcaption class="speaker-tile__identity">
                     {speaker.data.eventRole && (
                       <small class="speaker-tile__status">
@@ -270,6 +283,28 @@ const breadcrumbJsonLd = {
   .speaker-tile a:focus-visible .speaker-tile__portrait img {
     filter: grayscale(18%) contrast(1.02);
     transform: scale(1.025);
+  }
+
+  /* 7.5rem is the identity strip height: the logo sits on the photo row, above it. */
+  .speaker-tile__company-logo {
+    position: absolute;
+    z-index: 3;
+    right: 0.85rem;
+    bottom: calc(7.5rem + 0.85rem);
+    display: grid;
+    overflow: hidden;
+    width: 3.25rem;
+    height: 3.25rem;
+    place-items: center;
+    border-radius: 0.3rem;
+  }
+
+  .speaker-tile__portrait .speaker-tile__company-logo img {
+    width: 100%;
+    height: 100%;
+    filter: none;
+    object-fit: contain;
+    transform: none;
   }
 
   .speaker-tile__fallback {

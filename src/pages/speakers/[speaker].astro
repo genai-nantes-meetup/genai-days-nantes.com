@@ -122,7 +122,7 @@ const socialLinks = [
             {speaker.data.companyLogo && (
               <span class="speaker-page-company-logo">
                 <img
-                  src={speaker.data.companyLogo}
+                  src={speaker.data.companyLogoOnDark ?? speaker.data.companyLogo}
                   alt={speaker.data.companyLogoAlt ?? `Logo ${speaker.data.company}`}
                   width="56"
                   height="56"
@@ -330,10 +330,7 @@ const socialLinks = [
     width: 3.5rem;
     height: 3.5rem;
     place-items: center;
-    border: 3px solid var(--color-brand-white);
     border-radius: 0.4rem;
-    background: var(--color-brand-white);
-    box-shadow: 0 0.3rem 0.8rem rgb(13 13 18 / 20%);
   }
 
   .speaker-page-company-logo img {

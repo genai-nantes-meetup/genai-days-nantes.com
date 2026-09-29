@@ -42,6 +42,19 @@ describe('speakers index page', () => {
     expect(quentinIndex).toBeLessThan(theoIndex);
   });
 
+  it('shows the company logo on the tile of speakers who have one', async () => {
+    const speakers = await getCollection('speakers');
+    const withLogo = speakers.filter((speaker) => speaker.data.companyLogo);
+    const container = await createAstroContainer();
+    const html = await container.renderToString(SpeakersIndexPage);
+
+    expect(withLogo.length).toBeGreaterThan(0);
+    expect(html.match(/<span class="speaker-tile__company-logo/g)).toHaveLength(withLogo.length);
+    withLogo.forEach((speaker) => {
+      expect(html).toContain(`src="${speaker.data.companyLogoOnDark ?? speaker.data.companyLogo}"`);
+    });
+  });
+
   it('shows the next announcement placeholder and closes with the shared ticket', async () => {
     const speakers = await getCollection('speakers');
     const container = await createAstroContainer();

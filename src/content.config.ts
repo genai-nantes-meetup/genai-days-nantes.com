@@ -46,6 +46,7 @@ const speakers = defineCollection({
     photo: z.string().optional(),
     companyLogo: z.string().optional(),
     companyLogoAlt: z.string().optional(),
+    companyLogoOnDark: z.string().optional(),
     linkedin: z.string().url().optional(),
     website: z.string().url().optional(),
     x: z.string().url().optional(),

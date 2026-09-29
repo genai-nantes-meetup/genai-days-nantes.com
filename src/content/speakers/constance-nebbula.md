@@ -24,8 +24,10 @@ companies:
     relationship: "13e vice-présidente du Conseil régional"
     description: "La Région Pays de la Loire accueille GENAI DAYS à Nantes. Constance Nebbula y porte les politiques consacrées au numérique, à l’intelligence artificielle, à la donnée et à la cybersécurité."
     website: "https://www.paysdelaloire.fr/"
-    logo: "/logos/logo-pays_de_la_loire.svg"
+    logo: "/logos/logo-pays_de_la_loire-square.svg"
 photo: "/speakers/constance-nebbula-optimized.webp"
+companyLogo: "/logos/logo-pays_de_la_loire-square.svg"
+companyLogoAlt: "Logo Région Pays de la Loire"
 linkedin: "https://fr.linkedin.com/in/constance-nebbula"
 website: "https://www.paysdelaloire.fr/mon-conseil-regional/linstitution/les-elus/constance-nebbula"
 ---

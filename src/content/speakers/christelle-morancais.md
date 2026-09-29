@@ -24,6 +24,8 @@ companies:
     description: "La Région Pays de la Loire accueille GENAI DAYS 2026 à l’Hôtel de Région, à Nantes. Elle soutient l’événement et le développement d’un écosystème régional de l’intelligence artificielle, au service des entreprises, de l’innovation et de l’emploi."
     website: "https://www.paysdelaloire.fr/"
 photo: "/speakers/christelle-morancais-optimized.webp"
+companyLogo: "/logos/logo-pays_de_la_loire-square.svg"
+companyLogoAlt: "Logo Région Pays de la Loire"
 linkedin: "https://www.linkedin.com/in/christellemorancais/"
 website: "https://www.paysdelaloire.fr/mon-conseil-regional/linstitution/les-elus/christelle-morancais-0"
 ---

@@ -30,6 +30,7 @@ companies:
     description: "Le Groupe Réalités est un développeur territorial nantais qui conçoit et pilote des projets immobiliers et urbains en partenariat avec les acteurs publics et privés."
     website: "https://www.realites.com"
 companyLogo: "/logos/adn-ouest-optimized.svg"
+companyLogoOnDark: "/logos/adn-ouest-white.svg"
 photo: "/speakers/david-leaurant-optimized.webp"
 linkedin: "https://www.linkedin.com/in/leaurantdavid/"
 website: "https://www.adnouest.org"

@@ -31,6 +31,9 @@ companies:
     description: "AlphaEdge développe des systèmes d’IA experts et efficients pour des usages professionnels. Son approche associe modèles spécialisés, faible latence, sobriété de l’infrastructure et maîtrise des données."
     website: "https://alphaedge-ai.com/"
 photo: "/speakers/theo-hubert-optimized.webp"
+companyLogo: "/logos/alphaedge-square-optimized.svg"
+companyLogoOnDark: "/logos/alphaedge-square-white.svg"
+companyLogoAlt: "Logo AlphaEdge"
 linkedin: "https://www.linkedin.com/in/theohubertlozere/"
 website: "https://alphaedge-ai.com/"
 ---
