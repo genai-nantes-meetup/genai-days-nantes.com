@@ -10,10 +10,9 @@ interface Props {
    * propre (état immergé rendu côté serveur : aucun flash de barre blanche
    * au chargement). header-scroll.ts pilote ensuite les états au scroll. */
   immersive?: boolean;
-  showTicketCta?: boolean;
 }
 
-const { immersive = false, showTicketCta = true } = Astro.props;
+const { immersive = false } = Astro.props;
 
 interface NavLink {
   label: string;
@@ -91,11 +90,9 @@ const isCurrentPage = (href: string) =>
     </button>
   </div>
 
-  {showTicketCta && (
-    <div class="site-header__actions col-start-3 items-center justify-self-end">
-      <Button class:list={['header-cta header-cta--tickets', { 'header-cta--poster': immersive }]} variant="accent" href={CTA_LINKS.tickets}>Réserver ma place</Button>
-    </div>
-  )}
+  <div class="site-header__actions col-start-3 items-center justify-self-end">
+    <Button class:list={['header-cta header-cta--tickets', { 'header-cta--poster': immersive }]} variant="accent" href={CTA_LINKS.tickets}>Réserver ma place</Button>
+  </div>
 
   <div
     class="site-menu absolute inset-x-0 top-full border-b border-black/10 shadow-lg"
@@ -166,11 +163,9 @@ const isCurrentPage = (href: string) =>
 
 {/* Le CTA est fixe, donc hors du flux : sans ce conteneur il vivrait en
     enfant direct de <body>, en dehors de tout point de repère. */}
-{showTicketCta && (
-  <aside class="mobile-ticket-bar" aria-label="Billetterie">
-    <Button class:list={['mobile-ticket-cta', { 'mobile-ticket-cta--poster': immersive }]} variant="accent" href={CTA_LINKS.tickets}>Réserver ma place</Button>
-  </aside>
-)}
+<aside class="mobile-ticket-bar" aria-label="Billetterie">
+  <Button class:list={['mobile-ticket-cta', { 'mobile-ticket-cta--poster': immersive }]} variant="accent" href={CTA_LINKS.tickets}>Réserver ma place</Button>
+</aside>
 
 <script>
   import { initHeaderMenu } from '../scripts/header-menu';

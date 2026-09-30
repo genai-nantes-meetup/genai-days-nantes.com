@@ -67,14 +67,4 @@ describe('Header.astro', () => {
     expect(html.match(/header-cta--poster/g)).toHaveLength(1);
     expect(html.match(/mobile-ticket-cta--poster/g)).toHaveLength(1);
   });
-
-  it('can remove ticketing from task-focused pages', async () => {
-    const container = await AstroContainer.create();
-    const html = await container.renderToString(Header, { props: { showTicketCta: false } });
-
-    expect(html).not.toContain('Réserver ma place');
-    expect(html).not.toContain('header-cta--tickets');
-    expect(html).not.toContain('mobile-ticket-bar');
-    expect(html).toContain('href="/press-kit"');
-  });
 });
