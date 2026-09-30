@@ -27,6 +27,7 @@ export const SPEAKER_LAST_ORDER = [
   'annabelle-koster',
   'marie-fleur-sacreste',
   'florian-herveou',
+  'jaafar-steiblen-raji',
 ] as const;
 
 /* Dimensions réelles des fichiers portrait, non dérivables du schéma de la
@@ -40,6 +41,7 @@ export const SPEAKER_PORTRAIT_DIMENSIONS: Record<string, { width: number; height
   'david-leaurant': { width: 800, height: 800 },
   'florian-herveou': { width: 600, height: 600 },
   'gael-brisson': { width: 1024, height: 1024 },
+  'jaafar-steiblen-raji': { width: 800, height: 920 },
   'julien-lesaicherre': { width: 800, height: 800 },
   'laurent-duthoit': { width: 238, height: 336 },
   'nicolas-martignole': { width: 1448, height: 1086 },
@@ -61,6 +63,7 @@ export const SPEAKER_PORTRAIT_SMALL: Partial<Record<string, string>> = {
   'constance-nebbula': '/speakers/constance-nebbula-480-optimized.webp',
   'david-leaurant': '/speakers/david-leaurant-480-optimized.webp',
   'gael-brisson': '/speakers/gael-brisson-480-optimized.webp',
+  'jaafar-steiblen-raji': '/speakers/jaafar-steiblen-raji-480-optimized.webp',
   'julien-lesaicherre': '/speakers/julien-lesaicherre-480-optimized.webp',
   'nicolas-martignole': '/speakers/nicolas-martignole-wide-480-optimized.webp',
   'theo-hubert': '/speakers/theo-hubert-480-optimized.webp',
