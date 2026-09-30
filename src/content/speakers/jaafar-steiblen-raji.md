@@ -2,12 +2,12 @@
 name: "Jaafar Steiblen-Raji"
 role: "Consultant Senior"
 company: "Explore The Vault"
-bio: "Maître de cérémonie de GENAI DAYS, Jaafar Steiblen-Raji a fondé Les Grandes Épopées et rejoint Explore The Vault pour aider les experts à démultiplier leur savoir-faire grâce à l’IA."
+bio: "Maître de cérémonie de GenAI Days, Jaafar Steiblen-Raji a fondé Les Grandes Épopées et rejoint Explore The Vault pour aider les experts à démultiplier leur savoir-faire grâce à l’IA."
 profile:
   - "Jaafar Steiblen-Raji passe sept ans chez Theodo, cabinet de conseil et de réalisation tech. VP Project & Sales chez Theodo France, puis à la tête de Theodo Nantes dont il mène le lancement, il accompagne des dizaines d’entreprises dans le développement d’applications métiers exigeantes, dont des projets complexes intégrant de l’IA."
   - "En 2023, il cofonde Shift, le hackathon GenAI porté par l’association Naomakers, et rejoint le bureau de l’association. Une manière d’explorer l’IA générative avec l’écosystème nantais, bien avant que le sujet ne s’impose autant dans les entreprises."
   - "Fin 2024, il lance Les Grandes Épopées, un podcast où des dirigeants ayant tourné une page majeure de leur carrière racontent leurs choix, leurs doutes et leurs enseignements. Il rejoint aujourd’hui Explore The Vault pour aider les profils les plus expérimentés à démultiplier leur expertise grâce à l’IA. Un même fil relie les deux : faire circuler l’expérience de ceux qui savent."
-genaiLegitimacy: "Depuis Les Grandes Épopées, Jaafar Steiblen-Raji mène des entretiens longs avec des dirigeants : écouter, relancer et faire émerger ce qui compte. Maître de cérémonie de GENAI DAYS, il met cette pratique au service de la journée pour tisser un fil entre les prises de parole. Son regard sur l’IA part de la même conviction : l’enjeu n’est pas uniquement l’outil, mais le maintien des compétences et des connaissances dans les organisations. Le récit transmet le savoir tacite, l’IA et l’acculturation démultiplient le savoir-faire des experts."
+genaiLegitimacy: "Depuis Les Grandes Épopées, Jaafar Steiblen-Raji mène des entretiens longs avec des dirigeants : écouter, relancer et faire émerger ce qui compte. Maître de cérémonie de GenAI Days, il met cette pratique au service de la journée pour tisser un fil entre les prises de parole. Son regard sur l’IA part de la même conviction : l’enjeu n’est pas uniquement l’outil, mais le maintien des compétences et des connaissances dans les organisations. Le récit transmet le savoir tacite, l’IA et l’acculturation démultiplient le savoir-faire des experts."
 careerHighlights:
   - period: "Aujourd’hui"
     title: "Explore The Vault"
@@ -17,7 +17,7 @@ careerHighlights:
     description: "Crée un podcast où des dirigeants reviennent sans filtre sur leur carrière, pour transmettre leur expérience."
   - period: "Depuis 2023"
     title: "Cofondateur de Shift"
-    description: "Lance avec Naomakers un hackathon consacré à l’IA générative et rejoint le bureau de l’association, qui porte aujourd’hui GENAI DAYS."
+    description: "Lance avec Naomakers un hackathon consacré à l’IA générative et rejoint le bureau de l’association, qui porte aujourd’hui GenAI Days."
   - period: "Chez Theodo"
     title: "VP Project & Sales à Theodo France, puis Head of Theodo Nantes"
     description: "Pilote la vente et la réalisation d’applications métiers exigeantes, dont des projets complexes intégrant de l’IA. Mène ensuite le lancement du bureau nantais : premiers clients, premiers recrutements, structuration de l’équipe."
