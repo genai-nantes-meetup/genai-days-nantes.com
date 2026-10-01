@@ -78,6 +78,17 @@ const breadcrumbJsonLd = {
   ],
 };
 
+// Le portrait remplace la cover de la journée dans les aperçus de partage ;
+// sans photo, BaseLayout retombe sur la cover.
+const socialImage = speaker.data.photo
+  ? {
+      src: speaker.data.photo,
+      alt: `Portrait de ${speaker.data.name}`,
+      width: portrait?.width,
+      height: portrait?.height,
+    }
+  : undefined;
+
 const socialLinks = [
   speaker.data.linkedin && { label: 'LinkedIn', href: speaker.data.linkedin },
   speaker.data.website && { label: 'Site web', href: speaker.data.website },
@@ -88,6 +99,7 @@ const socialLinks = [
 <BaseLayout
   title={`${speaker.data.name} · ${eventRoleLabel ?? 'Intervenant'} GENAI DAYS ${EVENT.year}`}
   description={pageDescription}
+  socialImage={socialImage}
   structuredData={[speakerJsonLd, breadcrumbJsonLd]}
 >
   <Header />
