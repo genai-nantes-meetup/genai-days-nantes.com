@@ -1,0 +1,14 @@
+{
+  "regionSpokesperson": {
+    "name": "Aymeric de Maussion",
+    "role": "Directeur de l’IA · Région Pays de la Loire",
+    "topics": "Écosystème régional, adoption de l’IA et dynamiques territoriales.",
+    "photo": "/organisateurs/aymeric-de-maussion-optimized.webp",
+    "photoWidth": 800,
+    "photoHeight": 800,
+    "en": {
+      "role": "Director of AI · Région Pays de la Loire",
+      "topics": "Regional ecosystem, AI adoption and local momentum."
+    }
+  }
+}

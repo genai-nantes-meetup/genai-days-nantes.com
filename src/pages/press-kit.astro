@@ -17,6 +17,7 @@ import { getLocaleFromPath, localizePath } from "../lib/i18n";
 import { getLocalizedCollection } from "../lib/localized-content";
 import EVENT from "../content/event.json";
 import PRICING from "../content/pricing.json";
+import PRESS from "../content/press.json";
 
 const locale = getLocaleFromPath(Astro.url.pathname);
 
@@ -45,6 +46,8 @@ const teamMember = (id: string) => {
 };
 const maxime = teamMember("maxime-pitussi");
 const samuel = teamMember("samuel-berthe");
+const regionSpokesperson = PRESS.regionSpokesperson;
+const regionSpokespersonCopy = locale === "en" ? regionSpokesperson.en : regionSpokesperson;
 
 const pressTeamCount = pressTeam.length;
 // README.pdf, visuel officiel, wordmark et symbole, plus les dossiers
@@ -127,8 +130,6 @@ const copy = {
     symbolFileName: "genai-days-symbole.svg",
     symbolDownloadLabel: "Télécharger le symbole vectoriel",
     interviewsTitle: "Pour une interview.",
-    regionSpokespersonRole: "Directeur de l’IA · Région Pays de la Loire",
-    regionSpokespersonTopics: "Écosystème régional, adoption de l’IA et dynamiques territoriales.",
     interviewsLede:
       "Trois porte-paroles pour apporter un éclairage technique, communautaire ou territorial.",
     portraitAlt: (name: string) => `Portrait de ${name}`,
@@ -210,8 +211,6 @@ const copy = {
     symbolFileName: "genai-days-symbol.svg",
     symbolDownloadLabel: "Download the vector symbol",
     interviewsTitle: "For interviews.",
-    regionSpokespersonRole: "Director of AI · Région Pays de la Loire",
-    regionSpokespersonTopics: "Regional ecosystem, AI adoption and local momentum.",
     interviewsLede:
       "Three spokespeople for a technical, community or regional perspective.",
     portraitAlt: (name: string) => `Portrait of ${name}`,
@@ -243,12 +242,12 @@ const spokespeople = [
     photoHeight: 600,
   },
   {
-    name: "Aymeric de Maussion",
-    role: copy.regionSpokespersonRole,
-    topics: copy.regionSpokespersonTopics,
-    photo: "/organisateurs/aymeric-de-maussion-optimized.webp",
-    photoWidth: 800,
-    photoHeight: 800,
+    name: regionSpokesperson.name,
+    role: regionSpokespersonCopy.role,
+    topics: regionSpokespersonCopy.topics,
+    photo: regionSpokesperson.photo,
+    photoWidth: regionSpokesperson.photoWidth,
+    photoHeight: regionSpokesperson.photoHeight,
   },
 ];
 

@@ -11,6 +11,7 @@ only need a rebuild when the site content changes.
 from __future__ import annotations
 
 import json
+import hashlib
 import re
 import shutil
 import tempfile
@@ -50,7 +51,7 @@ PAGE_W, PAGE_H = A4
 RAIL = 40
 CONTENT_W = PAGE_W - 2 * RAIL
 PAD = 16
-TOTAL_PAGES = 7
+SPEAKERS_PER_PAGE = 12
 ILLUSTRATION_WIDTH = 1920
 MONTHS = (
     "janvier", "février", "mars", "avril", "mai", "juin",
@@ -107,6 +108,11 @@ def programme_slots() -> list[dict]:
         if "time" in fields and title:
             slots.append({"time": fields["time"], "title": title.group(1) or title.group(2), "kind": fields["kind"]})
     return slots
+
+
+def time_minutes(value: str) -> int:
+    hours, minutes = map(int, value.split(":"))
+    return hours * 60 + minutes
 
 
 def hero_title() -> tuple[str, str]:
@@ -363,7 +369,7 @@ def section_rule(pdf: canvas.Canvas, y: float) -> None:
     corner(pdf, PAGE_W - RAIL, y)
 
 
-def page_base(pdf: canvas.Canvas, number: int, site_host: str, year: int) -> None:
+def page_base(pdf: canvas.Canvas, number: int, site_host: str, year: int, total_pages: int) -> None:
     pdf.setFillColor(CREAM)
     pdf.rect(0, 0, PAGE_W, PAGE_H, fill=1, stroke=0)
     vline(pdf, RAIL, 0, PAGE_H, RULE_SOFT)
@@ -375,7 +381,7 @@ def page_base(pdf: canvas.Canvas, number: int, site_host: str, year: int) -> Non
     pdf.setFont("Arial", 7.5)
     pdf.setFillColor(MUTED)
     pdf.drawString(RAIL + PAD, 28, site_host)
-    label(pdf, f"{number:02d} / {TOTAL_PAGES:02d}", PAGE_W - RAIL - PAD, 28, size=6.5, align="right", color=MUTED)
+    label(pdf, f"{number:02d} / {total_pages:02d}", PAGE_W - RAIL - PAD, 28, size=6.5, align="right", color=MUTED)
 
 
 def prepared_image(
@@ -547,7 +553,7 @@ def cover_page(pdf: canvas.Canvas, ctx: dict) -> None:
 
 def brief_page(pdf: canvas.Canvas, ctx: dict) -> None:
     event, tmp = ctx["event"], ctx["tmp"]
-    page_base(pdf, ctx["page"], ctx["site_host"], event["year"])
+    page_base(pdf, ctx["page"], ctx["site_host"], event["year"], ctx["total_pages"])
     left = RAIL + PAD
     y = headline(pdf, "En bref.", left, PAGE_H - 78, CONTENT_W - 2 * PAD, size=30)
 
@@ -632,7 +638,7 @@ def measure(value: str, width: float, *, size: float, leading: float, font: str)
 
 def programme_page(pdf: canvas.Canvas, ctx: dict) -> None:
     event = ctx["event"]
-    page_base(pdf, ctx["page"], ctx["site_host"], event["year"])
+    page_base(pdf, ctx["page"], ctx["site_host"], event["year"], ctx["total_pages"])
     left = RAIL + PAD
     y = headline(pdf, "Le programme.", left, PAGE_H - 82, CONTENT_W - 2 * PAD)
     y = paragraph(pdf, text(ctx["programme_status"]), left, y - 14, 400, size=8.5, leading=12, color=MUTED)
@@ -657,13 +663,21 @@ def programme_page(pdf: canvas.Canvas, ctx: dict) -> None:
     people_style = dict(size=6.6, leading=8.2, font="ArialBold")
 
     def people(session: dict) -> str:
-        names = ", ".join(speakers[slug]["name"] for slug in session["speakerSlugs"] if slug in speakers)
-        return f"Jury : {names}" if names and session["format"] == "concours" else names
+        participants = [speakers[slug] for slug in session["speakerSlugs"] if slug in speakers]
+        if session["format"] == "concours":
+            jury = ", ".join(person["name"] for person in participants if person.get("eventRole") != "animateur")
+            hosts = ", ".join(person["name"] for person in participants if person.get("eventRole") == "animateur")
+            return " · ".join(value for value in (f"Jury : {jury}" if jury else "", f"Animation : {hosts}" if hosts else "") if value)
+        return ", ".join(person["name"] for person in participants)
+
+    def cell_title(session: dict) -> str:
+        title = session_title(session)
+        return f"Suite : {title}" if session.get("continuation") else title
 
     def cell_height(session: dict | None) -> float:
         if session is None:
             return 12
-        height = measure(text(session_title(session)), inner, **title_style)
+        height = measure(text(cell_title(session)), inner, **title_style)
         if session["format"] in kinds:
             height += 9
         if people(session):
@@ -699,7 +713,7 @@ def programme_page(pdf: canvas.Canvas, ctx: dict) -> None:
             if session["format"] in kinds:
                 label(pdf, kinds[session["format"]], x, cy - 5.5, size=5.8, color=ORANGE)
                 cy -= 9
-            bottom = paragraph(pdf, text(session_title(session)), x, cy, inner, **title_style)
+            bottom = paragraph(pdf, text(cell_title(session)), x, cy, inner, **title_style)
             if people(session):
                 paragraph(pdf, text(people(session)), x, bottom - 2, inner, color=MUTED, **people_style)
         top -= height
@@ -708,7 +722,7 @@ def programme_page(pdf: canvas.Canvas, ctx: dict) -> None:
 
 def speakers_page(pdf: canvas.Canvas, ctx: dict) -> None:
     event, tmp = ctx["event"], ctx["tmp"]
-    page_base(pdf, ctx["page"], ctx["site_host"], event["year"])
+    page_base(pdf, ctx["page"], ctx["site_host"], event["year"], ctx["total_pages"])
     left = RAIL + PAD
     y = headline(pdf, "Les intervenants.", left, PAGE_H - 82, CONTENT_W - 2 * PAD)
     paragraph(pdf, text(ctx["speakers_intro"]), left, y - 14, 380, size=8.5, leading=12, color=MUTED)
@@ -716,7 +730,7 @@ def speakers_page(pdf: canvas.Canvas, ctx: dict) -> None:
     columns = 4
     cell_w = CONTENT_W / columns
     photo_h = cell_w
-    caption_h = 50
+    caption_h = 66
     top = y - 46
     hline(pdf, RAIL, PAGE_W - RAIL, top, RULE)
     for index, speaker in enumerate(ctx["speakers"]):
@@ -729,12 +743,13 @@ def speakers_page(pdf: canvas.Canvas, ctx: dict) -> None:
             (cell_w, photo_h), focus=(0.5, 0.36), grayscale=True, dpi=200,
         )
         pdf.drawImage(str(portrait), x, cell_top - photo_h, cell_w, photo_h)
-        pdf.setFillColor(INK)
-        pdf.setFont("GaramondBold", 12)
-        pdf.drawString(x + 9, cell_top - photo_h - 15, speaker["name"])
+        name_bottom = paragraph(
+            pdf, text(speaker["name"]), x + 9, cell_top - photo_h - 8,
+            cell_w - 18, size=11, leading=12, font="GaramondBold",
+        )
         paragraph(
             pdf, text(f"{speaker['role']} · {speaker['company']}"),
-            x + 9, cell_top - photo_h - 20, cell_w - 18, size=6.8, leading=8.6, color=MUTED,
+            x + 9, name_bottom - 4, cell_w - 18, size=6.8, leading=8.6, color=MUTED,
         )
         if col:
             vline(pdf, x, cell_top - photo_h - caption_h, cell_top, RULE)
@@ -745,7 +760,7 @@ def speakers_page(pdf: canvas.Canvas, ctx: dict) -> None:
 
 def partners_page(pdf: canvas.Canvas, ctx: dict) -> None:
     event, tmp = ctx["event"], ctx["tmp"]
-    page_base(pdf, ctx["page"], ctx["site_host"], event["year"])
+    page_base(pdf, ctx["page"], ctx["site_host"], event["year"], ctx["total_pages"])
     left = RAIL + PAD
     y = headline(pdf, "Ils rendent la journée possible.", left, PAGE_H - 82, CONTENT_W - 2 * PAD)
 
@@ -792,7 +807,7 @@ def partners_page(pdf: canvas.Canvas, ctx: dict) -> None:
 
 def team_page(pdf: canvas.Canvas, ctx: dict) -> None:
     event, tmp = ctx["event"], ctx["tmp"]
-    page_base(pdf, ctx["page"], ctx["site_host"], event["year"])
+    page_base(pdf, ctx["page"], ctx["site_host"], event["year"], ctx["total_pages"])
     left = RAIL + PAD
     y = headline(pdf, "L’équipe.", left, PAGE_H - 82, CONTENT_W - 2 * PAD)
     team = ctx["team"]
@@ -842,7 +857,7 @@ def team_page(pdf: canvas.Canvas, ctx: dict) -> None:
 
 def resources_page(pdf: canvas.Canvas, ctx: dict) -> None:
     event, site = ctx["event"], ctx["site"]
-    page_base(pdf, ctx["page"], ctx["site_host"], event["year"])
+    page_base(pdf, ctx["page"], ctx["site_host"], event["year"], ctx["total_pages"])
     left = RAIL + PAD
     y = headline(pdf, "Ressources.", left, PAGE_H - 82, CONTENT_W - 2 * PAD)
 
@@ -962,6 +977,16 @@ def build_context(tmp: Path) -> dict:
     for session in sessions:
         by_time.setdefault(session["startTime"], {})[session["track"]] = session
 
+    def session_at(time: str, track: str) -> dict | None:
+        starting = by_time.get(time, {}).get(track)
+        if starting:
+            return starting
+        for session in sessions:
+            start = time_minutes(session["startTime"])
+            if session["track"] == track and start < time_minutes(time) < start + session["durationMinutes"]:
+                return {**session, "continuation": True}
+        return None
+
     def names(session: dict) -> str:
         return ", ".join(speakers_by_id[s]["name"] for s in session["speakerSlugs"] if s in speakers_by_id)
 
@@ -969,11 +994,10 @@ def build_context(tmp: Path) -> dict:
     for slot in slots:
         common = by_time.get(slot["time"], {}).get("commun")
         if slot["kind"] == "conference":
-            sessions_at = by_time.get(slot["time"], {})
             rows.append({
                 "kind": "conference",
                 "time": slot["time"].replace(":", "h"),
-                "sessions": [sessions_at.get(track["id"]) for track in tracks],
+                "sessions": [session_at(slot["time"], track["id"]) for track in tracks],
             })
         elif slot["kind"] == "closing" or (slot["kind"] == "transition" and "pause" not in slot["title"].lower()):
             continue
@@ -1056,6 +1080,8 @@ def build_context(tmp: Path) -> dict:
             "name": member["name"], "role": member["role"], "topics": member["background"],
             "photo": f"/organisateurs/{member_id}-optimized.webp",
         })
+    region_spokesperson = json.loads((CONTENT / "press.json").read_text(encoding="utf-8"))["regionSpokesperson"]
+    spokespeople.append({key: region_spokesperson[key] for key in ("name", "role", "topics", "photo")})
 
     kit_contents = (
         ("README.pdf", "Ce dossier de presse"),
@@ -1090,13 +1116,32 @@ def render_pdf(ctx: dict) -> None:
     pdf.setTitle(f"GENAI DAYS {event['year']} · Dossier de presse")
     pdf.setAuthor("GENAI DAYS")
     pdf.setSubject("Présentation, programme, intervenants, partenaires et ressources presse")
-    pages = (cover_page, brief_page, programme_page, speakers_page, partners_page, team_page, resources_page)
-    assert len(pages) == TOTAL_PAGES
-    for number, page in enumerate(pages, start=1):
-        ctx["page"] = number
-        page(pdf, ctx)
+    pages = [(cover_page, ctx), (brief_page, ctx), (programme_page, ctx)]
+    for offset in range(0, len(ctx["speakers"]), SPEAKERS_PER_PAGE):
+        pages.append((speakers_page, {**ctx, "speakers": ctx["speakers"][offset:offset + SPEAKERS_PER_PAGE]}))
+    pages.extend((page, ctx) for page in (partners_page, team_page, resources_page))
+    for number, (page, page_ctx) in enumerate(pages, start=1):
+        page_ctx["page"] = number
+        page_ctx["total_pages"] = len(pages)
+        page(pdf, page_ctx)
         pdf.showPage()
     pdf.save()
+
+
+def source_manifest() -> dict[str, str]:
+    paths = [
+        ROOT / "scripts/build-press-kit.py",
+        CONTENT / "event.json", CONTENT / "pricing.json", CONTENT / "press.json",
+        ROOT / "src/components/HeroAffiche.astro",
+        ROOT / "src/lib/programme.ts", ROOT / "src/lib/speakers.ts",
+        ROOT / "src/lib/cta-links.ts", ROOT / "src/styles/global.css",
+    ]
+    for name in ("tracks", "sessions", "speakers", "partners", "team"):
+        paths.extend((CONTENT / name).glob("*.md"))
+    return {
+        path.relative_to(ROOT).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
+        for path in sorted(paths)
+    }
 
 
 def main() -> None:
@@ -1138,6 +1183,9 @@ def main() -> None:
     count = len(ZipFile(archive).namelist())
     size = archive.stat().st_size / 1024 / 1024
     print(f"Built {archive} with {count} files ({size:.1f} MB)")
+    (ROOT / "scripts/press-kit-manifest.json").write_text(
+        json.dumps(source_manifest(), ensure_ascii=False, indent=2) + "\n", encoding="utf-8",
+    )
 
 
 if __name__ == "__main__":
