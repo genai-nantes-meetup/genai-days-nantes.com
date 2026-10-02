@@ -24,9 +24,9 @@ describe('index.astro', () => {
     expect(html).toMatch(/href="\/en\/speakers\/[a-z-]+"/);
     expect(html).not.toContain('Du discours au terrain.');
     expect(event.description).toContain('Talks are delivered in French.');
-    expect(event.description).toContain('Co-organized with the Région Pays de la Loire');
-    expect(event.organizer[0].name).toBe('Naomakers');
-    expect(event.organizer[1].name).toBe('Région Pays de la Loire');
+    expect(event.description).toContain('With support from the Région Pays de la Loire');
+    expect(event.organizer.name).toBe('Naomakers');
+    expect(event.sponsor.name).toBe('Région Pays de la Loire');
     expect(event.inLanguage).toBe('fr');
     expect(event.url).toBe('https://example.com/en');
     expect(event.performer[0].url).toMatch(/^https:\/\/example\.com\/en\/speakers\/[a-z-]+$/);
@@ -41,6 +41,7 @@ describe('index.astro', () => {
     expect(event.url).toBe('https://example.com/');
     expect(event.performer[0].url).toMatch(/^https:\/\/example\.com\/speakers\/[a-z-]+$/);
     expect(website.inLanguage).toBe('fr');
-    expect(event.description).toContain('Co-organisée avec la Région Pays de la Loire');
+    expect(event.description).toContain('Avec le soutien de la Région Pays de la Loire');
+    expect(event.description).not.toMatch(/co-?organis/i);
   });
 });

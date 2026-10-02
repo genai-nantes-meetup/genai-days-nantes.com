@@ -1,4 +1,4 @@
 ---
 role: "Finance Lead"
-background: "AI, data and finance consultant at Explore The Vault"
+background: "AI, data and finance consultant at Explore the Vault"
 ---

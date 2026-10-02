@@ -97,13 +97,13 @@
       "id": "france",
       "name": "GenAI France",
       "title": "Le réseau national",
-      "indexLabel": "Réseau de six villes",
+      "indexLabel": "Réseau de sept villes",
       "logo": "/logos/Gen AI Logo.svg",
       "logoWidth": 199,
       "logoHeight": 199,
       "href": "https://www.generativeai.paris/",
       "linkLabel": "Découvrir le réseau",
-      "description": "Six villes françaises réunies autour de rencontres locales consacrées à l'IA générative.",
+      "description": "Sept villes françaises réunies autour de rencontres locales consacrées à l'IA générative.",
       "stats": [
         {
           "value": "7",
@@ -120,9 +120,9 @@
       ],
       "en": {
         "title": "The national network",
-        "indexLabel": "Six-city network",
+        "indexLabel": "Seven-city network",
         "linkLabel": "Explore the network",
-        "description": "Local generative AI meetups in six French cities, connected as one network.",
+        "description": "Local generative AI meetups in seven French cities, connected as one network.",
         "stats": [
           {
             "label": "major cities"

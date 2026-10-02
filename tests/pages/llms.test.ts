@@ -14,6 +14,9 @@ describe('llms.txt', () => {
 
     expect(response.headers.get('content-type')).toContain('text/plain');
     expect(text).toContain('## Sessions annoncées');
+    expect(text).toContain('Avec le soutien de la Région Pays de la Loire');
+    expect(text).not.toMatch(/co-?organis/i);
+    expect(text).not.toContain('salle .');
 
     for (const session of sessions) {
       expect(text).toContain(session.data.title);

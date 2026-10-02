@@ -1,7 +1,7 @@
 ---
 name: "Judie Boulissière"
 role: "Responsable Finance"
-background: "Intervenante IA, data et finance chez Explore The Vault"
+background: "Intervenante IA, data et finance chez Explore the Vault"
 photo: "/organisateurs/judie-boulissiere-deck-optimized.webp"
 photoWidth: 233
 photoHeight: 910

@@ -42,9 +42,9 @@ export const GET: APIRoute = async ({ site, url }) => {
     getCollection('team'),
     getCollection('partners'),
   ]);
-  const coOrganizer = partners.find((partner) => partner.data.coOrganizer);
-  const coOrganizerLine = coOrganizer
-    ? ` Co-organisée avec la ${coOrganizer.data.name} (${coOrganizer.data.website}).`
+  const supporter = partners.find((partner) => partner.data.coOrganizer);
+  const supporterLine = supporter
+    ? ` Avec le soutien de la ${supporter.data.name} (${supporter.data.website}).`
     : '';
   const trackLines = tracks
     .map(
@@ -72,7 +72,7 @@ export const GET: APIRoute = async ({ site, url }) => {
       const description = session.body?.trim() ? ` ${stripMarkdownToPlainText(session.body)}` : '';
       const track = session.data.track === 'commun' ? 'Temps commun' : (trackById.get(session.data.track) ?? session.data.track);
 
-      return `- ${session.data.title} : ${session.data.startTime}, ${session.data.durationMinutes} min, ${SESSION_FORMAT_LABELS[session.data.format]}, parcours ${track}, salle ${session.data.room}.${contributorLine}${description} Détail : ${siteUrl}programme/${session.id}`;
+      return `- ${session.data.title} : ${session.data.startTime}, ${session.data.durationMinutes} min, ${SESSION_FORMAT_LABELS[session.data.format]}, parcours ${track}${session.data.room ? `, salle ${session.data.room}` : ''}.${contributorLine}${description} Détail : ${siteUrl}programme/${session.id}`;
     })
     .join('\n');
 
@@ -94,7 +94,7 @@ export const GET: APIRoute = async ({ site, url }) => {
 
 > ${EVENT.description}
 
-GENAI DAYS a lieu le ${formatEventDateLabel()} à ${EVENT.venue.name}, à ${EVENT.venue.city} (France). Organisée par l'association ${EVENT.organizer.name}.${coOrganizerLine} Toutes les conférences sont présentées en français.
+GENAI DAYS a lieu le ${formatEventDateLabel()} à ${EVENT.venue.name}, à ${EVENT.venue.city} (France). Organisée par l'association ${EVENT.organizer.name}.${supporterLine} Toutes les conférences sont présentées en français.
 
 ## Informations pratiques
 
@@ -103,7 +103,7 @@ GENAI DAYS a lieu le ${formatEventDateLabel()} à ${EVENT.venue.name}, à ${EVEN
 - Lieu : ${EVENT.venue.name}, ${EVENT.venue.address}, ${EVENT.venue.postalCode} ${EVENT.venue.city}, France
 - Langue : français
 - Organisateur : ${EVENT.organizer.name} (association loi 1901, Nantes)
-${coOrganizer ? `- Co-organisateur : ${coOrganizer.data.name} · ${coOrganizer.data.website}` : ''}
+${supporter ? `- Soutien : ${supporter.data.name} · ${supporter.data.website}` : ''}
 
 ## Parcours
 
@@ -138,7 +138,7 @@ ${socialSection}
 
 - Le programme détaillé (sessions, horaires, salles, intervenant·es) est disponible sur ${siteUrl}programme et sur chaque page de session (${siteUrl}programme/{slug}).
 - L'annuaire des intervenant·es est disponible sur ${siteUrl}speakers, avec une fiche détaillée sur ${siteUrl}speakers/{slug}.
-- Les partenaires confirmés et leurs sites officiels sont référencés sur ${siteUrl}partenaires.${coOrganizer ? ` La ${coOrganizer.data.name} est co-organisatrice de cette édition.` : ''}
+- Les partenaires confirmés et leurs sites officiels sont référencés sur ${siteUrl}partenaires.${supporter ? ` La ${supporter.data.name} soutient cette édition et l’accueille à l’${EVENT.venue.shortName}.` : ''}
 - L'événement est organisé par une équipe de bénévoles issue du meetup Generative AI Nantes, présentée sur ${siteUrl}equipe avec le périmètre de chacun. Les demandes passent par ${siteUrl}contact, qui oriente vers le bon interlocuteur sans exposer d'adresse e-mail.
 - L'adresse, les transports, l'accessibilité et les hébergements sont détaillés sur ${siteUrl}infos-pratiques.
 - Les journalistes trouvent sur ${siteUrl}press-kit une présentation prête à publier, la fiche factuelle et le kit presse téléchargeable (${siteUrl}press/genai-days-press-kit.zip) : dossier PDF avec programme, intervenants et partenaires, visuel officiel, wordmark, illustrations des conférences et portraits de l'équipe.

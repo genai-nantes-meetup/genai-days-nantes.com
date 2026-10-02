@@ -42,12 +42,14 @@ describe('buildEventJsonLd', () => {
     expect(jsonLd).not.toHaveProperty('aggregateRating');
   });
 
-  it('lists every organizer, including a co-organizer, with a stable @id for the primary one', async () => {
+  it('identifies Naomakers as the organizer and the Region as a supporter', async () => {
     const jsonLd = (await buildEventJsonLd(SITE_URL + '/', 'https://billetterie.genaidays.fr/edition-2026')) as any;
     const organizers = Array.isArray(jsonLd.organizer) ? jsonLd.organizer : [jsonLd.organizer];
     const primary = organizers.find((org: any) => org.name === 'Naomakers');
     expect(primary).toBeDefined();
     expect(primary['@id']).toBe(SITE_URL + '/#organizer');
+    expect(organizers).toHaveLength(1);
+    expect(jsonLd.sponsor.name).toBe('Région Pays de la Loire');
   });
 
   it('declares only social profiles that have a URL', async () => {

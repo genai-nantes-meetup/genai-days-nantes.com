@@ -62,6 +62,6 @@ describe('HeroAffiche.astro', () => {
     expect(html).toMatch(/<b[^>]*>November<\/b>/);
     expect(html).toContain('TUESDAY, November 17, 2026');
     expect(html).toContain('400+ ATTENDEES');
-    expect(html).toContain('aria-label="Co-organized with the Région Pays de la Loire"');
+    expect(html).toContain('aria-label="With support from the Région Pays de la Loire"');
   });
 });

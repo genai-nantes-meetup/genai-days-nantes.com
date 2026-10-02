@@ -20,9 +20,9 @@ const coOrganizer = partners.find((partner) => partner.data.coOrganizer);
 const copy = {
   fr: {
     lede: coOrganizer
-      ? `La ${coOrganizer.data.name} co-organise cette édition à l’${EVENT.venue.shortName}, aux côtés des entreprises et réseaux engagés.`
+      ? `La ${coOrganizer.data.name} soutient cette édition et l’accueille à l’${EVENT.venue.shortName}, aux côtés des entreprises et réseaux engagés.`
       : 'Des organisations engagées pour relier les communautés techniques, les entreprises et le territoire.',
-    pageTitle: `Partenaires · GENAI DAYS${coOrganizer ? ` · avec la ${coOrganizer.data.name}` : ''}`,
+    pageTitle: `Partenaires · GENAI DAYS${coOrganizer ? ` · avec le soutien de la ${coOrganizer.data.name}` : ''}`,
     descriptionIntro: `Partenaires de ${EVENT.name} à ${EVENT.venue.city}.`,
     listName: `Partenaires de ${EVENT.name}`,
     homeLabel: 'Accueil',
@@ -38,9 +38,9 @@ const copy = {
   },
   en: {
     lede: coOrganizer
-      ? `The ${coOrganizer.data.name} co-organizes this edition at the ${EVENT.venue.shortName}, alongside committed companies and networks.`
+      ? `The ${coOrganizer.data.name} supports this edition and hosts it at the ${EVENT.venue.shortName}, alongside committed companies and networks.`
       : 'Organizations committed to connecting tech communities, businesses and the region.',
-    pageTitle: `Partners · GENAI DAYS${coOrganizer ? ` · with the ${coOrganizer.data.name}` : ''}`,
+    pageTitle: `Partners · GENAI DAYS${coOrganizer ? ` · with support from the ${coOrganizer.data.name}` : ''}`,
     descriptionIntro: `${EVENT.name} partners in ${EVENT.venue.city}.`,
     listName: `${EVENT.name} partners`,
     homeLabel: 'Home',

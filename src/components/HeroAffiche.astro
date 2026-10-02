@@ -37,15 +37,15 @@ const copy = {
     dateLong: `${eventWeekdayUppercase} ${eventDay} ${eventMonth} ${eventYear}`,
     capacity: `+ ${PRICING.capacity} PARTICIPANTS`,
     bookSeat: 'Réserver ma place',
-    coOrganizerAlt: (name: string) => `${name}, coorganisatrice`,
-    coOrganizedWith: (name: string) => `Co-organisé avec la ${name}`,
+    coOrganizerAlt: (name: string) => `${name}, soutien de l’événement`,
+    coOrganizedWith: (name: string) => `Avec le soutien de la ${name}`,
   },
   en: {
     dateLong: `${eventWeekdayUppercase}, ${eventMonth} ${eventDay}, ${eventYear}`,
     capacity: `${PRICING.capacity}+ ATTENDEES`,
     bookSeat: 'Book my seat',
-    coOrganizerAlt: (name: string) => `${name}, event co-organizer`,
-    coOrganizedWith: (name: string) => `Co-organized with the ${name}`,
+    coOrganizerAlt: (name: string) => `${name}, event supporter`,
+    coOrganizedWith: (name: string) => `With support from the ${name}`,
   },
 }[locale];
 ---
@@ -211,7 +211,7 @@ const copy = {
      * sous l'affiche dès les premiers pixels de scroll. */
     height: 100lvh;
     overflow: hidden;
-    background: #050510;
+    background: var(--color-brand-night);
   }
 
   /* Le dolly-in vise le centre de l'affiche, pas le centre géométrique. */

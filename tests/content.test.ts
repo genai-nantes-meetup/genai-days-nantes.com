@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { getCollection } from 'astro:content';
 import { PARTNER_TIER_CAPACITIES } from '../src/lib/partners';
+import { PROGRAMME_SLOTS } from '../src/lib/programme';
 
 describe('content collections', () => {
   it('defines exactly the dirigeants and tech tracks', async () => {
@@ -118,6 +119,31 @@ describe('content collections', () => {
       'david-leaurant',
       'florian-herveou',
     ]);
+  });
+
+  it('keeps announced sessions on scheduled slots without overlapping a session on the same track', async () => {
+    const sessions = await getCollection('sessions');
+    const minutes = (time: string) => {
+      const [hours, minutes] = time.split(':').map(Number);
+      return hours * 60 + minutes;
+    };
+    const slots = new Set(PROGRAMME_SLOTS.map((slot) => slot.time));
+    for (const session of sessions) {
+      expect(slots.has(session.data.startTime), session.id).toBe(true);
+      const start = minutes(session.data.startTime);
+      const end = start + session.data.durationMinutes;
+      const overlaps = sessions.filter((other) => other.id !== session.id
+        && other.data.track === session.data.track
+        && minutes(other.data.startTime) < end
+        && minutes(other.data.startTime) + other.data.durationMinutes > start);
+      expect(overlaps, session.id).toEqual([]);
+    }
+    PROGRAMME_SLOTS.forEach((slot, index) => {
+      const next = PROGRAMME_SLOTS[index + 1];
+      if (next && slot.durationMinutes) {
+        expect(minutes(slot.time) + slot.durationMinutes, slot.time).toBeLessThanOrEqual(minutes(next.time));
+      }
+    });
   });
 
   /* Garde-fou de la double maintenance FR/EN (AGENTS.md) : un seul

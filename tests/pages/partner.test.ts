@@ -12,7 +12,7 @@ describe('partner directory', () => {
     expect(confirmedPartners.length).toBeGreaterThan(0);
     expect(html).toContain('partner-board__group--with-coorganizer');
     expect(html).toContain('partner-tile--coorganizer');
-    expect(html).toContain('La Région Pays de la Loire co-organise cette édition à l’Hôtel de Région');
+    expect(html).toContain('La Région Pays de la Loire soutient cette édition et l’accueille à l’Hôtel de Région');
 
     confirmedPartners.forEach((partner) => {
       expect(html).toContain(`href="${partner.data.website}"`);
@@ -34,7 +34,7 @@ describe('partner directory', () => {
     });
     const main = html.slice(html.indexOf('<main'), html.indexOf('</main>'));
 
-    expect(html).toContain('<title>Partners · GENAI DAYS · with the Région Pays de la Loire</title>');
+    expect(html).toContain('<title>Partners · GENAI DAYS · with support from the Région Pays de la Loire</title>');
     expect(main).toContain('at the Hôtel de Région, alongside committed companies and networks.');
     expect(main).toContain('aria-label="Visit the Clever Cloud website"');
     expect(main).toContain('Want your organization to take part in the day?');

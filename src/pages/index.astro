@@ -18,12 +18,12 @@ const coOrganizer = (await getCollection('partners')).find((partner) => partner.
 const coOrganizerName = coOrganizer?.data.name;
 const copy = {
   fr: {
-    pageTitle: `GENAI DAYS ${EVENT.year} · Conférence IA générative à ${EVENT.venue.city}${coOrganizerName ? ` avec la ${coOrganizerName}` : ''}`,
-    pageDescription: `Une journée-conférence sur l’IA générative à ${EVENT.venue.city} pour décideurs et équipes techniques : retours terrain, deux parcours et Startup Contest.${coOrganizerName ? ` Co-organisée avec la ${coOrganizerName} à l’${EVENT.venue.shortName}.` : ''}`,
+    pageTitle: `GENAI DAYS ${EVENT.year} · Conférence IA générative à ${EVENT.venue.city}${coOrganizerName ? ` avec le soutien de la ${coOrganizerName}` : ''}`,
+    pageDescription: `Une journée-conférence sur l’IA générative à ${EVENT.venue.city} pour décideurs et équipes techniques : retours terrain, deux parcours et Startup Contest.${coOrganizerName ? ` Avec le soutien de la ${coOrganizerName}, qui accueille la journée à l’${EVENT.venue.shortName}.` : ''}`,
   },
   en: {
-    pageTitle: `GENAI DAYS ${EVENT.year} · Generative AI conference in ${EVENT.venue.city}${coOrganizerName ? ` with the ${coOrganizerName}` : ''}`,
-    pageDescription: `A one-day generative AI conference in ${EVENT.venue.city} for decision-makers and tech teams: real-world case studies, two tracks and a Startup Contest.${coOrganizerName ? ` Co-organized with the ${coOrganizerName} at the ${EVENT.venue.shortName}.` : ''} Talks are delivered in French.`,
+    pageTitle: `GENAI DAYS ${EVENT.year} · Generative AI conference in ${EVENT.venue.city}${coOrganizerName ? ` with support from the ${coOrganizerName}` : ''}`,
+    pageDescription: `A one-day generative AI conference in ${EVENT.venue.city} for decision-makers and tech teams: real-world case studies, two tracks and a Startup Contest.${coOrganizerName ? ` With support from the ${coOrganizerName}, which hosts the day at the ${EVENT.venue.shortName}.` : ''} Talks are delivered in French.`,
   },
 }[locale];
 const speakers = sortSpeakersByProminence(await getCollection('speakers'));

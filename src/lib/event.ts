@@ -52,13 +52,8 @@ export function formatEventDateUppercase(locale: Locale = 'fr'): string {
 export async function buildEventJsonLd(siteUrl: string, ticketUrl: string, locale: Locale = 'fr') {
   const ticketHostname = new URL(ticketUrl).hostname;
   const hasPublicTicketUrl = ticketHostname !== 'example.com' && !ticketHostname.endsWith('.example.com');
-  const coOrganizer = (await getCollection('partners')).find((partner) => partner.data.coOrganizer);
-  const organizer = coOrganizer
-    ? [
-        { '@type': 'Organization', '@id': `${siteUrl}#organizer`, name: eventData.organizer.name, url: siteUrl },
-        { '@type': 'Organization', name: coOrganizer.data.name, url: coOrganizer.data.website },
-      ]
-    : { '@type': 'Organization', '@id': `${siteUrl}#organizer`, name: eventData.organizer.name, url: siteUrl };
+  const supporter = (await getCollection('partners')).find((partner) => partner.data.coOrganizer);
+  const organizer = { '@type': 'Organization', '@id': `${siteUrl}#organizer`, name: eventData.organizer.name, url: siteUrl };
 
   return {
     '@context': 'https://schema.org',
@@ -92,6 +87,9 @@ export async function buildEventJsonLd(siteUrl: string, ticketUrl: string, local
       },
     },
     organizer,
+    ...(supporter && {
+      sponsor: { '@type': 'Organization', name: supporter.data.name, url: supporter.data.website },
+    }),
     ...(hasPublicTicketUrl
       ? {
           offers: {

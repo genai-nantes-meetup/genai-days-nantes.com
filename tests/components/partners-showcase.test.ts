@@ -3,7 +3,7 @@ import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import PartnersShowcase from '../../src/components/PartnersShowcase.astro';
 
 describe('PartnersShowcase.astro', () => {
-  it('keeps the co-organizer fixed while the other partners scroll on two rows', async () => {
+  it('keeps the supporting Region fixed while the other partners scroll on two rows', async () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(PartnersShowcase);
 
@@ -20,7 +20,7 @@ describe('PartnersShowcase.astro', () => {
     expect(html.match(/data-partner-logo=/g)).toHaveLength(16);
     expect(html).toContain('class="partner-showcase__coorganizer"');
     expect(html).toContain(
-      'La Région Pays de la Loire co-organise cette édition et nous ouvre les portes de l’Hôtel de Région',
+      'La Région Pays de la Loire soutient cette édition et nous accueille à l’Hôtel de Région',
     );
     expect(html).toContain('alt="Logo Région Pays de la Loire"');
     expect(html).toContain('alt="Logo ADN Ouest"');
@@ -73,7 +73,7 @@ describe('PartnersShowcase.astro', () => {
     const html = await container.renderToString(PartnersShowcase, { request: new Request('https://example.com/en') });
 
     expect(html).toContain('They make the day possible.');
-    expect(html).toContain('The Région Pays de la Loire co-organizes this edition and opens the doors of the Hôtel de Région.');
+    expect(html).toContain('The Région Pays de la Loire supports this edition and welcomes us to the Hôtel de Région.');
     expect(html).toContain('aria-label="Visit the Région Pays de la Loire website"');
     expect(html).toContain('alt="Clever Cloud logo"');
     expect(html).toContain('href="/en/partners"');

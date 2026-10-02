@@ -38,8 +38,9 @@ export const SPEAKER_LAST_ORDER = [
  * Partagées entre toutes les vues qui affichent un portrait, pour réserver
  * l'espace d'image avant chargement et éviter un décalage de mise en page. */
 export const SPEAKER_PORTRAIT_DIMENSIONS: Record<string, { width: number; height: number }> = {
+  'annabelle-koster': { width: 400, height: 400 },
   'camille-croze': { width: 238, height: 336 },
-  'christelle-morancais': { width: 800, height: 800 },
+  'christelle-morancais': { width: 952, height: 952 },
   'constance-nebbula': { width: 832, height: 832 },
   'david-leaurant': { width: 800, height: 800 },
   'florian-herveou': { width: 600, height: 600 },
@@ -47,6 +48,7 @@ export const SPEAKER_PORTRAIT_DIMENSIONS: Record<string, { width: number; height
   'jaafar-steiblen-raji': { width: 800, height: 920 },
   'julien-lesaicherre': { width: 800, height: 800 },
   'laurent-duthoit': { width: 238, height: 336 },
+  'marie-fleur-sacreste': { width: 800, height: 800 },
   'nicolas-martignole': { width: 1448, height: 1086 },
   'jean-baptiste-kempf': { width: 1200, height: 1801 },
   'quentin-adam': { width: 800, height: 800 },

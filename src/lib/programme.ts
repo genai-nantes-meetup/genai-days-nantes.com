@@ -118,7 +118,7 @@ export const PROGRAMME_SLOTS: ProgrammeSlot[] = [
     time: '17:35',
     title: { fr: 'Keynote de clôture', en: 'Closing keynote' },
     kind: 'keynote',
-    durationMinutes: 55,
+    durationMinutes: 25,
   },
   {
     time: '18:00',

@@ -35,7 +35,7 @@ describe('HeroSponsorsMarquee.astro', () => {
     const html = await container.renderToString(HeroAffiche);
 
     expect(html).toMatch(/hero-affiche__cta[\s\S]*hero-affiche__sponsors[\s\S]*aria-label="Partenaires"/);
-    expect(html).toContain('aria-label="Co-organisé avec la Région Pays de la Loire"');
+    expect(html).toContain('aria-label="Avec le soutien de la Région Pays de la Loire"');
   });
 
   it('labels the logo rail in English on English pages', async () => {

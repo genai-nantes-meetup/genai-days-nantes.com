@@ -19,7 +19,7 @@ if (!decisionTrack || !deliveryTrack) {
 }
 
 const afterworkStart = PROGRAMME_SLOTS.find((slot) => slot.kind === 'social')?.time ?? EVENT.endTime;
-const conferenceCount = PROGRAMME_SLOTS.filter((slot) => slot.kind === 'conference').length * tracks.length;
+const conferenceCount = sessions.filter((session) => !['concours', 'podcast'].includes(session.data.format)).length;
 const startupContestTime = startupContest?.data.startTime ?? '13:45';
 
 const copy = {
@@ -30,7 +30,7 @@ const copy = {
     dayTitle: 'Le rythme de la journée.',
     timelineLabel: 'Les temps forts de la journée',
     talksTitle: 'Conférences et keynotes.',
-    talksText: `${conferenceCount} conférences réparties sur les deux scènes. Les captations sont publiées après l’événement.`,
+    talksText: `${conferenceCount} conférences, keynotes et tables rondes sur les deux scènes. Les captations sont publiées après l’événement.`,
     contestTitle: 'Startup Contest. Podcast.',
     contestTime: 'En public',
     contestText: `Les startups montent sur scène à ${startupContestTime} côté Ceux qui décident, devant un jury d’entrepreneurs et de décideurs. Le podcast s’enregistre en fin de journée côté Ceux qui implémentent.`,
