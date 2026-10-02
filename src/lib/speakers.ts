@@ -5,11 +5,15 @@ export const SPEAKER_TARGET = 19;
 export const SPEAKER_EVENT_ROLE_LABELS = {
   jury: 'Jury du Startup Contest',
   animateur: 'Animateur du Startup Contest',
+  'monsieur-loyal': 'Monsieur Loyal de la journée',
+  'madame-loyale': 'Madame Loyale de la journée',
 } as const;
 
 export const SPEAKER_EVENT_ROLE_SHORT_LABELS = {
   jury: 'Jury',
   animateur: 'Animateur',
+  'monsieur-loyal': 'Monsieur Loyal',
+  'madame-loyale': 'Madame Loyale',
 } as const;
 
 export const SPEAKER_PROMINENCE_ORDER = [

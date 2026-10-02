@@ -1,6 +1,7 @@
 ---
 import SessionIllustration from './SessionIllustration.astro';
 import { IS_MY_DAY_ENABLED } from '../lib/features';
+import type { SPEAKER_EVENT_ROLE_LABELS } from '../lib/speakers';
 
 interface Props {
   title: string;
@@ -10,7 +11,7 @@ interface Props {
   durationMinutes: number;
   room: string;
   format: 'keynote' | 'talk' | 'table-ronde' | 'atelier' | 'concours' | 'podcast';
-  speakers: { name: string; href: string; eventRole?: 'jury' | 'animateur' }[];
+  speakers: { name: string; href: string; eventRole?: keyof typeof SPEAKER_EVENT_ROLE_LABELS }[];
   sessionHref?: string;
   provisional?: boolean;
   illustration?: {

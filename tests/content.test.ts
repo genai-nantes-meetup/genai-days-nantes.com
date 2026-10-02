@@ -39,6 +39,8 @@ describe('content collections', () => {
     expect(speakers.find((speaker) => speaker.id === 'sebastien-le-corfec')?.data.eventRole).toBe('jury');
     expect(speakers.find((speaker) => speaker.id === 'thomas-mathieu')?.data.eventRole).toBe('jury');
     expect(speakers.find((speaker) => speaker.id === 'florian-herveou')?.data.eventRole).toBe('animateur');
+    expect(speakers.find((speaker) => speaker.id === 'jaafar-steiblen-raji')?.data.eventRole).toBe('monsieur-loyal');
+    expect(speakers.find((speaker) => speaker.id === 'annabelle-koster')?.data.eventRole).toBe('madame-loyale');
   });
 
   it('gives every speaker a detailed profile, career landmarks and associated companies', async () => {

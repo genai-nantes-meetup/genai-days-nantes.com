@@ -2,6 +2,7 @@
 name: "Annabelle Koster"
 role: "Tech Community Ambassador"
 company: "SFEIR"
+eventRole: "madame-loyale"
 bio: "Tech Community Ambassador chez SFEIR et présidente de GDG Nantes, Annabelle Koster orchestre GENAI DAYS en tant que maîtresse de cérémonie de la journée."
 profile:
   - "Annabelle Koster débute sa carrière comme recruteuse dans la tech avant de rejoindre l’équipe recrutement de SFEIR, société d’ingénierie qui a fait de l’intelligence artificielle un axe central de son activité, avec plus de 850 ingénieurs répartis dans huit bureaux en France et au Benelux. Elle y devient ensuite Tech Community Ambassador, un rôle taillé sur mesure pour elle."
