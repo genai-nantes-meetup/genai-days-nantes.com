@@ -21,4 +21,16 @@ describe('VenueSpotlight.astro', () => {
     expect(html).toContain('https://www.google.com/maps/dir/');
     expect(html).toContain('href="/infos-pratiques"');
   });
+
+  it('presents the venue in English on English pages', async () => {
+    const container = await createAstroContainer();
+    const html = await container.renderToString(VenueSpotlight, { request: new Request('https://example.com/en') });
+
+    expect(html).toContain('On the banks of the Loire, in the heart of Nantes.');
+    expect(html).toContain(formatEventDateLabel('en'));
+    expect(html).toMatch(/Busway 5 · Pompidou stop<br[^>]*>Bus 26/);
+    expect(html).toContain('href="/en/practical-info"');
+    expect(html).toContain('Plan my visit');
+    expect(html).not.toContain('Préparer ma venue');
+  });
 });

@@ -3,7 +3,9 @@ import { getCollection } from 'astro:content';
 import EventName from '../../components/EventName.astro';
 import StickerRewardLayout from '../../layouts/StickerRewardLayout.astro';
 import { EVENT, formatEventDateLabel, formatEventDateShort } from '../../lib/event';
+import { getLocaleFromPath, INTL_LOCALES, localizePath } from '../../lib/i18n';
 
+const locale = getLocaleFromPath(Astro.url.pathname);
 const sessions = await getCollection('sessions');
 const speakers = await getCollection('speakers');
 const requiredLabelIds = [
@@ -16,17 +18,55 @@ const requiredLabelIds = [
  * suit la date de l'édition au lieu de rester figée sur un millésime. */
 const dataRetentionDate = new Date(`${EVENT.date}T00:00:00`);
 dataRetentionDate.setMonth(dataRetentionDate.getMonth() + 3);
-const dataRetentionLabel = new Intl.DateTimeFormat('fr-FR', {
+const dataRetentionLabel = new Intl.DateTimeFormat(INTL_LOCALES[locale], {
   day: 'numeric',
   month: 'long',
   year: 'numeric',
 }).format(dataRetentionDate);
+const copy = {
+  fr: {
+    title: 'Ta récompense · GenAI Days',
+    description: 'Inscris-toi parmi les gagnants de l’easter egg GenAI Days pour récupérer ta récompense le jour de l’événement.',
+    step: 'Récompense · 01/02',
+    eyebrow: 'COLLECTION VALIDÉE',
+    heading: 'Ton dossier est complet.',
+    noteTitle: 'Ce que tu dois savoir',
+    contactUse: 'Tes coordonnées seront utilisées uniquement pour confirmer ton inscription et te contacter au sujet de cette récompense.',
+    formTitle: 'FICHE GAGNANT',
+    lastName: 'Nom',
+    firstName: 'Prénom',
+    email: 'Email',
+    phone: 'Téléphone',
+    phoneTitle: 'Chiffres, espaces, parenthèses, points et tirets uniquement, par exemple 06 12 34 56 78',
+    phoneHint: 'Format : 06 12 34 56 78 ou +33 6 12 34 56 78',
+    honeypot: 'Commentaire',
+    submit: 'Sauvegarder mes informations',
+  },
+  en: {
+    title: 'Your reward · GenAI Days',
+    description: 'Sign up as a winner of the GenAI Days easter egg to collect your reward on the day of the event.',
+    step: 'Reward · 01/02',
+    eyebrow: 'COLLECTION CONFIRMED',
+    heading: 'Your collection is complete.',
+    noteTitle: 'What you need to know',
+    contactUse: 'Your contact details will only be used to confirm your registration and to contact you about this reward.',
+    formTitle: 'WINNER FORM',
+    lastName: 'Last name',
+    firstName: 'First name',
+    email: 'Email',
+    phone: 'Phone',
+    phoneTitle: 'Digits, spaces, parentheses, dots and hyphens only, for example +33 6 12 34 56 78',
+    phoneHint: 'Format: 06 12 34 56 78 or +33 6 12 34 56 78',
+    honeypot: 'Comment',
+    submit: 'Save my details',
+  },
+}[locale];
 ---
 
 <StickerRewardLayout
-  title="Ta récompense · GenAI Days"
-  description="Inscris-toi parmi les gagnants de l’easter egg GenAI Days pour récupérer ta récompense le jour de l’événement."
-  step="Récompense · 01/02"
+  title={copy.title}
+  description={copy.description}
+  step={copy.step}
 >
   <section
     class="reward-registration"
@@ -35,21 +75,38 @@ const dataRetentionLabel = new Intl.DateTimeFormat('fr-FR', {
     hidden
   >
     <div class="reward-registration__intro">
-      <p class="reward-registration__eyebrow">COLLECTION VALIDÉE · {requiredLabelIds.length}/{requiredLabelIds.length}</p>
-      <h1>Ton dossier est complet.</h1>
+      <p class="reward-registration__eyebrow">{copy.eyebrow} · {requiredLabelIds.length}/{requiredLabelIds.length}</p>
+      <h1>{copy.heading}</h1>
       <p class="reward-registration__lead">
-        Le jour de <EventName />, une surprise t’attendra à l’accueil. Pour que notre équipe puisse
-        t’ajouter à la liste des gagnants et préparer ton cadeau, laisse-nous ces quelques informations.
+        {locale === 'en' ? (
+          <>
+            On the day of <EventName />, a surprise will be waiting for you at the welcome desk. Leave us
+            a few details so our team can add you to the winners list and prepare your gift.
+          </>
+        ) : (
+          <>
+            Le jour de <EventName />, une surprise t’attendra à l’accueil. Pour que notre équipe puisse
+            t’ajouter à la liste des gagnants et préparer ton cadeau, laisse-nous ces quelques informations.
+          </>
+        )}
       </p>
       <div class="reward-registration__note">
-        <strong>Ce que tu dois savoir</strong>
+        <strong>{copy.noteTitle}</strong>
         <p>
-          La récompense est réservée aux participants présents à <EventName /> et sera remise
-          uniquement sur place le {formatEventDateLabel()}.
+          {locale === 'en' ? (
+            <>
+              The reward is reserved for attendees present at <EventName /> and will only be handed out
+              on site on {formatEventDateLabel('en')}.
+            </>
+          ) : (
+            <>
+              La récompense est réservée aux participants présents à <EventName /> et sera remise
+              uniquement sur place le {formatEventDateLabel()}.
+            </>
+          )}
         </p>
         <p>
-          Tes coordonnées seront utilisées uniquement pour confirmer ton inscription et te contacter
-          au sujet de cette récompense.
+          {copy.contactUse}
         </p>
       </div>
     </div>
@@ -60,13 +117,13 @@ const dataRetentionLabel = new Intl.DateTimeFormat('fr-FR', {
       data-reward-registration-form
     >
       <div class="reward-registration__form-heading">
-        <span id="reward-form-title">FICHE GAGNANT</span>
+        <span id="reward-form-title">{copy.formTitle}</span>
         <span>{formatEventDateShort()}</span>
       </div>
 
       <fieldset aria-labelledby="reward-form-title" data-reward-registration-fields>
         <div class="reward-registration__field">
-          <label for="reward-last-name">Nom</label>
+          <label for="reward-last-name">{copy.lastName}</label>
           <input
             id="reward-last-name"
             name="lastName"
@@ -79,7 +136,7 @@ const dataRetentionLabel = new Intl.DateTimeFormat('fr-FR', {
         </div>
 
         <div class="reward-registration__field">
-          <label for="reward-first-name">Prénom</label>
+          <label for="reward-first-name">{copy.firstName}</label>
           <input
             id="reward-first-name"
             name="firstName"
@@ -92,7 +149,7 @@ const dataRetentionLabel = new Intl.DateTimeFormat('fr-FR', {
         </div>
 
         <div class="reward-registration__field">
-          <label for="reward-email">Email</label>
+          <label for="reward-email">{copy.email}</label>
           <input
             id="reward-email"
             name="email"
@@ -104,7 +161,7 @@ const dataRetentionLabel = new Intl.DateTimeFormat('fr-FR', {
         </div>
 
         <div class="reward-registration__field">
-          <label for="reward-phone">Téléphone</label>
+          <label for="reward-phone">{copy.phone}</label>
           <input
             id="reward-phone"
             name="phone"
@@ -114,17 +171,17 @@ const dataRetentionLabel = new Intl.DateTimeFormat('fr-FR', {
             minlength="6"
             maxlength="32"
             pattern="[+0-9][0-9 \(\)\.\-]{5,31}"
-            title="Chiffres, espaces, parenthèses, points et tirets uniquement, par exemple 06 12 34 56 78"
+            title={copy.phoneTitle}
             aria-describedby="reward-phone-hint"
             required
           />
           <p class="reward-registration__hint" id="reward-phone-hint">
-            Format&nbsp;: 06 12 34 56 78 ou +33 6 12 34 56 78
+            {copy.phoneHint}
           </p>
         </div>
 
         <div class="reward-registration__honeypot" aria-hidden="true">
-          <label for="reward-note">Commentaire</label>
+          <label for="reward-note">{copy.honeypot}</label>
           <input
             id="reward-note"
             name="note"
@@ -134,13 +191,23 @@ const dataRetentionLabel = new Intl.DateTimeFormat('fr-FR', {
           />
         </div>
 
-        <button type="submit" data-reward-submit>Sauvegarder mes informations</button>
+        <button type="submit" data-reward-submit>{copy.submit}</button>
       </fieldset>
 
       <p class="reward-registration__privacy">
-        Naomakers utilise ces informations pour vérifier ton éligibilité et organiser la remise de ta récompense.
-        Tous les champs sont obligatoires. Les données sont conservées jusqu’au {dataRetentionLabel}, puis supprimées.
-        <a href="/confidentialite#donnees-personnelles">En savoir plus sur tes données</a>.
+        {locale === 'en' ? (
+          <>
+            Naomakers uses this information to check your eligibility and arrange the handover of your reward.
+            All fields are required. The data is kept until {dataRetentionLabel}, then deleted.
+            <a href={localizePath('/confidentialite#donnees-personnelles', locale)}>Learn more about your data</a>.
+          </>
+        ) : (
+          <>
+            Naomakers utilise ces informations pour vérifier ton éligibilité et organiser la remise de ta récompense.
+            Tous les champs sont obligatoires. Les données sont conservées jusqu’au {dataRetentionLabel}, puis supprimées.
+            <a href="/confidentialite#donnees-personnelles">En savoir plus sur tes données</a>.
+          </>
+        )}
       </p>
 
       <p
@@ -155,7 +222,11 @@ const dataRetentionLabel = new Intl.DateTimeFormat('fr-FR', {
 
   <noscript>
     <div class="reward-registration__noscript">
-      JavaScript doit être activé pour vérifier ta collection. <a href="/">Retour à l’accueil</a>
+      {locale === 'en' ? (
+        <>JavaScript must be enabled to check your collection. <a href={localizePath('/', locale)}>Back to home</a></>
+      ) : (
+        <>JavaScript doit être activé pour vérifier ta collection. <a href="/">Retour à l’accueil</a></>
+      )}
     </div>
   </noscript>
 </StickerRewardLayout>
@@ -168,17 +239,36 @@ const dataRetentionLabel = new Intl.DateTimeFormat('fr-FR', {
     saveRewardRegistration,
   } from '../../lib/label-collection';
   import { capture } from '../../lib/analytics';
+  import { getDocumentLocale, localizePath } from '../../lib/i18n';
   import { navigateWithPageTransition } from '../../scripts/page-transition';
+
+  const messages = {
+    fr: {
+      saving: 'Sauvegarde en cours…',
+      saveFailed: 'L’inscription n’a pas pu être sauvegardée.',
+      simulated: 'Mode test local. Les informations sont validées, aucun email n’a été envoyé.',
+      saved: 'Informations sauvegardées. Ton message de félicitations arrive…',
+    },
+    en: {
+      saving: 'Saving…',
+      saveFailed: 'Your registration could not be saved.',
+      simulated: 'Local test mode. Your details are valid, no email was sent.',
+      saved: 'Details saved. Your congratulations message is on its way…',
+    },
+  };
 
   const page = document.querySelector<HTMLElement>('[data-reward-registration-page]');
 
   if (page) {
+    const locale = getDocumentLocale();
+    const copy = messages[locale];
+    const congratulationsPath = localizePath('/stickers/felicitations', locale);
     const requiredLabelIds = JSON.parse(page.dataset.requiredLabels || '[]') as string[];
 
     if (!hasCollectedEvery(requiredLabelIds)) {
-      window.location.replace('/');
+      window.location.replace(localizePath('/', locale));
     } else if (getRewardRegistration()) {
-      window.location.replace('/stickers/felicitations');
+      window.location.replace(congratulationsPath);
     } else {
       page.hidden = false;
     }
@@ -186,12 +276,14 @@ const dataRetentionLabel = new Intl.DateTimeFormat('fr-FR', {
     const form = page.querySelector<HTMLFormElement>('[data-reward-registration-form]');
     const fieldset = page.querySelector<HTMLFieldSetElement>('[data-reward-registration-fields]');
     const submit = page.querySelector<HTMLButtonElement>('[data-reward-submit]');
+    const submitLabel = submit?.textContent ?? '';
     const status = page.querySelector<HTMLElement>('[data-reward-status]');
 
-    /* Le serveur ne renvoie qu'une phrase : on en déduit le champ à pointer
-     * pour que le message serve à quelque chose au clavier et au lecteur
-     * d'écran. Une panne sans champ identifiable reste portée par la seule
-     * live region. */
+    /* Le serveur ne renvoie qu'une phrase, dans la langue de la page : on en
+     * déduit le champ à pointer pour que le message serve à quelque chose au
+     * clavier et au lecteur d'écran. « phone » couvre aussi « téléphone ».
+     * Une panne sans champ identifiable reste portée par la seule live
+     * region. */
     const rejectableFields = ['reward-email', 'reward-phone']
       .map((fieldId) => page.querySelector<HTMLInputElement>(`#${fieldId}`))
       .filter((field): field is HTMLInputElement => field !== null);
@@ -214,7 +306,7 @@ const dataRetentionLabel = new Intl.DateTimeFormat('fr-FR', {
     const rejectField = (message: string): void => {
       const rejectedFieldId = /email/i.test(message)
         ? 'reward-email'
-        : /téléphone/i.test(message)
+        : /phone/i.test(message)
           ? 'reward-phone'
           : '';
       const field = rejectableFields.find((candidate) => candidate.id === rejectedFieldId);
@@ -249,9 +341,9 @@ const dataRetentionLabel = new Intl.DateTimeFormat('fr-FR', {
       isSubmitting = true;
       clearRejectedFields();
       submit.setAttribute('aria-disabled', 'true');
-      submit.textContent = 'Sauvegarde en cours…';
+      submit.textContent = copy.saving;
       status.classList.remove('is-error');
-      status.textContent = 'Sauvegarde en cours…';
+      status.textContent = copy.saving;
 
       const formData = new FormData(form);
       const firstName = String(formData.get('firstName') || '').trim();
@@ -267,6 +359,7 @@ const dataRetentionLabel = new Intl.DateTimeFormat('fr-FR', {
             phone: formData.get('phone'),
             note: formData.get('note'),
             collected: getCollected(),
+            locale,
           }),
         });
         const result = await response.json().catch(() => ({}));
@@ -275,7 +368,7 @@ const dataRetentionLabel = new Intl.DateTimeFormat('fr-FR', {
           throw new Error(
             typeof result.message === 'string'
               ? result.message
-              : 'L’inscription n’a pas pu être sauvegardée.',
+              : copy.saveFailed,
           );
         }
 
@@ -284,20 +377,21 @@ const dataRetentionLabel = new Intl.DateTimeFormat('fr-FR', {
         saveRewardRegistration(firstName);
         capture('sticker_reward_submitted', { simulated: isSimulated });
         status.classList.remove('is-error');
-        status.textContent = isSimulated
-          ? 'Mode test local. Les informations sont validées, aucun email n’a été envoyé.'
-          : 'Informations sauvegardées. Ton message de félicitations arrive…';
+        status.textContent = isSimulated ? copy.simulated : copy.saved;
 
         window.setTimeout(() => {
-          navigateWithPageTransition('/stickers/felicitations');
+          navigateWithPageTransition(congratulationsPath);
         }, isSimulated ? 1600 : 900);
       } catch (error) {
-        const message = error instanceof Error
+        /* fetch rejette une panne réseau en TypeError, avec un libellé
+         * technique du navigateur toujours en anglais : seul le refus du
+         * serveur est affiché tel quel. */
+        const message = error instanceof Error && !(error instanceof TypeError)
           ? error.message
-          : 'L’inscription n’a pas pu être sauvegardée.';
+          : copy.saveFailed;
         isSubmitting = false;
         submit.removeAttribute('aria-disabled');
-        submit.textContent = 'Sauvegarder mes informations';
+        submit.textContent = submitLabel;
         status.classList.add('is-error');
         status.textContent = message;
         rejectField(message);

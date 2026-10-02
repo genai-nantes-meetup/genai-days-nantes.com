@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { getCollection } from 'astro:content';
 import SpeakersIndexPage from '../../src/pages/speakers/index.astro';
-import { SPEAKER_TARGET } from '../../src/lib/speakers';
+import { EVENT_YEAR } from '../../src/lib/event';
+import { SPEAKER_TARGET, sortSpeakersByProminence, trackForSpeaker } from '../../src/lib/speakers';
 import { createAstroContainer } from '../utils/create-astro-container';
 
 describe('speakers index page', () => {
@@ -21,7 +22,9 @@ describe('speakers index page', () => {
     });
 
     expect(html).not.toContain('Parcours ·');
-    expect(html.match(/data-track-mark-variant="icon"/g)).toHaveLength(speakers.length);
+    const sessions = await getCollection('sessions');
+    const withTrack = speakers.filter((speaker) => trackForSpeaker(speaker.id, sessions));
+    expect(html.match(/data-track-mark-variant="icon"/g)).toHaveLength(withTrack.length);
     expect(html.match(/data-track-mark-variant="label"/g)).toHaveLength(2);
     expect(html).toContain('lucide-telescope');
     expect(html).toContain('lucide-wrench');
@@ -30,16 +33,8 @@ describe('speakers index page', () => {
     expect(html).toContain('speaker-tile__role');
     expect(html).toContain('speaker-tile__company');
 
-    const christelleIndex = html.indexOf('data-speaker-tile="christelle-morancais"');
-    const nicolasIndex = html.indexOf('data-speaker-tile="nicolas-martignole"');
-    const jeanBaptisteIndex = html.indexOf('data-speaker-tile="jean-baptiste-kempf"');
-    const quentinIndex = html.indexOf('data-speaker-tile="quentin-adam"');
-    const theoIndex = html.indexOf('data-speaker-tile="theo-hubert"');
-
-    expect(christelleIndex).toBeLessThan(nicolasIndex);
-    expect(nicolasIndex).toBeLessThan(jeanBaptisteIndex);
-    expect(jeanBaptisteIndex).toBeLessThan(quentinIndex);
-    expect(quentinIndex).toBeLessThan(theoIndex);
+    const positions = sortSpeakersByProminence(speakers).map((speaker) => html.indexOf(`data-speaker-tile="${speaker.id}"`));
+    expect(positions).toEqual([...positions].sort((a, b) => a - b));
   });
 
   it('shows the company logo on the tile of speakers who have one', async () => {
@@ -70,5 +65,27 @@ describe('speakers index page', () => {
     expect(html).toContain('id="pass-participant"');
     expect(html).toContain('Réserver ma place');
     expect(html).toContain('"@type":"CollectionPage"');
+  });
+
+  it('renders the English directory with localized profile links and metadata', async () => {
+    const speakers = await getCollection('speakers');
+    const container = await createAstroContainer();
+    const html = await container.renderToString(SpeakersIndexPage, {
+      request: new Request('https://example.com/en/speakers'),
+    });
+
+    expect(html).toContain('<html lang="en"');
+    expect(html).toContain(`<title>Speakers ${EVENT_YEAR} · GENAI DAYS</title>`);
+    expect(html).toContain('Voices chosen for their expertise.');
+    expect(html).toContain('Next speaker');
+    expect(html).not.toContain('Prochain intervenant');
+    expect(html).toContain('Those who decide');
+    expect(html).toContain('Those who implement');
+    speakers.forEach((speaker) => {
+      expect(html).toContain(`href="/en/speakers/${speaker.id}"`);
+      expect(html).not.toContain(`href="/speakers/${speaker.id}"`);
+    });
+    expect(html).toContain('"url":"https://example.com/en/speakers"');
+    expect(html).toContain('"inLanguage":"en"');
   });
 });

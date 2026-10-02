@@ -9,6 +9,7 @@ import BackToTop from '../components/BackToTop.astro';
 import { EVENT, EVENT_YEAR, formatEventDateLabel } from '../lib/event';
 import { POSTHOG_API_HOST, POSTHOG_UI_HOST } from '../lib/analytics';
 import { getSocialImageUrl } from '../lib/social-image';
+import { getAlternatePaths, getLocaleFromPath, LOCALES, OG_LOCALES } from '../lib/i18n';
 
 interface Props {
   title: string;
@@ -18,13 +19,14 @@ interface Props {
   socialImage?: { src: string; alt: string; width?: number; height?: number };
 }
 
+const locale = getLocaleFromPath(Astro.url.pathname);
 const {
   title,
   description,
   structuredData = [],
   socialImage = {
     src: EVENT.image,
-    alt: `GENAI DAYS · ${formatEventDateLabel()} · ${EVENT.venue.city}`,
+    alt: `GENAI DAYS · ${formatEventDateLabel(locale)} · ${EVENT.venue.city}`,
     width: 2560,
     height: 1454,
   },
@@ -33,12 +35,28 @@ const {
 const socialImageUrl = getSocialImageUrl(socialImage.src, Astro.site ?? Astro.url.origin);
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).href;
 const socialImageAlt = socialImage.alt;
+/* Le français reste la version par défaut (x-default) : c'est la langue de
+ * l'événement et celle des conférences. */
+const alternatePaths = getAlternatePaths(Astro.url.pathname);
+const alternateLinks = alternatePaths
+  ? [
+      ...LOCALES.map((alternateLocale) => ({
+        hreflang: alternateLocale,
+        href: new URL(alternatePaths[alternateLocale], Astro.site ?? Astro.url.origin).href,
+      })),
+      { hreflang: 'x-default', href: new URL(alternatePaths.fr, Astro.site ?? Astro.url.origin).href },
+    ]
+  : [];
+const copy = {
+  fr: { skipLink: 'Aller au contenu', llmsTitle: 'GENAI DAYS · informations pour les agents IA' },
+  en: { skipLink: 'Skip to content', llmsTitle: 'GENAI DAYS · information for AI agents' },
+}[locale];
 const posthogKey = import.meta.env.PUBLIC_POSTHOG_KEY;
 const analyticsEnabled = import.meta.env.PROD && Boolean(posthogKey);
 ---
 
 <!doctype html>
-<html lang="fr">
+<html lang={locale}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -53,8 +71,9 @@ const analyticsEnabled = import.meta.env.PROD && Boolean(posthogKey);
     <link rel="icon" type="image/svg+xml" href="/logos/Gen AI Logo.svg" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="canonical" href={canonicalUrl} />
+    {alternateLinks.map((link) => <link rel="alternate" hreflang={link.hreflang} href={link.href} />)}
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <link rel="alternate" type="text/plain" href="/llms.txt" title="GENAI DAYS · informations pour les agents IA" />
+    <link rel="alternate" type="text/plain" href="/llms.txt" title={copy.llmsTitle} />
     {/* EB Garamond porte tous les titres du site (--font-serif) : le latin
      * couvre les accents français et l'apostrophe typographique du H1 de
      * la hero. Précharger évite au texte visible d'attendre la découverte
@@ -180,7 +199,10 @@ const analyticsEnabled = import.meta.env.PROD && Boolean(posthogKey);
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:site_name" content="GENAI DAYS" />
-    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:locale" content={OG_LOCALES[locale]} />
+    {alternatePaths && LOCALES.filter((alternateLocale) => alternateLocale !== locale).map((alternateLocale) => (
+      <meta property="og:locale:alternate" content={OG_LOCALES[alternateLocale]} />
+    ))}
     <meta property="og:image" content={socialImageUrl} />
     {socialImage.width && <meta property="og:image:width" content={socialImage.width} />}
     {socialImage.height && <meta property="og:image:height" content={socialImage.height} />}
@@ -253,7 +275,7 @@ const analyticsEnabled = import.meta.env.PROD && Boolean(posthogKey);
     }
   </head>
   <body class="bg-brand-cream text-brand-black font-sans">
-    <a class="skip-link" href="#contenu">Aller au contenu</a>
+    <a class="skip-link" href="#contenu">{copy.skipLink}</a>
     <slot />
     <script is:inline>
       /* Le <main> appartient à chaque page ; le layout lui pose la cible du

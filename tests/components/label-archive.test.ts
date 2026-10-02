@@ -13,8 +13,8 @@ describe('LabelArchive.astro', () => {
     expect(html).toContain('Collection vide.');
     expect(html).toContain('data-label-id="landing-day-manifesto"');
     expect(html).toContain('data-label-id="speaker-jean-baptiste-kempf"');
-    expect(html).toContain('data-label-id="session-finops-agents-dev-tools"');
-    expect(html).toContain('data-session-start="15:55"');
+    expect(html).toContain('data-label-id="session-finops-agents"');
+    expect(html).toContain('data-session-start="13:45"');
     expect(html).toContain('data-my-day-choice-marker');
     expect(html).toContain('data-label-restick-template');
     expect(html).toContain('site-label--cover');
@@ -47,5 +47,24 @@ describe('LabelArchive.astro', () => {
     expect(handles).toHaveLength(items.length);
     expect(html).toContain('data-label-restick-name="Accueil · Manifeste"');
     expect(html).toContain('data-label-restick-name="Jean-Baptiste Kempf"');
+  });
+
+  it('renders the English collection with localized links and unchanged label ids', async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(LabelArchive, {
+      request: new Request('https://example.com/en/program'),
+    });
+
+    expect(html).toContain('aria-label="Label collection"');
+    expect(html).toContain('Clear the collection');
+    expect(html).toContain('You found them all.');
+    expect(html).toContain('data-label-restick-name="Home · Manifesto"');
+    expect(html).toContain('data-label-id="speaker-jean-baptiste-kempf"');
+    expect(html).toContain('href="/en/speakers/jean-baptiste-kempf"');
+    expect(html).toContain('href="/en/stickers/congratulations"');
+    expect(html).toContain('href="/en/stickers/reward"');
+    expect(html).toMatch(/<strong[^>]*>“[^”<]+”<\/strong>/);
+    expect(html).not.toMatch(/<strong[^>]*>&quot;/);
+    expect(html).not.toContain('Vider la collection');
   });
 });

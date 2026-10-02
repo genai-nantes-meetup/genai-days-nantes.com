@@ -43,6 +43,40 @@ describe('Header.astro', () => {
     expect(html).not.toMatch(/href="\/speakers"[^>]*aria-current="page"/);
   });
 
+  it('offers the other language as a discreet code before the ticketing CTA', async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(Header, {
+      request: new Request('https://example.com/programme'),
+    });
+
+    // Avant le bouton Menu sur mobile, avant la billetterie au-delà.
+    expect(html.match(/data-language-switch/g)).toHaveLength(2);
+    expect(html).toMatch(
+      /class="site-header__language site-header__language--compact" href="\/en\/program" hreflang="en" lang="en" data-language-switch>/,
+    );
+    expect(html).toMatch(
+      /site-header__actions[\s\S]*?<a class="site-header__language" href="\/en\/program" hreflang="en" lang="en" data-language-switch>\s*<span aria-hidden="true">EN<\/span>\s*<span class="sr-only">English<\/span>/,
+    );
+    const menu = html.slice(html.indexOf('id="site-menu"'));
+    expect(menu).not.toContain('data-language-switch');
+  });
+
+  it('renders the English header with localized links and ticketing', async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(Header, {
+      request: new Request('https://example.com/en/program/agentic-coding'),
+    });
+
+    expect(html.match(/Book my seat/g)).toHaveLength(2);
+    expect(html).not.toContain('Réserver ma place');
+    expect(html).toMatch(/href="\/en"[^>]*class="site-header__brand/);
+    expect(html).toMatch(/href="\/en\/program"[^>]*aria-current="page"[^>]*>Program/);
+    expect(html).toContain('href="/en/practical-info"');
+    expect(html).toContain('href="/en/team"');
+    expect(html).toContain('opens in a new tab');
+    expect(html).toMatch(/href="\/programme\/agentic-coding" hreflang="fr" lang="fr" data-language-switch>\s*<span aria-hidden="true">FR<\/span>\s*<span class="sr-only">Français<\/span>/);
+  });
+
   it('stays sticky, surface driven by --header-surface, with the mobile menu panel', async () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(Header);

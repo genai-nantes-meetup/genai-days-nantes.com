@@ -2,5 +2,9 @@
   "name": "Pass Participant",
   "capacity": 400,
   "amount": 147,
-  "policy": "Place transférable à un·e collègue jusqu’au jour J depuis la billetterie. Remboursement sur demande."
+  "policy": "Place transférable à un·e collègue jusqu’au jour J depuis la billetterie. Remboursement sur demande.",
+  "en": {
+    "name": "Participant Pass",
+    "policy": "Your seat can be transferred to a colleague from the ticketing site, right up to the day of the event. Refunds on request."
+  }
 }

@@ -1,5 +1,6 @@
 ---
 import ArrowIcon from './ArrowIcon.astro';
+import { getLocaleFromPath } from '../lib/i18n';
 
 /**
  * Remontée rapide : le standard universel, un bouton fixe en bas à droite
@@ -9,9 +10,13 @@ import ArrowIcon from './ArrowIcon.astro';
  * bord d'écran appartient au classeur. Remonte avec le moteur de scroll
  * actif pour interrompre proprement son inertie.
  */
+const label = {
+  fr: 'Revenir en haut de page',
+  en: 'Back to top',
+}[getLocaleFromPath(Astro.url.pathname)];
 ---
 
-<button type="button" class="back-to-top" data-back-to-top data-scroll-top aria-label="Revenir en haut de page">
+<button type="button" class="back-to-top" data-back-to-top data-scroll-top aria-label={label}>
   <ArrowIcon direction="up" />
 </button>
 

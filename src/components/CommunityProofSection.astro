@@ -1,26 +1,54 @@
 ---
 import ArrowIcon from './ArrowIcon.astro';
+import BrandText from './BrandText.astro';
 import EditorialGrid from './EditorialGrid.astro';
-import EventName from './EventName.astro';
 import communityData from '../content/community.json';
+import { getLocaleFromPath, localizePath } from '../lib/i18n';
 
-const communities = communityData.communities;
+const locale = getLocaleFromPath(Astro.url.pathname);
 
+/* Chaque communauté porte sa version anglaise dans un objet `en`. Les
+ * chiffres se fusionnent par position : l'anglais ne redonne une valeur que
+ * pour en changer l'écriture (4,8 devient 4.8). */
+const communities = communityData.communities.map(({ en, ...community }) =>
+  locale === 'en'
+    ? { ...community, ...en, stats: community.stats.map((stat, index) => ({ ...stat, ...en.stats[index] })) }
+    : community,
+);
+
+const copy = {
+  fr: {
+    title: 'La communauté est déjà là.',
+    lede: 'GENAI DAYS arrive à Nantes, porté par une équipe qui y rassemble déjà celles et ceux qui font l’IA générative.',
+    teamLink: 'Rencontrer l’équipe',
+    indexLabel: 'Choisir un rendez-vous de l’équipe',
+    panelLabel: (name: string) => `Détails de ${name}`,
+    statsLabel: (name: string) => `Chiffres clés de ${name}`,
+  },
+  en: {
+    title: 'The community is already here.',
+    lede: 'GENAI DAYS comes to Nantes, run by a team that already brings together the people building generative AI in the city.',
+    teamLink: 'Meet the team',
+    indexLabel: 'Choose one of the team’s events',
+    panelLabel: (name: string) => `${name} details`,
+    statsLabel: (name: string) => `${name} key figures`,
+  },
+}[locale];
 ---
 
 <section class="community-proof" aria-labelledby="community-proof-title" data-community-proof>
   <EditorialGrid />
   <div class="community-proof__inner">
     <header class="community-proof__heading">
-      <h2 id="community-proof-title" class="type-section-title">La communauté est déjà là.</h2>
-      <p><EventName /> arrive à Nantes, porté par une équipe qui y rassemble déjà celles et ceux qui font l’IA générative.</p>
-      <a class="community-proof__team-link" href="/equipe">
-        Rencontrer l’équipe <ArrowIcon />
+      <h2 id="community-proof-title" class="type-section-title">{copy.title}</h2>
+      <p><BrandText text={copy.lede} /></p>
+      <a class="community-proof__team-link" href={localizePath('/equipe', locale)}>
+        {copy.teamLink} <ArrowIcon />
       </a>
     </header>
 
     <div class="community-proof__stage">
-      <div class="community-index" role="group" aria-label="Choisir un rendez-vous de l’équipe">
+      <div class="community-index" role="group" aria-label={copy.indexLabel}>
         {communities.map((community, index) => (
           <button
             class:list={['community-index__tab', `community-index__tab--${community.id}`]}
@@ -54,7 +82,7 @@ const communities = communityData.communities;
           <article
             class:list={['community-panel', `community-panel--${community.id}`]}
             id={`community-panel-${community.id}`}
-            aria-label={`Détails de ${community.name}`}
+            aria-label={copy.panelLabel(community.name)}
             data-community-panel={community.id}
             hidden={index !== 0}
           >
@@ -65,7 +93,7 @@ const communities = communityData.communities;
               </div>
             </header>
 
-            <dl class="community-panel__stats" aria-label={`Chiffres clés de ${community.name}`}>
+            <dl class="community-panel__stats" aria-label={copy.statsLabel(community.name)}>
               {community.stats.map((stat) => (
                 <div><dt>{stat.value}</dt><dd>{stat.label}</dd></div>
               ))}

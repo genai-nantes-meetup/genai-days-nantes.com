@@ -1,15 +1,90 @@
 ---
 import { getCollection } from 'astro:content';
 import { SPEAKER_EVENT_ROLE_SHORT_LABELS } from '../lib/speakers';
+import { getLocaleFromPath, localizePath } from '../lib/i18n';
+import { getLocalizedCollection } from '../lib/localized-content';
 import CoverLabel from './CoverLabel.astro';
 import EventName from './EventName.astro';
 import ImagePlaceholder from './ImagePlaceholder.astro';
 import Label from './Label.astro';
 
-const sessions = (await getCollection('sessions')).sort((a, b) => a.data.startTime.localeCompare(b.data.startTime));
-const speakers = (await getCollection('speakers')).sort((a, b) => a.data.name.localeCompare(b.data.name));
+const locale = getLocaleFromPath(Astro.url.pathname);
+const copy = {
+  fr: {
+    archiveLabel: 'Collection d’étiquettes',
+    closeArchive: 'Fermer la collection',
+    dropTitle: 'Déposer l’étiquette ici',
+    dropHint: 'Relâcher pour collectionner',
+    empty: 'Collection vide.',
+    homeLinkLabel: 'Ouvrir la page d’accueil',
+    homeKicker: 'ACCUEIL · MANIFESTE',
+    homeTitle: "Une journée pour comprendre, décider et construire avec l'IA",
+    homeRestickName: 'Accueil · Manifeste',
+    speakerLinkLabel: (name: string) => `Ouvrir la page de ${name}`,
+    sessionLinkLabel: (title: string) => `Ouvrir la page : ${title}`,
+    quotedTitle: (title: string) => `"${title}"`,
+    sharedSession: 'Temps commun',
+    myDay: 'Ma journée',
+    restickLabel: 'Recoller l’étiquette sur la page',
+    restickTitle: 'Recoller sur la page',
+    shinePermission: "Activer l'effet shiny",
+    rewardLink: 'Voir ma récompense',
+    reset: 'Vider la collection',
+    rewardImage: 'Image de récompense à venir',
+    closeModal: 'Fermer la fenêtre',
+    completionKicker: 'COLLECTION COMPLÈTE',
+    completionTitle: 'Tu les as tous trouvés.',
+    completionCta: 'Accéder à ma récompense',
+    later: 'Plus tard',
+    sessionFormats: {
+      keynote: 'Keynote',
+      talk: 'Talk',
+      'table-ronde': 'Table ronde',
+      atelier: 'Atelier',
+      concours: 'Startup Contest',
+      podcast: 'Podcast en public',
+    },
+  },
+  en: {
+    archiveLabel: 'Label collection',
+    closeArchive: 'Close the collection',
+    dropTitle: 'Drop the label here',
+    dropHint: 'Release to collect',
+    empty: 'Your collection is empty.',
+    homeLinkLabel: 'Open the home page',
+    homeKicker: 'HOME · MANIFESTO',
+    homeTitle: 'One day to understand, decide and build with AI',
+    homeRestickName: 'Home · Manifesto',
+    speakerLinkLabel: (name: string) => `Open ${name}’s profile`,
+    sessionLinkLabel: (title: string) => `Open the session page: ${title}`,
+    quotedTitle: (title: string) => `“${title}”`,
+    sharedSession: 'All tracks',
+    myDay: 'My day',
+    restickLabel: 'Stick the label back on the page',
+    restickTitle: 'Stick back on the page',
+    shinePermission: 'Turn on the shine effect',
+    rewardLink: 'See my reward',
+    reset: 'Clear the collection',
+    rewardImage: 'Reward image coming soon',
+    closeModal: 'Close dialog',
+    completionKicker: 'COLLECTION COMPLETE',
+    completionTitle: 'You found them all.',
+    completionCta: 'Claim my reward',
+    later: 'Later',
+    sessionFormats: {
+      keynote: 'Keynote',
+      talk: 'Talk',
+      'table-ronde': 'Panel',
+      atelier: 'Workshop',
+      concours: 'Startup Contest',
+      podcast: 'Live podcast',
+    },
+  },
+}[locale];
+const sessions = (await getLocalizedCollection('sessions', locale)).sort((a, b) => a.data.startTime.localeCompare(b.data.startTime));
+const speakers = (await getLocalizedCollection('speakers', locale)).sort((a, b) => a.data.name.localeCompare(b.data.name));
 const partners = await getCollection('partners');
-const tracks = await getCollection('tracks');
+const tracks = await getLocalizedCollection('tracks', locale);
 const speakerById = new Map(speakers.map((speaker) => [speaker.id, speaker]));
 const companyLogoByName = new Map(partners.map((partner) => [partner.data.name, partner.data.logo]));
 const trackById = new Map(tracks.map((track) => [track.id, track.data]));
@@ -18,7 +93,7 @@ const trackById = new Map(tracks.map((track) => [track.id, track.data]));
  * une salle vide. */
 const roomFor = (session: (typeof sessions)[number]) =>
   session.data.room ||
-  (trackById.get(session.data.track)?.name ?? (session.data.track === 'commun' ? 'Temps commun' : session.data.track));
+  (trackById.get(session.data.track)?.name ?? (session.data.track === 'commun' ? copy.sharedSession : session.data.track));
 const presentersFor = (session: (typeof sessions)[number]) => [
   ...session.data.speakerSlugs
     .map((slug) => speakerById.get(slug))
@@ -36,14 +111,6 @@ const presentersFor = (session: (typeof sessions)[number]) => [
       }]
     : []),
 ];
-const sessionFormatLabels = {
-  keynote: 'Keynote',
-  talk: 'Talk',
-  'table-ronde': 'Table ronde',
-  atelier: 'Atelier',
-  concours: 'Startup Contest',
-  podcast: 'Podcast en public',
-};
 const totalLabels = sessions.length + speakers.length + 1;
 const requiredLabelIds = [
   'landing-day-manifesto',
@@ -58,7 +125,7 @@ const requiredLabelIds = [
   data-label-archive
   data-total-labels={totalLabels}
   data-required-labels={JSON.stringify(requiredLabelIds)}
-  aria-label="Collection d’étiquettes"
+  aria-label={copy.archiveLabel}
 >
   <button class="label-archive__tab" type="button" data-label-archive-tab aria-expanded="false">
     <span>COLLECTION</span>
@@ -66,17 +133,17 @@ const requiredLabelIds = [
   </button>
 
   <div class="label-archive__drawer">
-    <button class="label-archive__close" type="button" data-label-archive-close aria-label="Fermer la collection">×</button>
+    <button class="label-archive__close" type="button" data-label-archive-close aria-label={copy.closeArchive}>×</button>
 
     <div class="label-archive__dropzone" data-label-dropzone>
       <span class="label-archive__target" aria-hidden="true"></span>
-      <strong>Déposer l’étiquette ici</strong>
-      <small>Relâcher pour collectionner</small>
+      <strong>{copy.dropTitle}</strong>
+      <small>{copy.dropHint}</small>
     </div>
 
     <div class="label-archive__inventory">
       <p class="label-archive__empty" data-label-archive-empty>
-        Collection vide.
+        {copy.empty}
       </p>
 
       <ol>
@@ -86,25 +153,25 @@ const requiredLabelIds = [
             format="rectangle-a"
             elevation="flat"
             rotation={-0.35}
-            href="/"
-            ariaLabel="Ouvrir la page d’accueil"
+            href={localizePath('/', locale)}
+            ariaLabel={copy.homeLinkLabel}
             class="label-archive__card"
             contentClass="label-archive__card-content"
           >
             <span>00</span>
             <div>
-              <small>ACCUEIL · MANIFESTE</small>
-              <strong>Une journée pour comprendre, décider et construire avec l'IA</strong>
+              <small>{copy.homeKicker}</small>
+              <strong>{copy.homeTitle}</strong>
             </div>
           </Label>
           <button
             class="label-archive__restick"
             type="button"
             data-label-archive-restick
-            data-label-restick-name="Accueil · Manifeste"
-            aria-label="Recoller l’étiquette sur la page"
+            data-label-restick-name={copy.homeRestickName}
+            aria-label={copy.restickLabel}
             aria-disabled="true"
-            title="Recoller sur la page"
+            title={copy.restickTitle}
             disabled
           >
             <span aria-hidden="true">↖</span>
@@ -118,8 +185,8 @@ const requiredLabelIds = [
               format="rectangle-a"
               elevation="flat"
               rotation={-0.35}
-              href={`/speakers/${speaker.id}`}
-              ariaLabel={`Ouvrir la page de ${speaker.data.name}`}
+              href={localizePath(`/speakers/${speaker.id}`, locale)}
+              ariaLabel={copy.speakerLinkLabel(speaker.data.name)}
               class="label-archive__card"
               contentClass="label-archive__card-content"
             >
@@ -127,7 +194,7 @@ const requiredLabelIds = [
               <div>
                 <small>
                   {speaker.data.eventRole
-                    ? SPEAKER_EVENT_ROLE_SHORT_LABELS[speaker.data.eventRole].toUpperCase()
+                    ? SPEAKER_EVENT_ROLE_SHORT_LABELS[locale][speaker.data.eventRole].toUpperCase()
                     : 'SPEAKER'} · {speaker.data.company}
                 </small>
                 <strong>{speaker.data.name}</strong>
@@ -138,9 +205,9 @@ const requiredLabelIds = [
               type="button"
               data-label-archive-restick
               data-label-restick-name={speaker.data.name}
-              aria-label="Recoller l’étiquette sur la page"
+              aria-label={copy.restickLabel}
               aria-disabled="true"
-              title="Recoller sur la page"
+              title={copy.restickTitle}
               disabled
             >
               <span aria-hidden="true">↖</span>
@@ -163,8 +230,8 @@ const requiredLabelIds = [
               format="rectangle-a"
               elevation="flat"
               rotation={-0.35}
-              href={`/programme/${session.id}`}
-              ariaLabel={`Ouvrir la page : ${session.data.title}`}
+              href={localizePath(`/programme/${session.id}`, locale)}
+              ariaLabel={copy.sessionLinkLabel(session.data.title)}
               class="label-archive__card"
               contentClass="label-archive__card-content"
             >
@@ -172,15 +239,15 @@ const requiredLabelIds = [
               <div>
                 <small>{session.data.startTime} · {roomFor(session)}</small>
                 <strong>
-                  {session.data.quoteTitle ? `"${session.data.title}"` : session.data.title}
+                  {session.data.quoteTitle ? copy.quotedTitle(session.data.title) : session.data.title}
                 </strong>
-                <em data-my-day-choice-marker hidden>Ma journée</em>
+                <em data-my-day-choice-marker hidden>{copy.myDay}</em>
               </div>
             </Label>
             <template data-label-restick-template>
               <CoverLabel
                 labelId={`session-${session.id}`}
-                format={sessionFormatLabels[session.data.format]}
+                format={copy.sessionFormats[session.data.format]}
                 room={roomFor(session)}
                 startTime={session.data.startTime}
                 durationMinutes={session.data.durationMinutes}
@@ -194,9 +261,9 @@ const requiredLabelIds = [
               type="button"
               data-label-archive-restick
               data-label-restick-name={session.data.title}
-              aria-label="Recoller l’étiquette sur la page"
+              aria-label={copy.restickLabel}
               aria-disabled="true"
-              title="Recoller sur la page"
+              title={copy.restickTitle}
               disabled
             >
               <span aria-hidden="true">↖</span>
@@ -214,18 +281,18 @@ const requiredLabelIds = [
         aria-live="polite"
         hidden
       >
-        Activer l'effet shiny
+        {copy.shinePermission}
       </button>
       <a
         class="label-archive__reward-link"
-        href="/stickers/felicitations"
+        href={localizePath('/stickers/felicitations', locale)}
         data-label-archive-reward
         hidden
       >
-        Voir ma récompense
+        {copy.rewardLink}
       </a>
       <button class="label-archive__reset" type="button" data-label-archive-reset>
-        Vider la collection
+        {copy.reset}
       </button>
     </footer>
   </div>
@@ -240,32 +307,42 @@ const requiredLabelIds = [
 >
   <div class="label-completion-modal__sheet">
     <div class="label-completion-modal__cover">
-      <ImagePlaceholder label="Image de récompense à venir" />
+      <ImagePlaceholder label={copy.rewardImage} />
       <form method="dialog" class="label-completion-modal__close-form">
         <button
           class="label-completion-modal__close"
           type="submit"
           data-label-completion-close
-          aria-label="Fermer la fenêtre"
+          aria-label={copy.closeModal}
         >
           ×
         </button>
       </form>
     </div>
     <div class="label-completion-modal__content">
-      <p class="label-completion-modal__eyebrow">COLLECTION COMPLÈTE</p>
-      <h2 id="label-completion-title">Tu les as tous trouvés.</h2>
+      <p class="label-completion-modal__eyebrow">{copy.completionKicker}</p>
+      <h2 id="label-completion-title">{copy.completionTitle}</h2>
       <p>
-        Bravo&nbsp;! Tu viens de compléter l’easter egg des stickers <EventName />.
-        Une récompense spéciale t’attend le jour de l’événement.
-        Elle est réservée aux participants de <EventName /> et sera remise uniquement sur place.
+        {locale === 'en' ? (
+          <>
+            Well done! You just completed the <EventName /> sticker easter egg.
+            A special reward is waiting for you on the day of the event.
+            It is reserved for <EventName /> attendees and will only be handed out on site.
+          </>
+        ) : (
+          <>
+            Bravo&nbsp;! Tu viens de compléter l’easter egg des stickers <EventName />.
+            Une récompense spéciale t’attend le jour de l’événement.
+            Elle est réservée aux participants de <EventName /> et sera remise uniquement sur place.
+          </>
+        )}
       </p>
-      <a class="label-completion-modal__cta" href="/stickers/recompense">
-        Accéder à ma récompense
+      <a class="label-completion-modal__cta" href={localizePath('/stickers/recompense', locale)}>
+        {copy.completionCta}
       </a>
       <form method="dialog">
         <button class="label-completion-modal__later" type="submit" data-label-completion-close>
-          Plus tard
+          {copy.later}
         </button>
       </form>
     </div>

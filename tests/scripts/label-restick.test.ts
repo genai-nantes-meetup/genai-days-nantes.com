@@ -54,6 +54,7 @@ function buildDom(): void {
 describe('restick from the archive', () => {
   beforeEach(() => {
     window.localStorage.clear();
+    document.documentElement.removeAttribute('lang');
     vi.stubGlobal('IntersectionObserver', class {
       observe() {}
       unobserve() {}
@@ -256,6 +257,23 @@ describe('restick from the archive', () => {
     expect(labelCollection.isCollected('session-a')).toBe(false);
     expect(shell.classList.contains('is-collected')).toBe(false);
     expect(document.querySelector<HTMLElement>('[data-label-card]')!.parentElement).toBe(shell);
+  });
+
+  it('announces the restick in English on English pages', () => {
+    document.documentElement.lang = 'en';
+    labelCollection.collect('session-a');
+    initLabelEasterEgg();
+
+    const handle = document.querySelector<HTMLButtonElement>('[data-label-archive-restick]')!;
+    const live = document.querySelector<HTMLElement>('[data-label-archive-live]')!;
+    expect(handle.getAttribute('aria-label')).toContain('Stick the label “Session A” back on the page');
+
+    handle.click();
+
+    expect(live.textContent).toBe('Label stuck back in its original spot.');
+    expect(document.querySelector('[data-label-corner]')!.getAttribute('aria-label')).toBe(
+      'Peel off the label · Enter or Space adds it to the collection',
+    );
   });
 
 });

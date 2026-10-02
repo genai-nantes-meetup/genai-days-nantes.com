@@ -5,10 +5,13 @@ import EditorialGrid from './EditorialGrid.astro';
 import ScheduleSession from './ScheduleSession.astro';
 import TrackMark from './TrackMark';
 import { stripMarkdownToPlainText } from '../lib/markdown';
+import { getLocaleFromPath, localizePath } from '../lib/i18n';
+import { getLocalizedCollection } from '../lib/localized-content';
 
-const sessions = await getCollection('sessions');
+const locale = getLocaleFromPath(Astro.url.pathname);
+const sessions = await getLocalizedCollection('sessions', locale);
 const speakers = await getCollection('speakers');
-const tracks = await getCollection('tracks');
+const tracks = await getLocalizedCollection('tracks', locale);
 
 const speakerById = new Map(speakers.map((speaker) => [speaker.id, speaker]));
 const trackById = new Map(tracks.map((track) => [track.id, track.data]));
@@ -100,7 +103,7 @@ function sessionSpeakers(session: CollectionEntry<'sessions'>) {
     const speaker = speakerById.get(slug);
     return {
       name: speaker?.data.name ?? slug,
-      href: `/speakers/${slug}`,
+      href: localizePath(`/speakers/${slug}`, locale),
       eventRole: speaker?.data.eventRole,
     };
   });
@@ -110,14 +113,57 @@ function sessionSpeakers(session: CollectionEntry<'sessions'>) {
     : sessionPeople;
 }
 
-const commonKindLabels: Record<Exclude<ProgrammeSlotKind, 'conference'>, string> = {
-  arrival: 'Accueil',
-  keynote: 'Keynote',
-  transition: 'Interlude',
-  meal: 'Pause déjeuner',
-  social: 'Temps de rencontre',
-  closing: 'Fin de journée',
-};
+const copy = {
+  fr: {
+    commonKindLabels: {
+      arrival: 'Accueil',
+      keynote: 'Keynote',
+      transition: 'Interlude',
+      meal: 'Pause déjeuner',
+      social: 'Temps de rencontre',
+      closing: 'Fin de journée',
+    },
+    daypartLabels: {
+      matin: 'Matin',
+      dejeuner: 'Déjeuner',
+      apresMidi: 'Après-midi',
+      soiree: 'Soirée',
+    },
+    sectionLabel: 'Programme heure par heure',
+    trackHeadingsLabel: 'Parcours du programme',
+    trackFilterLabel: 'Filtrer par parcours',
+    panelLabel: 'Déroulé de la journée',
+    provisionalTitle: 'Programmation à venir',
+    atTime: 'à',
+    quote: (text: string) => `"${text}"`,
+    notice: 'Horaires et contenus susceptibles d’évoluer.',
+  },
+  en: {
+    commonKindLabels: {
+      arrival: 'Welcome',
+      keynote: 'Keynote',
+      transition: 'Break',
+      meal: 'Lunch break',
+      social: 'Networking',
+      closing: 'End of day',
+    },
+    daypartLabels: {
+      matin: 'Morning',
+      dejeuner: 'Lunch',
+      apresMidi: 'Afternoon',
+      soiree: 'Evening',
+    },
+    sectionLabel: 'Hour-by-hour program',
+    trackHeadingsLabel: 'Program tracks',
+    trackFilterLabel: 'Filter by track',
+    panelLabel: 'Schedule of the day',
+    provisionalTitle: 'To be announced',
+    atTime: 'at',
+    quote: (text: string) => `“${text}”`,
+    notice: 'Times and content are subject to change.',
+  },
+}[locale];
+const commonKindLabels: Record<Exclude<ProgrammeSlotKind, 'conference'>, string> = copy.commonKindLabels;
 
 const mealIndex = PROGRAMME_SLOTS.findIndex((slot) => slot.kind === 'meal');
 const socialIndex = PROGRAMME_SLOTS.findIndex((slot) => slot.kind === 'social');
@@ -126,10 +172,10 @@ const afternoonStart = mealIndex === -1 ? morningEnd : mealIndex + 1;
 const afternoonEnd = socialIndex === -1 ? PROGRAMME_SLOTS.length : socialIndex;
 
 const dayparts = [
-  { id: 'matin', label: 'Matin', slots: PROGRAMME_SLOTS.slice(0, morningEnd) },
-  { id: 'dejeuner', label: 'Déjeuner', slots: mealIndex === -1 ? [] : PROGRAMME_SLOTS.slice(mealIndex, mealIndex + 1) },
-  { id: 'apres-midi', label: 'Après-midi', slots: PROGRAMME_SLOTS.slice(afternoonStart, afternoonEnd) },
-  { id: 'soiree', label: 'Soirée', slots: PROGRAMME_SLOTS.slice(afternoonEnd) },
+  { id: 'matin', label: copy.daypartLabels.matin, slots: PROGRAMME_SLOTS.slice(0, morningEnd) },
+  { id: 'dejeuner', label: copy.daypartLabels.dejeuner, slots: mealIndex === -1 ? [] : PROGRAMME_SLOTS.slice(mealIndex, mealIndex + 1) },
+  { id: 'apres-midi', label: copy.daypartLabels.apresMidi, slots: PROGRAMME_SLOTS.slice(afternoonStart, afternoonEnd) },
+  { id: 'soiree', label: copy.daypartLabels.soiree, slots: PROGRAMME_SLOTS.slice(afternoonEnd) },
 ]
   .filter((daypart) => daypart.slots.length > 0)
   .map((daypart) => ({ ...daypart, groups: groupConferenceSlots(daypart.slots) }));
@@ -138,7 +184,7 @@ const dayparts = [
 <section
   id="planning"
   class="schedule-section"
-  aria-label="Programme heure par heure"
+  aria-label={copy.sectionLabel}
   data-active-track="decideurs"
   data-schedule-tabs
 >
@@ -146,12 +192,12 @@ const dayparts = [
 
   <div class="schedule-section__inner">
     <div class="schedule-track-guide">
-      <div class="schedule-track-headings" aria-label="Parcours du programme">
-        <h3 class="schedule-track-heading schedule-track-heading--decideurs"><TrackMark track="decideurs" /></h3>
-        <h3 class="schedule-track-heading schedule-track-heading--tech"><TrackMark track="tech" /></h3>
+      <div class="schedule-track-headings" aria-label={copy.trackHeadingsLabel}>
+        <h3 class="schedule-track-heading schedule-track-heading--decideurs"><TrackMark track="decideurs" locale={locale} /></h3>
+        <h3 class="schedule-track-heading schedule-track-heading--tech"><TrackMark track="tech" locale={locale} /></h3>
       </div>
 
-      <div class="schedule-tabs" role="group" aria-label="Filtrer par parcours">
+      <div class="schedule-tabs" role="group" aria-label={copy.trackFilterLabel}>
         <button
           id="schedule-tab-decideurs"
           class="schedule-tab schedule-tab--decideurs"
@@ -160,7 +206,7 @@ const dayparts = [
           aria-pressed="true"
           data-schedule-tab="decideurs"
         >
-          <TrackMark track="decideurs" />
+          <TrackMark track="decideurs" locale={locale} />
         </button>
         <button
           id="schedule-tab-tech"
@@ -170,7 +216,7 @@ const dayparts = [
           aria-pressed="false"
           data-schedule-tab="tech"
         >
-          <TrackMark track="tech" />
+          <TrackMark track="tech" locale={locale} />
         </button>
       </div>
     </div>
@@ -179,7 +225,7 @@ const dayparts = [
       id="schedule-track-sessions"
       class="schedule-panel"
       role="group"
-      aria-label="Déroulé de la journée"
+      aria-label={copy.panelLabel}
       aria-describedby="schedule-notice"
       data-schedule-panel
     >
@@ -227,13 +273,13 @@ const dayparts = [
                                   room={cell.session.data.room}
                                   format={cell.session.data.format}
                                   speakers={sessionSpeakers(cell.session)}
-                                  sessionHref={`/programme/${cell.session.id}`}
+                                  sessionHref={localizePath(`/programme/${cell.session.id}`, locale)}
                                   illustration={cell.session.data.illustration}
                                   sessionId={cell.session.id}
                                 />
                               ) : (
                                 <ScheduleSession
-                                  title="Programmation à venir"
+                                  title={copy.provisionalTitle}
                                   startTime={time}
                                   durationMinutes={group[rowIndex].durationMinutes ?? 0}
                                   room={trackById.get(trackId)?.name ?? ''}
@@ -275,7 +321,7 @@ const dayparts = [
                               room={parallelSession.data.room}
                               format={parallelSession.data.format}
                               speakers={sessionSpeakers(parallelSession)}
-                              sessionHref={`/programme/${parallelSession.id}`}
+                              sessionHref={localizePath(`/programme/${parallelSession.id}`, locale)}
                               illustration={parallelSession.data.illustration}
                               sessionId={parallelSession.id}
                             />
@@ -285,7 +331,7 @@ const dayparts = [
                               <div>
                                 <p class="schedule-common__meta">{commonKindLabels[slot.kind]}</p>
                                 <h4 class="schedule-common__title">
-                                  {slot.title}<span class="sr-only"> à {slot.time}</span>
+                                  {slot.title[locale]}<span class="sr-only"> {copy.atTime} {slot.time}</span>
                                 </h4>
                               </div>
                             </article>
@@ -327,16 +373,16 @@ const dayparts = [
                       </p>
                       <h4 class="schedule-common__title">
                         {commonSession ? (
-                          <a href={`/programme/${commonSession.id}`}>
+                          <a href={localizePath(`/programme/${commonSession.id}`, locale)}>
                             {commonSession.data.quoteTitle
-                              ? `"${commonSession.data.title}"`
+                              ? copy.quote(commonSession.data.title)
                               : commonSession.data.title}
-                            <span class="sr-only"> à {slot.time}</span>
+                            <span class="sr-only"> {copy.atTime} {slot.time}</span>
                           </a>
                         ) : (
                           <>
-                            {slot.title}
-                            <span class="sr-only"> à {slot.time}</span>
+                            {slot.title[locale]}
+                            <span class="sr-only"> {copy.atTime} {slot.time}</span>
                           </>
                         )}
                       </h4>
@@ -356,7 +402,7 @@ const dayparts = [
                           ))}
                         </p>
                       )}
-                      {!commonSession && slot.detail && <p class="schedule-common__detail">{slot.detail}</p>}
+                      {!commonSession && slot.detail && <p class="schedule-common__detail">{slot.detail[locale]}</p>}
                     </div>
                   </article>
                 );
@@ -368,7 +414,7 @@ const dayparts = [
     </div>
 
     <p id="schedule-notice" class="schedule-section__notice">
-      Horaires et contenus susceptibles d’évoluer.
+      {copy.notice}
     </p>
   </div>
 </section>

@@ -46,4 +46,14 @@ describe('Footer.astro', () => {
     expect(html).not.toContain('on passe au terrain.');
     expect(html).not.toContain('site-footer__closing-mark');
   });
+
+  it('renders the English footer with localized links', async () => {
+    const container = await AstroContainer.create();
+    const english = await container.renderToString(Footer, { request: new Request('https://example.com/en/team') });
+
+    expect(english).toContain('All rights reserved');
+    expect(english).toContain('href="/en/team"');
+    expect(english).toContain('href="/en/partners#devenir-partenaire"');
+    expect(english).not.toContain('data-language-switch');
+  });
 });

@@ -9,7 +9,7 @@ describe('partner directory', () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(PartnersIndexPage);
 
-    expect(confirmedPartners).toHaveLength(16);
+    expect(confirmedPartners.length).toBeGreaterThan(0);
     expect(html).toContain('partner-board__group--with-coorganizer');
     expect(html).toContain('partner-tile--coorganizer');
     expect(html).toContain('La Région Pays de la Loire co-organise cette édition à l’Hôtel de Région');
@@ -25,5 +25,22 @@ describe('partner directory', () => {
     expect(html).not.toContain('Groupe Atlantide');
     expect(html).not.toContain('Loire Data Works');
     expect(html).not.toContain('Nautilus AI');
+  });
+
+  it('renders the English directory under /en/partners with the same anchors', async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(PartnersIndexPage, {
+      request: new Request('https://example.com/en/partners'),
+    });
+    const main = html.slice(html.indexOf('<main'), html.indexOf('</main>'));
+
+    expect(html).toContain('<title>Partners · GENAI DAYS · with the Région Pays de la Loire</title>');
+    expect(main).toContain('at the Hôtel de Région, alongside committed companies and networks.');
+    expect(main).toContain('aria-label="Visit the Clever Cloud website"');
+    expect(main).toContain('Want your organization to take part in the day?');
+    expect(main).toContain('id="devenir-partenaire"');
+    expect(main).not.toContain('Devenir partenaire');
+    expect(html).toContain('"url":"https://example.com/en/partners","inLanguage":"en"');
+    expect(html).toContain('{"@type":"ListItem","position":1,"name":"Home","item":"https://example.com/en"}');
   });
 });

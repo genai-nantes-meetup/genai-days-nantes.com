@@ -1,5 +1,17 @@
+import { getDocumentLocale } from '../lib/i18n';
+
+const messages = {
+  fr: {
+    status: (first: number, last: number, total: number) => `Diapositives ${first} à ${last} sur ${total}. Carrousel en boucle.`,
+  },
+  en: {
+    status: (first: number, last: number, total: number) => `Slides ${first} to ${last} of ${total}. Looping carousel.`,
+  },
+};
+
 export function initSpeakerCarousels(root: ParentNode = document): number {
   const carousels = root.querySelectorAll<HTMLElement>('[data-speaker-carousel]');
+  const copy = messages[getDocumentLocale()];
 
   carousels.forEach((carousel) => {
     if (carousel.dataset.speakerCarouselReady === 'true') return;
@@ -41,7 +53,7 @@ export function initSpeakerCarousels(root: ParentNode = document): number {
       const last = Math.min(slides.length, first + visible);
       const canMove = slides.length > visible;
 
-      status.textContent = `Diapositives ${first + 1} à ${last} sur ${slides.length}. Carrousel en boucle.`;
+      status.textContent = copy.status(first + 1, last, slides.length);
       previous.disabled = !canMove;
       next.disabled = !canMove;
 

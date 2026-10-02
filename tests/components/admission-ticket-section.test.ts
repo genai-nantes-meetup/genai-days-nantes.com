@@ -22,4 +22,22 @@ describe('AdmissionTicketSection.astro', () => {
     expect(html).not.toContain('/da/admission-ticket-blank-v1-optimized.webp');
     expect(html).toContain('editorial-cta--conversion');
   });
+
+  it('renders the English pass on English pages, with localized price, date and links', async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(AdmissionTicketSection, {
+      request: new Request('https://example.com/en/program'),
+    });
+
+    expect(html).toContain('id="pass-participant"');
+    expect(html).toContain('One pass for the whole day.');
+    expect(html).toContain('Talks are delivered in French.');
+    expect(html).toContain('aria-label="Participant Pass · €147 incl. VAT"');
+    expect(html).toContain('November 17, 2026');
+    expect(html).toContain('17·NOV·26');
+    expect(html).toContain('Book my seat');
+    expect(html).toContain('href="/en/practical-info"');
+    expect(html).not.toContain('Réserver ma place');
+    expect(html).not.toContain('€ TTC');
+  });
 });

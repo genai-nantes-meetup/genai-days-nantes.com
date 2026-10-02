@@ -29,7 +29,24 @@
           "value": "16",
           "label": "partenaires"
         }
-      ]
+      ],
+      "en": {
+        "title": "The GenAI hackathon",
+        "indexLabel": "48-hour hackathon",
+        "linkLabel": "Explore SHIFT",
+        "description": "48 hours to prototype and pitch generative AI projects in Nantes.",
+        "stats": [
+          {
+            "label": "of building"
+          },
+          {
+            "label": "participants"
+          },
+          {
+            "label": "partners"
+          }
+        ]
+      }
     },
     {
       "id": "nantes",
@@ -55,7 +72,26 @@
           "value": "15+",
           "label": "événements par an"
         }
-      ]
+      ],
+      "en": {
+        "title": "The monthly meetup",
+        "indexLabel": "Monthly meetups",
+        "linkLabel": "See the meetup",
+        "description": "In Nantes, professionals and enthusiasts share how they work and what they’ve learned.",
+        "stats": [
+          {
+            "value": "4.8/5",
+            "label": "from 247 reviews"
+          },
+          {
+            "value": "1,500",
+            "label": "Meetup and Eventbrite followers"
+          },
+          {
+            "label": "events a year"
+          }
+        ]
+      }
     },
     {
       "id": "france",
@@ -81,7 +117,25 @@
           "value": "50+",
           "label": "événements par an"
         }
-      ]
+      ],
+      "en": {
+        "title": "The national network",
+        "indexLabel": "Six-city network",
+        "linkLabel": "Explore the network",
+        "description": "Local generative AI meetups in six French cities, connected as one network.",
+        "stats": [
+          {
+            "label": "major cities"
+          },
+          {
+            "value": "10,000+",
+            "label": "members"
+          },
+          {
+            "label": "events a year"
+          }
+        ]
+      }
     }
   ]
 }

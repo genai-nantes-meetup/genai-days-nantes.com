@@ -47,11 +47,11 @@ describe('initScheduleTabs', () => {
 
     const group = document.querySelector<HTMLElement>('[data-schedule-tabs]')!;
     const techFilter = document.querySelector<HTMLButtonElement>('[data-schedule-tab="tech"]')!;
-    const dsiFilter = document.querySelector<HTMLButtonElement>('[data-schedule-tab="dsi"]')!;
+    const decideursFilter = document.querySelector<HTMLButtonElement>('[data-schedule-tab="decideurs"]')!;
 
     expect(group.dataset.activeTrack).toBe('tech');
     expect(techFilter.getAttribute('aria-pressed')).toBe('true');
-    expect(dsiFilter.getAttribute('aria-pressed')).toBe('false');
+    expect(decideursFilter.getAttribute('aria-pressed')).toBe('false');
   });
 
   it('keeps the default track when the URL names an unknown one', () => {
@@ -60,6 +60,6 @@ describe('initScheduleTabs', () => {
 
     const group = document.querySelector<HTMLElement>('[data-schedule-tabs]')!;
 
-    expect(group.dataset.activeTrack).toBe('dsi');
+    expect(group.dataset.activeTrack).toBe('decideurs');
   });
 });

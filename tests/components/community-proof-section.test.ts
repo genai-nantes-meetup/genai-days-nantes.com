@@ -29,7 +29,7 @@ describe('CommunityProofSection.astro', () => {
     const html = await container.renderToString(CommunityProofSection);
 
     expect(html).toContain('4,8/5');
-    expect(html).toContain('7 000+');
+    expect(html).toContain('10 000+');
     expect(html.match(/src="\/logos\/logo-shift-noir.svg"/g)).toHaveLength(1);
     expect(html).not.toContain('data-community-evidence');
     expect(html).not.toContain('data-community-carousel');
@@ -45,5 +45,20 @@ describe('CommunityProofSection.astro', () => {
 
     expect(programmeStart).toBeLessThan(html.indexOf('data-community-proof'));
     expect(speakersSection).not.toContain('data-track-mark');
+  });
+
+  it('renders the English copy and figures on English pages', async () => {
+    const container = await createAstroContainer();
+    const html = await container.renderToString(CommunityProofSection, { request: new Request('https://example.com/en') });
+
+    expect(html).toContain('The community is already here.</h2>');
+    expect(html).toContain('comes to Nantes, run by a team that already brings together the people building generative AI in the city.');
+    expect(html).toContain('href="/en/team"');
+    expect(html).toContain('The GenAI hackathon');
+    expect(html).toContain('4.8/5');
+    expect(html).toContain('10,000+');
+    expect(html).toContain('aria-controls="community-panel-shift"');
+    expect(html).not.toContain('La communauté est déjà là.');
+    expect(html).not.toContain('4,8/5');
   });
 });

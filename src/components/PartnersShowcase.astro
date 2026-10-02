@@ -1,10 +1,39 @@
 ---
-import { getCollection } from 'astro:content';
 import EditorialCta from './EditorialCta.astro';
 import EditorialGrid from './EditorialGrid.astro';
 import { EVENT } from '../lib/event';
+import { getLocaleFromPath, localizePath } from '../lib/i18n';
+import { getLocalizedCollection } from '../lib/localized-content';
 
-const showcasePartners = (await getCollection('partners'))
+const locale = getLocaleFromPath(Astro.url.pathname);
+const copy = {
+  fr: {
+    title: 'Ils rendent la journée possible.',
+    coOrganizerDescription: (name: string) =>
+      `La ${name} co-organise cette édition et nous ouvre les portes de l’${EVENT.venue.shortName}.`,
+    description: 'Entreprises, réseaux et acteurs du territoire réunis autour de cette première édition.',
+    visitLabel: (name: string) => `Visiter le site de ${name}`,
+    logoAlt: (name: string) => `Logo ${name}`,
+    marqueeLabel: 'Aperçu des partenaires',
+    pauseLabel: 'Mettre en pause le défilement des logos',
+    viewportLabel: 'Logos des partenaires, deux lignes défilantes',
+    allPartners: 'Découvrir tous les partenaires',
+  },
+  en: {
+    title: 'They make the day possible.',
+    coOrganizerDescription: (name: string) =>
+      `The ${name} co-organizes this edition and opens the doors of the ${EVENT.venue.shortName}.`,
+    description: 'Companies, networks and local organizations coming together for this first edition.',
+    visitLabel: (name: string) => `Visit the ${name} website`,
+    logoAlt: (name: string) => `${name} logo`,
+    marqueeLabel: 'Partner overview',
+    pauseLabel: 'Pause the scrolling logos',
+    viewportLabel: 'Partner logos, two scrolling rows',
+    allPartners: 'See all partners',
+  },
+}[locale];
+
+const showcasePartners = (await getLocalizedCollection('partners', locale))
   .sort((a, b) => a.data.order - b.data.order)
   .map((partner) => {
     const logo = partner.data.monochromeLogo ?? partner.data.logo;
@@ -32,9 +61,7 @@ const partnerRows = [
   { partners: platinumPartners, emphasis: 'platinum' },
   ...(remainingPartners.length > 0 ? [{ partners: remainingPartners, emphasis: 'remaining' }] : []),
 ] as const;
-const headingDescription = coOrganizer
-  ? `La ${coOrganizer.name} co-organise cette édition et nous ouvre les portes de l’${EVENT.venue.shortName}.`
-  : 'Entreprises, réseaux et acteurs du territoire réunis autour de cette première édition.';
+const headingDescription = coOrganizer ? copy.coOrganizerDescription(coOrganizer.name) : copy.description;
 ---
 
 <section
@@ -48,7 +75,7 @@ const headingDescription = coOrganizer
   <div class="partner-showcase__inner">
     <header class:list={['partner-showcase__heading', coOrganizer && 'partner-showcase__heading--with-coorganizer']}>
       <div class="partner-showcase__heading-copy">
-        <h2 id="partner-showcase-title" class="type-section-title">Ils rendent la journée possible.</h2>
+        <h2 id="partner-showcase-title" class="type-section-title">{copy.title}</h2>
         <p>{headingDescription}</p>
       </div>
       {coOrganizer && (
@@ -57,12 +84,12 @@ const headingDescription = coOrganizer
           href={coOrganizer.website}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label={`Visiter le site de ${coOrganizer.name}`}
+          aria-label={copy.visitLabel(coOrganizer.name)}
           style={`--partner-logo: url("${coOrganizer.logo}");`}
         >
           <img
             src={coOrganizer.logo}
-            alt={`Logo ${coOrganizer.name}`}
+            alt={copy.logoAlt(coOrganizer.name)}
             width={coOrganizer.width}
             height={coOrganizer.height}
             loading="lazy"
@@ -72,12 +99,12 @@ const headingDescription = coOrganizer
       )}
     </header>
 
-    <div class="partner-showcase__marquee" data-logo-marquee data-partner-layout="two-rows" role="group" aria-label="Aperçu des partenaires">
-      <button class="partner-showcase__toggle" type="button" aria-pressed="false" aria-label="Mettre en pause le défilement des logos" data-logo-marquee-toggle>
+    <div class="partner-showcase__marquee" data-logo-marquee data-partner-layout="two-rows" role="group" aria-label={copy.marqueeLabel}>
+      <button class="partner-showcase__toggle" type="button" aria-pressed="false" aria-label={copy.pauseLabel} data-logo-marquee-toggle>
         <svg class="partner-showcase__pause-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 5v14M16 5v14" /></svg>
         <svg class="partner-showcase__play-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m8 5 11 7-11 7z" /></svg>
       </button>
-      <div class="partner-showcase__viewport" tabindex="0" aria-label="Logos des partenaires, deux lignes défilantes">
+      <div class="partner-showcase__viewport" tabindex="0" aria-label={copy.viewportLabel}>
         {partnerRows.map((row) => (
           <div class:list={['partner-showcase__row', `partner-showcase__row--${row.emphasis}`]} data-marquee-row data-partner-emphasis={row.emphasis}>
             <div class="partner-showcase__track">
@@ -97,12 +124,12 @@ const headingDescription = coOrganizer
                         href={partner.website}
                         target="_blank"
                         rel="noopener noreferrer"
-                        aria-label={duplicate ? undefined : `Visiter le site de ${partner.name}`}
+                        aria-label={duplicate ? undefined : copy.visitLabel(partner.name)}
                         tabindex={duplicate ? '-1' : undefined}
                       >
                         <img
                           src={partner.logo}
-                          alt={duplicate ? '' : `Logo ${partner.name}`}
+                          alt={duplicate ? '' : copy.logoAlt(partner.name)}
                           width={partner.width}
                           height={partner.height}
                           loading="lazy"
@@ -120,7 +147,7 @@ const headingDescription = coOrganizer
     </div>
 
     <div class="partner-showcase__cta">
-      <EditorialCta href="/partenaires">Découvrir tous les partenaires</EditorialCta>
+      <EditorialCta href={localizePath('/partenaires', locale)}>{copy.allPartners}</EditorialCta>
     </div>
   </div>
 </section>

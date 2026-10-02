@@ -1,0 +1,10 @@
+---
+/* Version anglaise de /speakers/[speaker] : même composant et mêmes
+ * chemins statiques, la langue se lit dans l'URL. */
+import SpeakerPage from '../../speakers/[speaker].astro';
+import { getSpeakerPagePaths } from '../../../lib/speakers';
+
+export const getStaticPaths = getSpeakerPagePaths;
+---
+
+<SpeakerPage {...Astro.props} />

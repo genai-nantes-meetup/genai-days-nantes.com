@@ -1,5 +1,24 @@
+import { getDocumentLocale } from '../lib/i18n';
+
 const RESET_DELAY = 2200;
 const ANNOUNCE_DELAY = 60;
+
+const messages = {
+  fr: {
+    fallbackLabel: 'Copier',
+    successLabel: 'Copié',
+    errorLabel: 'Copie impossible',
+    successAnnouncement: 'Texte copié dans le presse-papiers',
+    errorAnnouncement: 'La copie a échoué',
+  },
+  en: {
+    fallbackLabel: 'Copy',
+    successLabel: 'Copied',
+    errorLabel: 'Copy failed',
+    successAnnouncement: 'Text copied to clipboard',
+    errorAnnouncement: 'Could not copy the text',
+  },
+};
 
 function getCopyValue(target: HTMLElement): string {
   if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
@@ -27,6 +46,7 @@ async function writeToClipboard(value: string): Promise<void> {
 }
 
 export function initPressKitCopy(root: ParentNode = document): number {
+  const localeMessages = messages[getDocumentLocale()];
   const triggers = root.querySelectorAll<HTMLButtonElement>('[data-copy-target]');
   const liveRegion = root.querySelector<HTMLElement>('[data-copy-live]');
   const resetTimeoutIds = new WeakMap<HTMLButtonElement, number>();
@@ -64,7 +84,7 @@ export function initPressKitCopy(root: ParentNode = document): number {
       if (!target) return;
 
       const label = trigger.querySelector<HTMLElement>('[data-copy-action-label]');
-      const defaultLabel = trigger.dataset.copyLabel ?? label?.textContent?.trim() ?? trigger.textContent?.trim() ?? 'Copier';
+      const defaultLabel = trigger.dataset.copyLabel ?? label?.textContent?.trim() ?? trigger.textContent?.trim() ?? localeMessages.fallbackLabel;
       const setLabel = (value: string) => {
         if (label) {
           label.textContent = value;
@@ -81,13 +101,13 @@ export function initPressKitCopy(root: ParentNode = document): number {
 
       try {
         await writeToClipboard(getCopyValue(target));
-        setLabel('Copié');
+        setLabel(localeMessages.successLabel);
         trigger.dataset.copyState = 'success';
-        announceCopyResult('Texte copié dans le presse-papiers');
+        announceCopyResult(localeMessages.successAnnouncement);
       } catch {
-        setLabel('Copie impossible');
+        setLabel(localeMessages.errorLabel);
         trigger.dataset.copyState = 'error';
-        announceCopyResult('La copie a échoué');
+        announceCopyResult(localeMessages.errorAnnouncement);
       }
 
       const resetTimeoutId = window.setTimeout(() => {

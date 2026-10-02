@@ -4,18 +4,82 @@ import EventName from "../components/EventName.astro";
 import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
 import EVENT from "../content/event.json";
+import { getLocaleFromPath } from "../lib/i18n";
+
+const locale = getLocaleFromPath(Astro.url.pathname);
+
+const copy = {
+  fr: {
+    pageDescription:
+      "Code de conduite de GenAI Days : un événement inclusif, respectueux et sans harcèlement pour tous les participants, intervenants et partenaires.",
+    kicker: "ENGAGEMENT",
+    policyTitle: "Engagement",
+    policySanctions:
+      "Tout langage ou toute image à caractère sexuel est inapproprié dans le cadre de l’événement, y compris dans les présentations, les ateliers, les discussions et sur les supports des partenaires. Les violations de ces règles peuvent entraîner des sanctions allant jusqu’à l’exclusion sans remboursement.",
+    standardsTitle: "Normes de conduite",
+    standardsHarassment:
+      "Le harcèlement inclut, sans s’y limiter : les remarques verbales renforçant des rapports de domination, les images sexuelles dans les espaces partagés, l’intimidation, le harcèlement, le suivi indésirable, l’enregistrement ou la photographie non consentie, la perturbation des activités, le contact physique inapproprié, les avances sexuelles non désirées, la nudité publique et l’encouragement de tels comportements.",
+    standardsCompliance:
+      "Toute personne sollicitée pour arrêter un comportement de harcèlement doit y mettre fin immédiatement. Les partenaires, les exposants et le personnel des stands doivent également éviter tout contenu ou tenue sexualisée ; en cas de non-conformité, un stand peut être fermé.",
+    authorityTitle: "Autorité de l’organisation",
+    authorityText:
+      "L’équipe organisatrice peut, à sa discrétion, prendre toute mesure appropriée face au harcèlement, y compris avertir ou expulser une personne sans remboursement, et intervenir pour résoudre toute perturbation ou condition hostile affectant le déroulement de l’événement.",
+    responsibilitiesTitle: "Responsabilités des participants",
+    reportingTitle: "Signaler un incident",
+    reportingSupport:
+      `Les signalements sont traités de manière discrète, avec un accompagnement (liaison sécurité, escorte, services locaux). Vous pouvez venir avec une personne de soutien ; il n’est pas nécessaire de confronter la personne concernée ni de divulguer votre identité. Pour un signalement par e-mail, contactez ${EVENT.contactEmail} et incluez vos coordonnées, le moment et le lieu de l’incident, une description, des éléments sur la personne concernée et tout témoin ou contexte utile.`,
+    confidentialityTitle: "Confidentialité et processus",
+    confidentialityHandling:
+      "Les signalements sont traités de manière confidentielle. Lorsqu’une discussion avec la personne concernée est nécessaire, elle est menée de façon anonymisée dans la mesure du possible.",
+    confidentialitySafety:
+      "Si un risque de sécurité ou de représailles existe, mentionnez-le dans votre signalement. Plusieurs signalements anonymisés sur la même personne peuvent entraîner une action. Si une déclaration publique est requise, l’identité des victimes et des signalants reste confidentielle sauf instruction contraire.",
+    contactTitle: "Contact",
+    licenseTitle: "Licence",
+    licenseText:
+      "Ce document s’inspire du modèle Geek Feminism (Ada Initiative et al.), publié sous licence Creative Commons Zero.",
+  },
+  en: {
+    pageDescription:
+      "The GenAI Days code of conduct: an inclusive, respectful, harassment-free event for all attendees, speakers and partners.",
+    kicker: "COMMITMENT",
+    policyTitle: "Commitment",
+    policySanctions:
+      "Sexual language and imagery are not appropriate anywhere at the event, including talks, workshops, discussions and partner materials. Violating these rules may lead to sanctions up to and including expulsion without a refund.",
+    standardsTitle: "Standards of conduct",
+    standardsHarassment:
+      "Harassment includes, but is not limited to: verbal comments that reinforce structures of domination, sexual images in shared spaces, intimidation, stalking, unwanted following, recording or photography without consent, disruption of activities, inappropriate physical contact, unwelcome sexual advances, public nudity and encouraging any of these behaviors.",
+    standardsCompliance:
+      "Anyone asked to stop harassing behavior must stop immediately. Partners, exhibitors and booth staff must also avoid sexualized content or clothing. A booth that does not comply may be closed.",
+    authorityTitle: "Organizers’ authority",
+    authorityText:
+      "The organizing team may, at its discretion, take any appropriate action in response to harassment, including warning a person or expelling them without a refund, and step in to resolve any disruption or hostile situation that affects the event.",
+    responsibilitiesTitle: "Participant responsibilities",
+    reportingTitle: "Reporting an incident",
+    reportingSupport:
+      `Reports are handled discreetly, with support available (liaison with security, escorts, local services). You can bring a support person, and you do not need to confront the person involved or disclose your identity. To report by email, write to ${EVENT.contactEmail} and include your contact details, the time and place of the incident, a description, details about the person involved and any witnesses or useful context.`,
+    confidentialityTitle: "Confidentiality and process",
+    confidentialityHandling:
+      "Reports are handled confidentially. When a conversation with the person involved is needed, it is kept anonymous as far as possible.",
+    confidentialitySafety:
+      "If there is a risk to your safety or of retaliation, say so in your report. Several anonymized reports about the same person may lead to action. If a public statement is required, the identities of victims and of those who reported remain confidential unless they ask otherwise.",
+    contactTitle: "Contact",
+    licenseTitle: "License",
+    licenseText:
+      "This document draws on the Geek Feminism template (Ada Initiative et al.), released under the Creative Commons Zero license.",
+  },
+}[locale];
 ---
 
 <BaseLayout
   title="Code of conduct · GenAI Days"
-  description="Code de conduite de GenAI Days : un événement inclusif, respectueux et sans harcèlement pour tous les participants, intervenants et partenaires."
+  description={copy.pageDescription}
 >
   <Header />
 
   <main class="coc-page">
     <section class="coc-hero px-6 py-16 sm:py-24">
       <div class="mx-auto max-w-4xl">
-        <p class="coc-kicker">ENGAGEMENT</p>
+        <p class="coc-kicker">{copy.kicker}</p>
         <h1
           class="mt-6 max-w-3xl text-[2.5rem] leading-[0.92] sm:text-7xl lg:text-8xl"
         >
@@ -24,8 +88,17 @@ import EVENT from "../content/event.json";
         <p
           class="mt-8 max-w-2xl text-lg leading-relaxed text-[rgb(57_54_54_/_72%)]"
         >
-          <EventName /> s’engage pour un événement inclusif, respectueux et sans harcèlement,
-          pour toutes et tous.
+          {locale === "en" ? (
+            <>
+              <EventName /> is committed to an inclusive, respectful and harassment-free
+              event for everyone.
+            </>
+          ) : (
+            <>
+              <EventName /> s’engage pour un événement inclusif, respectueux et sans harcèlement,
+              pour toutes et tous.
+            </>
+          )}
         </p>
       </div>
     </section>
@@ -33,122 +106,126 @@ import EVENT from "../content/event.json";
     <div class="bg-brand-white px-6 py-14 sm:py-20">
       <article class="coc-content mx-auto max-w-3xl">
         <section aria-labelledby="policy-heading">
-          <h2 id="policy-heading">Engagement</h2>
+          <h2 id="policy-heading">{copy.policyTitle}</h2>
           <p>
-            <EventName /> s’engage à offrir une expérience sans harcèlement pour toutes
-            les personnes, quels que soient leur âge, leur genre, leur orientation,
-            leur handicap, leur apparence physique, leur taille, leur origine, leur
-            religion ou leurs choix techniques.
+            {locale === "en" ? (
+              <>
+                <EventName /> is dedicated to providing a harassment-free experience for
+                everyone, regardless of age, gender, sexual orientation, disability,
+                physical appearance, body size, origin, religion or technology choices.
+              </>
+            ) : (
+              <>
+                <EventName /> s’engage à offrir une expérience sans harcèlement pour toutes
+                les personnes, quels que soient leur âge, leur genre, leur orientation,
+                leur handicap, leur apparence physique, leur taille, leur origine, leur
+                religion ou leurs choix techniques.
+              </>
+            )}
           </p>
-          <p>
-            Tout langage ou toute image à caractère sexuel est inapproprié dans
-            le cadre de l’événement, y compris dans les présentations, les
-            ateliers, les discussions et sur les supports des partenaires. Les
-            violations de ces règles peuvent entraîner des sanctions allant
-            jusqu’à l’exclusion sans remboursement.
-          </p>
+          <p>{copy.policySanctions}</p>
         </section>
 
         <section aria-labelledby="standards-heading">
-          <h2 id="standards-heading">Normes de conduite</h2>
-          <p>
-            Le harcèlement inclut, sans s’y limiter : les remarques verbales
-            renforçant des rapports de domination, les images sexuelles dans les
-            espaces partagés, l’intimidation, le harcèlement, le suivi
-            indésirable, l’enregistrement ou la photographie non consentie, la
-            perturbation des activités, le contact physique inapproprié, les
-            avances sexuelles non désirées, la nudité publique et
-            l’encouragement de tels comportements.
-          </p>
-          <p>
-            Toute personne sollicitée pour arrêter un comportement de
-            harcèlement doit y mettre fin immédiatement. Les partenaires, les
-            exposants et le personnel des stands doivent également éviter tout
-            contenu ou tenue sexualisée ; en cas de non-conformité, un stand
-            peut être fermé.
-          </p>
+          <h2 id="standards-heading">{copy.standardsTitle}</h2>
+          <p>{copy.standardsHarassment}</p>
+          <p>{copy.standardsCompliance}</p>
         </section>
 
         <section aria-labelledby="authority-heading">
-          <h2 id="authority-heading">Autorité de l’organisation</h2>
-          <p>
-            L’équipe organisatrice peut, à sa discrétion, prendre toute mesure
-            appropriée face au harcèlement, y compris avertir ou expulser une
-            personne sans remboursement, et intervenir pour résoudre toute
-            perturbation ou condition hostile affectant le déroulement de
-            l’événement.
-          </p>
+          <h2 id="authority-heading">{copy.authorityTitle}</h2>
+          <p>{copy.authorityText}</p>
         </section>
 
         <section aria-labelledby="responsibilities-heading">
           <h2 id="responsibilities-heading">
-            Responsabilités des participants
+            {copy.responsibilitiesTitle}
           </h2>
           <p>
-            Tous les participants doivent respecter ces lignes directrices dans
-            tous les lieux de l’événement et dans les espaces en ligne associés,
-            et étendre cette conduite respectueuse au-delà des activités de <EventName
-            />.
+            {locale === "en" ? (
+              <>
+                All participants must follow these guidelines at every event venue and
+                in related online spaces, and carry this respectful conduct beyond <EventName
+                /> activities.
+              </>
+            ) : (
+              <>
+                Tous les participants doivent respecter ces lignes directrices dans
+                tous les lieux de l’événement et dans les espaces en ligne associés,
+                et étendre cette conduite respectueuse au-delà des activités de <EventName
+                />.
+              </>
+            )}
           </p>
         </section>
 
         <section aria-labelledby="reporting-heading">
-          <h2 id="reporting-heading">Signaler un incident</h2>
+          <h2 id="reporting-heading">{copy.reportingTitle}</h2>
           <p>
-            Si vous vous sentez mal à l’aise ou si vous constatez un
-            comportement inapproprié, contactez l’équipe organisatrice sans
-            tarder. Les signalements personnels peuvent être faits au personnel
-            portant un badge « Équipe <EventName /> » ou en contactant directement
-            un membre de l’organisation.
+            {locale === "en" ? (
+              <>
+                If you feel uncomfortable or notice inappropriate behavior, contact the
+                organizing team right away. You can report in person to staff wearing an
+                “<span lang="fr">Équipe <EventName /></span>” badge, or contact a member of
+                the organizing team directly.
+              </>
+            ) : (
+              <>
+                Si vous vous sentez mal à l’aise ou si vous constatez un
+                comportement inapproprié, contactez l’équipe organisatrice sans
+                tarder. Les signalements personnels peuvent être faits au personnel
+                portant un badge « Équipe <EventName /> » ou en contactant directement
+                un membre de l’organisation.
+              </>
+            )}
           </p>
-          <p>
-            Les signalements sont traités de manière discrète, avec un
-            accompagnement (liaison sécurité, escorte, services locaux). Vous
-            pouvez venir avec une personne de soutien ; il n’est pas nécessaire
-            de confronter la personne concernée ni de divulguer votre identité.
-            Pour un signalement par e-mail, contactez {EVENT.contactEmail} et incluez
-            vos coordonnées, le moment et le lieu de l’incident, une description,
-            des éléments sur la personne concernée et tout témoin ou contexte utile.
-          </p>
+          <p>{copy.reportingSupport}</p>
         </section>
 
         <section aria-labelledby="confidentiality-heading">
-          <h2 id="confidentiality-heading">Confidentialité et processus</h2>
-          <p>
-            Les signalements sont traités de manière confidentielle. Lorsqu’une
-            discussion avec la personne concernée est nécessaire, elle est menée
-            de façon anonymisée dans la mesure du possible.
-          </p>
-          <p>
-            Si un risque de sécurité ou de représailles existe, mentionnez-le
-            dans votre signalement. Plusieurs signalements anonymisés sur la
-            même personne peuvent entraîner une action. Si une déclaration
-            publique est requise, l’identité des victimes et des signalants
-            reste confidentielle sauf instruction contraire.
-          </p>
+          <h2 id="confidentiality-heading">{copy.confidentialityTitle}</h2>
+          <p>{copy.confidentialityHandling}</p>
+          <p>{copy.confidentialitySafety}</p>
         </section>
 
         <section aria-labelledby="contact-heading">
-          <h2 id="contact-heading">Contact</h2>
+          <h2 id="contact-heading">{copy.contactTitle}</h2>
           <p>
-            Pour tout conflit d’intérêt ou signalement : contactez l’équipe <EventName
-            /> via <a href={`mailto:${EVENT.contactEmail}`}
-              >{EVENT.contactEmail}</a
-            >.
+            {locale === "en" ? (
+              <>
+                To report an incident or a conflict of interest, contact the <EventName /> team at <a
+                  href={`mailto:${EVENT.contactEmail}`}>{EVENT.contactEmail}</a
+                >.
+              </>
+            ) : (
+              <>
+                Pour tout conflit d’intérêt ou signalement : contactez l’équipe <EventName
+                /> via <a href={`mailto:${EVENT.contactEmail}`}
+                  >{EVENT.contactEmail}</a
+                >.
+              </>
+            )}
           </p>
           <p>
-            L’association <strong>Naomakers</strong>, organisatrice de <EventName
-            />, veille au respect de ces principes et s’engage à agir rapidement
-            et équitablement en cas de violation.
+            {locale === "en" ? (
+              <>
+                The <strong>Naomakers</strong> association, which organizes <EventName
+                />, ensures these principles are respected and is committed to acting
+                quickly and fairly if they are violated.
+              </>
+            ) : (
+              <>
+                L’association <strong>Naomakers</strong>, organisatrice de <EventName
+                />, veille au respect de ces principes et s’engage à agir rapidement
+                et équitablement en cas de violation.
+              </>
+            )}
           </p>
         </section>
 
         <section aria-labelledby="license-heading" class="coc-license">
-          <h2 id="license-heading">Licence</h2>
-          <p>
-            Ce document s’inspire du modèle Geek Feminism (Ada Initiative et
-            al.), publié sous licence Creative Commons Zero.
-          </p>
+          <h2 id="license-heading">{copy.licenseTitle}</h2>
+          <p>{copy.licenseText}</p>
         </section>
       </article>
     </div>

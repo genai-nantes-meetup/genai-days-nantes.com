@@ -3,13 +3,20 @@
  * annotée data-my-day-session, et src/scripts/my-day.ts fait le reste. Le nom
  * accessible reste stable, l'état passe par aria-pressed : le bouton est une
  * bascule, pas deux actions. */
+import { getLocaleFromPath } from '../lib/i18n';
+
 interface Props {
   title: string;
   class?: string;
   variant?: 'default' | 'gutter';
 }
 
+const locale = getLocaleFromPath(Astro.url.pathname);
 const { title, class: className = '', variant = 'default' } = Astro.props;
+const copy = {
+  fr: { accessibleName: `Inclure « ${title} » dans ma journée`, addToDay: 'Ajouter à ma journée' },
+  en: { accessibleName: `Include “${title}” in my day`, addToDay: 'Add to my day' },
+}[locale];
 ---
 
 <button
@@ -17,11 +24,11 @@ const { title, class: className = '', variant = 'default' } = Astro.props;
   type="button"
   data-my-day-toggle
   aria-pressed="false"
-  aria-label={`Inclure « ${title} » dans ma journée`}
-  title="Ajouter à ma journée"
+  aria-label={copy.accessibleName}
+  title={copy.addToDay}
 >
   <span class="my-day-toggle__mark" aria-hidden="true"></span>
-  {variant === 'default' && <span class="my-day-toggle__text" data-my-day-toggle-label>Ajouter à ma journée</span>}
+  {variant === 'default' && <span class="my-day-toggle__text" data-my-day-toggle-label>{copy.addToDay}</span>}
 </button>
 
 <style>

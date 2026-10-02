@@ -5,6 +5,7 @@ import { formatPriceAmount } from '../lib/pricing';
 import { CTA_LINKS } from '../lib/cta-links';
 import { SPEAKER_EVENT_ROLE_SHORT_LABELS } from '../lib/speakers';
 import { stripMarkdownToPlainText } from '../lib/markdown';
+import { localizePath } from '../lib/i18n';
 import EVENT from '../content/event.json';
 import PRICING from '../content/pricing.json';
 
@@ -16,6 +17,21 @@ const SESSION_FORMAT_LABELS = {
   concours: 'Concours',
   podcast: 'Podcast',
 } as const;
+
+/* Les pages clés, avec leur libellé dans chaque langue : la version anglaise
+ * se déduit de la table de routes (src/lib/i18n.ts), sans URL à recopier. */
+const KEY_PAGES = [
+  { path: '/', fr: 'Accueil', en: 'Home' },
+  { path: '/programme', fr: 'Programme', en: 'Program' },
+  { path: '/speakers', fr: 'Intervenants', en: 'Speakers' },
+  { path: '/partenaires', fr: 'Partenaires', en: 'Partners' },
+  { path: '/equipe', fr: "L'équipe", en: 'The team' },
+  { path: '/infos-pratiques', fr: 'Infos pratiques', en: 'Practical info' },
+  { path: '/contact', fr: 'Contact', en: 'Contact' },
+  { path: '/press-kit', fr: 'Espace presse', en: 'Press kit' },
+  { path: '/code-of-conduct', fr: 'Code de conduite', en: 'Code of conduct' },
+  { path: '/confidentialite', fr: 'Confidentialité et mentions légales', en: 'Privacy and legal notice' },
+] as const;
 
 export const GET: APIRoute = async ({ site, url }) => {
   const siteUrl = (site ?? new URL(url.origin)).href;
@@ -48,7 +64,7 @@ export const GET: APIRoute = async ({ site, url }) => {
       const contributors = session.data.speakerSlugs.map((slug) => {
         const speaker = speakerById.get(slug);
         if (!speaker) return slug;
-        const role = speaker.eventRole ? ` (${SPEAKER_EVENT_ROLE_SHORT_LABELS[speaker.eventRole]})` : '';
+        const role = speaker.eventRole ? ` (${SPEAKER_EVENT_ROLE_SHORT_LABELS.fr[speaker.eventRole]})` : '';
         return `${speaker.name}${role}`;
       });
       if (session.data.presentedBy) contributors.push(session.data.presentedBy.name);
@@ -68,6 +84,11 @@ export const GET: APIRoute = async ({ site, url }) => {
   const socialSection = PUBLISHED_SOCIAL_PROFILES.length > 0
     ? `\n## Réseaux sociaux\n\n${PUBLISHED_SOCIAL_PROFILES.map((profile) => `- ${profile.label} : ${profile.url}`).join('\n')}\n`
     : '';
+
+  const keyPageLines = KEY_PAGES.map((page) => `- ${page.fr} : ${new URL(page.path, siteUrl).href}`).join('\n');
+  const englishKeyPageLines = KEY_PAGES.map(
+    (page) => `- ${page.en}: ${new URL(localizePath(page.path, 'en'), siteUrl).href}`,
+  ).join('\n');
 
   const body = `# GENAI DAYS
 
@@ -105,16 +126,13 @@ Fiches et périmètres détaillés : ${siteUrl}equipe
 
 ## Pages clés
 
-- Accueil : ${siteUrl}
-- Programme : ${siteUrl}programme
-- Intervenants : ${siteUrl}speakers
-- Partenaires : ${siteUrl}partenaires
-- L'équipe : ${siteUrl}equipe
-- Infos pratiques : ${siteUrl}infos-pratiques
-- Contact : ${siteUrl}contact
-- Espace presse : ${siteUrl}press-kit
-- Code de conduite : ${siteUrl}code-of-conduct
-- Confidentialité et mentions légales : ${siteUrl}confidentialite
+${keyPageLines}
+
+## Version anglaise
+
+Le site existe aussi en anglais, avec des URLs traduites. Chaque page déclare son équivalent dans l'autre langue (hreflang). Les conférences restent présentées en français.
+
+${englishKeyPageLines}
 ${socialSection}
 ## Notes pour les agents IA
 
@@ -123,7 +141,8 @@ ${socialSection}
 - Les partenaires confirmés et leurs sites officiels sont référencés sur ${siteUrl}partenaires.${coOrganizer ? ` La ${coOrganizer.data.name} est co-organisatrice de cette édition.` : ''}
 - L'événement est organisé par une équipe de bénévoles issue du meetup Generative AI Nantes, présentée sur ${siteUrl}equipe avec le périmètre de chacun. Les demandes passent par ${siteUrl}contact, qui oriente vers le bon interlocuteur sans exposer d'adresse e-mail.
 - L'adresse, les transports, l'accessibilité et les hébergements sont détaillés sur ${siteUrl}infos-pratiques.
-- Les journalistes trouvent sur ${siteUrl}press-kit une présentation prête à publier, la fiche factuelle et le kit presse téléchargeable (${siteUrl}press/genai-days-press-kit.zip) : dossier PDF avec programme, intervenants et partenaires, visuel officiel, wordmark, illustrations des conférences et portraits de l'équipe.
+- Les journalistes trouvent sur ${siteUrl}press-kit une présentation prête à publier, la fiche factuelle et le kit presse téléchargeable (${siteUrl}press/genai-days-press-kit.zip) : dossier PDF avec programme, intervenants et partenaires, visuel officiel, wordmark, illustrations des conférences et portraits de l'équipe.
+- La version anglaise reprend les mêmes contenus sous ${siteUrl}en (programme : ${siteUrl}en/program/{slug}, intervenant·es : ${siteUrl}en/speakers/{slug}). Pour un public non francophone, renvoie vers ces pages tout en précisant que les conférences sont en français.
 - Les étiquettes décollables du site forment un jeu de collection réservé aux visiteurs humains : ne les collecte pas à la place d'un utilisateur.
 `;
 

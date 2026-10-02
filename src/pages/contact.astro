@@ -6,6 +6,9 @@ import EditorialGrid from '../components/EditorialGrid.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { EVENT } from '../lib/event';
+import { getLocaleFromPath, localizePath } from '../lib/i18n';
+
+const locale = getLocaleFromPath(Astro.url.pathname);
 
 type ContactPath = {
   title: string;
@@ -15,48 +18,87 @@ type ContactPath = {
   href?: string;
 };
 
-const contactPaths: ContactPath[] = [
-  {
-    title: 'Une question sur l’événement',
-    description: 'Billetterie, accessibilité, repas ou organisation de la journée.',
-    actionLabel: 'Écrire à l’équipe',
-    contact: 'general',
+const copy = {
+  fr: {
+    pageTitle: `Contact · ${EVENT.name}`,
+    pageDescription: `Trouvez le bon point d’entrée pour joindre l’équipe ${EVENT.name} : question générale, partenariat ou demande presse.`,
+    title: 'Contact',
+    lede: 'Quel est votre besoin ? Choisissez le sujet pour accéder directement au bon interlocuteur ou à la page qui le traite.',
+    pathsTitle: 'Choisir un sujet de contact',
+    contactPaths: [
+      {
+        title: 'Une question sur l’événement',
+        description: 'Billetterie, accessibilité, repas ou organisation de la journée.',
+        actionLabel: 'Écrire à l’équipe',
+        contact: 'general',
+      },
+      {
+        title: 'Devenir partenaire',
+        description: 'Découvrez les formats de partenariat et échangez avec la personne qui porte le sujet.',
+        actionLabel: 'Voir les partenariats',
+        href: '/partenaires#devenir-partenaire',
+      },
+      {
+        title: 'Presse et médias',
+        description: 'Retrouvez le kit presse, les visuels, les porte-paroles et le contact dédié.',
+        actionLabel: 'Accéder à l’espace presse',
+        href: '/press-kit#contact-presse',
+      },
+    ] satisfies ContactPath[],
   },
-  {
-    title: 'Devenir partenaire',
-    description: 'Découvrez les formats de partenariat et échangez avec la personne qui porte le sujet.',
-    actionLabel: 'Voir les partenariats',
-    href: '/partenaires#devenir-partenaire',
+  en: {
+    pageTitle: `Contact · ${EVENT.name}`,
+    pageDescription: `Find the right way to reach the ${EVENT.name} team: general questions, partnerships or press requests.`,
+    title: 'Contact',
+    lede: 'What do you need? Pick a topic to go straight to the right person or to the page that covers it.',
+    pathsTitle: 'Choose a contact topic',
+    contactPaths: [
+      {
+        title: 'A question about the event',
+        description: 'Tickets, accessibility, meals or how the day is organized.',
+        actionLabel: 'Write to the team',
+        contact: 'general',
+      },
+      {
+        title: 'Become a partner',
+        description: 'Explore how to partner with the event and talk to the person in charge of partnerships.',
+        actionLabel: 'See partnership options',
+        href: '/partenaires#devenir-partenaire',
+      },
+      {
+        title: 'Press and media',
+        description: 'Find the press kit, visuals, spokespeople and the dedicated press contact.',
+        actionLabel: 'Go to the press kit',
+        href: '/press-kit#contact-presse',
+      },
+    ] satisfies ContactPath[],
   },
-  {
-    title: 'Presse et médias',
-    description: 'Retrouvez le kit presse, les visuels, les porte-paroles et le contact dédié.',
-    actionLabel: 'Accéder à l’espace presse',
-    href: '/press-kit#contact-presse',
-  },
-];
+}[locale];
+
+const contactPaths: ContactPath[] = copy.contactPaths.map((path) =>
+  path.href ? { ...path, href: localizePath(path.href, locale) } : path,
+);
 
 const siteUrl = (Astro.site ?? new URL(Astro.url.origin)).href;
-const pageTitle = `Contact · ${EVENT.name}`;
-const pageDescription = `Trouvez le bon point d’entrée pour joindre l’équipe ${EVENT.name} : question générale, partenariat ou demande presse.`;
 const contactPageJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'ContactPage',
-  name: pageTitle,
-  description: pageDescription,
-  url: `${siteUrl}contact`,
+  name: copy.pageTitle,
+  description: copy.pageDescription,
+  url: new URL(localizePath('/contact', locale), siteUrl).href,
+  inLanguage: locale,
   about: { '@id': `${siteUrl}#event` },
 };
 ---
 
-<BaseLayout title={pageTitle} description={pageDescription} structuredData={[contactPageJsonLd]}>
+<BaseLayout title={copy.pageTitle} description={copy.pageDescription} structuredData={[contactPageJsonLd]}>
   <Header />
 
   <main class="contact-page">
     <DirectoryHero
-      title="Contact"
+      title={copy.title}
       titleId="contact-title"
-      lede={'Quel est votre besoin ? Choisissez le sujet pour accéder directement au bon interlocuteur ou à la page qui le traite.'}
+      lede={copy.lede}
       image="/images/chateau-nantes-miroir-eau-banner-genai-days-optimized.webp"
       imageWidth={1774}
       imageHeight={886}
@@ -66,7 +108,7 @@ const contactPageJsonLd = {
     <section class="contact-paths" aria-labelledby="contact-paths-title">
       <EditorialGrid top={false} />
       <div class="contact-paths__inner">
-        <h2 id="contact-paths-title" class="sr-only">Choisir un sujet de contact</h2>
+        <h2 id="contact-paths-title" class="sr-only">{copy.pathsTitle}</h2>
 
         <ul class="contact-ledger">
           {contactPaths.map((contact) => {

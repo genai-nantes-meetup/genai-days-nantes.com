@@ -1,6 +1,9 @@
 ---
 import EventName from './EventName.astro';
 import Label from './Label.astro';
+import { getLocaleFromPath } from '../lib/i18n';
+
+const locale = getLocaleFromPath(Astro.url.pathname);
 
 interface Props {
   labelId: string;
@@ -18,13 +21,25 @@ interface Props {
 }
 
 const { labelId, format, room, startTime, durationMinutes, title, quoted = true, speakers = [] } = Astro.props;
-const displayTitle = quoted ? `"${title}"` : title;
-const speakerNames = speakers.length > 0 ? speakers.map((speaker) => speaker.name).join(' · ') : 'Speaker To Be Announced';
+const copy = {
+  fr: {
+    ariaLabel: `Étiquette de la session : ${title}`,
+    companyLogoAlt: (company: string) => `Logo ${company}`,
+    quotedTitle: (text: string) => `"${text}"`,
+  },
+  en: {
+    ariaLabel: `Session label: ${title}`,
+    companyLogoAlt: (company: string) => `${company} logo`,
+    quotedTitle: (text: string) => `“${text}”`,
+  },
+}[locale];
+const displayTitle = quoted ? copy.quotedTitle(title) : title;
+const speakerNames = speakers.length > 0 ? speakers.map((speaker) => speaker.name).join(' · ') : locale === 'en' ? 'Speaker to be announced' : 'Speaker To Be Announced';
 const companyLogos = speakers.reduce<{ src: string; alt: string }[]>((logos, speaker) => {
   if (speaker.companyLogo && !logos.some((logo) => logo.src === speaker.companyLogo)) {
     logos.push({
       src: speaker.companyLogo,
-      alt: `Logo ${speaker.company}`,
+      alt: copy.companyLogoAlt(speaker.company),
     });
   }
 
@@ -49,7 +64,7 @@ const surfaceStyle =
   peelable
   labelId={labelId}
   as="article"
-  ariaLabel={`Étiquette de la session : ${title}`}
+  ariaLabel={copy.ariaLabel}
 >
   <Fragment slot="logo">
     {companyLogos.length > 0 ? (

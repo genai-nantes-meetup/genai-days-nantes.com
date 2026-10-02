@@ -3,9 +3,12 @@ import { getCollection } from 'astro:content';
 import EditorialGrid from './EditorialGrid.astro';
 import TrackMark from './TrackMark';
 import { EVENT } from '../lib/event';
+import { getLocaleFromPath, localizePath } from '../lib/i18n';
+import { getLocalizedCollection } from '../lib/localized-content';
 import { PROGRAMME_SLOTS } from '../lib/programme';
 
-const tracks = await getCollection('tracks');
+const locale = getLocaleFromPath(Astro.url.pathname);
+const tracks = await getLocalizedCollection('tracks', locale);
 const sessions = await getCollection('sessions');
 const decisionTrack = tracks.find((track) => track.id === 'decideurs');
 const deliveryTrack = tracks.find((track) => track.id === 'tech');
@@ -17,6 +20,38 @@ if (!decisionTrack || !deliveryTrack) {
 
 const afterworkStart = PROGRAMME_SLOTS.find((slot) => slot.kind === 'social')?.time ?? EVENT.endTime;
 const conferenceCount = PROGRAMME_SLOTS.filter((slot) => slot.kind === 'conference').length * tracks.length;
+const startupContestTime = startupContest?.data.startTime ?? '13:45';
+
+const copy = {
+  fr: {
+    lede: 'Deux parcours en parallèle. Vous passez de l’un à l’autre entre deux sessions.',
+    visualAlt: 'Deux voies, l’une bleue et l’autre orange, convergent vers un même horizon, entre boussole et rouages',
+    programmeLink: 'Voir le programme complet',
+    dayTitle: 'Le rythme de la journée.',
+    timelineLabel: 'Les temps forts de la journée',
+    talksTitle: 'Conférences et keynotes.',
+    talksText: `${conferenceCount} conférences réparties sur les deux scènes. Les captations sont publiées après l’événement.`,
+    contestTitle: 'Startup Contest. Podcast.',
+    contestTime: 'En public',
+    contestText: `Les startups montent sur scène à ${startupContestTime} côté Ceux qui décident, devant un jury d’entrepreneurs et de décideurs. Le podcast s’enregistre en fin de journée côté Ceux qui implémentent.`,
+    afterworkTitle: 'Apéro networking. DJ set.',
+    afterworkText: `Avec les intervenants, les partenaires et les participants. DJ set jusqu’à ${EVENT.endTime}.`,
+  },
+  en: {
+    lede: 'Two tracks run in parallel. Move from one to the other between sessions.',
+    visualAlt: 'Two paths, one blue and one orange, converge on the same horizon, between a compass and gears',
+    programmeLink: 'See the full program',
+    dayTitle: 'The day at a glance.',
+    timelineLabel: 'Highlights of the day',
+    talksTitle: 'Talks and keynotes.',
+    talksText: `${conferenceCount} talks across the two stages, all delivered in French. Recordings will be published after the event.`,
+    contestTitle: 'Startup Contest. Podcast.',
+    contestTime: 'Live audience',
+    contestText: `Startups take the stage at ${startupContestTime} in the “Those who decide” track, in front of a jury of entrepreneurs and decision-makers. The podcast is recorded at the end of the day in the “Those who implement” track.`,
+    afterworkTitle: 'Networking drinks. DJ set.',
+    afterworkText: `With the speakers, partners and attendees. DJ set until ${EVENT.endTime}.`,
+  },
+}[locale];
 ---
 
 <section id="programme" class="tracks-programme" aria-labelledby="tracks-programme-title">
@@ -24,17 +59,23 @@ const conferenceCount = PROGRAMME_SLOTS.filter((slot) => slot.kind === 'conferen
 
   <div class="tracks-programme__inner">
     <header class="tracks-programme__intro">
-      <h2 id="tracks-programme-title" class="type-section-title">Un même terrain.<br />Deux parcours.</h2>
+      <h2 id="tracks-programme-title" class="type-section-title">
+        {locale === 'en' ? (
+          <>Common ground.<br />Two tracks.</>
+        ) : (
+          <>Un même terrain.<br />Deux parcours.</>
+        )}
+      </h2>
       <p class="tracks-programme__lede type-section-lede">
-        Deux parcours en parallèle. Vous passez de l’un à l’autre entre deux sessions.
+        {copy.lede}
       </p>
     </header>
 
     <figure class="tracks-programme__visual">
-      <a href="/programme">
+      <a href={localizePath('/programme', locale)}>
         <img
           src="/images/affiche-decide-implemente-optimized.webp"
-          alt="Deux voies, l’une bleue et l’autre orange, convergent vers un même horizon, entre boussole et rouages"
+          alt={copy.visualAlt}
           width="2560"
           height="1072"
           loading="lazy"
@@ -45,7 +86,7 @@ const conferenceCount = PROGRAMME_SLOTS.filter((slot) => slot.kind === 'conferen
 
     <div class="tracks-programme__tracks">
       <article class="tracks-programme__track tracks-programme__track--decision">
-        <h3><TrackMark track="decideurs" /></h3>
+        <h3><TrackMark track="decideurs" locale={locale} /></h3>
         <p class="tracks-programme__meta">{decisionTrack.data.formats.join(' · ')}</p>
         <ul>
           {decisionTrack.data.themes.map((theme) => <li>{theme}</li>)}
@@ -53,7 +94,7 @@ const conferenceCount = PROGRAMME_SLOTS.filter((slot) => slot.kind === 'conferen
       </article>
 
       <article class="tracks-programme__track tracks-programme__track--delivery">
-        <h3><TrackMark track="tech" /></h3>
+        <h3><TrackMark track="tech" locale={locale} /></h3>
         <p class="tracks-programme__meta">{deliveryTrack.data.formats.join(' · ')}</p>
         <ul>
           {deliveryTrack.data.themes.map((theme) => <li>{theme}</li>)}
@@ -64,36 +105,36 @@ const conferenceCount = PROGRAMME_SLOTS.filter((slot) => slot.kind === 'conferen
     <div class="tracks-programme__programme-link">
       <a
         class="inline-flex items-center gap-2 font-sans font-bold uppercase text-sm tracking-wide transition-[background-color,scale] duration-150 ease-out bg-[var(--color-action-ticket)] text-[var(--color-action-ticket-ink)] px-6 py-3 hover:bg-[var(--color-action-ticket-hover)] active:scale-[0.96]"
-        href="/programme"
+        href={localizePath('/programme', locale)}
       >
-        Voir le programme complet
+        {copy.programmeLink}
       </a>
     </div>
 
     <div class="tracks-programme__day">
       <header class="tracks-programme__day-heading">
-        <h3>Le rythme de la journée.</h3>
+        <h3>{copy.dayTitle}</h3>
       </header>
 
-      <ol class="tracks-programme__timeline" aria-label="Les temps forts de la journée">
+      <ol class="tracks-programme__timeline" aria-label={copy.timelineLabel}>
         <li>
-          <h4>Conférences et keynotes.</h4>
+          <h4>{copy.talksTitle}</h4>
           <p class="tracks-programme__time">
             <time datetime={EVENT.startTime}>{EVENT.startTime}</time><span aria-hidden="true"> → </span><time datetime={afterworkStart}>{afterworkStart}</time>
           </p>
-          <p>{conferenceCount} conférences réparties sur les deux scènes. Les captations sont publiées après l’événement.</p>
+          <p>{copy.talksText}</p>
         </li>
         <li>
-          <h4>Startup Contest. Podcast.</h4>
-          <p class="tracks-programme__time">En public</p>
-          <p>Les startups montent sur scène à {startupContest?.data.startTime ?? '13:45'} côté Ceux qui décident, devant un jury d’entrepreneurs et de décideurs. Le podcast s’enregistre en fin de journée côté Ceux qui implémentent.</p>
+          <h4>{copy.contestTitle}</h4>
+          <p class="tracks-programme__time">{copy.contestTime}</p>
+          <p>{copy.contestText}</p>
         </li>
         <li>
-          <h4>Apéro networking. DJ set.</h4>
+          <h4>{copy.afterworkTitle}</h4>
           <p class="tracks-programme__time">
             <time datetime={afterworkStart}>{afterworkStart}</time><span aria-hidden="true"> → </span><time datetime={EVENT.endTime}>{EVENT.endTime}</time>
           </p>
-          <p>Avec les intervenants, les partenaires et les participants. DJ set jusqu’à {EVENT.endTime}.</p>
+          <p>{copy.afterworkText}</p>
         </li>
       </ol>
     </div>

@@ -4,6 +4,7 @@ import EditorialFrame from './EditorialFrame.astro';
 import EditorialGrid from './EditorialGrid.astro';
 import EVENT from '../content/event.json';
 import { SOCIAL_PROFILES } from '../lib/event';
+import { getLocaleFromPath, localizePath } from '../lib/i18n';
 
 interface Props {
   grid?: boolean;
@@ -11,13 +12,66 @@ interface Props {
 }
 
 const { grid = false, lead = true } = Astro.props;
+const locale = getLocaleFromPath(Astro.url.pathname);
 
-const siteLinks = [
-  { label: 'Programme', href: '/programme' },
-  { label: 'Speakers', href: '/speakers' },
-  { label: 'Partenaires', href: '/partenaires' },
-  { label: 'L’équipe', href: '/equipe' },
-];
+const copy = {
+  fr: {
+    siteLinks: [
+      { label: 'Programme', href: '/programme' },
+      { label: 'Speakers', href: '/speakers' },
+      { label: 'Partenaires', href: '/partenaires' },
+      { label: 'L’équipe', href: '/equipe' },
+    ],
+    utilityLinks: [
+      { label: 'Infos pratiques', href: '/infos-pratiques' },
+      { label: 'Contact', href: '/contact' },
+      { label: 'Espace presse', href: '/press-kit' },
+      { label: 'Confidentialité et mentions légales', href: '/confidentialite' },
+      { label: 'Code of conduct', href: '/code-of-conduct' },
+    ],
+    homeLabel: 'Retour à l’accueil',
+    baseline: 'Une journée pour ceux qui décident et ceux qui implémentent.',
+    socialLabel: 'Réseaux sociaux',
+    newTabHint: ', ouvre un nouvel onglet',
+    siteNavigationLabel: 'Pages principales',
+    siteNavigationTitle: 'Explorer',
+    utilityNavigationLabel: 'Informations utiles',
+    utilityNavigationTitle: 'Préparer sa venue',
+    contributeTitle: 'Contribuer',
+    becomePartner: 'Devenir partenaire',
+    association: 'Association',
+    rightsReserved: 'Tous droits réservés',
+  },
+  en: {
+    siteLinks: [
+      { label: 'Program', href: '/programme' },
+      { label: 'Speakers', href: '/speakers' },
+      { label: 'Partners', href: '/partenaires' },
+      { label: 'The team', href: '/equipe' },
+    ],
+    utilityLinks: [
+      { label: 'Practical info', href: '/infos-pratiques' },
+      { label: 'Contact', href: '/contact' },
+      { label: 'Press kit', href: '/press-kit' },
+      { label: 'Privacy and legal notice', href: '/confidentialite' },
+      { label: 'Code of conduct', href: '/code-of-conduct' },
+    ],
+    homeLabel: 'Back to home',
+    baseline: 'One day for those who decide and those who implement.',
+    socialLabel: 'Social media',
+    newTabHint: ', opens in a new tab',
+    siteNavigationLabel: 'Main pages',
+    siteNavigationTitle: 'Explore',
+    utilityNavigationLabel: 'Useful information',
+    utilityNavigationTitle: 'Plan your visit',
+    contributeTitle: 'Get involved',
+    becomePartner: 'Become a partner',
+    association: 'Association',
+    rightsReserved: 'All rights reserved',
+  },
+}[locale];
+
+const siteLinks = copy.siteLinks.map((link) => ({ ...link, href: localizePath(link.href, locale) }));
 
 /* Tracés Simple Icons, dessinés sur une grille 24×24. */
 const socialIconPaths = {
@@ -25,13 +79,7 @@ const socialIconPaths = {
   x: 'M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z',
 } as const;
 
-const utilityLinks = [
-  { label: 'Infos pratiques', href: '/infos-pratiques' },
-  { label: 'Contact', href: '/contact' },
-  { label: 'Espace presse', href: '/press-kit' },
-  { label: 'Confidentialité et mentions légales', href: '/confidentialite' },
-  { label: 'Code of conduct', href: '/code-of-conduct' },
-];
+const utilityLinks = copy.utilityLinks.map((link) => ({ ...link, href: localizePath(link.href, locale) }));
 ---
 
 <footer class:list={['site-footer', { 'site-footer--editorial-grid': grid, 'site-footer--without-lead': !lead }] }>
@@ -60,17 +108,17 @@ const utilityLinks = [
     {grid && <EditorialFrame columns={4} tone="paper" />}
 
     <div class="site-footer__identity">
-      <a href="/" aria-label="Retour à l’accueil" data-scroll-top>
+      <a href={localizePath('/', locale)} aria-label={copy.homeLabel} data-scroll-top>
         <EventName showLocation />
       </a>
-      <p>Une journée pour ceux qui décident et ceux qui implémentent.</p>
-      <ul class="site-footer__social" aria-label="Réseaux sociaux">
+      <p>{copy.baseline}</p>
+      <ul class="site-footer__social" aria-label={copy.socialLabel}>
         {SOCIAL_PROFILES.map((profile) => (
           <li>
             <a
               href={profile.url || '#'}
               target="_blank"
-              aria-label={`${profile.label}, ouvre un nouvel onglet`}
+              aria-label={`${profile.label}${copy.newTabHint}`}
             >
               <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                 <path d={socialIconPaths[profile.network]} />
@@ -81,27 +129,27 @@ const utilityLinks = [
       </ul>
     </div>
 
-    <nav aria-label="Pages principales">
-      <p class="site-footer__nav-title">Explorer</p>
+    <nav aria-label={copy.siteNavigationLabel}>
+      <p class="site-footer__nav-title">{copy.siteNavigationTitle}</p>
       {siteLinks.map((link) => <a href={link.href}>{link.label}</a>)}
     </nav>
 
-    <nav aria-label="Informations utiles">
-      <p class="site-footer__nav-title">Préparer sa venue</p>
+    <nav aria-label={copy.utilityNavigationLabel}>
+      <p class="site-footer__nav-title">{copy.utilityNavigationTitle}</p>
       {utilityLinks.map((link) => <a href={link.href}>{link.label}</a>)}
     </nav>
 
     <div class="site-footer__contribute">
-      <p class="site-footer__nav-title">Contribuer</p>
-      <a href="/partenaires#devenir-partenaire">Devenir partenaire</a>
-      <a href="https://naomakers.com" target="_blank">Association</a>
+      <p class="site-footer__nav-title">{copy.contributeTitle}</p>
+      <a href={localizePath('/partenaires#devenir-partenaire', locale)}>{copy.becomePartner}</a>
+      <a href="https://naomakers.com" target="_blank">{copy.association}</a>
     </div>
   </div>
 
   <div class="site-footer__bottom">
     <span>{EVENT.venue.city} · {EVENT.year}</span>
     <a href="/llms.txt" rel="alternate" type="text/plain">llms.txt</a>
-    <span>© <EventName /> · Tous droits réservés</span>
+    <span>© <EventName /> · {copy.rightsReserved}</span>
   </div>
 </footer>
 

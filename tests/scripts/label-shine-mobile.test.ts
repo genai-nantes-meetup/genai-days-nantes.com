@@ -56,6 +56,7 @@ function renderShineFixture(): {
 
 afterEach(() => {
   document.body.innerHTML = '';
+  document.documentElement.removeAttribute('lang');
   window.localStorage.clear();
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
@@ -106,6 +107,21 @@ describe('mobile metallic reflection activation', () => {
     await vi.waitFor(() => expect(requestPermission).toHaveBeenCalledOnce());
     expect(button.hidden).toBe(true);
     expect(button.closest('[data-label-archive]')?.classList).not.toContain('is-shine-available');
+
+    cleanup();
+  });
+
+  it('labels the permission control in English on English pages', async () => {
+    document.documentElement.lang = 'en';
+    stubMotionPreferences(true);
+    const requestPermission = vi.fn().mockRejectedValue(new DOMException('Interaction required'));
+    vi.stubGlobal('DeviceOrientationEvent', { requestPermission });
+    const { button } = renderShineFixture();
+    const cleanup = initLabelShine();
+
+    expect(button.textContent).toBe('Turn on the shine effect');
+    button.click();
+    await vi.waitFor(() => expect(button.textContent).toBe('Shine effect not allowed'));
 
     cleanup();
   });

@@ -1,5 +1,4 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ArrowIcon from '../components/ArrowIcon.astro';
 import Button from '../components/Button.astro';
@@ -7,16 +6,55 @@ import EditorialGrid from '../components/EditorialGrid.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { EVENT } from '../lib/event';
+import { getLocaleFromPath, localizePath } from '../lib/i18n';
+import { getLocalizedCollection } from '../lib/localized-content';
 import { PARTNER_TIER_CAPACITIES } from '../lib/partners';
+
+const locale = getLocaleFromPath(Astro.url.pathname);
 
 const tierSequence = ['platinum', 'gold', 'silver'] as const;
 type PartnerTier = (typeof tierSequence)[number];
 
-const partners = (await getCollection('partners')).sort((a, b) => a.data.order - b.data.order);
+const partners = (await getLocalizedCollection('partners', locale)).sort((a, b) => a.data.order - b.data.order);
 const coOrganizer = partners.find((partner) => partner.data.coOrganizer);
-const pageLede = coOrganizer
-  ? `La ${coOrganizer.data.name} co-organise cette édition à l’${EVENT.venue.shortName}, aux côtés des entreprises et réseaux engagés.`
-  : 'Des organisations engagées pour relier les communautés techniques, les entreprises et le territoire.';
+const copy = {
+  fr: {
+    lede: coOrganizer
+      ? `La ${coOrganizer.data.name} co-organise cette édition à l’${EVENT.venue.shortName}, aux côtés des entreprises et réseaux engagés.`
+      : 'Des organisations engagées pour relier les communautés techniques, les entreprises et le territoire.',
+    pageTitle: `Partenaires · GENAI DAYS${coOrganizer ? ` · avec la ${coOrganizer.data.name}` : ''}`,
+    descriptionIntro: `Partenaires de ${EVENT.name} à ${EVENT.venue.city}.`,
+    listName: `Partenaires de ${EVENT.name}`,
+    homeLabel: 'Accueil',
+    title: 'Partenaires',
+    boardTitle: 'Partenaires confirmés et emplacements à venir',
+    websiteLabel: (name: string) => `Visiter le site de ${name}`,
+    logoAlt: (name: string) => `Logo ${name}`,
+    upcomingLabel: (position: number, total: number) => `Partenaire à venir ${position} sur ${total}`,
+    upcoming: 'À venir',
+    invitationTitle: 'Votre organisation veut prendre part à la journée ?',
+    invitationText: 'Échangez avec l’équipe sur les formats de partenariat et la manière de contribuer à l’édition.',
+    becomePartner: 'Devenir partenaire',
+  },
+  en: {
+    lede: coOrganizer
+      ? `The ${coOrganizer.data.name} co-organizes this edition at the ${EVENT.venue.shortName}, alongside committed companies and networks.`
+      : 'Organizations committed to connecting tech communities, businesses and the region.',
+    pageTitle: `Partners · GENAI DAYS${coOrganizer ? ` · with the ${coOrganizer.data.name}` : ''}`,
+    descriptionIntro: `${EVENT.name} partners in ${EVENT.venue.city}.`,
+    listName: `${EVENT.name} partners`,
+    homeLabel: 'Home',
+    title: 'Partners',
+    boardTitle: 'Confirmed partners, with more to come',
+    websiteLabel: (name: string) => `Visit the ${name} website`,
+    logoAlt: (name: string) => `${name} logo`,
+    upcomingLabel: (position: number, total: number) => `Upcoming partner ${position} of ${total}`,
+    upcoming: 'Coming soon',
+    invitationTitle: 'Want your organization to take part in the day?',
+    invitationText: 'Talk with the team about partnership options and how you can contribute to this edition.',
+    becomePartner: 'Become a partner',
+  },
+}[locale];
 
 const partnerGroups = tierSequence.map((tier) => {
   const tierPartners = partners
@@ -43,15 +81,17 @@ const partnerGroups = tierSequence.map((tier) => {
 
 const publishedPartners = partnerGroups.flatMap((group) => group.partners);
 const siteUrl = Astro.site ?? new URL(Astro.url.origin);
-const pageUrl = new URL('/partenaires', siteUrl).href;
-const pageDescription = `Partenaires de ${EVENT.name} à ${EVENT.venue.city}. ${pageLede}`;
+const homeUrl = new URL(localizePath('/', locale), siteUrl).href;
+const pageUrl = new URL(localizePath('/partenaires', locale), siteUrl).href;
+const pageDescription = `${copy.descriptionIntro} ${copy.lede}`;
 const structuredData = [
   {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: `Partenaires de ${EVENT.name}`,
+    name: copy.listName,
     description: pageDescription,
     url: pageUrl,
+    inLanguage: locale,
     about: { '@id': `${siteUrl.href}#event` },
     mainEntity: {
       '@type': 'ItemList',
@@ -71,8 +111,8 @@ const structuredData = [
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Accueil', item: siteUrl.href },
-      { '@type': 'ListItem', position: 2, name: 'Partenaires', item: pageUrl },
+      { '@type': 'ListItem', position: 1, name: copy.homeLabel, item: homeUrl },
+      { '@type': 'ListItem', position: 2, name: copy.title, item: pageUrl },
     ],
   },
 ];
@@ -80,7 +120,7 @@ const structuredData = [
 ---
 
 <BaseLayout
-  title={`Partenaires · ${EVENT.name}${coOrganizer ? ` · avec la ${coOrganizer.data.name}` : ''}`}
+  title={copy.pageTitle}
   description={pageDescription}
   structuredData={structuredData}
 >
@@ -103,14 +143,14 @@ const structuredData = [
       <EditorialGrid tone="paper" top={false} />
 
       <div class="partners-hero__inner">
-        <h1 id="partners-title" class="type-page-title type-page-title--long">Partenaires</h1>
-        <p>{pageLede}</p>
+        <h1 id="partners-title" class="type-page-title type-page-title--long">{copy.title}</h1>
+        <p>{copy.lede}</p>
       </div>
     </section>
 
     <section class="partner-board" aria-labelledby="partner-board-title">
       <EditorialGrid top={false} />
-      <h2 id="partner-board-title" class="sr-only">Partenaires confirmés et emplacements à venir</h2>
+      <h2 id="partner-board-title" class="sr-only">{copy.boardTitle}</h2>
 
       <div class="partner-board__inner">
         {partnerGroups.map((group) => (
@@ -133,13 +173,13 @@ const structuredData = [
                   href={partner.data.website}
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label={`Visiter le site de ${partner.data.name}`}
+                  aria-label={copy.websiteLabel(partner.data.name)}
                 >
                   <figure class="partner-tile__card">
                     <div class="partner-tile__logo">
                       <img
                         src={logo.src}
-                        alt={`Logo ${partner.data.name}`}
+                        alt={copy.logoAlt(partner.data.name)}
                         width={logo.width}
                         height={logo.height}
                         loading="eager"
@@ -160,11 +200,11 @@ const structuredData = [
                   'partner-tile--future',
                   `partner-tile--${group.tier}`,
                 ]}
-                aria-label={`Partenaire à venir ${index + 1} sur ${group.placeholderCount}`}
+                aria-label={copy.upcomingLabel(index + 1, group.placeholderCount)}
               >
                 <div class="partner-tile__card">
                   <div class="partner-tile__logo partner-tile__placeholder" aria-hidden="true">
-                    <span>À venir</span>
+                    <span>{copy.upcoming}</span>
                   </div>
                 </div>
               </li>
@@ -179,14 +219,14 @@ const structuredData = [
       <div class="partners-invitation__inner">
         <div>
           <h2 id="partners-invitation-title" class="type-section-title">
-            Votre organisation veut prendre part à la journée&nbsp;?
+            {copy.invitationTitle}
           </h2>
           <p>
-            Échangez avec l’équipe sur les formats de partenariat et la manière de contribuer à l’édition.
+            {copy.invitationText}
           </p>
         </div>
         <Button class="partners-invitation__button" variant="secondary" contact="partner">
-          Devenir partenaire
+          {copy.becomePartner}
         </Button>
       </div>
     </section>
@@ -376,6 +416,7 @@ const structuredData = [
   .partner-tile__placeholder span {
     position: relative;
     z-index: 1;
+    text-align: center;
     color: rgb(57 54 54 / 48%);
     font-family: var(--font-serif);
     font-size: 1.5rem;

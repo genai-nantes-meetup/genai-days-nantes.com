@@ -1,5 +1,6 @@
 ---
-import { getCollection, render, type CollectionEntry } from "astro:content";
+import type { InferGetStaticPropsType } from "astro";
+import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
@@ -8,6 +9,12 @@ import CoverLabel from "../../components/CoverLabel.astro";
 import TrackMark from "../../components/TrackMark";
 import LabelArchive from "../../components/LabelArchive.astro";
 import BrandText from "../../components/BrandText.astro";
+import { getSessionPagePaths } from "../../lib/programme";
+import { getLocaleFromPath, localizePath } from "../../lib/i18n";
+import {
+  localizeEntry,
+  renderLocalizedBody,
+} from "../../lib/localized-content";
 import {
   SPEAKER_EVENT_ROLE_LABELS,
   SPEAKER_PORTRAIT_DIMENSIONS,
@@ -18,40 +25,23 @@ import EVENT from "../../content/event.json";
 import { getSocialImageUrl } from "../../lib/social-image";
 import { stripMarkdownToPlainText } from "../../lib/markdown";
 
-export async function getStaticPaths() {
-  const sessions = await getCollection("sessions");
-  const speakers = await getCollection("speakers");
-  const tracks = await getCollection("tracks");
-  const speakerById = new Map(speakers.map((speaker) => [speaker.id, speaker]));
-  const trackById = new Map(tracks.map((track) => [track.id, track]));
+export const getStaticPaths = getSessionPagePaths;
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 
-  return sessions.map((session) => {
-    const sameTrackSessions = sessions
-      .filter((candidate) => candidate.data.track === session.data.track)
-      .sort((a, b) => a.data.startTime.localeCompare(b.data.startTime));
-    const sessionIndex = sameTrackSessions.findIndex(
-      (candidate) => candidate.id === session.id,
-    );
-
-    return {
-      params: { session: session.id },
-      props: {
-        session,
-        track: trackById.get(session.data.track),
-        previousSession: sameTrackSessions[sessionIndex - 1],
-        nextSession: sameTrackSessions[sessionIndex + 1],
-        speakers: session.data.speakerSlugs
-          .map((slug) => speakerById.get(slug))
-          .filter((speaker): speaker is CollectionEntry<"speakers"> =>
-            Boolean(speaker),
-          ),
-      },
-    };
-  });
-}
-
-const { session, speakers, track, previousSession, nextSession } = Astro.props;
-const { Content } = await render(session);
+const locale = getLocaleFromPath(Astro.url.pathname);
+const session = await localizeEntry(Astro.props.session, locale);
+const track =
+  Astro.props.track && (await localizeEntry(Astro.props.track, locale));
+const speakers = await Promise.all(
+  Astro.props.speakers.map((speaker) => localizeEntry(speaker, locale)),
+);
+const previousSession =
+  Astro.props.previousSession &&
+  (await localizeEntry(Astro.props.previousSession, locale));
+const nextSession =
+  Astro.props.nextSession &&
+  (await localizeEntry(Astro.props.nextSession, locale));
+const { Content } = await renderLocalizedBody(session);
 const partners = await getCollection("partners");
 const companyLogoByName = new Map(
   partners.map((partner) => [partner.data.name, partner.data.logo]),
@@ -76,29 +66,112 @@ const labelPresenters = [
     : []),
 ];
 
-const formatLabel = {
-  keynote: "Keynote",
-  talk: "Talk",
-  "table-ronde": "Table ronde",
-  atelier: "Atelier",
-  concours: "Startup Contest",
-  podcast: "Podcast en public",
-}[session.data.format];
+const copy = {
+  fr: {
+    formatLabels: {
+      keynote: "Keynote",
+      talk: "Talk",
+      "table-ronde": "Table ronde",
+      atelier: "Atelier",
+      concours: "Startup Contest",
+      podcast: "Podcast en public",
+    },
+    themeLabels: {
+      governance: ["Gouvernance data", "Conformité IA Act", "Risques"],
+      transformation: ["Transformation IA", "Adoption", "ROI"],
+      rag: ["RAG", "Production", "Architecture"],
+      agents: ["Agents IA", "Observabilité", "Évaluation continue"],
+      evaluation: ["Évaluation modèles", "Qualité", "Tests"],
+      sovereignty: ["Souveraineté numérique", "Secteur public", "Infrastructure"],
+      opening: ["Vision", "Stratégie", "Retours terrain"],
+      closing: ["Synthèse", "Prospective", "Passage à l’action"],
+      podcast: ["Actualité tech", "Cloud", "Podcast"],
+    },
+    sharedTrack: "Temps commun",
+    fallbackDescription: (
+      format: string,
+      speakerNames: string,
+      startTime: string,
+      room: string,
+    ) =>
+      `${format} de GenAI Days${speakerNames ? ` avec ${speakerNames}` : ""}, le ${startTime} en salle ${room}.`,
+    homeBreadcrumb: "Accueil",
+    programmeBreadcrumb: "Programme",
+    backLink: "Tout le programme",
+    factsHeading: "Fiche technique",
+    trackFact: "Parcours",
+    timeFact: "Horaire",
+    durationFact: "Durée",
+    formatFact: "Format",
+    roomFact: "Salle",
+    descriptionPending: "Le détail de cette conférence sera publié prochainement.",
+    themesLabel: "Thématiques de la session",
+    onStage: "Sur scène",
+    speakerLabel: "Participant de la session",
+    speakersLabel: "Participants de la session",
+    speakerPageLabel: (name: string) => `Voir la page de ${name}`,
+    speakerLinksLabel: (name: string) => `Liens de ${name}`,
+    sameTrackLabel: "Talks du même track",
+    previous: "Précédent",
+    next: "Suivant",
+    quote: (text: string) => `"${text}"`,
+  },
+  en: {
+    formatLabels: {
+      keynote: "Keynote",
+      talk: "Talk",
+      "table-ronde": "Panel",
+      atelier: "Workshop",
+      concours: "Startup Contest",
+      podcast: "Live podcast",
+    },
+    themeLabels: {
+      governance: ["Data governance", "AI Act compliance", "Risks"],
+      transformation: ["AI transformation", "Adoption", "ROI"],
+      rag: ["RAG", "Production", "Architecture"],
+      agents: ["AI agents", "Observability", "Continuous evaluation"],
+      evaluation: ["Model evaluation", "Quality", "Testing"],
+      sovereignty: ["Digital sovereignty", "Public sector", "Infrastructure"],
+      opening: ["Vision", "Strategy", "Case studies"],
+      closing: ["Wrap-up", "Foresight", "Taking action"],
+      podcast: ["Tech news", "Cloud", "Podcast"],
+    },
+    sharedTrack: "All tracks",
+    fallbackDescription: (
+      format: string,
+      speakerNames: string,
+      startTime: string,
+      room: string,
+    ) =>
+      `${format} at GenAI Days${speakerNames ? ` with ${speakerNames}` : ""}, at ${startTime} in ${room}.`,
+    homeBreadcrumb: "Home",
+    programmeBreadcrumb: "Program",
+    backLink: "Full program",
+    factsHeading: "Key facts",
+    trackFact: "Track",
+    timeFact: "Time",
+    durationFact: "Duration",
+    formatFact: "Format",
+    roomFact: "Room",
+    descriptionPending: "Details for this talk will be published soon.",
+    themesLabel: "Session topics",
+    onStage: "On stage",
+    speakerLabel: "Session speaker",
+    speakersLabel: "Session speakers",
+    speakerPageLabel: (name: string) => `View ${name}’s page`,
+    speakerLinksLabel: (name: string) => `Links for ${name}`,
+    sameTrackLabel: "Talks in the same track",
+    previous: "Previous",
+    next: "Next",
+    quote: (text: string) => `“${text}”`,
+  },
+}[locale];
 
+const formatLabel = copy.formatLabels[session.data.format];
 const themeLabels: Record<
   NonNullable<typeof session.data.illustration>["variant"],
   string[]
-> = {
-  governance: ["Gouvernance data", "Conformité IA Act", "Risques"],
-  transformation: ["Transformation IA", "Adoption", "ROI"],
-  rag: ["RAG", "Production", "Architecture"],
-  agents: ["Agents IA", "Observabilité", "Évaluation continue"],
-  evaluation: ["Évaluation modèles", "Qualité", "Tests"],
-  sovereignty: ["Souveraineté numérique", "Secteur public", "Infrastructure"],
-  opening: ["Vision", "Stratégie", "Retours terrain"],
-  closing: ["Synthèse", "Prospective", "Passage à l’action"],
-  podcast: ["Actualité tech", "Cloud", "Podcast"],
-};
+> = copy.themeLabels;
 
 const themes =
   session.data.themes ??
@@ -107,7 +180,7 @@ const themes =
     : [formatLabel]);
 const trackName =
   track?.data.name ??
-  (session.data.track === "commun" ? "Temps commun" : session.data.track);
+  (session.data.track === "commun" ? copy.sharedTrack : session.data.track);
 const trackAccent =
   session.data.track === "tech"
     ? "var(--color-brand-orange)"
@@ -134,13 +207,21 @@ const programmeTrack =
     : undefined;
 
 const siteUrl = (Astro.site ?? new URL(Astro.url.origin)).href;
-const sessionUrl = `${siteUrl}programme/${session.id}`;
+const sessionUrl = new URL(
+  localizePath(`/programme/${session.id}`, locale),
+  siteUrl,
+).href;
 const startDateTime = toISODateTime(session.data.startTime);
 const endDateTime = toISODateTime(endTime);
 const speakerNames = speakers.map((speaker) => speaker.data.name).join(", ");
 const pageDescription = session.body?.trim()
   ? stripMarkdownToPlainText(session.body)
-  : `${formatLabel} de GenAI Days${speakerNames ? ` avec ${speakerNames}` : ""}, le ${session.data.startTime} en salle ${displayRoom}.`;
+  : copy.fallbackDescription(
+      formatLabel,
+      speakerNames,
+      session.data.startTime,
+      displayRoom,
+    );
 const pageTitle = `${session.data.seoTitle ?? session.data.title} · GENAI DAYS`;
 const socialImage = session.data.illustration?.src
   ? { src: session.data.illustration.src, alt: session.data.illustration.alt }
@@ -172,13 +253,19 @@ const sessionJsonLd = {
     },
   },
   performer: [
-    ...speakers.map((speaker) => ({
-      "@type": "Person",
-      "@id": `${siteUrl}speakers/${speaker.id}#person`,
-      name: speaker.data.name,
-      jobTitle: speaker.data.role,
-      url: `${siteUrl}speakers/${speaker.id}`,
-    })),
+    ...speakers.map((speaker) => {
+      const speakerUrl = new URL(
+        localizePath(`/speakers/${speaker.id}`, locale),
+        siteUrl,
+      ).href;
+      return {
+        "@type": "Person",
+        "@id": `${speakerUrl}#person`,
+        name: speaker.data.name,
+        jobTitle: speaker.data.role,
+        url: speakerUrl,
+      };
+    }),
     ...(session.data.presentedBy
       ? [
           {
@@ -195,12 +282,17 @@ const breadcrumbJsonLd = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Accueil", item: siteUrl },
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: copy.homeBreadcrumb,
+      item: new URL(localizePath("/", locale), siteUrl).href,
+    },
     {
       "@type": "ListItem",
       position: 2,
-      name: "Programme",
-      item: `${siteUrl}programme`,
+      name: copy.programmeBreadcrumb,
+      item: new URL(localizePath("/programme", locale), siteUrl).href,
     },
     {
       "@type": "ListItem",
@@ -227,11 +319,11 @@ const breadcrumbJsonLd = {
           geste que « Tous les intervenants » et « Tous les partenaires ». */
       }
       <a
-        href="/programme"
+        href={localizePath("/programme", locale)}
         class="session-back-link mx-auto mb-8 flex max-w-5xl items-center gap-2"
       >
         <span aria-hidden="true">←</span>
-        Tout le programme
+        {copy.backLink}
       </a>
 
       <div
@@ -275,14 +367,14 @@ const breadcrumbJsonLd = {
             </p>
           )
         }
-        <h2 class="sr-only">Fiche technique</h2>
+        <h2 class="sr-only">{copy.factsHeading}</h2>
         <dl class="session-facts">
           <div>
-            <dt>Parcours</dt>
+            <dt>{copy.trackFact}</dt>
             <dd class="session-facts__accent">
               {
                 programmeTrack ? (
-                  <TrackMark track={programmeTrack} />
+                  <TrackMark track={programmeTrack} locale={locale} />
                 ) : (
                   trackName
                 )
@@ -290,22 +382,34 @@ const breadcrumbJsonLd = {
             </dd>
           </div>
           <div>
-            <dt>Horaire</dt>
+            <dt>{copy.timeFact}</dt>
             <dd>{session.data.startTime}&nbsp;→&nbsp;{endTime}</dd>
           </div>
           <div>
-            <dt>Durée</dt>
+            <dt>{copy.durationFact}</dt>
             <dd>{session.data.durationMinutes} min</dd>
           </div>
           <div>
-            <dt>Format</dt>
+            <dt>{copy.formatFact}</dt>
             <dd>{formatLabel}</dd>
           </div>
           {
             showRoom && (
               <div>
-                <dt>Salle</dt>
+                <dt>{copy.roomFact}</dt>
                 <dd>{session.data.room}</dd>
+              </div>
+            )
+          }
+          {
+            /* Les conférences sont données en français : la fiche anglaise le
+             * dit avec le reste de la fiche technique. */
+          }
+          {
+            locale === "en" && (
+              <div>
+                <dt>Language</dt>
+                <dd>French</dd>
               </div>
             )
           }
@@ -320,7 +424,11 @@ const breadcrumbJsonLd = {
           <div class="session-title-fallback__inner">
             <h1 class="session-title">
               {session.data.quoteTitle ? (
-                <Fragment>"<BrandText text={session.data.title} />"</Fragment>
+                locale === "en" ? (
+                  <Fragment>“<BrandText text={session.data.title} />”</Fragment>
+                ) : (
+                  <Fragment>"<BrandText text={session.data.title} />"</Fragment>
+                )
               ) : (
                 <BrandText text={session.data.title} />
               )}
@@ -335,11 +443,11 @@ const breadcrumbJsonLd = {
           </div>
         ) : (
           <p class="session-description">
-            <BrandText text="Le détail de cette conférence sera publié prochainement." />
+            <BrandText text={copy.descriptionPending} />
           </p>
         )}
 
-        <ul class="session-tags" aria-label="Thématiques de la session">
+        <ul class="session-tags" aria-label={copy.themesLabel}>
           {themes.map((theme) => <li>{theme}</li>)}
         </ul>
 
@@ -351,9 +459,9 @@ const breadcrumbJsonLd = {
         }
         {
           speakers.length === 0 && labelPresenters.length === 0 && (
-            <section class="session-speakers" aria-label="Participant de la session">
-              <h2 class="session-eyebrow">Sur scène</h2>
-              <p class="mt-6">Speaker To Be Announced</p>
+            <section class="session-speakers" aria-label={copy.speakerLabel}>
+              <h2 class="session-eyebrow">{copy.onStage}</h2>
+              <p class="mt-6">{locale === "en" ? "Speaker to be announced" : "Speaker To Be Announced"}</p>
             </section>
           )
         }
@@ -362,12 +470,10 @@ const breadcrumbJsonLd = {
             <section
               class="session-speakers"
               aria-label={
-                speakers.length > 1
-                  ? "Participants de la session"
-                  : "Participant de la session"
+                speakers.length > 1 ? copy.speakersLabel : copy.speakerLabel
               }
             >
-              <h2 class="session-eyebrow">Sur scène</h2>
+              <h2 class="session-eyebrow">{copy.onStage}</h2>
               <aside class="mt-6 grid gap-4">
                 {speakers.map((speaker, index) => (
                   <article
@@ -376,8 +482,8 @@ const breadcrumbJsonLd = {
                     <div class="speaker-feature-card__visual">
                       <a
                         class="speaker-feature-card__cover"
-                        href={`/speakers/${speaker.id}`}
-                        aria-label={`Voir la page de ${speaker.data.name}`}
+                        href={localizePath(`/speakers/${speaker.id}`, locale)}
+                        aria-label={copy.speakerPageLabel(speaker.data.name)}
                       >
                         <span
                           class="speaker-feature-card__fallback"
@@ -411,12 +517,12 @@ const breadcrumbJsonLd = {
                     <div class="speaker-feature-card__details">
                       {speaker.data.eventRole && (
                         <p class="speaker-feature-card__eyebrow">
-                          {SPEAKER_EVENT_ROLE_LABELS[speaker.data.eventRole]}
+                          {SPEAKER_EVENT_ROLE_LABELS[locale][speaker.data.eventRole]}
                         </p>
                       )}
                       <a
                         class="speaker-feature-card__name"
-                        href={`/speakers/${speaker.id}`}
+                        href={localizePath(`/speakers/${speaker.id}`, locale)}
                       >
                         {speaker.data.name}
                       </a>
@@ -428,7 +534,7 @@ const breadcrumbJsonLd = {
                       </p>
                       <div
                         class="speaker-feature-card__links"
-                        aria-label={`Liens de ${speaker.data.name}`}
+                        aria-label={copy.speakerLinksLabel(speaker.data.name)}
                       >
                         {speaker.data.linkedin && (
                           <a
@@ -471,12 +577,12 @@ const breadcrumbJsonLd = {
         (previousSession || nextSession) && (
           <nav
             class="mt-16 grid gap-4 sm:grid-cols-2"
-            aria-label="Talks du même track"
+            aria-label={copy.sameTrackLabel}
           >
             {previousSession ? (
               <a
                 class={`session-nav-card session-nav-card--previous session-nav-card--${previousSession.data.track}`}
-                href={`/programme/${previousSession.id}`}
+                href={localizePath(`/programme/${previousSession.id}`, locale)}
               >
                 <SessionIllustration
                   class="session-nav-card__thumb"
@@ -488,7 +594,7 @@ const breadcrumbJsonLd = {
                 <span class="session-nav-card__content">
                   <span class="session-nav-card__direction">
                     <span aria-hidden="true">←</span>
-                    Précédent
+                    {copy.previous}
                   </span>
                   <span class="session-nav-card__meta">
                     {previousSession.data.startTime} ·{" "}
@@ -496,7 +602,7 @@ const breadcrumbJsonLd = {
                   </span>
                   <strong>
                     {previousSession.data.quoteTitle
-                      ? `"${previousSession.data.title}"`
+                      ? copy.quote(previousSession.data.title)
                       : previousSession.data.title}
                   </strong>
                 </span>
@@ -507,11 +613,11 @@ const breadcrumbJsonLd = {
             {nextSession && (
               <a
                 class={`session-nav-card session-nav-card--next session-nav-card--${nextSession.data.track}`}
-                href={`/programme/${nextSession.id}`}
+                href={localizePath(`/programme/${nextSession.id}`, locale)}
               >
                 <span class="session-nav-card__content">
                   <span class="session-nav-card__direction">
-                    Suivant
+                    {copy.next}
                     <span aria-hidden="true">→</span>
                   </span>
                   <span class="session-nav-card__meta">
@@ -519,7 +625,7 @@ const breadcrumbJsonLd = {
                   </span>
                   <strong>
                     {nextSession.data.quoteTitle
-                      ? `"${nextSession.data.title}"`
+                      ? copy.quote(nextSession.data.title)
                       : nextSession.data.title}
                   </strong>
                 </span>

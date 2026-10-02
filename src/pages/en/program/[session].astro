@@ -1,0 +1,10 @@
+---
+/* Version anglaise de /programme/[session] : même composant et mêmes
+ * chemins statiques, la langue se lit dans l'URL. */
+import SessionPage from '../../programme/[session].astro';
+import { getSessionPagePaths } from '../../../lib/programme';
+
+export const getStaticPaths = getSessionPagePaths;
+---
+
+<SessionPage {...Astro.props} />

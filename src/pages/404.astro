@@ -2,6 +2,7 @@
 import EventName from '../components/EventName.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { formatEventDateLabel } from '../lib/event';
+import { localizePath } from '../lib/i18n';
 import EVENT from '../content/event.json';
 ---
 
@@ -45,6 +46,18 @@ import EVENT from '../content/event.json';
             Voir le programme
           </a>
         </div>
+        {/* Une seule page 404 sert les deux langues : le français reste la page,
+            une ligne renvoie les visiteurs anglophones vers leur accueil. */}
+        <p lang="en" class="mt-10 text-base text-white/80">
+          Page not found.{" "}
+          <a
+            href={localizePath('/', 'en')}
+            hreflang="en"
+            class="font-bold text-brand-cream underline decoration-brand-cream/50 underline-offset-4 transition-colors hover:text-white hover:decoration-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-orange"
+          >
+            Back to the English site
+          </a>
+        </p>
       </div>
     </section>
 

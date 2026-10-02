@@ -1,6 +1,7 @@
 import { getCollection } from 'astro:content';
 import eventData from '../content/event.json';
 import PRICING from '../content/pricing.json';
+import { INTL_LOCALES, type Locale } from './i18n';
 
 export const EVENT = eventData;
 export const EVENT_URL = eventData.url;
@@ -15,13 +16,19 @@ export const SOCIAL_PROFILES = [
  * ne doit jamais être déclaré aux moteurs ni aux agents IA. */
 export const PUBLISHED_SOCIAL_PROFILES = SOCIAL_PROFILES.filter((profile) => profile.url !== '');
 
+/* Le texte éditorial de l'événement dans la langue de la page. La langue
+ * de l'événement lui-même (EVENT.language) reste le français. */
+export function getEventCopy(locale: Locale = 'fr'): { tagline: string; description: string } {
+  return locale === 'en' ? eventData.en : { tagline: eventData.tagline, description: eventData.description };
+}
+
 export function toISODateTime(time: string): string {
   return `${eventData.date}T${time}:00${eventData.timezone}`;
 }
 
-export function formatEventDateLabel(): string {
+export function formatEventDateLabel(locale: Locale = 'fr'): string {
   const date = new Date(`${eventData.date}T00:00:00`);
-  return new Intl.DateTimeFormat('fr-FR', {
+  return new Intl.DateTimeFormat(INTL_LOCALES[locale], {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -38,11 +45,11 @@ export function formatEventDateCompact(): string {
   return `${day}/${month}/${year.slice(-2)}`;
 }
 
-export function formatEventDateUppercase(): string {
-  return formatEventDateLabel().toUpperCase();
+export function formatEventDateUppercase(locale: Locale = 'fr'): string {
+  return formatEventDateLabel(locale).toLocaleUpperCase(INTL_LOCALES[locale]);
 }
 
-export async function buildEventJsonLd(siteUrl: string, ticketUrl: string) {
+export async function buildEventJsonLd(siteUrl: string, ticketUrl: string, locale: Locale = 'fr') {
   const ticketHostname = new URL(ticketUrl).hostname;
   const hasPublicTicketUrl = ticketHostname !== 'example.com' && !ticketHostname.endsWith('.example.com');
   const coOrganizer = (await getCollection('partners')).find((partner) => partner.data.coOrganizer);
@@ -58,7 +65,7 @@ export async function buildEventJsonLd(siteUrl: string, ticketUrl: string) {
     '@type': 'Event',
     '@id': `${siteUrl}#event`,
     name: eventData.name,
-    description: eventData.description,
+    description: getEventCopy(locale).description,
     url: siteUrl,
     image: [`${siteUrl}${eventData.image}`],
     startDate: toISODateTime(eventData.startTime),

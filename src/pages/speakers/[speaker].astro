@@ -1,46 +1,98 @@
 ---
-import { getCollection, type CollectionEntry } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import BrandText from '../../components/BrandText.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import TrackMark from '../../components/TrackMark';
-import EVENT from '../../content/event.json';
-import { SPEAKER_EVENT_ROLE_LABELS, SPEAKER_PORTRAIT_DIMENSIONS, getSpeakerPortraitSrcset, trackForSpeaker } from '../../lib/speakers';
+import { EVENT, EVENT_YEAR } from '../../lib/event';
+import { SPEAKER_EVENT_ROLE_LABELS, SPEAKER_PORTRAIT_DIMENSIONS, getSpeakerPagePaths, getSpeakerPortraitSrcset, trackForSpeaker } from '../../lib/speakers';
+import { getLocaleFromPath, localizePath } from '../../lib/i18n';
+import { getLocalizedCollection, localizeEntry } from '../../lib/localized-content';
 import { stripMarkdownToPlainText } from '../../lib/markdown';
 
-export async function getStaticPaths() {
-  const speakers = await getCollection('speakers');
-  const sessions = await getCollection('sessions');
+export const getStaticPaths = getSpeakerPagePaths;
 
-  return speakers.map((speaker) => ({
-    params: { speaker: speaker.id },
-    props: {
-      speaker,
-      sessions: sessions.filter((session) => session.data.speakerSlugs.includes(speaker.id)),
-    },
-  }));
-}
-
-const { speaker, sessions } = Astro.props as {
+const locale = getLocaleFromPath(Astro.url.pathname);
+const props = Astro.props as {
   speaker: CollectionEntry<'speakers'>;
   sessions: CollectionEntry<'sessions'>[];
 };
+const speaker = await localizeEntry(props.speaker, locale);
+const sessions = await Promise.all(props.sessions.map((session) => localizeEntry(session, locale)));
 
 const siteUrl = (Astro.site ?? new URL(Astro.url.origin)).href;
-const speakerUrl = `${siteUrl}speakers/${speaker.id}`;
+const directoryPath = localizePath('/speakers', locale);
+const speakerUrl = new URL(localizePath(`/speakers/${speaker.id}`, locale), siteUrl).href;
 const portrait = SPEAKER_PORTRAIT_DIMENSIONS[speaker.id];
-const eventRoleLabel = speaker.data.eventRole ? SPEAKER_EVENT_ROLE_LABELS[speaker.data.eventRole] : undefined;
+const eventRoleLabel = speaker.data.eventRole ? SPEAKER_EVENT_ROLE_LABELS[locale][speaker.data.eventRole] : undefined;
 const speakerTrack = trackForSpeaker(speaker.id, sessions);
 
-const tracks = await getCollection('tracks');
+const copy = {
+  fr: {
+    pageTitle: `${speaker.data.name} · ${eventRoleLabel ?? 'Intervenant'} GENAI DAYS ${EVENT_YEAR}`,
+    pageDescriptionSuffix: ` ${eventRoleLabel ?? 'Intervenant'} à GENAI DAYS ${EVENT_YEAR} à ${EVENT.venue.city}.`,
+    homeLabel: 'Accueil',
+    directoryLabel: 'Intervenants',
+    backLink: 'Tous les intervenants',
+    portraitAlt: `Portrait de ${speaker.data.name}`,
+    companyLogoAlt: (company: string) => `Logo ${company}`,
+    socialLinksLabel: `Liens de ${speaker.data.name}`,
+    websiteLabel: 'Site web',
+    profileKicker: 'Portrait',
+    profileTitle: 'Son parcours',
+    legitimacyKicker: 'Son regard',
+    legitimacyTitle: 'Sa légitimité numérique et GenAI',
+    timelineKicker: 'Repères',
+    timelineTitle: 'Parcours en bref',
+    companiesKicker: 'Écosystème',
+    companiesTitle: 'Les entreprises qui jalonnent son parcours',
+    singleCompanyTitle: 'L’entreprise associée à son parcours',
+    companyLink: (company: string) => `Découvrir ${company}`,
+    sessionsKicker: 'Au programme',
+    sessionsTitle: 'Ses sessions',
+    singleSessionTitle: 'Sa session',
+    quotedTitle: (title: string) => `"${title}"`,
+    themesLabel: 'Thématiques',
+    sharedSessionRoom: 'Temps commun',
+  },
+  en: {
+    pageTitle: `${speaker.data.name} · ${eventRoleLabel ?? 'Speaker'} · GENAI DAYS ${EVENT_YEAR}`,
+    pageDescriptionSuffix: ` ${eventRoleLabel ?? 'Speaker'} at GENAI DAYS ${EVENT_YEAR} in ${EVENT.venue.city}.`,
+    homeLabel: 'Home',
+    directoryLabel: 'Speakers',
+    backLink: 'All speakers',
+    portraitAlt: `Portrait of ${speaker.data.name}`,
+    companyLogoAlt: (company: string) => `${company} logo`,
+    socialLinksLabel: `${speaker.data.name} on the web`,
+    websiteLabel: 'Website',
+    profileKicker: 'Profile',
+    profileTitle: 'Background',
+    legitimacyKicker: 'Perspective',
+    legitimacyTitle: 'Digital and GenAI credentials',
+    timelineKicker: 'Milestones',
+    timelineTitle: 'Career at a glance',
+    companiesKicker: 'Ecosystem',
+    companiesTitle: 'Organizations along the way',
+    singleCompanyTitle: 'Their organization',
+    companyLink: (company: string) => `Visit ${company}`,
+    sessionsKicker: 'On the program',
+    sessionsTitle: 'Their sessions',
+    singleSessionTitle: 'Their session',
+    quotedTitle: (title: string) => `“${title}”`,
+    themesLabel: 'Topics',
+    sharedSessionRoom: 'All tracks',
+  },
+}[locale];
+
+const tracks = await getLocalizedCollection('tracks', locale);
 const trackById = new Map(tracks.map((track) => [track.id, track.data]));
 /* Le `room` de la plupart des sessions ne fait que répéter le nom de son
  * parcours : quand il est vide, on retombe sur ce nom plutôt que d'afficher
  * une salle vide. */
 const roomFor = (session: CollectionEntry<'sessions'>) =>
   session.data.room ||
-  (trackById.get(session.data.track)?.name ?? (session.data.track === 'commun' ? 'Temps commun' : session.data.track));
+  (trackById.get(session.data.track)?.name ?? (session.data.track === 'commun' ? copy.sharedSessionRoom : session.data.track));
 
 // Tronque au dernier espace avant la limite pour ne jamais couper un mot en deux.
 function truncateAtWordBoundary(text: string, maxLength: number): string {
@@ -52,8 +104,7 @@ function truncateAtWordBoundary(text: string, maxLength: number): string {
 
 // Dérivée de la bio (unique par intervenant·e) plutôt que du gabarit nom/rôle/entreprise,
 // identique à quelques mots près d'une fiche à l'autre.
-const pageDescriptionSuffix = ` ${eventRoleLabel ?? 'Intervenant'} à GENAI DAYS ${EVENT.year} à ${EVENT.venue.city}.`;
-const pageDescription = `${truncateAtWordBoundary(speaker.data.bio, 155 - pageDescriptionSuffix.length)}${pageDescriptionSuffix}`;
+const pageDescription = `${truncateAtWordBoundary(speaker.data.bio, 155 - copy.pageDescriptionSuffix.length)}${copy.pageDescriptionSuffix}`;
 
 const speakerJsonLd = {
   '@context': 'https://schema.org',
@@ -72,8 +123,8 @@ const breadcrumbJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Accueil', item: siteUrl },
-    { '@type': 'ListItem', position: 2, name: 'Intervenants', item: `${siteUrl}speakers` },
+    { '@type': 'ListItem', position: 1, name: copy.homeLabel, item: new URL(localizePath('/', locale), siteUrl).href },
+    { '@type': 'ListItem', position: 2, name: copy.directoryLabel, item: new URL(directoryPath, siteUrl).href },
     { '@type': 'ListItem', position: 3, name: speaker.data.name, item: speakerUrl },
   ],
 };
@@ -83,7 +134,7 @@ const breadcrumbJsonLd = {
 const socialImage = speaker.data.photo
   ? {
       src: speaker.data.photo,
-      alt: `Portrait de ${speaker.data.name}`,
+      alt: copy.portraitAlt,
       width: portrait?.width,
       height: portrait?.height,
     }
@@ -91,13 +142,13 @@ const socialImage = speaker.data.photo
 
 const socialLinks = [
   speaker.data.linkedin && { label: 'LinkedIn', href: speaker.data.linkedin },
-  speaker.data.website && { label: 'Site web', href: speaker.data.website },
+  speaker.data.website && { label: copy.websiteLabel, href: speaker.data.website },
   speaker.data.x && { label: 'X', href: speaker.data.x },
 ].filter((link): link is { label: string; href: string } => Boolean(link));
 ---
 
 <BaseLayout
-  title={`${speaker.data.name} · ${eventRoleLabel ?? 'Intervenant'} GENAI DAYS ${EVENT.year}`}
+  title={copy.pageTitle}
   description={pageDescription}
   socialImage={socialImage}
   structuredData={[speakerJsonLd, breadcrumbJsonLd]}
@@ -111,9 +162,9 @@ const socialLinks = [
             depuis le planning ou depuis une fiche session, et « Retour au
             programme » mentait dans trois cas sur quatre. Même geste que
             « Tous les partenaires » sur la fiche partenaire. */}
-        <a href="/speakers" class="speaker-back-link">
+        <a href={directoryPath} class="speaker-back-link">
           <span aria-hidden="true">←</span>
-          Tous les intervenants
+          {copy.backLink}
         </a>
         <div class="mt-10 grid gap-9 sm:grid-cols-[14rem_1fr] sm:items-end lg:gap-14">
           <div class="speaker-page-photo">
@@ -123,7 +174,7 @@ const socialLinks = [
                 src={speaker.data.photo}
                 srcset={getSpeakerPortraitSrcset(speaker.id, speaker.data.photo)}
                 sizes="(min-width: 40rem) 14rem, min(15rem, 76vw)"
-                alt={`Portrait de ${speaker.data.name}`}
+                alt={copy.portraitAlt}
                 width={portrait?.width}
                 height={portrait?.height}
                 draggable="false"
@@ -135,7 +186,7 @@ const socialLinks = [
               <span class="speaker-page-company-logo">
                 <img
                   src={speaker.data.companyLogoOnDark ?? speaker.data.companyLogo}
-                  alt={speaker.data.companyLogoAlt ?? `Logo ${speaker.data.company}`}
+                  alt={speaker.data.companyLogoAlt ?? copy.companyLogoAlt(speaker.data.company)}
                   width="56"
                   height="56"
                 />
@@ -146,12 +197,12 @@ const socialLinks = [
             <div class="speaker-kicker">
               {eventRoleLabel && <span>{eventRoleLabel}</span>}
               {eventRoleLabel && <span aria-hidden="true">·</span>}
-              {speakerTrack && <TrackMark track={speakerTrack} />}
+              {speakerTrack && <TrackMark track={speakerTrack} locale={locale} />}
             </div>
             <h1 class="mt-4 text-4xl font-black leading-none tracking-tight sm:text-6xl">{speaker.data.name}</h1>
             <p class="mt-5 text-lg font-bold text-white/78 sm:text-xl">{speaker.data.role} · {speaker.data.company}</p>
             {socialLinks.length > 0 && (
-              <nav class="speaker-social-links mt-7" aria-label={`Liens de ${speaker.data.name}`}>
+              <nav class="speaker-social-links mt-7" aria-label={copy.socialLinksLabel}>
                 {socialLinks.map((link) => (
                   <a href={link.href} rel="noopener noreferrer" target="_blank">{link.label}</a>
                 ))}
@@ -165,8 +216,8 @@ const socialLinks = [
     <section class="mx-auto max-w-5xl px-6 py-14 sm:py-20">
       <div class="speaker-story-grid">
         <article>
-          <p class="type-section-kicker text-brand-blue">Portrait</p>
-          <h2 class="type-section-title mt-3">Son parcours</h2>
+          <p class="type-section-kicker text-brand-blue">{copy.profileKicker}</p>
+          <h2 class="type-section-title mt-3">{copy.profileTitle}</h2>
           <div class="speaker-prose mt-6">
             {speaker.data.profile.map((paragraph) => (
               <p><BrandText text={paragraph} /></p>
@@ -174,8 +225,8 @@ const socialLinks = [
           </div>
 
           <section class="speaker-legitimacy mt-12" aria-labelledby="speaker-legitimacy-title">
-            <p class="type-section-kicker text-brand-blue">Son regard</p>
-            <h2 id="speaker-legitimacy-title" class="type-section-title mt-3">Sa légitimité numérique et GenAI</h2>
+            <p class="type-section-kicker text-brand-blue">{copy.legitimacyKicker}</p>
+            <h2 id="speaker-legitimacy-title" class="type-section-title mt-3">{copy.legitimacyTitle}</h2>
             <p class="mt-5 text-lg leading-relaxed text-black/72">
               <BrandText text={speaker.data.genaiLegitimacy} />
             </p>
@@ -183,8 +234,8 @@ const socialLinks = [
         </article>
 
         <aside class="speaker-timeline" aria-labelledby="speaker-timeline-title">
-          <p class="type-section-kicker text-brand-blue">Repères</p>
-          <h2 id="speaker-timeline-title" class="mt-2 text-2xl font-extrabold">Parcours en bref</h2>
+          <p class="type-section-kicker text-brand-blue">{copy.timelineKicker}</p>
+          <h2 id="speaker-timeline-title" class="mt-2 text-2xl font-extrabold">{copy.timelineTitle}</h2>
           <ol class="mt-7 space-y-7">
             {speaker.data.careerHighlights.map((highlight) => (
               <li>
@@ -203,9 +254,9 @@ const socialLinks = [
     {speaker.data.companies && (
     <section class="speaker-companies px-6 py-14 sm:py-20" aria-labelledby="speaker-companies-title">
       <div class="mx-auto max-w-5xl">
-        <p class="type-section-kicker text-brand-blue">Écosystème</p>
+        <p class="type-section-kicker text-brand-blue">{copy.companiesKicker}</p>
         <h2 id="speaker-companies-title" class="type-section-title mt-3">
-          {speaker.data.companies.length > 1 ? 'Les entreprises qui jalonnent son parcours' : 'L’entreprise associée à son parcours'}
+          {speaker.data.companies.length > 1 ? copy.companiesTitle : copy.singleCompanyTitle}
         </h2>
         <div class:list={['mt-8 grid gap-5', speaker.data.companies.length > 1 && 'md:grid-cols-2 xl:grid-cols-3']}>
           {speaker.data.companies.map((company, index) => (
@@ -213,7 +264,7 @@ const socialLinks = [
               <div class="company-profile-card__heading">
                 <div class="company-profile-card__logo">
                   {company.logo ? (
-                    <img src={company.logo} alt={`Logo ${company.name}`} loading="lazy" />
+                    <img src={company.logo} alt={copy.companyLogoAlt(company.name)} loading="lazy" />
                   ) : (
                     <span aria-hidden="true">{company.name.slice(0, 1)}</span>
                   )}
@@ -227,7 +278,7 @@ const socialLinks = [
                 <BrandText text={company.description} />
               </p>
               <a class="company-profile-card__link" href={company.website} rel="noopener noreferrer" target="_blank">
-                Découvrir {company.name}
+                {copy.companyLink(company.name)}
                 <span aria-hidden="true">↗</span>
               </a>
             </article>
@@ -239,25 +290,25 @@ const socialLinks = [
 
     {sessions.length > 0 && (
       <section class="mx-auto max-w-5xl px-6 py-14 sm:py-20" aria-labelledby="speaker-sessions-title">
-        <p class="type-section-kicker text-brand-blue">Au programme</p>
+        <p class="type-section-kicker text-brand-blue">{copy.sessionsKicker}</p>
         <h2 id="speaker-sessions-title" class="type-section-title mt-3">
-          {sessions.length > 1 ? 'Ses sessions' : 'Sa session'}
+          {sessions.length > 1 ? copy.sessionsTitle : copy.singleSessionTitle}
         </h2>
         <div class="mt-8 grid gap-5">
           {sessions.map((session) => (
-            <a class="speaker-session-card" href={`/programme/${session.id}`}>
+            <a class="speaker-session-card" href={localizePath(`/programme/${session.id}`, locale)}>
               <div class="speaker-session-card__meta">
                 <span>{session.data.startTime}</span>
                 <span>{roomFor(session)}</span>
                 <span>{session.data.durationMinutes} min</span>
               </div>
               <div>
-                <h3>{session.data.quoteTitle ? `"${session.data.title}"` : session.data.title}</h3>
+                <h3>{session.data.quoteTitle ? copy.quotedTitle(session.data.title) : session.data.title}</h3>
                 {session.body?.trim() && (
                   <p><BrandText text={stripMarkdownToPlainText(session.body)} /></p>
                 )}
                 {session.data.themes && (
-                  <ul aria-label="Thématiques">
+                  <ul aria-label={copy.themesLabel}>
                     {session.data.themes.map((theme) => <li>{theme}</li>)}
                   </ul>
                 )}

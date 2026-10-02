@@ -1,0 +1,31 @@
+---
+role: "Tech entrepreneur"
+bio: "President of VideoLAN, a leading figure behind VLC and founder of Kyber, Jean-Baptiste Kempf brings more than twenty years of experience in open source, multimedia systems and technology leadership."
+profile:
+  - "Jean-Baptiste Kempf joined the VLC project while studying at École Centrale Paris in the early 2000s. He went on to help relaunch the project, created the VideoLAN nonprofit in 2008 and became its president. He remains one of VLC’s main developers today and maintains many open source projects related to video and codecs."
+  - "As much an engineer as an entrepreneur, he has founded several companies in multimedia and video games. He has also led technical teams at Shadow, Veepee and Scaleway, ranging from a handful of people to several hundred, working on streaming, cloud, performance and digital sovereignty."
+  - "He now devotes himself to Kyber, an open infrastructure for real-time remote control of robots, drones, vehicles and immersive environments. His path connects free software, distributed systems and taking demanding technologies to industrial scale."
+genaiLegitimacy: "Jean-Baptiste Kempf speaks as a builder of the infrastructure that makes generative models possible and sustainable, rather than as a researcher working on the models themselves. His work on codecs, efficient computing, European cloud and ultra-low-latency systems gives him a rare perspective on the performance, cost, openness and sovereignty constraints of GenAI. At Scaleway, his work included driving a new generation of sovereign European cloud and AI services."
+careerHighlights:
+  - period: "Since 2003"
+    title: "Key VLC developer"
+    description: "Contributing to the open source media player and to several software building blocks used across the global video ecosystem."
+  - period: "Since 2008"
+    title: "President of VideoLAN"
+    description: "Creating and governing the nonprofit behind VLC, which upholds a model with no ads and no tracking."
+  - period: "2023 to 2026"
+    title: "CTO of Scaleway"
+    description: "Technology leadership at a European cloud provider, with a focus on open source, sovereignty and AI services."
+  - period: "Since 2024"
+    title: "Founder of Kyber"
+    description: "Building real-time, low-latency infrastructure for controlling machines remotely."
+companies:
+  - name: "VideoLAN and VLC"
+    relationship: "President of VideoLAN and key VLC developer"
+    description: "VideoLAN is the nonprofit organization behind VLC and several open source multimedia technologies. Jean-Baptiste Kempf created it in 2008 after joining the VLC project as a student."
+  - relationship: "CTO from 2023 to 2026"
+    description: "Scaleway develops a European cloud offering. Jean-Baptiste Kempf led its technology, championing open, high-performance and sovereign infrastructure, particularly for AI use cases."
+  - relationship: "Founder"
+    description: "Kyber is building open, ultra-low-latency streaming infrastructure to remotely operate robots, drones, vehicles and other interactive machines."
+companyLogoAlt: "Kyber logo"
+---

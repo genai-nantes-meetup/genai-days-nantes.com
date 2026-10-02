@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { formatPriceAmount } from '../lib/pricing';
+import { formatPriceAmount, getPricingCopy } from '../lib/pricing';
 import { CTA_LINKS } from '../lib/cta-links';
 import PRICING from '../content/pricing.json';
 
@@ -8,9 +8,9 @@ export const GET: APIRoute = async ({ site, url }) => {
 
   const body = `# Pricing · GENAI DAYS
 
-## ${PRICING.name}
+## ${getPricingCopy('en').name}
 
-- Price: ${formatPriceAmount()} per person
+- Price: ${formatPriceAmount('en')} per person
 - Capacity: ${PRICING.capacity} seats
 - Tickets: ${CTA_LINKS.tickets}
 

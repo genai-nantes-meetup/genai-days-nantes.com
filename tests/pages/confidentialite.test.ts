@@ -41,4 +41,20 @@ describe('confidentialite.astro', () => {
     expect(html).toContain('ne diffuse aucune publicité');
     expect(html).toContain('ne dépose aucun traceur publicitaire');
   });
+
+  it('renders the English translation and defers to the French version', async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(PrivacyPage, {
+      request: new Request('https://example.com/en/privacy'),
+    });
+
+    expect(html).toContain('<title>Privacy &amp; legal notice · GenAI Days</title>');
+    expect(html).toContain('shows no advertising');
+    expect(html).toContain('the French version prevails');
+    expect(html).toContain('href="/confidentialite" hreflang="fr"');
+    expect(html).toContain('id="donnees-personnelles"');
+    expect(html).toContain('href="#donnees-personnelles"');
+    expect(html).toContain('genaidays:label-archive:v5');
+    expect(html).not.toContain('ne diffuse aucune publicité');
+  });
 });

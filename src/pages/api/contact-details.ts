@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { getSecret } from 'astro:env/server';
 import { CONTACT_PROFILES, isContactTopic } from '../../lib/contact';
+import { DEFAULT_LOCALE, isLocale, type Locale } from '../../lib/i18n';
 
 export const prerender = false;
 
@@ -11,6 +12,19 @@ const RESPONSE_HEADERS = {
   'X-Content-Type-Options': 'nosniff',
   'X-Robots-Tag': 'noindex, nofollow, noarchive',
 };
+
+/* La langue arrive dans le corps de la requête. Les refus prononcés avant
+ * sa lecture (origine, taille, format, JSON illisible) restent en français. */
+const ERROR_MESSAGES = {
+  fr: {
+    unknownTopic: 'Ce contact est introuvable.',
+    unavailable: 'Les coordonnées sont momentanément indisponibles. Réessayez dans quelques instants.',
+  },
+  en: {
+    unknownTopic: 'This contact could not be found.',
+    unavailable: 'The contact details are temporarily unavailable. Please try again in a few moments.',
+  },
+} satisfies Record<Locale, Record<string, string>>;
 
 function json(body: Record<string, unknown>, status = 200): Response {
   return new Response(JSON.stringify(body), {
@@ -40,39 +54,42 @@ export const POST: APIRoute = async ({ request }) => {
     return json({ message: 'Le format de la demande est invalide.' }, 415);
   }
 
-  let payload: { topic?: unknown };
+  // Un corps JSON valide peut valoir null : les champs se lisent donc avec ?.
+  let payload: { topic?: unknown; locale?: unknown } | null;
   try {
     payload = await request.json();
   } catch {
     return json({ message: 'La demande est invalide.' }, 400);
   }
 
-  if (!isContactTopic(payload.topic)) {
-    return json({ message: 'Ce contact est introuvable.' }, 404);
+  const requestedLocale = payload?.locale;
+  const locale = isLocale(requestedLocale) ? requestedLocale : DEFAULT_LOCALE;
+  const topic = payload?.topic;
+
+  if (!isContactTopic(topic)) {
+    return json({ message: ERROR_MESSAGES[locale].unknownTopic }, 404);
   }
 
-  const profile = CONTACT_PROFILES[payload.topic];
+  const profile = CONTACT_PROFILES[topic];
   const contactValue = getSecret(profile.environmentKey)?.trim();
 
   if (!contactValue) {
     console.error(`Contact configuration is missing for ${profile.environmentKey}.`);
-    return json(
-      { message: 'Les coordonnées sont momentanément indisponibles. Réessayez dans quelques instants.' },
-      503,
-    );
+    return json({ message: ERROR_MESSAGES[locale].unavailable }, 503);
   }
 
+  const profileCopy = profile[locale];
   return json({
     contact: {
-      label: profile.contactLabel,
+      label: profileCopy.contactLabel,
       value: contactValue,
     },
     person: {
       image: profile.image,
-      name: profile.name,
-      role: profile.role,
+      name: profileCopy.name,
+      role: profileCopy.role,
     },
-    subject: profile.subject,
-    suggestion: profile.message,
+    subject: profileCopy.subject,
+    suggestion: profileCopy.message,
   });
 };

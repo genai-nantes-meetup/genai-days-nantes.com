@@ -12,14 +12,28 @@ describe('TracksProgramme.astro', () => {
 
     expect(linkIndex).toBeGreaterThan(tracksIndex);
     expect(linkIndex).toBeLessThan(dayIndex);
-    expect(html.match(/href="\/programme"/g)).toHaveLength(1);
+    expect(html.match(/href="\/programme"/g)).toHaveLength(2);
   });
 
-  it('links each track name to its planning on the programme page', async () => {
+  it('identifies both tracks and links to the complete program', async () => {
     const container = await createAstroContainer();
     const html = await container.renderToString(TracksProgramme);
 
-    expect(html).toContain('href="/programme?parcours=dsi#planning"');
-    expect(html).toContain('href="/programme?parcours=tech#planning"');
+    expect(html).toContain('data-track-mark="decideurs"');
+    expect(html).toContain('data-track-mark="tech"');
+    expect(html).toContain('Voir le programme complet');
+  });
+
+  it('renders the English tracks and links them to the English program', async () => {
+    const container = await createAstroContainer();
+    const html = await container.renderToString(TracksProgramme, { request: new Request('https://example.com/en') });
+
+    expect(html).toMatch(/Common ground\.<br[^>]*>Two tracks\./);
+    expect(html).toContain('Those who decide');
+    expect(html).toContain('href="/en/program"');
+    expect(html).toContain('See the full program');
+    expect(html).toContain('all delivered in French');
+    expect(html).not.toContain('Le rythme de la journée');
+    expect(html).not.toContain('href="/programme"');
   });
 });

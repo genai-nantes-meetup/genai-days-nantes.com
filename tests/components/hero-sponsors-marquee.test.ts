@@ -37,6 +37,18 @@ describe('HeroSponsorsMarquee.astro', () => {
     expect(html).toMatch(/hero-affiche__cta[\s\S]*hero-affiche__sponsors[\s\S]*aria-label="Partenaires"/);
     expect(html).toContain('aria-label="Co-organisé avec la Région Pays de la Loire"');
   });
+
+  it('labels the logo rail in English on English pages', async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(HeroSponsorsMarquee, { request: new Request('https://example.com/en') });
+    const primary = html.slice(html.indexOf('data-marquee-copy="primary"'), html.indexOf('data-marquee-copy="duplicate"'));
+
+    expect(html).toContain('aria-label="Partners"');
+    expect(html).toContain('aria-label="Pause the scrolling logos"');
+    expect(primary).toContain('alt="Clever Cloud logo"');
+    expect(primary).toContain('aria-label="Visit the Clever Cloud website"');
+    expect(html).not.toContain('Visiter le site');
+  });
 });
 
 function primaryLinkCount(html: string) {

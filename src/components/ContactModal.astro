@@ -1,10 +1,41 @@
-<dialog class="contact-dialog" data-contact-dialog aria-label="Préparer un message">
+---
+import { getLocaleFromPath } from '../lib/i18n';
+
+const locale = getLocaleFromPath(Astro.url.pathname);
+
+const copy = {
+  fr: {
+    dialogLabel: 'Préparer un message',
+    closeLabel: 'Fermer la fenêtre de contact',
+    retryLabel: 'Réessayer',
+    recipientLabel: 'À',
+    copyLabel: 'Copier',
+    copyCoordinateLabel: 'Copier la coordonnée',
+    subjectLabel: 'Objet',
+    messageLabel: 'Message proposé',
+    copyMessageLabel: 'Copier le message',
+  },
+  en: {
+    dialogLabel: 'Write a message',
+    closeLabel: 'Close the contact window',
+    retryLabel: 'Try again',
+    recipientLabel: 'To',
+    copyLabel: 'Copy',
+    copyCoordinateLabel: 'Copy the contact details',
+    subjectLabel: 'Subject',
+    messageLabel: 'Suggested message',
+    copyMessageLabel: 'Copy the message',
+  },
+}[locale];
+---
+
+<dialog class="contact-dialog" data-contact-dialog aria-label={copy.dialogLabel}>
   <div class="contact-dialog__shell">
     <button
       class="contact-dialog__close"
       type="button"
       data-contact-close
-      aria-label="Fermer la fenêtre de contact"
+      aria-label={copy.closeLabel}
     >
       <span aria-hidden="true">×</span>
     </button>
@@ -16,12 +47,12 @@
 
     <div class="contact-dialog__error" data-contact-error hidden role="alert">
       <p data-contact-error-message></p>
-      <button type="button" data-contact-retry>Réessayer</button>
+      <button type="button" data-contact-retry>{copy.retryLabel}</button>
     </div>
 
     <div class="contact-email" data-contact-content hidden>
       <div class="contact-email__row contact-email__row--recipient">
-        <span class="contact-email__row-label">À</span>
+        <span class="contact-email__row-label">{copy.recipientLabel}</span>
         <div class="contact-person__portrait" aria-hidden="true">
           <img class="portrait-photo" data-contact-image alt="" hidden draggable="false" />
           <span data-contact-initial>N</span>
@@ -34,26 +65,26 @@
             <button
               type="button"
               data-contact-copy="coordinate"
-              aria-label="Copier la coordonnée"
+              aria-label={copy.copyCoordinateLabel}
             >
-              Copier
+              {copy.copyLabel}
             </button>
           </div>
         </div>
       </div>
 
       <div class="contact-email__row">
-        <span class="contact-email__row-label">Objet</span>
+        <span class="contact-email__row-label">{copy.subjectLabel}</span>
         <strong class="contact-email__subject" data-contact-subject></strong>
       </div>
 
-      <section class="contact-email__message" aria-label="Message proposé">
+      <section class="contact-email__message" aria-label={copy.messageLabel}>
         <button
           type="button"
           data-contact-copy="message"
-          aria-label="Copier le message"
+          aria-label={copy.copyMessageLabel}
         >
-          Copier
+          {copy.copyLabel}
         </button>
         <pre data-contact-message></pre>
       </section>
@@ -63,6 +94,7 @@
 
 <script>
   import { capture } from '../lib/analytics';
+  import { getDocumentLocale } from '../lib/i18n';
 
   interface ContactResponse {
     contact: {
@@ -96,15 +128,41 @@
   let activeRequest: AbortController | undefined;
   let opener: HTMLElement | null = null;
 
-  const LOADING_MESSAGE = 'Préparation du message…';
-  const FALLBACK_ERROR_MESSAGE = 'Impossible de récupérer les coordonnées pour le moment.';
+  const locale = getDocumentLocale();
+  const messages = {
+    fr: {
+      loading: 'Préparation du message…',
+      fallbackError: 'Impossible de récupérer les coordonnées pour le moment.',
+      unavailable: 'Les coordonnées sont indisponibles.',
+      copy: 'Copier',
+      copied: 'Copié',
+      copyManually: 'À copier',
+      copyManuallyLabel: 'Sélectionnez puis copiez manuellement',
+    },
+    en: {
+      loading: 'Preparing your message…',
+      fallbackError: 'The contact details cannot be retrieved right now.',
+      unavailable: 'The contact details are unavailable.',
+      copy: 'Copy',
+      copied: 'Copied',
+      copyManually: 'Copy manually',
+      copyManuallyLabel: 'Select the text, then copy it manually',
+    },
+  }[locale];
 
   function setState(state: 'loading' | 'content' | 'error') {
     if (loading) loading.hidden = state !== 'loading';
     if (content) content.hidden = state !== 'content';
     if (error) error.hidden = state !== 'error';
     // Le texte est écrit après l'affichage : une région live encore masquée n'annonce rien.
-    if (loadingMessage) loadingMessage.textContent = state === 'loading' ? LOADING_MESSAGE : '';
+    if (loadingMessage) loadingMessage.textContent = state === 'loading' ? messages.loading : '';
+  }
+
+  function showError(message: string) {
+    setState('error');
+    requestAnimationFrame(() => {
+      if (errorMessage) errorMessage.textContent = message;
+    });
   }
 
   function renderContact(data: ContactResponse) {
@@ -143,7 +201,7 @@
           Accept: 'application/json',
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ topic }),
+        body: JSON.stringify({ topic, locale }),
         cache: 'no-store',
         credentials: 'same-origin',
         signal: activeRequest.signal,
@@ -151,7 +209,8 @@
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(typeof data.message === 'string' ? data.message : 'Les coordonnées sont indisponibles.');
+        showError(typeof data.message === 'string' ? data.message : messages.unavailable);
+        return;
       }
 
       // La modale est dévoilée avant l'écriture : les mutations de l'output sont alors annoncées.
@@ -159,11 +218,9 @@
       renderContact(data as ContactResponse);
     } catch (requestError) {
       if (requestError instanceof DOMException && requestError.name === 'AbortError') return;
-      const message = requestError instanceof Error ? requestError.message : FALLBACK_ERROR_MESSAGE;
-      setState('error');
-      requestAnimationFrame(() => {
-        if (errorMessage) errorMessage.textContent = message;
-      });
+      // Une panne réseau ou une réponse illisible porte un message technique du
+      // navigateur, en anglais : la modale affiche le sien, dans la langue de la page.
+      showError(messages.fallbackError);
     }
   }
 
@@ -180,7 +237,7 @@
   async function copyText(value: string, button: HTMLButtonElement) {
     if (!value) return;
 
-    const originalLabel = button.textContent ?? 'Copier';
+    const originalLabel = button.textContent ?? messages.copy;
     const originalAccessibleLabel = button.getAttribute('aria-label') ?? '';
 
     try {
@@ -198,17 +255,17 @@
         temporaryField.remove();
       }
 
-      button.textContent = 'Copié';
+      button.textContent = messages.copied;
       button.classList.add('is-copied');
-      button.setAttribute('aria-label', 'Copié');
+      button.setAttribute('aria-label', messages.copied);
       window.setTimeout(() => {
         button.textContent = originalLabel;
         button.classList.remove('is-copied');
         button.setAttribute('aria-label', originalAccessibleLabel);
       }, 1800);
     } catch {
-      button.textContent = 'À copier';
-      button.setAttribute('aria-label', 'Sélectionnez puis copiez manuellement');
+      button.textContent = messages.copyManually;
+      button.setAttribute('aria-label', messages.copyManuallyLabel);
     }
   }
 

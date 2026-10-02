@@ -9,6 +9,27 @@
  * (couleur, noir, blanc). Le groupe est dupliqué pour boucler sans saut.
  */
 import { getCollection } from 'astro:content';
+import { getLocaleFromPath } from '../lib/i18n';
+
+const locale = getLocaleFromPath(Astro.url.pathname);
+const copy = {
+  fr: {
+    groupLabel: 'Partenaires',
+    pauseLabel: 'Mettre en pause le défilement des logos',
+    viewportLabel: 'Logos des partenaires, défilement horizontal',
+    listLabel: 'Logos des partenaires',
+    visitLabel: (name: string) => `Visiter le site de ${name}`,
+    logoAlt: (name: string) => `Logo ${name}`,
+  },
+  en: {
+    groupLabel: 'Partners',
+    pauseLabel: 'Pause the scrolling logos',
+    viewportLabel: 'Partner logos, scrolling horizontally',
+    listLabel: 'Partner logos',
+    visitLabel: (name: string) => `Visit the ${name} website`,
+    logoAlt: (name: string) => `${name} logo`,
+  },
+}[locale];
 
 const sponsors = (await getCollection('partners'))
   .sort((a, b) => a.data.order - b.data.order)
@@ -30,17 +51,17 @@ const sponsors = (await getCollection('partners'))
   });
 ---
 
-<div class="hero-sponsors" role="group" aria-label="Partenaires" data-logo-marquee>
-  <button class="hero-sponsors__toggle" type="button" aria-pressed="false" aria-label="Mettre en pause le défilement des logos" data-logo-marquee-toggle>
+<div class="hero-sponsors" role="group" aria-label={copy.groupLabel} data-logo-marquee>
+  <button class="hero-sponsors__toggle" type="button" aria-pressed="false" aria-label={copy.pauseLabel} data-logo-marquee-toggle>
     <svg class="hero-sponsors__pause-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 5v14M16 5v14" /></svg>
     <svg class="hero-sponsors__play-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m8 5 11 7-11 7z" /></svg>
   </button>
-  <div class="hero-sponsors__viewport" tabindex="0" aria-label="Logos des partenaires, défilement horizontal">
+  <div class="hero-sponsors__viewport" tabindex="0" aria-label={copy.viewportLabel}>
     <div class="hero-sponsors__track">
       {[false, true].map((duplicate) => (
         <ul
           class="hero-sponsors__group"
-          aria-label={duplicate ? undefined : 'Logos des partenaires'}
+          aria-label={duplicate ? undefined : copy.listLabel}
           aria-hidden={duplicate ? 'true' : undefined}
           data-marquee-copy={duplicate ? 'duplicate' : 'primary'}
         >
@@ -53,12 +74,12 @@ const sponsors = (await getCollection('partners'))
                 href={sponsor.website}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label={duplicate ? undefined : `Visiter le site de ${sponsor.name}`}
+                aria-label={duplicate ? undefined : copy.visitLabel(sponsor.name)}
                 tabindex={duplicate ? '-1' : undefined}
               >
                 <img
                   src={sponsor.logo}
-                  alt={duplicate ? '' : `Logo ${sponsor.name}`}
+                  alt={duplicate ? '' : copy.logoAlt(sponsor.name)}
                   width={sponsor.width}
                   height={sponsor.height}
                   loading="lazy"

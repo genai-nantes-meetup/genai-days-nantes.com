@@ -64,6 +64,15 @@ describe('archive restick handle', () => {
   it('keeps a readable label when the archive card carries no name', () => {
     expect(getArchiveRestickAffordance('  ', true).ariaLabel).toContain('Recoller l’étiquette sur la page');
   });
+
+  it('names the handle in English on English pages', () => {
+    expect(getArchiveRestickAffordance('Jean-Baptiste Kempf', true, 'en').ariaLabel).toBe(
+      'Stick the label “Jean-Baptiste Kempf” back on the page · Enter or Space returns it to its original spot',
+    );
+    expect(getArchiveRestickAffordance('', false, 'en').ariaLabel).toBe(
+      'Place the label on the page · Enter or Space puts it in the center',
+    );
+  });
 });
 
 describe('archive lift placement', () => {

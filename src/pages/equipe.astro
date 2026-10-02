@@ -1,5 +1,4 @@
 ---
-import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ArrowIcon from "../components/ArrowIcon.astro";
 import Button from "../components/Button.astro";
@@ -9,10 +8,47 @@ import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
 import Label from "../components/Label.astro";
 import { EVENT, EVENT_YEAR, formatEventDateLabel } from "../lib/event";
+import { getLocaleFromPath, localizePath } from "../lib/i18n";
+import { getLocalizedCollection } from "../lib/localized-content";
 
-const team = (await getCollection("team")).sort(
+const locale = getLocaleFromPath(Astro.url.pathname);
+
+const team = (await getLocalizedCollection("team", locale)).sort(
   (a, b) => a.data.order - b.data.order,
 );
+const eventDate = formatEventDateLabel(locale);
+const copy = {
+  fr: {
+    pageTitle: `L’équipe ${EVENT_YEAR} · GENAI DAYS`,
+    pageDescription: `Découvrez les six organisateurs bénévoles de GENAI DAYS ${EVENT_YEAR} à ${EVENT.venue.city}, issus du meetup Generative AI Nantes et du hackathon SHIFT.`,
+    homeLabel: "Accueil",
+    title: "L’équipe",
+    lede: `Six bénévoles de l’écosystème nantais, déjà réunis autour du meetup Generative AI Nantes et du hackathon SHIFT, qui organisent la journée du ${eventDate}.`,
+    rosterTitle: "Les membres de l’équipe",
+    portraitAlt: (name: string) => `Portrait de ${name}`,
+    linkedinLabel: (name: string) => `Profil LinkedIn de ${name}, ouvre un nouvel onglet`,
+    closingKicker: "Nous écrire",
+    closingTitle: "Une question, une envie de contribuer ?",
+    closingLede:
+      "Chaque sujet a son interlocuteur dédié. La page contact vous oriente vers la bonne personne.",
+    contactCta: "Contacter l’équipe",
+  },
+  en: {
+    pageTitle: `The ${EVENT_YEAR} team · GENAI DAYS`,
+    pageDescription: `Meet the six volunteer organizers of GENAI DAYS ${EVENT_YEAR} in ${EVENT.venue.city}, who come from the Generative AI Nantes meetup and the SHIFT hackathon.`,
+    homeLabel: "Home",
+    title: "The team",
+    lede: `Six volunteers from the Nantes tech community, already brought together by the Generative AI Nantes meetup and the SHIFT hackathon, are organizing the event on ${eventDate}.`,
+    rosterTitle: "Team members",
+    portraitAlt: (name: string) => `Portrait of ${name}`,
+    linkedinLabel: (name: string) => `${name}’s LinkedIn profile, opens in a new tab`,
+    closingKicker: "Get in touch",
+    closingTitle: "Have a question or want to get involved?",
+    closingLede:
+      "Every topic has a dedicated contact. The contact page points you to the right person.",
+    contactCta: "Contact the team",
+  },
+}[locale];
 
 /* Les plaques ne sont pas alignées au cordeau : chacune est posée à la main,
  * comme sur la planche du deck sponsors. Deux séries de valeurs suffisent à
@@ -31,16 +67,16 @@ const TEAM_COLUMN_TRACKS = team
   .join(" ");
 
 const siteUrl = (Astro.site ?? new URL(Astro.url.origin)).href;
-const pageUrl = new URL("/equipe", siteUrl).href;
-const pageTitle = `L’équipe ${EVENT_YEAR} · GENAI DAYS`;
-const pageDescription = `Découvrez les six organisateurs bénévoles de GENAI DAYS ${EVENT_YEAR} à ${EVENT.venue.city}, issus du meetup Generative AI Nantes et du hackathon SHIFT.`;
+const homeUrl = new URL(localizePath("/", locale), siteUrl).href;
+const pageUrl = new URL(localizePath("/equipe", locale), siteUrl).href;
 
 const collectionJsonLd = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
-  name: pageTitle,
-  description: pageDescription,
+  name: copy.pageTitle,
+  description: copy.pageDescription,
   url: pageUrl,
+  inLanguage: locale,
   about: { "@id": `${siteUrl}#event` },
   mainEntity: {
     "@type": "ItemList",
@@ -65,24 +101,24 @@ const breadcrumbJsonLd = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Accueil", item: siteUrl },
-    { "@type": "ListItem", position: 2, name: "L’équipe", item: pageUrl },
+    { "@type": "ListItem", position: 1, name: copy.homeLabel, item: homeUrl },
+    { "@type": "ListItem", position: 2, name: copy.title, item: pageUrl },
   ],
 };
 ---
 
 <BaseLayout
-  title={pageTitle}
-  description={pageDescription}
+  title={copy.pageTitle}
+  description={copy.pageDescription}
   structuredData={[collectionJsonLd, breadcrumbJsonLd]}
 >
   <Header />
 
   <main class="team-page">
     <DirectoryHero
-      title="L’équipe"
+      title={copy.title}
       titleId="team-title"
-      lede={`Six bénévoles de l’écosystème nantais, déjà réunis autour du meetup Generative AI Nantes et du hackathon SHIFT, qui organisent la journée du ${formatEventDateLabel()}.`}
+      lede={copy.lede}
       image="/images/cover_v2-optimized.webp"
       imageWidth={2560}
       imageHeight={1454}
@@ -93,7 +129,7 @@ const breadcrumbJsonLd = {
       <EditorialGrid top={false} />
 
       <div class="team-roster__inner">
-        <h2 id="team-roster-title" class="sr-only">Les membres de l’équipe</h2>
+        <h2 id="team-roster-title" class="sr-only">{copy.rosterTitle}</h2>
         <ol
           class="team-wall"
           style={`--team-column-tracks: ${TEAM_COLUMN_TRACKS};`}
@@ -108,7 +144,7 @@ const breadcrumbJsonLd = {
                   <img
                     class="team-member__portrait"
                     src={member.data.photo}
-                    alt={`Portrait de ${member.data.name}`}
+                    alt={copy.portraitAlt(member.data.name)}
                     width={member.data.photoWidth}
                     height={member.data.photoHeight}
                     loading={index < 3 ? "eager" : "lazy"}
@@ -139,7 +175,7 @@ const breadcrumbJsonLd = {
                       href={member.data.linkedin}
                       target="_blank"
                       rel="noopener noreferrer"
-                      aria-label={`Profil LinkedIn de ${member.data.name}, ouvre un nouvel onglet`}
+                      aria-label={copy.linkedinLabel(member.data.name)}
                     >
                       LinkedIn <ArrowIcon direction="external" />
                     </a>
@@ -157,18 +193,19 @@ const breadcrumbJsonLd = {
 
       <div class="team-closing__inner">
         <div>
-          <p class="type-section-kicker">Nous écrire</p>
+          <p class="type-section-kicker">{copy.closingKicker}</p>
           <h2 id="team-closing-title" class="type-section-title">
-            Une question, une envie de contribuer&nbsp;?
+            {copy.closingTitle}
           </h2>
           <p class="type-section-lede">
-            Chaque sujet a son interlocuteur dédié. La page contact vous oriente
-            vers la bonne personne.
+            {copy.closingLede}
           </p>
         </div>
 
         <div class="team-closing__actions">
-          <Button variant="primary" href="/contact">Contacter l’équipe</Button>
+          <Button variant="primary" href={localizePath("/contact", locale)}
+            >{copy.contactCta}</Button
+          >
         </div>
       </div>
     </section>

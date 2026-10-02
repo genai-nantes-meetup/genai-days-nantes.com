@@ -1,6 +1,7 @@
 ---
 import SessionIllustration from './SessionIllustration.astro';
 import { IS_MY_DAY_ENABLED } from '../lib/features';
+import { getLocaleFromPath } from '../lib/i18n';
 
 interface Props {
   title: string;
@@ -24,6 +25,7 @@ interface Props {
   sessionId?: string;
 }
 
+const locale = getLocaleFromPath(Astro.url.pathname);
 const {
   title,
   quoteTitle = true,
@@ -40,15 +42,36 @@ const {
 
 const isCollectible = IS_MY_DAY_ENABLED && Boolean(sessionId) && !provisional;
 
-const formatLabel = {
-  keynote: 'Keynote',
-  talk: 'Conférence',
-  'table-ronde': 'Table ronde',
-  atelier: 'Atelier',
-  concours: 'Concours',
-  podcast: 'Podcast',
-}[format];
-const displayTitle = quoteTitle ? `"${title}"` : title;
+const copy = {
+  fr: {
+    formatLabels: {
+      keynote: 'Keynote',
+      talk: 'Conférence',
+      'table-ronde': 'Table ronde',
+      atelier: 'Atelier',
+      concours: 'Concours',
+      podcast: 'Podcast',
+    },
+    provisionalFormat: 'Conférence',
+    atTime: 'à',
+    quote: (text: string) => `"${text}"`,
+  },
+  en: {
+    formatLabels: {
+      keynote: 'Keynote',
+      talk: 'Talk',
+      'table-ronde': 'Panel',
+      atelier: 'Workshop',
+      concours: 'Contest',
+      podcast: 'Podcast',
+    },
+    provisionalFormat: 'Talk',
+    atTime: 'at',
+    quote: (text: string) => `“${text}”`,
+  },
+}[locale];
+const formatLabel = copy.formatLabels[format];
+const displayTitle = quoteTitle ? copy.quote(title) : title;
 const showSpeakers = speakers.length > 0 || !provisional;
 ---
 
@@ -77,7 +100,7 @@ const showSpeakers = speakers.length > 0 || !provisional;
     <div class="schedule-session__top flex min-w-0 items-start justify-between gap-3">
       <div class="schedule-session__time shrink-0 font-label text-base font-bold">{startTime}</div>
       <p class="schedule-session__tags">
-        <span>{provisional ? 'Conférence' : formatLabel}</span>
+        <span>{provisional ? copy.provisionalFormat : formatLabel}</span>
         <span aria-hidden="true">·</span>
         <span>{durationMinutes} min</span>
       </p>
@@ -91,7 +114,7 @@ const showSpeakers = speakers.length > 0 || !provisional;
         ) : (
           displayTitle
         )}
-        {provisional && <span class="sr-only"> à {startTime}</span>}
+        {provisional && <span class="sr-only"> {copy.atTime} {startTime}</span>}
       </h4>
       {subtitle && <p class="schedule-session__subtitle">{subtitle}</p>}
       {showSpeakers && (
@@ -104,7 +127,7 @@ const showSpeakers = speakers.length > 0 || !provisional;
               </>
             ))
           ) : (
-            <span>Speaker To Be Announced</span>
+            <span>{locale === 'en' ? 'Speaker to be announced' : 'Speaker To Be Announced'}</span>
           )}
         </p>
       )}

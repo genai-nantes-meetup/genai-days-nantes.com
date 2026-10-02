@@ -26,5 +26,9 @@
     "linkedin": "https://www.linkedin.com/company/generative-ai-nantes/",
     "x": "https://x.com/GenAINantes"
   },
-  "contactEmail": "hello@genai-days-nantes.com"
+  "contactEmail": "hello@genai-days-nantes.com",
+  "en": {
+    "tagline": "Generative AI is already in your company. Now comes the hard part.",
+    "description": "A one-day generative AI conference in Nantes, France, for the people who decide on AI and the people who implement it: two complementary tracks, real-world case studies and a Startup Contest. Talks are delivered in French."
+  }
 }

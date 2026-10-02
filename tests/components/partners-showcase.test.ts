@@ -67,4 +67,16 @@ describe('PartnersShowcase.astro', () => {
     expect(html).toContain('href="/partenaires"');
     expect(html).toContain('Découvrir tous les partenaires');
   });
+
+  it('renders the English heading, labels and partners link on English pages', async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(PartnersShowcase, { request: new Request('https://example.com/en') });
+
+    expect(html).toContain('They make the day possible.');
+    expect(html).toContain('The Région Pays de la Loire co-organizes this edition and opens the doors of the Hôtel de Région.');
+    expect(html).toContain('aria-label="Visit the Région Pays de la Loire website"');
+    expect(html).toContain('alt="Clever Cloud logo"');
+    expect(html).toContain('href="/en/partners"');
+    expect(html).not.toContain('Découvrir tous les partenaires');
+  });
 });

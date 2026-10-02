@@ -1,4 +1,5 @@
 import { capture } from '../lib/analytics';
+import { DEFAULT_LOCALE, getDocumentLocale, type Locale } from '../lib/i18n';
 import * as labelCollection from '../lib/label-collection';
 import * as myDay from '../lib/my-day';
 
@@ -20,15 +21,54 @@ interface DaySession {
   title: string;
 }
 
-export function describeSessionChosen(title: string, startTime: string, replacedTitle?: string): string {
-  if (replacedTitle) {
-    return `« ${title} » remplace « ${replacedTitle} » sur le créneau de ${startTime}.`;
-  }
-  return `« ${title} » ajoutée à ma journée, créneau de ${startTime}.`;
+interface MyDayMessages {
+  sessionChosen: (title: string, startTime: string) => string;
+  sessionReplaced: (title: string, replacedTitle: string, startTime: string) => string;
+  sessionRemoved: (title: string, startTime: string) => string;
+  toggleName: (title: string) => string;
+  addToDay: string;
+  removeFromDay: string;
+  choiceBlocked: string;
+  removalBlocked: string;
 }
 
-export function describeSessionRemoved(title: string, startTime: string): string {
-  return `« ${title} » retirée de ma journée. Le créneau de ${startTime} est libre.`;
+const messages: Record<Locale, MyDayMessages> = {
+  fr: {
+    sessionChosen: (title, startTime) => `« ${title} » ajoutée à ma journée, créneau de ${startTime}.`,
+    sessionReplaced: (title, replacedTitle, startTime) =>
+      `« ${title} » remplace « ${replacedTitle} » sur le créneau de ${startTime}.`,
+    sessionRemoved: (title, startTime) => `« ${title} » retirée de ma journée. Le créneau de ${startTime} est libre.`,
+    toggleName: (title) => `Inclure « ${title} » dans ma journée`,
+    addToDay: 'Ajouter à ma journée',
+    removeFromDay: 'Retirer de ma journée',
+    choiceBlocked: 'Impossible d’enregistrer ce choix : le stockage du navigateur est bloqué.',
+    removalBlocked: 'Impossible de retirer cette session : le stockage du navigateur est bloqué.',
+  },
+  en: {
+    sessionChosen: (title, startTime) => `“${title}” added to my day, ${startTime} slot.`,
+    sessionReplaced: (title, replacedTitle, startTime) =>
+      `“${title}” replaces “${replacedTitle}” in the ${startTime} slot.`,
+    sessionRemoved: (title, startTime) => `“${title}” removed from my day. The ${startTime} slot is free.`,
+    toggleName: (title) => `Include “${title}” in my day`,
+    addToDay: 'Add to my day',
+    removeFromDay: 'Remove from my day',
+    choiceBlocked: 'Could not save this choice: browser storage is blocked.',
+    removalBlocked: 'Could not remove this session: browser storage is blocked.',
+  },
+};
+
+export function describeSessionChosen(
+  title: string,
+  startTime: string,
+  replacedTitle?: string,
+  locale: Locale = DEFAULT_LOCALE,
+): string {
+  if (replacedTitle) return messages[locale].sessionReplaced(title, replacedTitle, startTime);
+  return messages[locale].sessionChosen(title, startTime);
+}
+
+export function describeSessionRemoved(title: string, startTime: string, locale: Locale = DEFAULT_LOCALE): string {
+  return messages[locale].sessionRemoved(title, startTime);
 }
 
 function readSessions(archive: HTMLElement): Map<string, DaySession> {
@@ -63,6 +103,8 @@ export function initMyDay(root: ParentNode = document): number {
   const instance = new AbortController();
   activeInstance = instance;
   const { signal } = instance;
+  const locale = getDocumentLocale();
+  const copy = messages[locale];
   const live = root.querySelector<HTMLElement>('[data-label-archive-live]');
 
   const announce = (message: string) => {
@@ -108,9 +150,9 @@ export function initMyDay(root: ParentNode = document): number {
       host.querySelectorAll<HTMLElement>('[data-my-day-toggle]').forEach((toggle) => {
         const isChosen = state === 'chosen';
         const title = sessions.get(sessionId)?.title ?? sessionId;
-        const label = isChosen ? 'Retirer de ma journée' : 'Ajouter à ma journée';
+        const label = isChosen ? copy.removeFromDay : copy.addToDay;
         toggle.setAttribute('aria-pressed', String(isChosen));
-        toggle.setAttribute('aria-label', `Inclure « ${title} » dans ma journée`);
+        toggle.setAttribute('aria-label', copy.toggleName(title));
         toggle.setAttribute('title', label);
         toggle.querySelectorAll<HTMLElement>('[data-my-day-toggle-label]').forEach((text) => {
           text.textContent = label;
@@ -125,14 +167,14 @@ export function initMyDay(root: ParentNode = document): number {
 
     const result = myDay.chooseSession(sessionId, session.startTime);
     if (!result.ok) {
-      announce('Impossible d’enregistrer ce choix : le stockage du navigateur est bloqué.');
+      announce(copy.choiceBlocked);
       return false;
     }
 
     const replaced = result.replaced ? sessions.get(result.replaced) : undefined;
     if (result.replaced) releaseSessionLabel(result.replaced);
     render();
-    announce(describeSessionChosen(session.title, session.startTime, replaced?.title));
+    announce(describeSessionChosen(session.title, session.startTime, replaced?.title, locale));
     capture('session_added_to_day', {
       session_id: sessionId,
       slot: session.startTime,
@@ -148,13 +190,13 @@ export function initMyDay(root: ParentNode = document): number {
     if (!session) return false;
 
     if (!myDay.removeSession(sessionId)) {
-      announce('Impossible de retirer cette session : le stockage du navigateur est bloqué.');
+      announce(copy.removalBlocked);
       return false;
     }
 
     releaseSessionLabel(sessionId);
     render();
-    announce(describeSessionRemoved(session.title, session.startTime));
+    announce(describeSessionRemoved(session.title, session.startTime, locale));
     capture('session_removed_from_day', { session_id: sessionId, slot: session.startTime, method });
     return true;
   };
@@ -203,7 +245,7 @@ export function initMyDay(root: ParentNode = document): number {
     }
 
     if (!labelCollection.collect(labelId)) {
-      announce('Impossible d’enregistrer ce choix : le stockage du navigateur est bloqué.');
+      announce(copy.choiceBlocked);
       return;
     }
     document.dispatchEvent(

@@ -8,7 +8,7 @@ describe('ScheduleSection.astro', () => {
     const container = await createAstroContainer();
     const html = await container.renderToString(ScheduleSection);
     const arrivalIndex = html.indexOf('Accueil visiteurs, partenaires et café');
-    const closingIndex = html.indexOf('Clôture visiteurs');
+    const closingIndex = html.indexOf('Clôture');
 
     expect(arrivalIndex).toBeGreaterThan(-1);
     expect(closingIndex).toBeGreaterThan(arrivalIndex);
@@ -20,14 +20,14 @@ describe('ScheduleSection.astro', () => {
     const container = await createAstroContainer();
     const html = await container.renderToString(ScheduleSection);
 
-    expect(html).toContain('FinOps');
+    expect(html).toContain('Maîtriser les coûts des Coding Agents');
     expect(html).toContain('Nicolas Martignole');
     expect(html).toContain('href="/speakers/nicolas-martignole"');
-    expect(html).toContain('href="/programme/finops-agents-dev-tools"');
+    expect(html).toContain('href="/programme/finops-agents"');
     expect(html).toContain('Startup Contest');
     expect(html).toContain('href="/programme/startup-contest"');
     expect(html).toContain('Nicolas Martignole</a>');
-    expect(html).toContain('Conférence · 40 min');
+    expect(html).toMatch(/Conférence<\/span>[\s\S]*40 min/);
   });
 
   it.skipIf(IS_MY_DAY_ENABLED)('hides « Ma journée » while the feature is disabled', async () => {
@@ -42,9 +42,9 @@ describe('ScheduleSection.astro', () => {
     const container = await createAstroContainer();
     const html = await container.renderToString(ScheduleSection);
 
-    expect(html).toContain('id="creneau-1555"');
-    expect(html).toContain('data-schedule-slot="15:55"');
-    expect(html).toContain('data-my-day-session="finops-agents-dev-tools"');
+    expect(html).toContain('id="creneau-1345"');
+    expect(html).toContain('data-schedule-slot="13:45"');
+    expect(html).toContain('data-my-day-session="finops-agents"');
     expect(html).toContain('aria-label="Inclure « Startup Contest » dans ma journée"');
     expect(html).toMatch(/<button[^>]*data-my-day-toggle[^>]*aria-pressed="false"/);
     expect(html).toContain('schedule-session__time-column');
@@ -56,14 +56,13 @@ describe('ScheduleSection.astro', () => {
     /* La programmation à venir n'a rien à décoller ni à choisir. */
     expect(html).not.toContain('data-my-day-session="undefined"');
     expect(html).toContain('data-my-day-session="podcast-maci"');
-    expect(html).toContain('aria-label="Inclure « Podcast MACI » dans ma journée"');
+    expect(html).toContain('aria-label="Inclure « Podcast Message à caractère informatique » dans ma journée"');
   });
 
-  it('marks unannounced conference content as forthcoming', async () => {
+  it('keeps the schedule change notice visible', async () => {
     const container = await createAstroContainer();
     const html = await container.renderToString(ScheduleSection);
 
-    expect(html).toContain('Programmation à venir');
     expect(html).toContain('Horaires et contenus susceptibles d’évoluer.');
     expect(html).not.toContain('Premiers éléments');
     expect(html).not.toContain('Le découpage horaire est posé.');
@@ -84,6 +83,28 @@ describe('ScheduleSection.astro', () => {
     expect(html).not.toContain('Agents, contexte et évaluation');
     expect(html).not.toContain('schedule-track-overview');
     expect(html).toContain('class="schedule-section__inner"');
+  });
+
+  it('renders the English schedule with the same anchors and localized links', async () => {
+    const container = await createAstroContainer();
+    const html = await container.renderToString(ScheduleSection, {
+      request: new Request('https://example.com/en/program'),
+    });
+
+    expect(html).toContain('aria-label="Hour-by-hour program"');
+    expect(html).toContain('aria-label="Filter by track"');
+    expect(html).toContain('Those who decide');
+    expect(html).toContain('Check-in and welcome coffee for attendees and partners');
+    expect(html).toContain('Room change and coffee break');
+    expect(html).toContain('Times and content are subject to change.');
+    expect(html).toContain('id="schedule-daypart-apres-midi"');
+    expect(html).toContain('id="creneau-1800"');
+    expect(html).toContain('href="/en/program/podcast-maci"');
+    expect(html).toContain('href="/en/speakers/nicolas-martignole"');
+    expect(html).toMatch(/“[^”<]+”/);
+    expect(html).not.toContain('&quot;');
+    expect(html).not.toContain('Déplacement et pause café');
+    expect(html).not.toContain('Ceux qui décident');
   });
 
   it('segments the schedule into scannable parts of the day', async () => {
@@ -123,7 +144,7 @@ describe('ScheduleSection.astro', () => {
     expect(html).toContain('Afterwork');
     expect(html).toContain('id="creneau-1800"');
     expect(html).toContain('href="/programme/podcast-maci"');
-    expect(html).toContain('Podcast · 120 min');
+    expect(html).toMatch(/Podcast<\/span>[\s\S]*120 min/);
     expect(html).toContain('/talks/podcast-maci-clever-cloud-optimized.webp');
     expect(html).toContain('href="https://www.clever.cloud/"');
     expect(html).toContain('>Clever Cloud</a>');

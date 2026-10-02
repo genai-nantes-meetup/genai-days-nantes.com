@@ -97,11 +97,15 @@ CREAM_RULE = colors.Color(CREAM.red, CREAM.green, CREAM.blue, alpha=0.28)
 def programme_slots() -> list[dict]:
     source = (ROOT / "src/lib/programme.ts").read_text(encoding="utf-8")
     field = re.compile(r"""(\w+):\s*(?:'([^']*)'|"([^"]*)")""")
+    # Slot titles are { fr, en } objects since the English version of the
+    # site: blocks may nest one level, and the press kit reads the French.
+    french_title = re.compile(r"""title:\s*\{\s*fr:\s*(?:'([^']*)'|"([^"]*)")""")
     slots = []
-    for block in re.findall(r"\{([^{}]*)\}", source):
+    for block in re.findall(r"\{((?:[^{}]|\{[^{}]*\})*)\}", source):
         fields = {key: single or double for key, single, double in field.findall(block)}
-        if "time" in fields:
-            slots.append({"time": fields["time"], "title": fields["title"], "kind": fields["kind"]})
+        title = french_title.search(block)
+        if "time" in fields and title:
+            slots.append({"time": fields["time"], "title": title.group(1) or title.group(2), "kind": fields["kind"]})
     return slots
 
 

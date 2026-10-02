@@ -49,4 +49,19 @@ describe('HeroAffiche.astro', () => {
     expect(html).toMatch(/hero-affiche__practical[\s\S]*MARDI 17 novembre 2026[\s\S]*17\/11\/26[\s\S]*Hôtel de Région[\s\S]*\+\u00a0400 PARTICIPANTS/);
     expect(html).toContain('hero-affiche__coorganizer--relay');
   });
+
+  it('renders the English poster on the English home page', async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(HeroAffiche, { request: new Request('https://example.com/en') });
+
+    // « decision-makers » ne se coupe jamais sur son trait d'union.
+    expect(html).toMatch(/THE GenAI conference for <span class="whitespace-nowrap"[^>]*>decision-makers<\/span> and their tech teams/);
+    expect(html).toContain('2 tracks to decide where to invest and learn how to deploy');
+    expect(html).toMatch(/hero-affiche__cta[\s\S]*Book my seat[\s\S]*hero-affiche__sponsors/);
+    expect(html).not.toContain('Réserver ma place');
+    expect(html).toMatch(/<b[^>]*>November<\/b>/);
+    expect(html).toContain('TUESDAY, November 17, 2026');
+    expect(html).toContain('400+ ATTENDEES');
+    expect(html).toContain('aria-label="Co-organized with the Région Pays de la Loire"');
+  });
 });

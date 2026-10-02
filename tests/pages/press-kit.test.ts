@@ -6,6 +6,7 @@ describe('press-kit.astro', () => {
   it('renders a compact press dossier around the journalist workflow', async () => {
     const container = await createAstroContainer();
     const html = await container.renderToString(PressKitPage);
+    const main = html.slice(html.indexOf('<main'), html.indexOf('</main>'));
 
     expect(html).toContain('<title>Espace presse 2026 · GENAI DAYS</title>');
     expect(html).toContain('contentUrl":"https://example.com/images/cover_v2-optimized.webp"');
@@ -18,8 +19,8 @@ describe('press-kit.astro', () => {
     expect(html).not.toContain('L’IA, ici et maintenant');
     expect(html).not.toContain('L’équipe organisatrice');
     expect(html).not.toContain('Les repères factuels');
-    expect(html).not.toContain('Réserver ma place');
-    expect(html).not.toContain('mobile-ticket-bar');
+    expect(main).not.toContain('Réserver ma place');
+    expect(main).not.toContain('mobile-ticket-bar');
   });
 
   it('exposes copy-ready presentation and factual information', async () => {
@@ -78,5 +79,27 @@ describe('press-kit.astro', () => {
     expect(html).not.toContain('Afficher et copier les coordonnées');
     expect(html).not.toContain('mailto:');
     expect(html).not.toMatch(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
+  });
+
+  /* La version anglaise sert les mêmes fichiers et précise que les
+   * conférences sont données en français. */
+  it('renders the English press kit under /en/press-kit', async () => {
+    const container = await createAstroContainer();
+    const html = await container.renderToString(PressKitPage, {
+      request: new Request('https://example.com/en/press-kit'),
+    });
+    const main = html.slice(html.indexOf('<main'), html.indexOf('</main>'));
+
+    expect(html).toContain('<title>Press kit 2026 · GENAI DAYS</title>');
+    expect(main).toContain('At a glance.');
+    expect(main).toContain('a program delivered entirely in French.');
+    expect(main).toContain('Language: All talks are delivered in French');
+    expect(main).toContain('data-copy-label="Copy the overview"');
+    expect(main).toContain('ZIP · 29 files');
+    expect(main).toContain('href="/press/genai-days-press-kit.zip"');
+    expect(main).toContain('href="/en/program"');
+    expect(main).not.toContain('Télécharger');
+    expect(main).not.toContain('Présentation prête à publier');
+    expect(html).toContain('"url":"https://example.com/en/press-kit","inLanguage":"en"');
   });
 });

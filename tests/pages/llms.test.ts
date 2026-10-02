@@ -32,4 +32,18 @@ describe('llms.txt', () => {
     expect(text).toContain('- LinkedIn : https://www.linkedin.com/company/generative-ai-nantes/');
     expect(text).toContain('- X : https://x.com/GenAINantes');
   });
+
+  it('points non-French readers to the English pages derived from the route table', async () => {
+    const response = await GET({
+      site: new URL('https://example.com/'),
+      url: new URL('https://example.com/llms.txt'),
+    } as never);
+    const text = await response.text();
+
+    expect(text).toContain('## Version anglaise');
+    expect(text).toContain('- Home: https://example.com/en\n');
+    expect(text).toContain('- Program: https://example.com/en/program');
+    expect(text).toContain('- Privacy and legal notice: https://example.com/en/privacy');
+    expect(text).toContain('Les conférences restent présentées en français.');
+  });
 });

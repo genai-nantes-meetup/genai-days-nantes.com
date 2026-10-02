@@ -46,6 +46,21 @@ describe('equipe.astro', () => {
     expect(html).toContain('"@type":"Person"');
   });
 
+  it('renders the English page under /en/team with localized links', async () => {
+    const container = await createAstroContainer();
+    const html = await container.renderToString(EquipePage, {
+      request: new Request('https://example.com/en/team'),
+    });
+    const main = html.slice(html.indexOf('<main'), html.indexOf('</main>'));
+
+    expect(html).toContain('<title>The 2026 team · GENAI DAYS</title>');
+    expect(main).toContain('are organizing the event on November 17, 2026.');
+    expect(main).toContain('Have a question or want to get involved?');
+    expect(main).toMatch(/<a href="\/en\/contact"[^>]*>Contact the team<\/a>/);
+    expect(main).not.toContain('Contacter l’équipe');
+    expect(html).toContain('"url":"https://example.com/en/team","inLanguage":"en"');
+  });
+
   /* Les coordonnées ne sont jamais exposées en clair sur le site : la page
    * équipe renvoie vers /contact, qui sert les adresses à la demande. */
   it('never exposes an email address', async () => {

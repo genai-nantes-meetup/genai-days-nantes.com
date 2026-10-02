@@ -1,16 +1,19 @@
-import type { CollectionEntry } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import type { Locale } from './i18n';
 
 export const SPEAKER_TARGET = 19;
 
+type SpeakerEventRole = NonNullable<CollectionEntry<'speakers'>['data']['eventRole']>;
+
 export const SPEAKER_EVENT_ROLE_LABELS = {
-  jury: 'Jury du Startup Contest',
-  animateur: 'Animateur du Startup Contest',
-} as const;
+  fr: { jury: 'Jury du Startup Contest', animateur: 'Animateur du Startup Contest' },
+  en: { jury: 'Startup Contest judge', animateur: 'Startup Contest host' },
+} as const satisfies Record<Locale, Record<SpeakerEventRole, string>>;
 
 export const SPEAKER_EVENT_ROLE_SHORT_LABELS = {
-  jury: 'Jury',
-  animateur: 'Animateur',
-} as const;
+  fr: { jury: 'Jury', animateur: 'Animateur' },
+  en: { jury: 'Judge', animateur: 'Host' },
+} as const satisfies Record<Locale, Record<SpeakerEventRole, string>>;
 
 export const SPEAKER_PROMINENCE_ORDER = [
   'christelle-morancais',
@@ -116,4 +119,18 @@ export function trackForSpeaker(
     )
     .sort((a, b) => a.data.startTime.localeCompare(b.data.startTime));
   return firstSession?.data.track;
+}
+
+/* Partagé par /speakers/[speaker] et son wrapper anglais. */
+export async function getSpeakerPagePaths() {
+  const speakers = await getCollection('speakers');
+  const sessions = await getCollection('sessions');
+
+  return speakers.map((speaker) => ({
+    params: { speaker: speaker.id },
+    props: {
+      speaker,
+      sessions: sessions.filter((session) => session.data.speakerSlugs.includes(speaker.id)),
+    },
+  }));
 }

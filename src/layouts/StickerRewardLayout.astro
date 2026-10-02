@@ -2,7 +2,10 @@
 import EventName from '../components/EventName.astro';
 import BaseLayout from './BaseLayout.astro';
 import { formatEventDateLabel } from '../lib/event';
+import { getLocaleFromPath, localizePath } from '../lib/i18n';
 import EVENT from '../content/event.json';
+
+const locale = getLocaleFromPath(Astro.url.pathname);
 
 interface Props {
   title: string;
@@ -11,20 +14,25 @@ interface Props {
 }
 
 const { title, description, step } = Astro.props;
+const copy = {
+  fr: { homeLink: 'Retour à l’accueil' },
+  en: { homeLink: 'Back to home' },
+}[locale];
+const homeHref = localizePath('/', locale);
 ---
 
 <BaseLayout title={title} description={description} robots="noindex, follow, noarchive">
   <div class="sticker-reward-layout">
     <header class="sticker-reward-layout__header">
-      <a href="/" class="sticker-reward-layout__brand"><EventName /></a>
+      <a href={homeHref} class="sticker-reward-layout__brand"><EventName /></a>
       <span>{step}</span>
     </header>
     <main class="sticker-reward-layout__main">
       <slot />
     </main>
     <footer class="sticker-reward-layout__footer">
-      <span>{formatEventDateLabel()} · {EVENT.venue.city}</span>
-      <a href="/">Retour à l’accueil</a>
+      <span>{formatEventDateLabel(locale)} · {EVENT.venue.city}</span>
+      <a href={homeHref}>{copy.homeLink}</a>
     </footer>
   </div>
 </BaseLayout>

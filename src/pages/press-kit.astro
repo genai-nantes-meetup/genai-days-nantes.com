@@ -13,15 +13,22 @@ import PressCopyAction from "../components/PressCopyAction.astro";
 import PressDownloadAction from "../components/PressDownloadAction.astro";
 import TrackMark from "../components/TrackMark";
 import { formatEventDateLabel } from "../lib/event";
+import { getLocaleFromPath, localizePath } from "../lib/i18n";
+import { getLocalizedCollection } from "../lib/localized-content";
 import EVENT from "../content/event.json";
 import PRICING from "../content/pricing.json";
+
+const locale = getLocaleFromPath(Astro.url.pathname);
 
 const partners = await getCollection("partners");
 // Le drapeau `coOrganizer` met en avant la Région, qui soutient l’événement
 // et l’accueille à l’Hôtel de Région : elle ne le co-organise pas.
 const supporter = partners.find((partner) => partner.data.coOrganizer)?.data;
+// Les sessions restent en français : la page n’en lit que des données
+// communes aux deux langues, et le nom propre du podcast, que le titre
+// anglais pourrait reformuler.
 const sessions = await getCollection("sessions");
-const speakers = await getCollection("speakers");
+const speakers = await getLocalizedCollection("speakers", locale);
 const openingKeynote = sessions.find((session) => session.data.format === "keynote");
 const keynoteSpeaker = speakers.find(
   (speaker) => speaker.id === openingKeynote?.data.speakerSlugs[0],
@@ -30,46 +37,7 @@ const podcast = sessions.find((session) => session.data.format === "podcast");
 const podcastName = podcast?.data.title.replace(/^Podcast\s+/, "");
 const illustrationCount = sessions.filter((session) => session.data.illustration?.src).length;
 
-const practicalDetails = [
-  { label: "Date", value: formatEventDateLabel() },
-  { label: "Horaires", value: `${EVENT.startTime} à ${EVENT.endTime}` },
-  { label: "Lieu", value: EVENT.venue.name },
-  {
-    label: "Adresse",
-    value: `${EVENT.venue.address}, ${EVENT.venue.postalCode} ${EVENT.venue.city}`,
-  },
-  { label: "Organisation", value: `Association ${EVENT.organizer.name}` },
-  ...(supporter ? [{ label: "Soutien", value: supporter.name }] : []),
-  { label: "Jauge", value: `${PRICING.capacity} participants` },
-  {
-    label: "Format",
-    value: "Conférences, retours d’expérience et temps de rencontre",
-  },
-  { label: "Langue", value: "Français" },
-];
-
-const pressFactsText = practicalDetails
-  .map((detail) => `${detail.label} : ${detail.value}`)
-  .join("\n");
-
-const editorialAngles = [
-  {
-    title: "Décider face à l’IA.",
-    description:
-      "Coûts, gouvernance, souveraineté, conformité et retour sur investissement.",
-  },
-  {
-    title: "Passer des prototypes à la production.",
-    description: "Architectures, agents, évaluation, données et observabilité.",
-  },
-  {
-    title: "Partager ce que le terrain a appris.",
-    description:
-      "Des choix documentés, des méthodes concrètes et des retours d’expérience.",
-  },
-];
-
-const pressTeam = await getCollection("team");
+const pressTeam = await getLocalizedCollection("team", locale);
 const teamMember = (id: string) => {
   const member = pressTeam.find((entry) => entry.id === id);
   if (!member) throw new Error(`Membre de l’équipe introuvable : ${id}`);
@@ -77,6 +45,185 @@ const teamMember = (id: string) => {
 };
 const maxime = teamMember("maxime-pitussi");
 const samuel = teamMember("samuel-berthe");
+
+const pressTeamCount = pressTeam.length;
+// README.pdf, visuel officiel, wordmark et symbole, plus les dossiers
+// générés par scripts/build-press-kit.py.
+const pressKitFileCount = 4 + illustrationCount + pressTeamCount;
+const eventDate = formatEventDateLabel(locale);
+
+const copy = {
+  fr: {
+    pageTitle: `Espace presse ${EVENT.year} · GENAI DAYS`,
+    pageDescription: `Dossier de presse GENAI DAYS ${EVENT.year} à ${EVENT.venue.city} : faits clés, deux parcours, programme, visuel officiel, ${illustrationCount} illustrations des conférences, ${pressTeamCount} portraits de l’équipe et contact presse.`,
+    title: "Espace presse",
+    lede: `Textes, faits et visuels prêts à publier pour couvrir l’édition ${EVENT.year} à ${EVENT.venue.city}.`,
+    downloadKit: "Télécharger le kit presse",
+    heroDownloadMeta: "ZIP · PDF, visuels, illustrations et portraits",
+    pressContact: "Contact presse",
+    summaryTitle: "En bref.",
+    summaryMeta: "Présentation prête à publier",
+    copySummary: "Copier la présentation",
+    factSheetTitle: "Fiche factuelle.",
+    practicalDetails: [
+      { label: "Date", value: eventDate },
+      { label: "Horaires", value: `${EVENT.startTime} à ${EVENT.endTime}` },
+      { label: "Lieu", value: EVENT.venue.name },
+      {
+        label: "Adresse",
+        value: `${EVENT.venue.address}, ${EVENT.venue.postalCode} ${EVENT.venue.city}`,
+      },
+      { label: "Organisation", value: `Association ${EVENT.organizer.name}` },
+      ...(supporter ? [{ label: "Soutien", value: supporter.name }] : []),
+      { label: "Jauge", value: `${PRICING.capacity} participants` },
+      {
+        label: "Format",
+        value: "Conférences, retours d’expérience et temps de rencontre",
+      },
+      { label: "Langue", value: "Français" },
+    ],
+    factSeparator: " : ",
+    copyFacts: "Copier les informations clés",
+    anglesTitle: "Trois angles pour raconter l’événement.",
+    anglesLede:
+      "Des sujets directement exploitables pour relier les enjeux de direction aux réalités d’implémentation.",
+    editorialAngles: [
+      {
+        title: "Décider face à l’IA.",
+        description:
+          "Coûts, gouvernance, souveraineté, conformité et retour sur investissement.",
+      },
+      {
+        title: "Passer des prototypes à la production.",
+        description: "Architectures, agents, évaluation, données et observabilité.",
+      },
+      {
+        title: "Partager ce que le terrain a appris.",
+        description:
+          "Des choix documentés, des méthodes concrètes et des retours d’expérience.",
+      },
+    ],
+    tracksLabel: "Deux parcours complémentaires",
+    programmeCta: "Voir le programme complet",
+    resourcesTitle: "À télécharger.",
+    resourcesLede:
+      "Les fichiers essentiels, leurs formats et les crédits à conserver lors de la publication.",
+    packageTitle: "Le kit presse complet.",
+    packageText: `Dossier PDF avec programme, intervenants et partenaires, visuel officiel, wordmark et symbole vectoriels, ${illustrationCount} illustrations des conférences et ${pressTeamCount} portraits de l’équipe organisatrice.`,
+    packageMeta: `ZIP · ${pressKitFileCount} fichiers`,
+    download: "Télécharger",
+    coverAlt: `Visuel officiel de l’édition ${EVENT.year}`,
+    coverTitle: `Visuel officiel ${EVENT.year}`,
+    coverFileName: `genai-days-${EVENT.year}-visuel-officiel.webp`,
+    coverDownloadLabel: `Télécharger le visuel officiel ${EVENT.year}`,
+    posterAlt: `Affiche officielle ${EVENT.year} avec titre, date et lieu`,
+    posterTitle: `Affiche officielle ${EVENT.year}`,
+    posterFileName: `genai-days-${EVENT.year}-affiche-officielle.png`,
+    posterDownloadLabel: `Télécharger l’affiche officielle ${EVENT.year}`,
+    symbolAlt: "Symbole de l’événement",
+    symbolTitle: "Symbole vectoriel",
+    symbolSummary:
+      "SVG · Fond transparent · Proportions et couleurs du symbole à respecter · Aucun effet ajouté",
+    symbolFileName: "genai-days-symbole.svg",
+    symbolDownloadLabel: "Télécharger le symbole vectoriel",
+    interviewsTitle: "Pour une interview.",
+    regionSpokespersonRole: "Directeur de l’IA · Région Pays de la Loire",
+    regionSpokespersonTopics: "Écosystème régional, adoption de l’IA et dynamiques territoriales.",
+    interviewsLede:
+      "Trois porte-paroles pour apporter un éclairage technique, communautaire ou territorial.",
+    portraitAlt: (name: string) => `Portrait de ${name}`,
+    requestInterview: "Demander une interview",
+    contactTitle: "Une question ou une accréditation ?",
+    contactCta: "Écrire au contact presse",
+  },
+  en: {
+    pageTitle: `Press kit ${EVENT.year} · GENAI DAYS`,
+    pageDescription: `Press kit for GENAI DAYS ${EVENT.year} in ${EVENT.venue.city}: key facts, two tracks, program, official visual, ${illustrationCount} talk illustrations, ${pressTeamCount} team portraits and press contact.`,
+    title: "Press kit",
+    lede: `Ready-to-publish copy, facts and visuals for covering the ${EVENT.year} edition in ${EVENT.venue.city}.`,
+    downloadKit: "Download the press kit",
+    heroDownloadMeta: "ZIP · PDF, visuals, illustrations and portraits",
+    pressContact: "Press contact",
+    summaryTitle: "At a glance.",
+    summaryMeta: "Ready-to-publish overview",
+    copySummary: "Copy the overview",
+    factSheetTitle: "Fact sheet.",
+    practicalDetails: [
+      { label: "Date", value: eventDate },
+      { label: "Hours", value: `${EVENT.startTime} to ${EVENT.endTime}` },
+      { label: "Venue", value: EVENT.venue.name },
+      {
+        label: "Address",
+        value: `${EVENT.venue.address}, ${EVENT.venue.postalCode} ${EVENT.venue.city}`,
+      },
+      { label: "Organizer", value: `${EVENT.organizer.name}, a nonprofit association` },
+      ...(supporter ? [{ label: "Supported by", value: supporter.name }] : []),
+      { label: "Capacity", value: `${PRICING.capacity} attendees` },
+      {
+        label: "Format",
+        value: "Talks, case studies and networking",
+      },
+      { label: "Language", value: "All talks are delivered in French" },
+    ],
+    factSeparator: ": ",
+    copyFacts: "Copy the key facts",
+    anglesTitle: "Three angles for covering the event.",
+    anglesLede:
+      "Ready-to-use topics that connect leadership concerns with the realities of implementation.",
+    editorialAngles: [
+      {
+        title: "Making decisions about AI.",
+        description:
+          "Costs, governance, sovereignty, compliance and return on investment.",
+      },
+      {
+        title: "Moving from prototypes to production.",
+        description: "Architectures, agents, evaluation, data and observability.",
+      },
+      {
+        title: "Sharing lessons from the field.",
+        description:
+          "Documented choices, concrete methods and case studies.",
+      },
+    ],
+    tracksLabel: "Two complementary tracks",
+    programmeCta: "See the full program",
+    resourcesTitle: "Downloads.",
+    resourcesLede:
+      "The essential files, their formats and the credit lines to use when publishing.",
+    packageTitle: "The complete press kit.",
+    packageText: `A PDF in French with the program, speakers and partners, plus the official visual, the vector wordmark and symbol, ${illustrationCount} talk illustrations and ${pressTeamCount} portraits of the organizing team.`,
+    packageMeta: `ZIP · ${pressKitFileCount} files`,
+    download: "Download",
+    coverAlt: `Official visual for the ${EVENT.year} edition`,
+    coverTitle: `Official ${EVENT.year} visual`,
+    coverFileName: `genai-days-${EVENT.year}-official-visual.webp`,
+    coverDownloadLabel: `Download the official ${EVENT.year} visual`,
+    posterAlt: `Official ${EVENT.year} poster with title, date and venue in French`,
+    posterTitle: `Official ${EVENT.year} poster`,
+    posterFileName: `genai-days-${EVENT.year}-official-poster.png`,
+    posterDownloadLabel: `Download the official ${EVENT.year} poster`,
+    symbolAlt: "Event symbol",
+    symbolTitle: "Vector symbol",
+    symbolSummary:
+      "SVG · Transparent background · Keep the symbol’s proportions and colors · No added effects",
+    symbolFileName: "genai-days-symbol.svg",
+    symbolDownloadLabel: "Download the vector symbol",
+    interviewsTitle: "For interviews.",
+    regionSpokespersonRole: "Director of AI · Région Pays de la Loire",
+    regionSpokespersonTopics: "Regional ecosystem, AI adoption and local momentum.",
+    interviewsLede:
+      "Three spokespeople for a technical, community or regional perspective.",
+    portraitAlt: (name: string) => `Portrait of ${name}`,
+    requestInterview: "Request an interview",
+    contactTitle: "Questions or press accreditation?",
+    contactCta: "Write to our press contact",
+  },
+}[locale];
+
+const pressFactsText = copy.practicalDetails
+  .map((detail) => `${detail.label}${copy.factSeparator}${detail.value}`)
+  .join("\n");
 
 const spokespeople = [
   {
@@ -97,28 +244,22 @@ const spokespeople = [
   },
   {
     name: "Aymeric de Maussion",
-    role: "Directeur de l’IA · Région Pays de la Loire",
-    topics:
-      "Écosystème régional, adoption de l’IA et dynamiques territoriales.",
+    role: copy.regionSpokespersonRole,
+    topics: copy.regionSpokespersonTopics,
     photo: "/organisateurs/aymeric-de-maussion-optimized.webp",
     photoWidth: 800,
     photoHeight: 800,
   },
 ];
 
-const pressTeamCount = pressTeam.length;
-// README.pdf, visuel officiel, wordmark et symbole, plus les dossiers
-// générés par scripts/build-press-kit.py.
-const pressKitFileCount = 4 + illustrationCount + pressTeamCount;
 const siteUrl = (Astro.site ?? new URL(Astro.url.origin)).href;
-const pageTitle = `Espace presse ${EVENT.year} · GENAI DAYS`;
-const pageDescription = `Dossier de presse GENAI DAYS ${EVENT.year} à ${EVENT.venue.city} : faits clés, deux parcours, programme, visuel officiel, ${illustrationCount} illustrations des conférences, ${pressTeamCount} portraits de l’équipe et contact presse.`;
 const pressKitJsonLd = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
-  name: pageTitle,
-  description: pageDescription,
-  url: `${siteUrl}press-kit`,
+  name: copy.pageTitle,
+  description: copy.pageDescription,
+  url: new URL(localizePath("/press-kit", locale), siteUrl).href,
+  inLanguage: locale,
   about: { "@id": `${siteUrl}#event` },
   publisher: { "@id": `${siteUrl}#organizer` },
   primaryImageOfPage: {
@@ -130,16 +271,16 @@ const pressKitJsonLd = {
 ---
 
 <BaseLayout
-  title={pageTitle}
-  description={pageDescription}
+  title={copy.pageTitle}
+  description={copy.pageDescription}
   structuredData={[pressKitJsonLd]}
 >
   <Header />
   <main class="press-page">
     <DirectoryHero
-      title="Espace presse"
+      title={copy.title}
       titleId="press-kit-title"
-      lede={`Textes, faits et visuels prêts à publier pour couvrir l’édition ${EVENT.year} à ${EVENT.venue.city}.`}
+      lede={copy.lede}
       image="/images/cover_v2-optimized.webp"
       imageWidth={2560}
       imageHeight={1454}
@@ -148,10 +289,10 @@ const pressKitJsonLd = {
       <div class="press-hero-actions">
         <PressDownloadAction
           href="/press/genai-days-press-kit.zip"
-          label="Télécharger le kit presse"
-          meta="ZIP · PDF, visuels, illustrations et portraits"
+          label={copy.downloadKit}
+          meta={copy.heroDownloadMeta}
         />
-        <PressContactAction tone="night">Contact presse</PressContactAction>
+        <PressContactAction tone="night">{copy.pressContact}</PressContactAction>
       </div>
     </DirectoryHero>
 
@@ -163,39 +304,63 @@ const pressKitJsonLd = {
       <EditorialGrid />
       <div class="press-shell press-brief">
         <article class="press-summary">
-          <h2 id="essentiel-title" class="type-section-title">En bref.</h2>
-          <p class="press-meta">Présentation prête à publier</p>
+          <h2 id="essentiel-title" class="type-section-title">{copy.summaryTitle}</h2>
+          <p class="press-meta">{copy.summaryMeta}</p>
           <p id="press-summary" class="press-summary__text">
-            <EventName /> est une journée-conférence consacrée à l’intelligence artificielle
-            générative, dédiée aux décideurs et à leurs équipes techniques. Organisée
-            par l’association {EVENT.organizer.name}{supporter && ` avec le soutien de la ${supporter.name}`},
-            elle se tient le {formatEventDateLabel()} à {EVENT.venue.city}{" "}
-            ({EVENT.venue.name}). L’événement réunit celles et ceux qui
-            décident, construisent et implémentent l’IA au quotidien. Deux
-            parcours complémentaires rythment la journée&nbsp;: un parcours «
-            Pour ceux qui décident » centré sur la stratégie, la gouvernance et
-            le retour sur investissement, et un parcours « Pour ceux qui
-            implémentent » dédié aux architectures, aux outils et aux retours
-            d’expérience.{keynoteSpeaker && (
+            {locale === "en" ? (
               <>
-                {" "}Au programme&nbsp;: une keynote d’ouverture de {keynoteSpeaker.name},
-                {" "}{keynoteSpeaker.role.charAt(0).toLowerCase() + keynoteSpeaker.role.slice(1)} de la {keynoteSpeaker.company},
-                une table ronde sur la souveraineté numérique, un Startup Contest{podcastName && ` et l’enregistrement en public du podcast ${podcastName}`}.
+                <EventName /> is a one-day conference on generative artificial
+                intelligence for decision-makers and their technical teams.
+                Organized by the {EVENT.organizer.name} association{supporter && ` with the support of the ${supporter.name}`},
+                it takes place on {eventDate}, in {EVENT.venue.city}{" "}
+                ({EVENT.venue.name}). The event brings together the people who
+                decide on, build and implement AI every day. Two complementary
+                tracks shape the day: a “For those who decide” track focused on
+                strategy, governance and return on investment, and a “For those
+                who implement” track covering architectures, tools and
+                real-world case studies.{keynoteSpeaker && (
+                  <>
+                    {" "}The program includes an opening keynote by {keynoteSpeaker.name}
+                    {" "}({keynoteSpeaker.role}, {keynoteSpeaker.company}), a panel on
+                    digital sovereignty{podcastName ? `, a Startup Contest and a live recording of the ${podcastName} podcast` : " and a Startup Contest"}.
+                  </>
+                )} Talks, practical discussions and networking make up a
+                program delivered entirely in French.
               </>
-            )} Conférences, échanges concrets et rencontres composent
-            un programme intégralement présenté en français.
+            ) : (
+              <>
+                <EventName /> est une journée-conférence consacrée à l’intelligence artificielle
+                générative, dédiée aux décideurs et à leurs équipes techniques. Organisée
+                par l’association {EVENT.organizer.name}{supporter && ` avec le soutien de la ${supporter.name}`},
+                elle se tient le {eventDate} à {EVENT.venue.city}{" "}
+                ({EVENT.venue.name}). L’événement réunit celles et ceux qui
+                décident, construisent et implémentent l’IA au quotidien. Deux
+                parcours complémentaires rythment la journée&nbsp;: un parcours «
+                Pour ceux qui décident » centré sur la stratégie, la gouvernance et
+                le retour sur investissement, et un parcours « Pour ceux qui
+                implémentent » dédié aux architectures, aux outils et aux retours
+                d’expérience.{keynoteSpeaker && (
+                  <>
+                    {" "}Au programme&nbsp;: une keynote d’ouverture de {keynoteSpeaker.name},
+                    {" "}{keynoteSpeaker.role.charAt(0).toLowerCase() + keynoteSpeaker.role.slice(1)} de la {keynoteSpeaker.company},
+                    une table ronde sur la souveraineté numérique, un Startup Contest{podcastName && ` et l’enregistrement en public du podcast ${podcastName}`}.
+                  </>
+                )} Conférences, échanges concrets et rencontres composent
+                un programme intégralement présenté en français.
+              </>
+            )}
           </p>
           <PressCopyAction
             target="press-summary"
-            label="Copier la présentation"
+            label={copy.copySummary}
           />
         </article>
 
         <aside class="press-fact-sheet" aria-labelledby="fact-sheet-title">
-          <h3 id="fact-sheet-title">Fiche factuelle.</h3>
+          <h3 id="fact-sheet-title">{copy.factSheetTitle}</h3>
           <dl>
             {
-              practicalDetails.map((detail) => (
+              copy.practicalDetails.map((detail) => (
                 <div>
                   <dt>{detail.label}</dt>
                   <dd>{detail.value}</dd>
@@ -206,7 +371,7 @@ const pressKitJsonLd = {
           <p id="press-facts-copy" class="sr-only">{pressFactsText}</p>
           <PressCopyAction
             target="press-facts-copy"
-            label="Copier les informations clés"
+            label={copy.copyFacts}
           />
         </aside>
       </div>
@@ -217,17 +382,16 @@ const pressKitJsonLd = {
       <div class="press-shell">
         <div class="press-heading">
           <h2 id="angles-title" class="type-section-title">
-            Trois angles pour raconter l’événement.
+            {copy.anglesTitle}
           </h2>
           <p>
-            Des sujets directement exploitables pour relier les enjeux de
-            direction aux réalités d’implémentation.
+            {copy.anglesLede}
           </p>
         </div>
 
         <div class="press-angles">
           {
-            editorialAngles.map((angle) => (
+            copy.editorialAngles.map((angle) => (
               <article>
                 <h3>{angle.title}</h3>
                 <p>{angle.description}</p>
@@ -238,14 +402,14 @@ const pressKitJsonLd = {
 
         <div class="press-programme-bridge">
           <div>
-            <p>Deux parcours complémentaires</p>
+            <p>{copy.tracksLabel}</p>
             <div class="press-track-marks">
-              <TrackMark track="decideurs" variant="label" />
-              <TrackMark track="tech" variant="label" />
+              <TrackMark track="decideurs" variant="label" locale={locale} />
+              <TrackMark track="tech" variant="label" locale={locale} />
             </div>
           </div>
-          <Button variant="tertiary" href="/programme"
-            >Voir le programme complet</Button
+          <Button variant="tertiary" href={localizePath("/programme", locale)}
+            >{copy.programmeCta}</Button
           >
         </div>
       </div>
@@ -260,27 +424,24 @@ const pressKitJsonLd = {
       <div class="press-shell">
         <div class="press-heading">
           <h2 id="ressources-title" class="type-section-title">
-            À télécharger.
+            {copy.resourcesTitle}
           </h2>
           <p>
-            Les fichiers essentiels, leurs formats et les crédits à conserver
-            lors de la publication.
+            {copy.resourcesLede}
           </p>
         </div>
 
         <article class="press-package">
           <div class="press-package__intro">
-            <h3>Le kit presse complet.</h3>
+            <h3>{copy.packageTitle}</h3>
             <p>
-              Dossier PDF avec programme, intervenants et partenaires, visuel
-              officiel, wordmark et symbole vectoriels, {illustrationCount} illustrations
-              des conférences et {pressTeamCount} portraits de l’équipe organisatrice.
+              {copy.packageText}
             </p>
           </div>
           <PressDownloadAction
             href="/press/genai-days-press-kit.zip"
-            label="Télécharger le kit presse"
-            meta={`ZIP · ${pressKitFileCount} fichiers`}
+            label={copy.downloadKit}
+            meta={copy.packageMeta}
           />
         </article>
 
@@ -289,7 +450,7 @@ const pressKitJsonLd = {
             <div class="press-resource__visual">
               <img
                 src="/images/cover_v2-optimized.webp"
-                alt={`Visuel officiel de l’édition ${EVENT.year}`}
+                alt={copy.coverAlt}
                 width="2560"
                 height="1454"
                 loading="lazy"
@@ -297,15 +458,21 @@ const pressKitJsonLd = {
             </div>
             <div class="press-resource__body">
               <div class="press-resource__details">
-                <h3>Visuel officiel {EVENT.year}</h3>
-                <p class="press-resource__summary">WEBP · 2560 × 1454 px · Crédit&nbsp;: <EventName /></p>
+                <h3>{copy.coverTitle}</h3>
+                <p class="press-resource__summary">
+                  {locale === "en" ? (
+                    <>WEBP · 2560 × 1454 px · Credit: <EventName /></>
+                  ) : (
+                    <>WEBP · 2560 × 1454 px · Crédit&nbsp;: <EventName /></>
+                  )}
+                </p>
               </div>
               <a
                 href="/press/genai-days-press-kit/cover_v2-optimized.webp"
-                download={`genai-days-${EVENT.year}-visuel-officiel.webp`}
-                aria-label={`Télécharger le visuel officiel ${EVENT.year}`}
+                download={copy.coverFileName}
+                aria-label={copy.coverDownloadLabel}
               >
-                Télécharger <DownloadIcon />
+                {copy.download} <DownloadIcon />
               </a>
             </div>
           </article>
@@ -314,7 +481,7 @@ const pressKitJsonLd = {
             <div class="press-resource__visual">
               <img
                 src="/images/cover-poster-optimized.webp"
-                alt={`Affiche officielle ${EVENT.year} avec titre, date et lieu`}
+                alt={copy.posterAlt}
                 width="1920"
                 height="1080"
                 loading="lazy"
@@ -322,15 +489,21 @@ const pressKitJsonLd = {
             </div>
             <div class="press-resource__body">
               <div class="press-resource__details">
-                <h3>Affiche officielle {EVENT.year}</h3>
-                <p class="press-resource__summary">PNG · 1920 × 1080 px · Titre, date et lieu inclus · Crédit&nbsp;: <EventName /></p>
+                <h3>{copy.posterTitle}</h3>
+                <p class="press-resource__summary">
+                  {locale === "en" ? (
+                    <>PNG · 1920 × 1080 px · Title, date and venue in French · Credit: <EventName /></>
+                  ) : (
+                    <>PNG · 1920 × 1080 px · Titre, date et lieu inclus · Crédit&nbsp;: <EventName /></>
+                  )}
+                </p>
               </div>
               <a
                 href="/images/cover-poster.png"
-                download={`genai-days-${EVENT.year}-affiche-officielle.png`}
-                aria-label={`Télécharger l’affiche officielle ${EVENT.year}`}
+                download={copy.posterFileName}
+                aria-label={copy.posterDownloadLabel}
               >
-                Télécharger <DownloadIcon />
+                {copy.download} <DownloadIcon />
               </a>
             </div>
           </article>
@@ -339,24 +512,23 @@ const pressKitJsonLd = {
             <div class="press-resource__visual press-resource__visual--logo">
               <img
                 src="/logos/Gen AI Logo.svg"
-                alt="Symbole de l’événement"
+                alt={copy.symbolAlt}
                 loading="lazy"
               />
             </div>
             <div class="press-resource__body">
               <div class="press-resource__details">
-                <h3>Symbole vectoriel</h3>
+                <h3>{copy.symbolTitle}</h3>
                 <p class="press-resource__summary">
-                  SVG · Fond transparent · Proportions et couleurs du symbole à
-                  respecter · Aucun effet ajouté
+                  {copy.symbolSummary}
                 </p>
               </div>
               <a
                 href="/logos/Gen AI Logo.svg"
-                download="genai-days-symbole.svg"
-                aria-label="Télécharger le symbole vectoriel"
+                download={copy.symbolFileName}
+                aria-label={copy.symbolDownloadLabel}
               >
-                Télécharger <DownloadIcon />
+                {copy.download} <DownloadIcon />
               </a>
             </div>
           </article>
@@ -373,11 +545,10 @@ const pressKitJsonLd = {
       <div class="press-shell">
         <div class="press-heading">
           <h2 id="interviews-title" class="type-section-title">
-            Pour une interview.
+            {copy.interviewsTitle}
           </h2>
           <p>
-            Trois porte-paroles pour apporter un éclairage technique,
-            communautaire ou territorial.
+            {copy.interviewsLede}
           </p>
         </div>
 
@@ -387,7 +558,7 @@ const pressKitJsonLd = {
               <article class="press-spokesperson">
                 <img
                   src={person.photo}
-                  alt={`Portrait de ${person.name}`}
+                  alt={copy.portraitAlt(person.name)}
                   width={person.photoWidth}
                   height={person.photoHeight}
                   loading="lazy"
@@ -399,7 +570,7 @@ const pressKitJsonLd = {
                   <p class="press-spokesperson__role">{person.role}</p>
                   <p>{person.topics}</p>
                   <PressContactAction class="press-interview-action">
-                    Demander une interview
+                    {copy.requestInterview}
                   </PressContactAction>
                 </div>
               </article>
@@ -418,15 +589,24 @@ const pressKitJsonLd = {
       <div class="press-shell press-contact">
         <div>
           <h2 id="contact-title" class="type-section-title">
-            Une question ou une accréditation&nbsp;?
+            {copy.contactTitle}
           </h2>
           <p>
-            L’équipe <EventName /> répond aux demandes de la presse et organise les
-            mises en relation utiles.
+            {locale === "en" ? (
+              <>
+                The <EventName /> team answers press requests and arranges
+                useful introductions.
+              </>
+            ) : (
+              <>
+                L’équipe <EventName /> répond aux demandes de la presse et organise les
+                mises en relation utiles.
+              </>
+            )}
           </p>
         </div>
         <PressContactAction class="press-final-contact"
-          >Écrire au contact presse</PressContactAction
+          >{copy.contactCta}</PressContactAction
         >
       </div>
     </section>

@@ -2,7 +2,9 @@
 import ArrowIcon from './ArrowIcon.astro';
 import Button from './Button.astro';
 import EventName from './EventName.astro';
+import LanguageLink from './LanguageLink.astro';
 import { CTA_LINKS } from '../lib/cta-links';
+import { getLocaleFromPath, localizePath } from '../lib/i18n';
 import EVENT from '../content/event.json';
 
 interface Props {
@@ -13,6 +15,7 @@ interface Props {
 }
 
 const { immersive = false } = Astro.props;
+const locale = getLocaleFromPath(Astro.url.pathname);
 
 interface NavLink {
   label: string;
@@ -24,28 +27,68 @@ interface DirectoryLink extends NavLink {
   isExternal?: boolean;
 }
 
+const copy = {
+  fr: {
+    primaryLinks: [
+      { label: 'Programme', href: '/programme' },
+      { label: 'Speakers', href: '/speakers' },
+      { label: 'Partenaires', href: '/partenaires' },
+      { label: 'Infos pratiques', href: '/infos-pratiques' },
+    ],
+    directoryLinks: [
+      { label: 'Espace presse', href: '/press-kit', description: 'Logos, visuels et chiffres clés' },
+      { label: 'L’équipe', href: '/equipe', description: 'Les six organisateurs' },
+      { label: 'Code of conduct', href: '/code-of-conduct', description: 'Un événement inclusif et respectueux' },
+      {
+        label: 'L’association',
+        href: 'https://naomakers.com',
+        description: `${EVENT.organizer.name}, qui porte l’événement`,
+        isExternal: true,
+      },
+    ],
+    primaryMenuLabel: 'L’événement',
+    mainNavigationLabel: 'Navigation principale',
+    menuLabel: 'Menu',
+    directoryLabel: 'Explorer',
+    directoryOpenLabel: 'Explorer le site',
+    newTabHint: ', ouvre un nouvel onglet',
+    ticketsLabel: 'Billetterie',
+    ticketsCta: 'Réserver ma place',
+  },
+  en: {
+    primaryLinks: [
+      { label: 'Program', href: '/programme' },
+      { label: 'Speakers', href: '/speakers' },
+      { label: 'Partners', href: '/partenaires' },
+      { label: 'Practical info', href: '/infos-pratiques' },
+    ],
+    directoryLinks: [
+      { label: 'Press kit', href: '/press-kit', description: 'Logos, visuals and key figures' },
+      { label: 'The team', href: '/equipe', description: 'The six organizers' },
+      { label: 'Code of conduct', href: '/code-of-conduct', description: 'An inclusive, respectful event' },
+      {
+        label: 'The association',
+        href: 'https://naomakers.com',
+        description: `${EVENT.organizer.name}, the nonprofit behind the event`,
+        isExternal: true,
+      },
+    ],
+    primaryMenuLabel: 'The event',
+    mainNavigationLabel: 'Main navigation',
+    menuLabel: 'Menu',
+    directoryLabel: 'Explore',
+    directoryOpenLabel: 'Explore the site',
+    newTabHint: ', opens in a new tab',
+    ticketsLabel: 'Tickets',
+    ticketsCta: 'Book my seat',
+  },
+}[locale];
+
 /* Le menu ne relie que des pages, jamais des ancres de la landing : chaque
  * destination n'y apparaît qu'une fois. Explorer range les pages annexes. */
-const primaryLinks: NavLink[] = [
-  { label: 'Programme', href: '/programme' },
-  { label: 'Speakers', href: '/speakers' },
-  { label: 'Partenaires', href: '/partenaires' },
-  { label: 'Infos pratiques', href: '/infos-pratiques' },
-];
-
-const directoryLinks: DirectoryLink[] = [
-  { label: 'Espace presse', href: '/press-kit', description: 'Logos, visuels et chiffres clés' },
-  { label: 'L’équipe', href: '/equipe', description: 'Les six organisateurs' },
-  { label: 'Code of conduct', href: '/code-of-conduct', description: 'Un événement inclusif et respectueux' },
-  {
-    label: 'L’association',
-    href: 'https://naomakers.com',
-    description: `${EVENT.organizer.name}, qui porte l’événement`,
-    isExternal: true,
-  },
-];
-
-const primaryMenuLabel = 'L’événement';
+const primaryLinks: NavLink[] = copy.primaryLinks.map((link) => ({ ...link, href: localizePath(link.href, locale) }));
+const directoryLinks: DirectoryLink[] = copy.directoryLinks.map((link) => ({ ...link, href: localizePath(link.href, locale) }));
+const primaryMenuLabel = copy.primaryMenuLabel;
 
 const isCurrentPage = (href: string) =>
   href.startsWith('/')
@@ -61,10 +104,13 @@ const isCurrentPage = (href: string) =>
     'sticky top-0 z-100 grid w-full min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 md:grid-cols-[1fr_auto_1fr]',
   ]}
 >
-  <a href="/" class="site-header__brand justify-self-start shrink-0 whitespace-nowrap text-lg font-bold tracking-wide sm:text-xl" data-scroll-top><EventName showLocation /></a>
+  <a href={localizePath('/', locale)} class="site-header__brand justify-self-start shrink-0 whitespace-nowrap text-lg font-bold tracking-wide sm:text-xl" data-scroll-top><EventName showLocation /></a>
 
   <div class="site-header__navigation col-start-2 justify-self-end md:justify-self-center">
-    <nav class="site-header__nav items-center" aria-label="Navigation principale">
+    {/* Sur mobile, la barre n'a pas de zone d'actions : le lien de langue
+        se range avant le bouton Menu. */}
+    <LanguageLink class="site-header__language site-header__language--compact" />
+    <nav class="site-header__nav items-center" aria-label={copy.mainNavigationLabel}>
       {primaryLinks.map((link) => (
         <a
           href={link.href}
@@ -83,15 +129,16 @@ const isCurrentPage = (href: string) =>
       aria-expanded="false"
       aria-controls="site-menu"
     >
-      <span class="menu-toggle__label menu-toggle__label--mobile">Menu</span>
-      <span class="menu-toggle__label menu-toggle__label--desktop">Explorer</span>
+      <span class="menu-toggle__label menu-toggle__label--mobile">{copy.menuLabel}</span>
+      <span class="menu-toggle__label menu-toggle__label--desktop">{copy.directoryLabel}</span>
       <span class="menu-toggle__bars" aria-hidden="true"></span>
       <span class="menu-toggle__chevron" aria-hidden="true"></span>
     </button>
   </div>
 
   <div class="site-header__actions col-start-3 items-center justify-self-end">
-    <Button class:list={['header-cta header-cta--tickets', { 'header-cta--poster': immersive }]} variant="accent" href={CTA_LINKS.tickets}>Réserver ma place</Button>
+    <LanguageLink class="site-header__language" />
+    <Button class:list={['header-cta header-cta--tickets', { 'header-cta--poster': immersive }]} variant="accent" href={CTA_LINKS.tickets}>{copy.ticketsCta}</Button>
   </div>
 
   <div
@@ -118,14 +165,14 @@ const isCurrentPage = (href: string) =>
           ))}
         </div>
         <button type="button" class="site-menu__drill-button" data-menu-directory-open>
-          <span>Explorer le site</span>
+          <span>{copy.directoryOpenLabel}</span>
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="m9 5 7 7-7 7"></path>
           </svg>
         </button>
       </nav>
 
-      <nav class="site-menu__group site-menu__directory" id="site-menu-directory" aria-label="Explorer">
+      <nav class="site-menu__group site-menu__directory" id="site-menu-directory" aria-label={copy.directoryLabel}>
         <div class="site-menu__directory-heading">
           <button type="button" class="site-menu__back-button" data-menu-directory-close>
             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -133,7 +180,7 @@ const isCurrentPage = (href: string) =>
             </svg>
             <span>{primaryMenuLabel}</span>
           </button>
-          <p class="site-menu__group-label">Explorer</p>
+          <p class="site-menu__group-label">{copy.directoryLabel}</p>
         </div>
         <div class="site-menu__links site-menu__links--directory">
           {directoryLinks.map((link) => (
@@ -148,7 +195,7 @@ const isCurrentPage = (href: string) =>
                 {link.isExternal && (
                   <>
                     <ArrowIcon direction="external" class="site-menu__external-icon" />
-                    <span class="sr-only">, ouvre un nouvel onglet</span>
+                    <span class="sr-only">{copy.newTabHint}</span>
                   </>
                 )}
               </span>
@@ -163,8 +210,8 @@ const isCurrentPage = (href: string) =>
 
 {/* Le CTA est fixe, donc hors du flux : sans ce conteneur il vivrait en
     enfant direct de <body>, en dehors de tout point de repère. */}
-<aside class="mobile-ticket-bar" aria-label="Billetterie">
-  <Button class:list={['mobile-ticket-cta', { 'mobile-ticket-cta--poster': immersive }]} variant="accent" href={CTA_LINKS.tickets}>Réserver ma place</Button>
+<aside class="mobile-ticket-bar" aria-label={copy.ticketsLabel}>
+  <Button class:list={['mobile-ticket-cta', { 'mobile-ticket-cta--poster': immersive }]} variant="accent" href={CTA_LINKS.tickets}>{copy.ticketsCta}</Button>
 </aside>
 
 <script>
@@ -279,9 +326,47 @@ const isCurrentPage = (href: string) =>
    * du hero. Le fond ne devient pleinement matériel qu'à sa sortie. */
   .site-header.is-immersed .site-header__nav a,
   .site-header.is-immersed .menu-toggle,
-  .site-header.is-immersed > a[href="/"] {
+  .site-header.is-immersed .site-header__brand,
+  .site-header.is-immersed :global(.site-header__language) {
     color: var(--color-brand-cream);
     text-shadow: 0 1px 14px rgb(5 5 16 / 55%), 0 1px 2px rgb(5 5 16 / 35%);
+  }
+
+  /* Le lien de langue est rendu par LanguageLink : classe globale, ancrée
+   * sur le header scopé. Volontairement discret : le seul code de l'autre
+   * langue, dans la voix de la nav mais un ton en dessous, sans pastille ni
+   * séparateur, pour ne pas concurrencer la billetterie qu'il précède. */
+  .site-header :global(.site-header__language) {
+    display: inline-flex;
+    min-width: 2rem;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    color: currentColor;
+    font-family: var(--font-nav);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    opacity: 0.6;
+    text-transform: uppercase;
+    transition: color 180ms ease, opacity 180ms ease;
+  }
+
+  .site-header :global(.site-header__language:hover),
+  .site-header :global(.site-header__language:focus-visible) {
+    color: var(--color-brand-blue);
+    opacity: 1;
+  }
+
+  /* Sur l'affiche, le survol reprend l'orange du bouton Menu ouvert : le
+   * bleu ne tient pas sur la nuit du poster. */
+  .site-header.is-immersed :global(.site-header__language:hover),
+  .site-header.is-immersed :global(.site-header__language:focus-visible) {
+    color: var(--color-brand-orange);
+  }
+
+  .site-header__actions :global(.site-header__language) {
+    margin-inline-end: clamp(0.75rem, 1.4vw, 1.25rem);
   }
 
   .menu-toggle {
@@ -658,6 +743,11 @@ const isCurrentPage = (href: string) =>
       display: flex;
     }
 
+    /* Placé après la règle de base, à spécificité égale : il l'emporte. */
+    .site-header__navigation :global(.site-header__language--compact) {
+      display: none;
+    }
+
     .mobile-ticket-bar {
       display: none;
     }
@@ -808,7 +898,8 @@ const isCurrentPage = (href: string) =>
     .site-header__nav-link::after,
     .menu-toggle__bars::before,
     .menu-toggle__bars::after,
-    .menu-toggle__chevron {
+    .menu-toggle__chevron,
+    .site-header :global(.site-header__language) {
       transition: none;
     }
   }

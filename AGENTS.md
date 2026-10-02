@@ -6,6 +6,20 @@ French typography: when a body-copy sentence uses a ":" (or ";", "!", "?"), put 
 
 Brand typography: every visible occurrence of the event name must use the official `GENAI DAYS` wordmark treatment, uppercase Garamond roman with `GENAI` bold, `DAYS` regular, and only `AI` italic. Use `EventName.astro` for literal template copy and `BrandText.astro` for strings rendered through an expression.
 
+## Internationalization
+
+The site is bilingual. French is the default at the existing URLs and English lives under `/en` with translated slugs (`/partenaires` and `/en/partners`). The route table, `getLocaleFromPath()`, `localizePath()` and `getAlternatePaths()` live in `src/lib/i18n.ts`. Talks are delivered in French: the English pages say so and never imply otherwise.
+
+Double maintenance is mandatory. Every change to visible copy updates French and English in the same change:
+
+- Component and page copy sits side by side in the same file: `const copy = { fr: {...}, en: {...} }[locale]` for plain strings, `{locale === 'en' ? (<>...</>) : (<>...</>)}` for rich text that contains components, links or emphasis. Client scripts keep a `{ fr, en }` messages object and read the language with `getDocumentLocale()`.
+- Content collections keep the English version of each entry in `src/content/<collection>/en/<slug>.md`, same slug, translatable fields and Markdown body only. Read entries through `getLocalizedCollection()` / `localizeEntry()` and render bodies with `renderLocalizedBody()` from `src/lib/localized-content.ts`, never with a bare `getCollection()` + `render()` on a page that exists in both languages. A new entry needs its `en/` file: `tests/content.test.ts` fails otherwise.
+- Event and pricing copy has an `en` block in `src/content/event.json` and `src/content/pricing.json`, read through `getEventCopy(locale)` and `getPricingCopy(locale)`. Date and price helpers take a `locale` argument.
+- A new page needs its English wrapper in `src/pages/en/` and an entry in the route table of `src/lib/i18n.ts`. Internal links go through `localizePath()`, and ids and query parameters stay identical in both languages so anchors and the language switcher keep working.
+- The SEO rule below applies per language: `<title>`, meta description and JSON-LD of both versions.
+
+English copy is US English, direct and concrete, in the same voice as the French. It uses the typographic apostrophe `’` and curly quotes `“ ”`, like the French uses `’` and `« »`. No non-breaking space before `:`, `;`, `!` or `?` in English, the em dash ban applies, and the event name still goes through `EventName.astro` / `BrandText.astro`.
+
 ## Testing
 
 Don't add a unit test for every new content collection entry (speaker, session, partner, track, team member, etc.). Only the first entries of a given kind got dedicated tests as examples; adding one per new content item is not expected and adds maintenance overhead without real coverage value.

@@ -1,0 +1,26 @@
+---
+import { getAlternatePaths, getLocaleFromPath, LOCALE_NAMES } from '../lib/i18n';
+
+interface Props {
+  class?: string;
+}
+
+/* Un seul lien, vers la même page dans l'autre langue : « EN » sur le site
+ * français, « FR » sur l'anglais. Le nom complet reste lu par les lecteurs
+ * d'écran. Jamais de sélecteur à deux états à côté de la billetterie. */
+const { class: className } = Astro.props;
+const locale = getLocaleFromPath(Astro.url.pathname);
+const alternateLocale = locale === 'fr' ? 'en' : 'fr';
+const alternatePath = getAlternatePaths(Astro.url.pathname)?.[alternateLocale] ?? (alternateLocale === 'en' ? '/en' : '/');
+---
+
+<a class={className} href={alternatePath} hreflang={alternateLocale} lang={alternateLocale} data-language-switch>
+  <span aria-hidden="true">{alternateLocale.toUpperCase()}</span>
+  <span class="sr-only">{LOCALE_NAMES[alternateLocale]}</span>
+</a>
+
+<script>
+  import { initLanguageLinks } from '../scripts/language-link';
+
+  initLanguageLinks();
+</script>

@@ -4,6 +4,7 @@ import { initPressKitCopy } from '../../src/scripts/press-kit-copy';
 
 describe('initPressKitCopy', () => {
   beforeEach(() => {
+    document.documentElement.removeAttribute('lang');
     document.body.innerHTML = `
       <p id="press-summary">Texte presse prêt à reprendre.</p>
       <button data-copy-target="press-summary" data-copy-label="Copier le texte">
@@ -30,6 +31,21 @@ describe('initPressKitCopy', () => {
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith('Texte presse prêt à reprendre.');
     expect(button.dataset.copyState).toBe('success');
     expect(button.querySelector('svg')).not.toBeNull();
+  });
+
+  it('confirms the copy in the language of the page', async () => {
+    document.documentElement.lang = 'en';
+    document.body.insertAdjacentHTML('beforeend', '<div role="status" data-copy-live></div>');
+    initPressKitCopy();
+    const button = document.querySelector<HTMLButtonElement>('button')!;
+    const label = button.querySelector<HTMLElement>('[data-copy-action-label]')!;
+    const liveRegion = document.querySelector<HTMLElement>('[data-copy-live]')!;
+    button.click();
+
+    await vi.waitFor(() => {
+      expect(label.textContent).toBe('Copied');
+      expect(liveRegion.textContent).toBe('Text copied to clipboard');
+    });
   });
 
   it('ignores triggers whose target does not exist', async () => {

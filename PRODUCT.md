@@ -41,7 +41,7 @@ GENAI DAYS est le rendez-vous qui met dans la même salle celles et ceux qui dé
 ## Brand Commitments
 
 - Le nom visible de l’événement utilise le traitement officiel GENAI DAYS : uppercase Garamond romain, `GENAI` gras, `DAYS` régulier et seulement `AI` en italique. Le code utilise `EventName.astro` pour le texte littéral et `BrandText.astro` pour les chaînes rendues par expression.
-- La communication publique est en français, directe, concrète et sans battage médiatique.
+- La communication publique est en français, directe, concrète et sans battage médiatique. Le site existe aussi en anglais sous `/en` pour les partenaires et visiteurs internationaux, dans la même voix. Les conférences restent présentées en français et la version anglaise le dit.
 - Le caractère em dash est interdit dans le code et les contenus du projet.
 - La typographie française utilise une espace insécable avant `:`, `;`, `!` et `?`, selon les règles définies dans `AGENTS.md`.
 - Le PDF `docs/DA-genai-days-2026.pdf`, les logos, les affiches et le système visuel déjà implémenté constituent les références de marque à préserver jusqu’à une décision explicite de refonte.

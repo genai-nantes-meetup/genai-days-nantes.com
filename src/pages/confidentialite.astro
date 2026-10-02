@@ -6,89 +6,319 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import EVENT from "../content/event.json";
 import { EVENT_URL } from "../lib/event";
+import { getLocaleFromPath } from "../lib/i18n";
 
-const pageSections = [
-  { label: "Mentions légales", href: "#mentions-legales" },
-  { label: "Données personnelles", href: "#donnees-personnelles" },
-  { label: "Traceurs et services tiers", href: "#traceurs" },
-  { label: "Vos droits", href: "#vos-droits" },
-  { label: "Propriété et responsabilité", href: "#propriete" },
-];
+const locale = getLocaleFromPath(Astro.url.pathname);
 
-const dataTreatments = [
-  {
-    activity: "Navigation et sécurité",
-    data: "Adresse IP, date et heure, page demandée, informations techniques du navigateur et journaux d’erreur.",
-    purpose:
-      "Afficher le site, garantir sa disponibilité, prévenir les abus et diagnostiquer les incidents.",
-    basis: "Intérêt légitime de Naomakers à exploiter et sécuriser le site.",
-    retention:
-      "Durée strictement nécessaire à l’exploitation et à la sécurité, dans la limite des durées techniques appliquées par l’hébergeur.",
+const copy = {
+  fr: {
+    pageSections: [
+      { label: "Mentions légales", href: "#mentions-legales" },
+      { label: "Données personnelles", href: "#donnees-personnelles" },
+      { label: "Traceurs et services tiers", href: "#traceurs" },
+      { label: "Vos droits", href: "#vos-droits" },
+      { label: "Propriété et responsabilité", href: "#propriete" },
+    ],
+    dataTreatments: [
+      {
+        activity: "Navigation et sécurité",
+        data: "Adresse IP, date et heure, page demandée, informations techniques du navigateur et journaux d’erreur.",
+        purpose:
+          "Afficher le site, garantir sa disponibilité, prévenir les abus et diagnostiquer les incidents.",
+        basis: "Intérêt légitime de Naomakers à exploiter et sécuriser le site.",
+        retention:
+          "Durée strictement nécessaire à l’exploitation et à la sécurité, dans la limite des durées techniques appliquées par l’hébergeur.",
+      },
+      {
+        activity: "Inscription à la récompense des stickers",
+        data: "Nom, prénom, adresse e-mail, téléphone, identifiants des stickers collectés et date de l’inscription.",
+        purpose:
+          "Vérifier l’éligibilité, inscrire la personne gagnante, préparer la récompense et organiser sa remise.",
+        basis:
+          "Exécution des mesures prises à votre demande et de l’engagement de remise de la récompense.",
+        retention: `Jusqu’au 17 février 2027, soit trois mois après GenAI Days ${EVENT.year}, puis suppression des espaces de travail actifs.`,
+      },
+      {
+        activity: "Demandes envoyées par e-mail",
+        data: "Identité, coordonnées, contenu du message et informations nécessaires au suivi de la demande.",
+        purpose:
+          "Répondre aux questions et gérer les échanges avec les participants, intervenants, partenaires et médias.",
+        basis:
+          "Intérêt légitime à répondre aux demandes ou mesures précontractuelles lorsque la demande concerne un partenariat.",
+        retention:
+          "Temps nécessaire au traitement, puis jusqu’à trois ans après le dernier échange, sauf obligation légale ou litige.",
+      },
+    ],
+    localStorageItems: [
+      {
+        name: "Archive de stickers",
+        key: "genaidays:label-archive:v5",
+        purpose:
+          "Mémoriser les stickers collectés et leur position dans l’interface.",
+      },
+      {
+        name: "Parcours de récompense",
+        key: "genaidays:sticker-reward:v1",
+        purpose:
+          "Mémoriser localement l’ouverture de l’étape finale puis, après inscription, le prénom et la date de validation.",
+      },
+      {
+        name: "Effet de brillance",
+        key: "genai-days:shiny-permission",
+        purpose:
+          "Mémoriser le choix d’activer l’effet lié aux capteurs de mouvement sur un appareil compatible.",
+      },
+    ],
+    pageTitle: "Confidentialité & Mentions légales · GenAI Days",
+    pageDescription:
+      "Mentions légales, politique de confidentialité, traitements de données personnelles, traceurs et modalités d’exercice de vos droits sur le site GenAI Days.",
+    kicker: `CADRE LÉGAL · ${EVENT_URL}`,
+    publisherLabel: "Éditeur",
+    publisherName: "Association Naomakers · Nantes",
+    tocLabel: "Sommaire de la page",
+    tocTitle: "SOMMAIRE",
+    summaryKicker: "EN BREF",
+    summaryTitle: "Ce qu’il faut retenir",
+    summaryRights:
+      `Naomakers ne vend ni ne loue vos données. Vous pouvez demander l’accès, la rectification ou l’effacement de vos informations en contactant l’équipe à ${EVENT.contactEmail}.`,
+    legalTitle: "Mentions légales",
+    publisherCardTitle: "Éditeur du site",
+    nameLabel: "Dénomination",
+    formLabel: "Forme",
+    formValue: "Association déclarée régie par la loi du 1er juillet 1901",
+    officeLabel: "Siège social",
+    contactLabel: "Contact :",
+    hostingLabel: "HÉBERGEMENT",
+    hostCountry: "États-Unis",
+    hostPrivacyLink: "Politique de confidentialité ↗",
+    privacyKicker: "02 · VIE PRIVÉE",
+    privacyTitle: "Données personnelles",
+    privacyIntro:
+      "Le responsable des traitements décrits ci-dessous est l’association Naomakers, aux coordonnées indiquées dans les mentions légales. Les données demandées dans le formulaire de récompense sont obligatoires : sans elles, l’équipe ne peut pas vérifier l’inscription ni organiser la remise. Aucune décision automatisée ni aucun profilage n’est réalisé.",
+    tableCaption: "Traitements de données réalisés sur le site ou à partir de ses contacts",
+    activityHeading: "Traitement",
+    dataHeading: "Données et finalité",
+    basisHeading: "Base légale et conservation",
+    dataLabel: "Données :",
+    purposeLabel: "Objectif :",
+    basisLabel: "Base :",
+    retentionLabel: "Durée :",
+    recipientsTitle: "Destinataires et prestataires",
+    recipientsIntro:
+      "Les données sont accessibles aux seuls membres habilités de l’équipe Naomakers et, selon le besoin, aux prestataires techniques agissant pour son compte :",
+    transfersText:
+      "Ces prestataires peuvent traiter certaines données aux États-Unis. Lorsque le droit l’exige, ces transferts sont encadrés par une décision d’adéquation applicable, des clauses contractuelles types de la Commission européenne ou un autre mécanisme reconnu. Naomakers ne communique les données à aucune autre organisation, sauf obligation légale ou demande d’une autorité habilitée.",
+    securityTitle: "Sécurité",
+    securityText:
+      "Naomakers applique des mesures raisonnables de limitation des accès, de validation des formulaires et de sécurisation des échanges. Aucun service en ligne ne pouvant garantir une sécurité absolue, l’association traite les incidents et ajuste ses protections selon les risques identifiés.",
+    storageKicker: "03 · NAVIGATEUR",
+    storageTitle: "Traceurs et services tiers",
+    storageIntro:
+      "Le site ne dépose aucun traceur publicitaire. Il peut utiliser des outils de mesure d’audience à des fins statistiques internes, sans finalité publicitaire. Le stockage local du navigateur sert par ailleurs à fournir les fonctions interactives ci-dessous. Ces éléments restent sur votre appareil et ne servent pas à vous suivre sur d’autres sites.",
+    storageRetention: "jusqu’à la suppression des données du site dans votre navigateur.",
+    storageDeletion:
+      "Vous pouvez supprimer ces informations depuis les réglages de votre navigateur, dans la rubrique consacrée aux données de sites. Cette suppression réinitialise la collection de stickers, le parcours de récompense et les préférences d’animation.",
+    sensorsTitle: "Capteurs de mouvement",
+    sensorsText:
+      "Sur les appareils compatibles, l’effet de brillance peut utiliser l’orientation du terminal après votre autorisation. Les valeurs des capteurs sont utilisées en temps réel dans le navigateur. Elles ne sont ni transmises à Naomakers ni enregistrées. Seul le choix d’activation peut être mémorisé localement.",
+    thirdPartyTitle: "Carte, médias et liens externes",
+    thirdPartyMedia:
+      "La page d’accueil charge une carte fournie par OpenFreeMap, la bibliothèque MapLibre depuis UNPKG, ainsi que certains médias hébergés sur les sites de Shift et de L’Informateur Judiciaire. Lors de ces chargements, les serveurs concernés peuvent recevoir l’adresse IP et les informations techniques indispensables à la transmission du fichier. Naomakers utilise ces ressources pour présenter le lieu et les précédents événements, sur le fondement de son intérêt légitime à informer le public.",
+    rightsKicker: "04 · RGPD",
+    rightsTitle: "Vos droits",
+    rightsText:
+      "Selon le traitement concerné, vous pouvez demander l’accès à vos données, leur rectification, leur effacement, la limitation de leur utilisation ou leur portabilité. Vous pouvez également vous opposer à un traitement fondé sur l’intérêt légitime et retirer votre consentement lorsqu’un traitement repose sur celui-ci.",
+    rightsActionKicker: "EXERCER UN DROIT",
+    rightsActionTitle: "Écrivez à Naomakers",
+    rightsActionText:
+      "Précisez la demande et l’adresse e-mail concernée. Un justificatif d’identité ne sera demandé qu’en cas de doute raisonnable sur votre identité.",
+    rightsActionLink: "Préparer ma demande",
+    propertyKicker: "05 · UTILISATION DU SITE",
+    propertyTitle: "Propriété et responsabilité",
+    ipTitle: "Propriété intellectuelle",
+    ipThirdParty:
+      "Les marques, logos, portraits, témoignages et contenus appartenant aux intervenants, partenaires ou tiers restent la propriété de leurs titulaires respectifs. La photographie de l’Hôtel de Région est créditée Région Pays de la Loire · Ouest Médias.",
+    infoTitle: "Informations et liens",
+    infoAccuracy:
+      "Naomakers veille à fournir des informations exactes et à jour, mais le programme, les tarifs, les intervenants, les disponibilités et les modalités pratiques peuvent évoluer. Les conditions opposables d’une réservation sont celles présentées par le service de billetterie au moment de l’opération.",
+    infoExternal:
+      "Les sites externes sont proposés à titre pratique. Naomakers ne contrôle ni leur contenu, ni leur disponibilité, ni leurs pratiques. L’association ne saurait être tenue responsable d’un dommage résultant exclusivement de l’utilisation d’un service tiers, sous réserve des dispositions légales impératives.",
+    availabilityTitle: "Disponibilité",
+    availabilityText:
+      "L’accès au site peut être interrompu pour maintenance, incident ou mise à jour. Naomakers met en œuvre des moyens raisonnables pour rétablir le service, sans garantir une disponibilité continue ni l’absence totale d’erreur.",
+    updateKicker: "ÉVOLUTION",
+    updateTitle: "Mise à jour de cette page",
+    updateText:
+      `Cette page peut évoluer pour refléter une modification du site, d’un prestataire ou de la réglementation. La date affichée en haut de page correspond à sa dernière révision. Pour toute question juridique ou relative à la confidentialité, contactez l’équipe à ${EVENT.contactEmail}.`,
   },
-  {
-    activity: "Inscription à la récompense des stickers",
-    data: "Nom, prénom, adresse e-mail, téléphone, identifiants des stickers collectés et date de l’inscription.",
-    purpose:
-      "Vérifier l’éligibilité, inscrire la personne gagnante, préparer la récompense et organiser sa remise.",
-    basis:
-      "Exécution des mesures prises à votre demande et de l’engagement de remise de la récompense.",
-    retention: `Jusqu’au 17 février 2027, soit trois mois après GenAI Days ${EVENT.year}, puis suppression des espaces de travail actifs.`,
+  en: {
+    pageSections: [
+      { label: "Legal notice", href: "#mentions-legales" },
+      { label: "Personal data", href: "#donnees-personnelles" },
+      { label: "Trackers and third-party services", href: "#traceurs" },
+      { label: "Your rights", href: "#vos-droits" },
+      { label: "Ownership and liability", href: "#propriete" },
+    ],
+    dataTreatments: [
+      {
+        activity: "Browsing and security",
+        data: "IP address, date and time, requested page, technical browser information and error logs.",
+        purpose:
+          "Display the site, keep it available, prevent abuse and diagnose incidents.",
+        basis: "Naomakers’ legitimate interest in operating and securing the site.",
+        retention:
+          "As long as strictly necessary for operation and security, within the technical retention periods applied by the host.",
+      },
+      {
+        activity: "Sticker reward sign-up",
+        data: "Last name, first name, email address, phone number, IDs of the stickers collected and sign-up date.",
+        purpose:
+          "Check eligibility, register the winner, prepare the reward and arrange its handover.",
+        basis:
+          "Carrying out the steps you requested and honoring our commitment to hand over the reward.",
+        retention: `Until February 17, 2027, three months after GenAI Days ${EVENT.year}, then deleted from active workspaces.`,
+      },
+      {
+        activity: "Requests sent by email",
+        data: "Identity, contact details, message content and information needed to follow up on the request.",
+        purpose:
+          "Answer questions and manage exchanges with attendees, speakers, partners and the media.",
+        basis:
+          "Legitimate interest in answering requests, or pre-contractual steps when the request concerns a partnership.",
+        retention:
+          "As long as needed to handle the request, then up to three years after the last exchange, unless a legal obligation or dispute requires otherwise.",
+      },
+    ],
+    localStorageItems: [
+      {
+        name: "Sticker collection",
+        key: "genaidays:label-archive:v5",
+        purpose:
+          "Remember the stickers you collected and their position in the interface.",
+      },
+      {
+        name: "Reward journey",
+        key: "genaidays:sticker-reward:v1",
+        purpose:
+          "Store locally that the final step was opened and, after sign-up, your first name and the confirmation date.",
+      },
+      {
+        name: "Shine effect",
+        key: "genai-days:shiny-permission",
+        purpose:
+          "Remember whether you chose to turn on the motion-sensor effect on a compatible device.",
+      },
+    ],
+    pageTitle: "Privacy & legal notice · GenAI Days",
+    pageDescription:
+      "Legal notice, privacy policy, personal data processing, trackers and how to exercise your rights on the GenAI Days website.",
+    kicker: `LEGAL FRAMEWORK · ${EVENT_URL}`,
+    publisherLabel: "Publisher",
+    publisherName: "Naomakers association · Nantes",
+    tocLabel: "Page contents",
+    tocTitle: "CONTENTS",
+    summaryKicker: "IN SHORT",
+    summaryTitle: "Key points",
+    summaryRights:
+      `Naomakers does not sell or rent your data. You can ask to access, correct or delete your information by contacting the team at ${EVENT.contactEmail}.`,
+    legalTitle: "Legal notice",
+    publisherCardTitle: "Site publisher",
+    nameLabel: "Name",
+    formLabel: "Legal form",
+    formValue: "Registered association governed by the French law of July 1, 1901",
+    officeLabel: "Registered office",
+    contactLabel: "Contact:",
+    hostingLabel: "HOSTING",
+    hostCountry: "United States",
+    hostPrivacyLink: "Privacy policy ↗",
+    privacyKicker: "02 · PRIVACY",
+    privacyTitle: "Personal data",
+    privacyIntro:
+      "The controller for the processing described below is the Naomakers association, at the contact details given in the legal notice. The data requested in the reward form is mandatory: without it, the team cannot verify the sign-up or arrange the handover. No automated decision-making or profiling takes place.",
+    tableCaption: "Data processing carried out on the site or through its contact channels",
+    activityHeading: "Processing",
+    dataHeading: "Data and purpose",
+    basisHeading: "Legal basis and retention",
+    dataLabel: "Data:",
+    purposeLabel: "Purpose:",
+    basisLabel: "Basis:",
+    retentionLabel: "Retention:",
+    recipientsTitle: "Recipients and service providers",
+    recipientsIntro:
+      "The data is accessible only to authorized members of the Naomakers team and, as needed, to technical service providers acting on its behalf:",
+    transfersText:
+      "These providers may process some data in the United States. Where the law requires it, these transfers are covered by an applicable adequacy decision, the European Commission’s standard contractual clauses or another recognized mechanism. Naomakers does not share the data with any other organization, except where required by law or at the request of an authorized authority.",
+    securityTitle: "Security",
+    securityText:
+      "Naomakers applies reasonable measures to restrict access, validate forms and secure exchanges. Since no online service can guarantee absolute security, the association handles incidents and adjusts its safeguards to the risks identified.",
+    storageKicker: "03 · BROWSER",
+    storageTitle: "Trackers and third-party services",
+    storageIntro:
+      "The site sets no advertising trackers. It may use analytics tools for internal statistics, with no advertising purpose. The browser’s local storage is also used to provide the interactive features below. This information stays on your device and is not used to track you on other sites.",
+    storageRetention: "until you delete the site’s data in your browser.",
+    storageDeletion:
+      "You can delete this information in your browser settings, in the section on site data. Deleting it resets the sticker collection, the reward journey and the animation preferences.",
+    sensorsTitle: "Motion sensors",
+    sensorsText:
+      "On compatible devices, the shine effect can use the device’s orientation once you allow it. Sensor values are used in real time in the browser. They are neither sent to Naomakers nor stored. Only your choice to turn the effect on may be remembered locally.",
+    thirdPartyTitle: "Map, media and external links",
+    thirdPartyMedia:
+      "The home page loads a map provided by OpenFreeMap, the MapLibre library from UNPKG and some media hosted on the SHIFT and L’Informateur Judiciaire websites. When these resources load, the servers involved may receive your IP address and the technical information required to deliver the file. Naomakers uses these resources to present the venue and past events, on the basis of its legitimate interest in informing the public.",
+    rightsKicker: "04 · GDPR",
+    rightsTitle: "Your rights",
+    rightsText:
+      "Depending on the processing concerned, you can request access to your data, its correction or deletion, a restriction of its use or its portability. You can also object to processing based on legitimate interest and withdraw your consent when processing relies on it.",
+    rightsActionKicker: "EXERCISE A RIGHT",
+    rightsActionTitle: "Write to Naomakers",
+    rightsActionText:
+      "State your request and the email address concerned. Proof of identity will only be requested if there is reasonable doubt about your identity.",
+    rightsActionLink: "Prepare my request",
+    propertyKicker: "05 · USING THE SITE",
+    propertyTitle: "Ownership and liability",
+    ipTitle: "Intellectual property",
+    ipThirdParty:
+      "Trademarks, logos, portraits, testimonials and content belonging to speakers, partners or third parties remain the property of their respective owners. The photograph of the Hôtel de Région is credited to Région Pays de la Loire · Ouest Médias.",
+    infoTitle: "Information and links",
+    infoAccuracy:
+      "Naomakers strives to provide accurate, up-to-date information, but the program, prices, speakers, availability and practical arrangements may change. The binding terms of a booking are those presented by the ticketing service at the time of the transaction.",
+    infoExternal:
+      "Links to external sites are provided for convenience. Naomakers does not control their content, availability or practices. The association cannot be held liable for damage resulting solely from the use of a third-party service, subject to mandatory legal provisions.",
+    availabilityTitle: "Availability",
+    availabilityText:
+      "Access to the site may be interrupted for maintenance, incidents or updates. Naomakers takes reasonable steps to restore service, without guaranteeing continuous availability or a complete absence of errors.",
+    updateKicker: "UPDATES",
+    updateTitle: "Updates to this page",
+    updateText:
+      `This page may change to reflect changes to the site, a service provider or the regulations. The date shown at the top of the page is the date of its last revision. For any legal or privacy question, contact the team at ${EVENT.contactEmail}.`,
   },
-  {
-    activity: "Demandes envoyées par e-mail",
-    data: "Identité, coordonnées, contenu du message et informations nécessaires au suivi de la demande.",
-    purpose:
-      "Répondre aux questions et gérer les échanges avec les participants, intervenants, partenaires et médias.",
-    basis:
-      "Intérêt légitime à répondre aux demandes ou mesures précontractuelles lorsque la demande concerne un partenariat.",
-    retention:
-      "Temps nécessaire au traitement, puis jusqu’à trois ans après le dernier échange, sauf obligation légale ou litige.",
-  },
-];
-
-const localStorageItems = [
-  {
-    name: "Archive de stickers",
-    key: "genaidays:label-archive:v5",
-    purpose:
-      "Mémoriser les stickers collectés et leur position dans l’interface.",
-  },
-  {
-    name: "Parcours de récompense",
-    key: "genaidays:sticker-reward:v1",
-    purpose:
-      "Mémoriser localement l’ouverture de l’étape finale puis, après inscription, le prénom et la date de validation.",
-  },
-  {
-    name: "Effet de brillance",
-    key: "genai-days:shiny-permission",
-    purpose:
-      "Mémoriser le choix d’activer l’effet lié aux capteurs de mouvement sur un appareil compatible.",
-  },
-];
+}[locale];
 ---
 
 <BaseLayout
-  title="Confidentialité & Mentions légales · GenAI Days"
-  description="Mentions légales, politique de confidentialité, traitements de données personnelles, traceurs et modalités d’exercice de vos droits sur le site GenAI Days."
+  title={copy.pageTitle}
+  description={copy.pageDescription}
 >
   <Header />
 
   <main>
     <section class="legal-hero px-6 py-16 sm:py-24">
       <div class="mx-auto max-w-6xl">
-        <p class="legal-kicker">CADRE LÉGAL · ${EVENT_URL}</p>
+        <p class="legal-kicker">{copy.kicker}</p>
         <h1
           class="mt-6 max-w-5xl text-[2.5rem] leading-[0.88] sm:text-7xl lg:text-8xl"
         >
-          Confidentialité<br />& Mentions légales
+          {locale === "en" ? (
+            <>Privacy<br />& legal notice</>
+          ) : (
+            <>Confidentialité<br />& Mentions légales</>
+          )}
         </h1>
         <div
           class="mt-10 grid gap-6 border-t border-black/15 pt-6 text-sm sm:grid-cols-2 lg:grid-cols-3"
         >
           <p>
-            <strong class="block text-brand-blue">Éditeur</strong>
-            Association Naomakers · Nantes
+            <strong class="block text-brand-blue">{copy.publisherLabel}</strong>
+            {copy.publisherName}
           </p>
           <p>
             <strong class="block text-brand-blue">Contact</strong>
@@ -103,11 +333,11 @@ const localStorageItems = [
         class="legal-shell mx-auto grid max-w-6xl gap-12 lg:grid-cols-[16rem_minmax(0,1fr)]"
       >
         <aside>
-          <nav class="legal-toc" aria-label="Sommaire de la page">
-            <p class="legal-toc__title">SOMMAIRE</p>
+          <nav class="legal-toc" aria-label={copy.tocLabel}>
+            <p class="legal-toc__title">{copy.tocTitle}</p>
             <ol>
               {
-                pageSections.map((section, index) => (
+                copy.pageSections.map((section, index) => (
                   <li>
                     <a href={section.href}>
                       <span>{String(index + 1).padStart(2, "0")}</span>
@@ -122,20 +352,36 @@ const localStorageItems = [
 
         <div class="legal-content">
           <section class="legal-summary" aria-labelledby="summary-heading">
-            <p class="legal-section-number">EN BREF</p>
-            <h2 id="summary-heading">Ce qu’il faut retenir</h2>
+            <p class="legal-section-number">{copy.summaryKicker}</p>
+            <h2 id="summary-heading">{copy.summaryTitle}</h2>
             <p>
-              <EventName /> ne diffuse aucune publicité. Le site peut utiliser des
-              outils de mesure d’audience à des fins statistiques et conserve des
-              réglages fonctionnels sur votre appareil. Des données personnelles
-              sont traitées lorsque vous écrivez à l’équipe ou vous inscrivez à la
-              récompense des stickers.
+              {locale === "en" ? (
+                <>
+                  <EventName /> shows no advertising. The site may use analytics
+                  tools for statistical purposes and keeps functional
+                  settings on your device. Personal data is processed when you write
+                  to the team or sign up for the sticker reward.
+                </>
+              ) : (
+                <>
+                  <EventName /> ne diffuse aucune publicité. Le site peut utiliser des
+                  outils de mesure d’audience à des fins statistiques et conserve des
+                  réglages fonctionnels sur votre appareil. Des données personnelles
+                  sont traitées lorsque vous écrivez à l’équipe ou vous inscrivez à la
+                  récompense des stickers.
+                </>
+              )}
             </p>
-            <p>
-              Naomakers ne vend ni ne loue vos données. Vous pouvez demander
-              l’accès, la rectification ou l’effacement de vos informations en
-              contactant l’équipe à {EVENT.contactEmail}.
-            </p>
+            <p>{copy.summaryRights}</p>
+            {locale === "en" && (
+              <p>
+                If this translation differs from the <a
+                  class="legal-link"
+                  href="/confidentialite"
+                  hreflang="fr">French version</a
+                >, the French version prevails.
+              </p>
+            )}
           </section>
 
           <section
@@ -144,24 +390,22 @@ const localStorageItems = [
             aria-labelledby="legal-heading"
           >
             <p class="legal-section-number">01 · IDENTIFICATION</p>
-            <h2 id="legal-heading">Mentions légales</h2>
+            <h2 id="legal-heading">{copy.legalTitle}</h2>
 
             <div class="legal-card-grid">
               <article class="legal-card">
-                <h3>Éditeur du site</h3>
+                <h3>{copy.publisherCardTitle}</h3>
                 <dl class="legal-details">
                   <div>
-                    <dt>Dénomination</dt>
+                    <dt>{copy.nameLabel}</dt>
                     <dd>Naomakers</dd>
                   </div>
                   <div>
-                    <dt>Forme</dt>
-                    <dd>
-                      Association déclarée régie par la loi du 1er juillet 1901
-                    </dd>
+                    <dt>{copy.formLabel}</dt>
+                    <dd>{copy.formValue}</dd>
                   </div>
                   <div>
-                    <dt>Siège social</dt>
+                    <dt>{copy.officeLabel}</dt>
                     <dd>25 avenue des Préludes, 44300 Nantes, France</dd>
                   </div>
                   <div>
@@ -186,36 +430,51 @@ const localStorageItems = [
               <article class="legal-card legal-card--accent">
                 <h3>Publication</h3>
                 <p>
-                  Le responsable de la publication est <strong
-                    >Rémi Wetteren</strong
-                  >.
+                  {locale === "en" ? (
+                    <>The publication director is <strong>Rémi Wetteren</strong>.</>
+                  ) : (
+                    <>
+                      Le responsable de la publication est <strong
+                        >Rémi Wetteren</strong
+                      >.
+                    </>
+                  )}
                 </p>
                 <p class="mt-6">
-                  Contact&nbsp;:{" "}
+                  {copy.contactLabel}{" "}
                   {EVENT.contactEmail}
                 </p>
                 <p class="mt-6">
-                  La conception éditoriale et la maintenance du site sont
-                  assurées pour <EventName /> sous la responsabilité de Naomakers.
+                  {locale === "en" ? (
+                    <>
+                      Naomakers is responsible for the editorial design and maintenance
+                      of the <EventName /> site.
+                    </>
+                  ) : (
+                    <>
+                      La conception éditoriale et la maintenance du site sont
+                      assurées pour <EventName /> sous la responsabilité de Naomakers.
+                    </>
+                  )}
                 </p>
               </article>
             </div>
 
             <article class="legal-host">
               <div>
-                <p class="legal-host__label">HÉBERGEMENT</p>
+                <p class="legal-host__label">{copy.hostingLabel}</p>
                 <h3>Vercel Inc.</h3>
               </div>
               <address>
                 440 N Barranca Avenue #4133<br />
-                Covina, CA 91723 · États-Unis<br />
+                Covina, CA 91723 · {copy.hostCountry}<br />
                 <a href="tel:+15592887060">+1 559 288 7060</a><br />
                 <a
                   href="https://vercel.com/legal/privacy-notice"
                   target="_blank"
                   rel="noreferrer"
                 >
-                  Politique de confidentialité ↗
+                  {copy.hostPrivacyLink}
                 </a>
               </address>
             </article>
@@ -226,16 +485,9 @@ const localStorageItems = [
             class="legal-section"
             aria-labelledby="privacy-heading"
           >
-            <p class="legal-section-number">02 · VIE PRIVÉE</p>
-            <h2 id="privacy-heading">Données personnelles</h2>
-            <p>
-              Le responsable des traitements décrits ci-dessous est
-              l’association Naomakers, aux coordonnées indiquées dans les
-              mentions légales. Les données demandées dans le formulaire de
-              récompense sont obligatoires&nbsp;: sans elles, l’équipe ne peut
-              pas vérifier l’inscription ni organiser la remise. Aucune décision
-              automatisée ni aucun profilage n’est réalisé.
-            </p>
+            <p class="legal-section-number">{copy.privacyKicker}</p>
+            <h2 id="privacy-heading">{copy.privacyTitle}</h2>
+            <p>{copy.privacyIntro}</p>
 
             <div
               class="legal-table-wrap"
@@ -244,31 +496,28 @@ const localStorageItems = [
               aria-labelledby="privacy-table-caption"
             >
               <table>
-                <caption id="privacy-table-caption"
-                  >Traitements de données réalisés sur le site ou à partir de
-                  ses contacts</caption
-                >
+                <caption id="privacy-table-caption">{copy.tableCaption}</caption>
                 <thead>
                   <tr>
-                    <th scope="col">Traitement</th>
-                    <th scope="col">Données et finalité</th>
-                    <th scope="col">Base légale et conservation</th>
+                    <th scope="col">{copy.activityHeading}</th>
+                    <th scope="col">{copy.dataHeading}</th>
+                    <th scope="col">{copy.basisHeading}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {
-                    dataTreatments.map((treatment) => (
+                    copy.dataTreatments.map((treatment) => (
                       <tr>
                         <th scope="row">{treatment.activity}</th>
                         <td>
-                          <strong>Données&nbsp;:</strong> {treatment.data}
+                          <strong>{copy.dataLabel}</strong> {treatment.data}
                           <br />
-                          <strong>Objectif&nbsp;:</strong> {treatment.purpose}
+                          <strong>{copy.purposeLabel}</strong> {treatment.purpose}
                         </td>
                         <td>
-                          <strong>Base&nbsp;:</strong> {treatment.basis}
+                          <strong>{copy.basisLabel}</strong> {treatment.basis}
                           <br />
-                          <strong>Durée&nbsp;:</strong>{" "}
+                          <strong>{copy.retentionLabel}</strong>{" "}
                           <BrandText text={treatment.retention} />
                         </td>
                       </tr>
@@ -279,48 +528,49 @@ const localStorageItems = [
             </div>
 
             <article class="legal-subsection">
-              <h3>Destinataires et prestataires</h3>
-              <p>
-                Les données sont accessibles aux seuls membres habilités de
-                l’équipe Naomakers et, selon le besoin, aux prestataires
-                techniques agissant pour son compte&nbsp;:
-              </p>
+              <h3>{copy.recipientsTitle}</h3>
+              <p>{copy.recipientsIntro}</p>
               <ul>
-                <li>
-                  <strong>Vercel Inc.</strong>, pour l’hébergement, la diffusion
-                  et la sécurité du site.
-                </li>
-                <li>
-                  <strong>Plus Five Five, Inc., sous la marque Resend</strong>,
-                  pour transmettre les inscriptions à la récompense vers la
-                  messagerie de l’équipe.
-                </li>
-                <li>
-                  <strong>Google LLC</strong>, lorsque la messagerie de
-                  réception ou l’adresse utilisée pour un échange est exploitée
-                  avec un service Google.
-                </li>
+                {locale === "en" ? (
+                  <>
+                    <li>
+                      <strong>Vercel Inc.</strong>, for hosting, delivering and
+                      securing the site.
+                    </li>
+                    <li>
+                      <strong>Plus Five Five, Inc., under the Resend brand</strong>,
+                      to forward reward sign-ups to the team’s inbox.
+                    </li>
+                    <li>
+                      <strong>Google LLC</strong>, when the receiving inbox or the
+                      address used for an exchange runs on a Google service.
+                    </li>
+                  </>
+                ) : (
+                  <>
+                    <li>
+                      <strong>Vercel Inc.</strong>, pour l’hébergement, la diffusion
+                      et la sécurité du site.
+                    </li>
+                    <li>
+                      <strong>Plus Five Five, Inc., sous la marque Resend</strong>,
+                      pour transmettre les inscriptions à la récompense vers la
+                      messagerie de l’équipe.
+                    </li>
+                    <li>
+                      <strong>Google LLC</strong>, lorsque la messagerie de
+                      réception ou l’adresse utilisée pour un échange est exploitée
+                      avec un service Google.
+                    </li>
+                  </>
+                )}
               </ul>
-              <p>
-                Ces prestataires peuvent traiter certaines données aux
-                États-Unis. Lorsque le droit l’exige, ces transferts sont
-                encadrés par une décision d’adéquation applicable, des clauses
-                contractuelles types de la Commission européenne ou un autre
-                mécanisme reconnu. Naomakers ne communique les données à aucune
-                autre organisation, sauf obligation légale ou demande d’une
-                autorité habilitée.
-              </p>
+              <p>{copy.transfersText}</p>
             </article>
 
             <article class="legal-subsection">
-              <h3>Sécurité</h3>
-              <p>
-                Naomakers applique des mesures raisonnables de limitation des
-                accès, de validation des formulaires et de sécurisation des
-                échanges. Aucun service en ligne ne pouvant garantir une
-                sécurité absolue, l’association traite les incidents et ajuste
-                ses protections selon les risques identifiés.
-              </p>
+              <h3>{copy.securityTitle}</h3>
+              <p>{copy.securityText}</p>
             </article>
           </section>
 
@@ -329,20 +579,13 @@ const localStorageItems = [
             class="legal-section"
             aria-labelledby="storage-heading"
           >
-            <p class="legal-section-number">03 · NAVIGATEUR</p>
-            <h2 id="storage-heading">Traceurs et services tiers</h2>
-            <p>
-              Le site ne dépose aucun traceur publicitaire. Il peut utiliser des
-              outils de mesure d’audience à des fins statistiques internes, sans
-              finalité publicitaire. Le stockage local du navigateur sert par
-              ailleurs à fournir les fonctions interactives ci-dessous. Ces
-              éléments restent sur votre appareil et ne servent pas à vous suivre
-              sur d’autres sites.
-            </p>
+            <p class="legal-section-number">{copy.storageKicker}</p>
+            <h2 id="storage-heading">{copy.storageTitle}</h2>
+            <p>{copy.storageIntro}</p>
 
             <div class="legal-storage-list">
               {
-                localStorageItems.map((item) => (
+                copy.localStorageItems.map((item) => (
                   <article>
                     <div>
                       <p class="legal-storage-list__name">{item.name}</p>
@@ -350,50 +593,39 @@ const localStorageItems = [
                     </div>
                     <p>{item.purpose}</p>
                     <p>
-                      <strong>Durée&nbsp;:</strong> jusqu’à la suppression des
-                      données du site dans votre navigateur.
+                      <strong>{copy.retentionLabel}</strong> {copy.storageRetention}
                     </p>
                   </article>
                 ))
               }
             </div>
 
-            <p>
-              Vous pouvez supprimer ces informations depuis les réglages de
-              votre navigateur, dans la rubrique consacrée aux données de sites.
-              Cette suppression réinitialise la collection de stickers, le
-              parcours de récompense et les préférences d’animation.
-            </p>
+            <p>{copy.storageDeletion}</p>
 
             <article class="legal-subsection">
-              <h3>Capteurs de mouvement</h3>
-              <p>
-                Sur les appareils compatibles, l’effet de brillance peut
-                utiliser l’orientation du terminal après votre autorisation. Les
-                valeurs des capteurs sont utilisées en temps réel dans le
-                navigateur. Elles ne sont ni transmises à Naomakers ni
-                enregistrées. Seul le choix d’activation peut être mémorisé
-                localement.
-              </p>
+              <h3>{copy.sensorsTitle}</h3>
+              <p>{copy.sensorsText}</p>
             </article>
 
             <article class="legal-subsection">
-              <h3>Carte, médias et liens externes</h3>
+              <h3>{copy.thirdPartyTitle}</h3>
+              <p>{copy.thirdPartyMedia}</p>
               <p>
-                La page d’accueil charge une carte fournie par OpenFreeMap, la
-                bibliothèque MapLibre depuis UNPKG, ainsi que certains médias
-                hébergés sur les sites de Shift et de L’Informateur Judiciaire.
-                Lors de ces chargements, les serveurs concernés peuvent recevoir
-                l’adresse IP et les informations techniques indispensables à la
-                transmission du fichier. Naomakers utilise ces ressources pour
-                présenter le lieu et les précédents événements, sur le fondement
-                de son intérêt légitime à informer le public.
-              </p>
-              <p>
-                Les liens vers Meetup, la billetterie, Google Maps, les hôtels,
-                les partenaires et les réseaux sociaux ne transmettent pas de
-                formulaire <EventName /> à ces services. Lorsque vous choisissez de
-                les ouvrir, leurs propres règles de confidentialité s’appliquent.
+                {locale === "en" ? (
+                  <>
+                    Links to Meetup, the ticketing service, Google Maps, hotels,
+                    partners and social networks do not send any <EventName /> form
+                    data to these services. When you choose to open them, their own
+                    privacy policies apply.
+                  </>
+                ) : (
+                  <>
+                    Les liens vers Meetup, la billetterie, Google Maps, les hôtels,
+                    les partenaires et les réseaux sociaux ne transmettent pas de
+                    formulaire <EventName /> à ces services. Lorsque vous choisissez de
+                    les ouvrir, leurs propres règles de confidentialité s’appliquent.
+                  </>
+                )}
               </p>
             </article>
           </section>
@@ -403,43 +635,54 @@ const localStorageItems = [
             class="legal-section legal-rights"
             aria-labelledby="rights-heading"
           >
-            <p class="legal-section-number">04 · RGPD</p>
-            <h2 id="rights-heading">Vos droits</h2>
-            <p>
-              Selon le traitement concerné, vous pouvez demander l’accès à vos
-              données, leur rectification, leur effacement, la limitation de
-              leur utilisation ou leur portabilité. Vous pouvez également vous
-              opposer à un traitement fondé sur l’intérêt légitime et retirer
-              votre consentement lorsqu’un traitement repose sur celui-ci.
-            </p>
+            <p class="legal-section-number">{copy.rightsKicker}</p>
+            <h2 id="rights-heading">{copy.rightsTitle}</h2>
+            <p>{copy.rightsText}</p>
             <div class="legal-rights__action">
               <div>
-                <p class="legal-rights__label">EXERCER UN DROIT</p>
-                <h3>Écrivez à Naomakers</h3>
-                <p>
-                  Précisez la demande et l’adresse e-mail concernée. Un
-                  justificatif d’identité ne sera demandé qu’en cas de doute
-                  raisonnable sur votre identité.
-                </p>
+                <p class="legal-rights__label">{copy.rightsActionKicker}</p>
+                <h3>{copy.rightsActionTitle}</h3>
+                <p>{copy.rightsActionText}</p>
               </div>
               <a href={`mailto:${EVENT.contactEmail}`}>
-                Préparer ma demande
+                {copy.rightsActionLink}
                 <span aria-hidden="true">→</span>
               </a>
             </div>
             <p>
-              Naomakers répond dans un délai d’un mois, prolongeable de deux
-              mois lorsque la demande est complexe ou nombreuse. Si vous estimez
-              que vos droits ne sont pas respectés après avoir contacté
-              l’association, vous pouvez adresser une réclamation à la{" "}
-              <a
-                class="legal-link"
-                href="https://www.cnil.fr/fr/plaintes"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Commission nationale de l’informatique et des libertés
-              </a>.
+              {locale === "en" ? (
+                <>
+                  Naomakers responds within one month, which may be extended by two
+                  months for complex or numerous requests. If you believe your rights
+                  have not been respected after contacting the association, you can
+                  file a complaint with the{" "}
+                  <a
+                    class="legal-link"
+                    href="https://www.cnil.fr/fr/plaintes"
+                    target="_blank"
+                    rel="noreferrer"
+                    hreflang="fr"
+                    lang="fr"
+                  >
+                    Commission nationale de l’informatique et des libertés
+                  </a> (CNIL), the French data protection authority.
+                </>
+              ) : (
+                <>
+                  Naomakers répond dans un délai d’un mois, prolongeable de deux
+                  mois lorsque la demande est complexe ou nombreuse. Si vous estimez
+                  que vos droits ne sont pas respectés après avoir contacté
+                  l’association, vous pouvez adresser une réclamation à la{" "}
+                  <a
+                    class="legal-link"
+                    href="https://www.cnil.fr/fr/plaintes"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Commission nationale de l’informatique et des libertés
+                  </a>.
+                </>
+              )}
             </p>
           </section>
 
@@ -448,65 +691,49 @@ const localStorageItems = [
             class="legal-section"
             aria-labelledby="property-heading"
           >
-            <p class="legal-section-number">05 · UTILISATION DU SITE</p>
-            <h2 id="property-heading">Propriété et responsabilité</h2>
+            <p class="legal-section-number">{copy.propertyKicker}</p>
+            <h2 id="property-heading">{copy.propertyTitle}</h2>
 
             <article class="legal-subsection">
-              <h3>Propriété intellectuelle</h3>
+              <h3>{copy.ipTitle}</h3>
               <p>
-                La structure du site, les textes, éléments graphiques, signes
-                distinctifs et contenus produits pour <EventName /> sont protégés
-                par les règles applicables à la propriété intellectuelle. Sauf indication
-                contraire, toute reproduction, adaptation, représentation ou diffusion
-                substantielle nécessite l’autorisation écrite préalable de Naomakers.
+                {locale === "en" ? (
+                  <>
+                    The site’s structure, texts, graphic elements, distinctive signs
+                    and content produced for <EventName /> are protected by the
+                    applicable intellectual property rules. Unless otherwise stated,
+                    any substantial reproduction, adaptation, performance or
+                    distribution requires the prior written permission of Naomakers.
+                  </>
+                ) : (
+                  <>
+                    La structure du site, les textes, éléments graphiques, signes
+                    distinctifs et contenus produits pour <EventName /> sont protégés
+                    par les règles applicables à la propriété intellectuelle. Sauf indication
+                    contraire, toute reproduction, adaptation, représentation ou diffusion
+                    substantielle nécessite l’autorisation écrite préalable de Naomakers.
+                  </>
+                )}
               </p>
-              <p>
-                Les marques, logos, portraits, témoignages et contenus
-                appartenant aux intervenants, partenaires ou tiers restent la
-                propriété de leurs titulaires respectifs. La photographie de
-                l’Hôtel de Région est créditée Région Pays de la Loire · Ouest
-                Médias.
-              </p>
+              <p>{copy.ipThirdParty}</p>
             </article>
 
             <article class="legal-subsection">
-              <h3>Informations et liens</h3>
-              <p>
-                Naomakers veille à fournir des informations exactes et à jour,
-                mais le programme, les tarifs, les intervenants, les
-                disponibilités et les modalités pratiques peuvent évoluer. Les
-                conditions opposables d’une réservation sont celles présentées
-                par le service de billetterie au moment de l’opération.
-              </p>
-              <p>
-                Les sites externes sont proposés à titre pratique. Naomakers ne
-                contrôle ni leur contenu, ni leur disponibilité, ni leurs
-                pratiques. L’association ne saurait être tenue responsable d’un
-                dommage résultant exclusivement de l’utilisation d’un service
-                tiers, sous réserve des dispositions légales impératives.
-              </p>
+              <h3>{copy.infoTitle}</h3>
+              <p>{copy.infoAccuracy}</p>
+              <p>{copy.infoExternal}</p>
             </article>
 
             <article class="legal-subsection">
-              <h3>Disponibilité</h3>
-              <p>
-                L’accès au site peut être interrompu pour maintenance, incident
-                ou mise à jour. Naomakers met en œuvre des moyens raisonnables
-                pour rétablir le service, sans garantir une disponibilité
-                continue ni l’absence totale d’erreur.
-              </p>
+              <h3>{copy.availabilityTitle}</h3>
+              <p>{copy.availabilityText}</p>
             </article>
           </section>
 
           <section class="legal-update" aria-labelledby="update-heading">
-            <p class="legal-section-number">ÉVOLUTION</p>
-            <h2 id="update-heading">Mise à jour de cette page</h2>
-            <p>
-              Cette page peut évoluer pour refléter une modification du site,
-              d’un prestataire ou de la réglementation. La date affichée en haut
-              de page correspond à sa dernière révision. Pour toute question
-              juridique ou relative à la confidentialité, contactez l’équipe à {EVENT.contactEmail}.
-            </p>
+            <p class="legal-section-number">{copy.updateKicker}</p>
+            <h2 id="update-heading">{copy.updateTitle}</h2>
+            <p>{copy.updateText}</p>
           </section>
         </div>
       </div>

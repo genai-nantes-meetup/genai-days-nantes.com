@@ -6,15 +6,57 @@ import EditorialGrid from './EditorialGrid.astro';
 import EventName from './EventName.astro';
 import { CTA_LINKS } from '../lib/cta-links';
 import { EVENT, formatEventDateLabel } from '../lib/event';
-import { formatPriceAmount, PRICING } from '../lib/pricing';
+import { getLocaleFromPath, INTL_LOCALES, localizePath } from '../lib/i18n';
+import { formatPriceAmount, formatShortPricingLine, getPricingCopy, PRICING } from '../lib/pricing';
 
+const locale = getLocaleFromPath(Astro.url.pathname);
+const intlLocale = INTL_LOCALES[locale];
 const ticketDate = new Date(`${EVENT.date}T00:00:00`);
-const ticketDateDay = new Intl.DateTimeFormat('fr-FR', { day: '2-digit' }).format(ticketDate);
-const ticketDateMonth = new Intl.DateTimeFormat('fr-FR', { month: 'short' })
+const ticketDateDay = new Intl.DateTimeFormat(intlLocale, { day: '2-digit' }).format(ticketDate);
+const ticketDateMonth = new Intl.DateTimeFormat(intlLocale, { month: 'short' })
   .format(ticketDate)
   .replace('.', '')
-  .toLocaleUpperCase('fr-FR');
-const ticketDateYear = new Intl.DateTimeFormat('fr-FR', { year: 'numeric' }).format(ticketDate);
+  .toLocaleUpperCase(intlLocale);
+const ticketDateYear = new Intl.DateTimeFormat(intlLocale, { year: 'numeric' }).format(ticketDate);
+
+const copy = {
+  fr: {
+    title: 'Un pass pour toute la journée.',
+    lede: 'Profitez de toutes les conférences, rencontres et temps forts, du matin jusqu’au soir.',
+    ticketLabel: 'Billet participant',
+    dateLabel: 'Date',
+    venueLabel: 'Lieu',
+    doorsLabel: 'Accueil',
+    admit: "Adhésion annuelle à l'association Naomakers",
+    includesLabel: 'Prestations comprises',
+    includes: [
+      { label: 'Programme', lines: ['Accès conférences · 2 tracks', 'Afterwork'] },
+      { label: 'Compris', lines: ['Café, pauses et déjeuner'] },
+      { label: 'Après', lines: ["Accès privilégié aux autres événements de l'association"] },
+    ],
+    practicalLink: 'Préparer ma venue',
+    stubAccess: `Accès journée · ${PRICING.capacity} places`,
+    bookSeat: 'Réserver ma place',
+  },
+  en: {
+    title: 'One pass for the whole day.',
+    lede: 'Every talk, conversation and highlight, from morning to evening. Talks are delivered in French.',
+    ticketLabel: 'Participant ticket',
+    dateLabel: 'Date',
+    venueLabel: 'Venue',
+    doorsLabel: 'Doors',
+    admit: 'Annual membership in the Naomakers association',
+    includesLabel: 'What’s included',
+    includes: [
+      { label: 'Program', lines: ['All talks · 2 tracks', 'Afterwork'] },
+      { label: 'Included', lines: ['Coffee, breaks and lunch'] },
+      { label: 'After', lines: ['Priority access to the association’s other events'] },
+    ],
+    practicalLink: 'Plan my visit',
+    stubAccess: `Full-day access · ${PRICING.capacity} seats`,
+    bookSeat: 'Book my seat',
+  },
+}[locale];
 ---
 
 <section id="pass-participant" class="ticket-field" aria-labelledby="ticket-title">
@@ -22,12 +64,12 @@ const ticketDateYear = new Intl.DateTimeFormat('fr-FR', { year: 'numeric' }).for
   <div class="ticket-field__inner">
     <header class="ticket-field__heading">
       <div class="ticket-field__heading-copy">
-        <h2 id="ticket-title" class="type-section-title">Un pass pour toute la journée.</h2>
-        <p>Profitez de toutes les conférences, rencontres et temps forts, du matin jusqu’au soir.</p>
+        <h2 id="ticket-title" class="type-section-title">{copy.title}</h2>
+        <p>{copy.lede}</p>
       </div>
     </header>
     <div class="ticket-field__stage">
-      <article class="admission-ticket" aria-label={`${PRICING.name} · ${formatPriceAmount()}`}>
+      <article class="admission-ticket" aria-label={formatShortPricingLine(locale)}>
         <img
           class="admission-ticket__paper"
           src="/da/admission-ticket-blank-brick-v1-optimized.webp"
@@ -38,37 +80,37 @@ const ticketDateYear = new Intl.DateTimeFormat('fr-FR', { year: 'numeric' }).for
         />
         <div class="admission-ticket__body">
           <header class="admission-ticket__header">
-            <p>Billet participant · <EventName /></p>
+            <p>{copy.ticketLabel} · <EventName /></p>
             <span>{ticketDateDay}·{ticketDateMonth}·{ticketDateYear.slice(-2)}</span>
           </header>
-          <div class="admission-ticket__price">
-            <p>{formatPriceAmount()}</p>
+          <div class:list={['admission-ticket__price', { 'admission-ticket__price--en': locale === 'en' }]}>
+            <p>{formatPriceAmount(locale)}</p>
             <span class="admission-ticket__barcode" aria-hidden="true"></span>
           </div>
           <dl class="admission-ticket__facts">
             <div>
-              <dt>Date</dt>
-              <dd>{formatEventDateLabel()}</dd>
+              <dt>{copy.dateLabel}</dt>
+              <dd>{formatEventDateLabel(locale)}</dd>
             </div>
             <div>
-              <dt>Lieu</dt>
+              <dt>{copy.venueLabel}</dt>
               <dd>{EVENT.venue.name}</dd>
             </div>
             <div>
-              <dt>Accueil</dt>
+              <dt>{copy.doorsLabel}</dt>
               <dd>{EVENT.startTime}</dd>
             </div>
           </dl>
-          <p class="admission-ticket__admit">Adhésion annuelle à l'association Naomakers</p>
-          <ul class="admission-ticket__includes" aria-label="Prestations comprises">
-            <li><span>Programme</span><strong>Accès conférences · 2 tracks<br>Afterwork</strong></li>
-            <li><span>Compris</span><strong>Café, pauses et déjeuner</strong></li>
-            <li><span>Après</span><strong>Accès privilégié aux autres événements de l'association</strong></li>
+          <p class="admission-ticket__admit">{copy.admit}</p>
+          <ul class="admission-ticket__includes" aria-label={copy.includesLabel}>
+            {copy.includes.map((item) => (
+              <li><span>{item.label}</span><strong>{item.lines.map((line, index) => <>{index > 0 && <br />}{line}</>)}</strong></li>
+            ))}
           </ul>
           <footer class="admission-ticket__footer">
-            <p class="admission-ticket__policy">{PRICING.policy}</p>
-            <a class="admission-ticket__practical-link" href="/infos-pratiques">
-              Préparer ma venue <ArrowIcon />
+            <p class="admission-ticket__policy">{getPricingCopy(locale).policy}</p>
+            <a class="admission-ticket__practical-link" href={localizePath('/infos-pratiques', locale)}>
+              {copy.practicalLink} <ArrowIcon />
             </a>
           </footer>
         </div>
@@ -80,13 +122,13 @@ const ticketDateYear = new Intl.DateTimeFormat('fr-FR', { year: 'numeric' }).for
           </p>
           <p class="admission-ticket__stub-meta">
             <span>{EVENT.venue.city}</span>
-            <span>Accès journée · {PRICING.capacity} places</span>
+            <span>{copy.stubAccess}</span>
           </p>
         </div>
       </article>
       <div class="ticket-field__cta">
         <EditorialCta href={CTA_LINKS.tickets} variant="conversion" target="_blank" rel="noopener">
-          Réserver ma place
+          {copy.bookSeat}
         </EditorialCta>
       </div>
     </div>
@@ -222,9 +264,23 @@ const ticketDateYear = new Intl.DateTimeFormat('fr-FR', { year: 'numeric' }).for
     gap: 0.75rem;
   }
 
+  /* « €147 incl. VAT » est 35 % plus long que « 147 € TTC ». Mesuré à
+   * chaque palier, il casse sur deux lignes entre 48 et 64rem et vers 80rem
+   * (il lui manque au plus 3 %), et sous 23.5rem (20 %) : l'anglais réduit
+   * légèrement le corps du prix, plus franchement sur les plus petits écrans. */
+  .admission-ticket__price--en {
+    --ticket-price-scale: 0.9;
+  }
+
+  @media (max-width: 23.4375rem) {
+    .admission-ticket__price--en {
+      --ticket-price-scale: 0.78;
+    }
+  }
+
   .admission-ticket__price > p {
     font-family: var(--font-serif);
-    font-size: clamp(3.5rem, 16vw, 5rem);
+    font-size: calc(clamp(3.5rem, 16vw, 5rem) * var(--ticket-price-scale, 1));
     font-weight: 600;
     font-variant-numeric: lining-nums tabular-nums;
     letter-spacing: -0.035em;
@@ -491,7 +547,7 @@ const ticketDateYear = new Intl.DateTimeFormat('fr-FR', { year: 'numeric' }).for
     }
 
     .admission-ticket__price > p {
-      font-size: clamp(3rem, 12vw, 4rem);
+      font-size: calc(clamp(3rem, 12vw, 4rem) * var(--ticket-price-scale, 1));
       font-weight: 700;
     }
 
@@ -604,7 +660,7 @@ const ticketDateYear = new Intl.DateTimeFormat('fr-FR', { year: 'numeric' }).for
     }
 
     .admission-ticket__price > p {
-      font-size: clamp(4.5rem, 7vw, 5.75rem);
+      font-size: calc(clamp(4.5rem, 7vw, 5.75rem) * var(--ticket-price-scale, 1));
     }
 
     .admission-ticket__barcode {
@@ -759,7 +815,7 @@ const ticketDateYear = new Intl.DateTimeFormat('fr-FR', { year: 'numeric' }).for
     }
 
     .admission-ticket__price > p {
-      font-size: clamp(3.5rem, 4.5vw, 4.5rem);
+      font-size: calc(clamp(3.5rem, 4.5vw, 4.5rem) * var(--ticket-price-scale, 1));
     }
 
     .admission-ticket__barcode {

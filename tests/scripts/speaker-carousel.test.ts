@@ -58,6 +58,7 @@ describe('initSpeakerCarousels', () => {
 
   afterEach(() => {
     document.body.innerHTML = '';
+    document.documentElement.removeAttribute('lang');
     vi.restoreAllMocks();
   });
 
@@ -90,5 +91,16 @@ describe('initSpeakerCarousels', () => {
     viewport?.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
 
     expect(document.querySelector<HTMLElement>('[data-speaker-status]')?.textContent).toBe('Diapositives 3 à 4 sur 4. Carrousel en boucle.');
+  });
+
+  it('announces the visible range in English on English pages', () => {
+    document.documentElement.lang = 'en';
+    initSpeakerCarousels();
+    const status = document.querySelector<HTMLElement>('[data-speaker-status]');
+
+    expect(status?.textContent).toBe('Slides 1 to 2 of 4. Looping carousel.');
+
+    document.querySelector<HTMLButtonElement>('[data-speaker-next]')?.click();
+    expect(status?.textContent).toBe('Slides 3 to 4 of 4. Looping carousel.');
   });
 });

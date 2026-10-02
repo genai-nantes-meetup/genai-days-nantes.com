@@ -48,4 +48,19 @@ describe('contact.astro', () => {
     expect(html).toContain('href="/press-kit#contact-presse"');
     expect(html).toContain('"@type":"ContactPage"');
   });
+
+  it('renders the English contact paths with localized links', async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(ContactPage, {
+      request: new Request('https://example.com/en/contact'),
+    });
+    const contactSection = html.match(/<section class="contact-paths"[\s\S]*?<\/section>/)?.[0];
+
+    expect(contactSection).toContain('A question about the event');
+    expect(contactSection?.match(/data-contact-topic="general"/g)).toHaveLength(1);
+    expect(contactSection).toContain('href="/en/partners#devenir-partenaire"');
+    expect(contactSection).toContain('href="/en/press-kit#contact-presse"');
+    expect(html).not.toContain('Une question sur l’événement');
+    expect(html).toContain('"url":"https://example.com/en/contact","inLanguage":"en"');
+  });
 });

@@ -53,12 +53,31 @@ describe('my day in the collection', () => {
 
   afterEach(() => {
     document.body.innerHTML = '';
+    document.documentElement.removeAttribute('lang');
   });
 
   it('describes a choice, a swap and a removal', () => {
     expect(describeSessionChosen('SLM', '15:55')).toContain('ajoutée à ma journée');
     expect(describeSessionChosen('SLM', '15:55', 'FinOps')).toContain('remplace « FinOps »');
     expect(describeSessionRemoved('SLM', '15:55')).toContain('retirée de ma journée');
+  });
+
+  it('describes a choice, a swap and a removal in English', () => {
+    expect(describeSessionChosen('SLM', '15:55', undefined, 'en')).toBe('“SLM” added to my day, 15:55 slot.');
+    expect(describeSessionChosen('SLM', '15:55', 'FinOps', 'en')).toContain('replaces “FinOps”');
+    expect(describeSessionRemoved('SLM', '15:55', 'en')).toContain('removed from my day');
+  });
+
+  it('labels the toggles and announces choices in the page language', () => {
+    document.documentElement.lang = 'en';
+    initMyDay();
+    const toggle = card('finops').querySelector<HTMLElement>('[data-my-day-toggle]')!;
+    expect(toggle.getAttribute('aria-label')).toBe('Include “FinOps” in my day');
+    expect(toggle.getAttribute('title')).toBe('Add to my day');
+    collect('session-finops');
+    archiveChange('session-finops');
+    expect(toggle.getAttribute('title')).toBe('Remove from my day');
+    expect(document.querySelector('[data-label-archive-live]')!.textContent).toBe('“FinOps” added to my day, 15:55 slot.');
   });
 
   it('does nothing without session metadata in the collection', () => {

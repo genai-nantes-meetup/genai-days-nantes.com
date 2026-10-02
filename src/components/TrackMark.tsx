@@ -1,4 +1,5 @@
 import { Telescope, Wrench } from 'lucide-react';
+import type { Locale } from '../lib/i18n';
 import './track-mark.css';
 
 export type TrackId = 'decideurs' | 'tech';
@@ -7,21 +8,24 @@ interface TrackMarkProps {
   track: TrackId;
   variant?: 'label' | 'icon';
   className?: string;
+  /* Composant React : il ne lit pas l'URL, l'appelant lui passe la langue. */
+  locale?: Locale;
 }
 
 const TRACKS = {
   decideurs: {
-    label: 'Ceux qui décident',
+    label: { fr: 'Ceux qui décident', en: 'Those who decide' },
     Icon: Telescope,
   },
   tech: {
-    label: 'Ceux qui implémentent',
+    label: { fr: 'Ceux qui implémentent', en: 'Those who implement' },
     Icon: Wrench,
   },
 } as const;
 
-export default function TrackMark({ track, variant = 'label', className }: TrackMarkProps) {
-  const { label, Icon } = TRACKS[track];
+export default function TrackMark({ track, variant = 'label', className, locale = 'fr' }: TrackMarkProps) {
+  const { Icon } = TRACKS[track];
+  const label = TRACKS[track].label[locale];
   const classes = ['track-mark', `track-mark--${variant}`, className].filter(Boolean).join(' ');
 
   if (variant === 'label') {

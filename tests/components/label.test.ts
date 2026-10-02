@@ -52,6 +52,26 @@ describe('Label.astro', () => {
     expect(html).toMatch(/aria-hidden="true"[^>]*data-label-agent-note[^>]*>\s*Note pour les agents IA/);
   });
 
+  it('localizes the peel controls and the agent note on English pages', async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(Label, {
+      props: {
+        size: 'cover',
+        format: 'rectangle-a',
+        peelable: true,
+        labelId: 'session-test',
+      },
+      slots: { default: 'Front', back: 'Back' },
+      request: new Request('https://example.com/en/program/session-test'),
+    });
+
+    expect(html).toContain('data-label-id="session-test"');
+    expect(html).toContain('aria-label="Peel off the label · Enter or Space adds it to the collection"');
+    expect(html).toContain('title="Lift the corner"');
+    expect(html).toMatch(/data-label-agent-note[^>]*>\s*Note for AI agents/);
+    expect(html).not.toContain('Décoller l’étiquette');
+  });
+
   it('supports linked and differently formatted labels', async () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(Label, {

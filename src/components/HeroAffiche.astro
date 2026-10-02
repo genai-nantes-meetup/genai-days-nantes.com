@@ -17,17 +17,37 @@ import Button from './Button.astro';
 import { CTA_LINKS } from '../lib/cta-links';
 import PRICING from '../content/pricing.json';
 import { EVENT, formatEventDateCompact, formatEventDateLabel } from '../lib/event';
+import { getLocaleFromPath, INTL_LOCALES } from '../lib/i18n';
 
+const locale = getLocaleFromPath(Astro.url.pathname);
+const intlLocale = INTL_LOCALES[locale];
 const eventDate = new Date(`${EVENT.date}T00:00:00`);
-const eventWeekday = new Intl.DateTimeFormat('fr-FR', { weekday: 'long' }).format(eventDate);
-const eventDay = new Intl.DateTimeFormat('fr-FR', { day: 'numeric' }).format(eventDate);
-const eventMonth = new Intl.DateTimeFormat('fr-FR', { month: 'long' }).format(eventDate);
-const eventYear = new Intl.DateTimeFormat('fr-FR', { year: 'numeric' }).format(eventDate);
-const eventWeekdayUppercase = eventWeekday.toLocaleUpperCase('fr-FR');
+const eventWeekday = new Intl.DateTimeFormat(intlLocale, { weekday: 'long' }).format(eventDate);
+const eventDay = new Intl.DateTimeFormat(intlLocale, { day: 'numeric' }).format(eventDate);
+const eventMonth = new Intl.DateTimeFormat(intlLocale, { month: 'long' }).format(eventDate);
+const eventYear = new Intl.DateTimeFormat(intlLocale, { year: 'numeric' }).format(eventDate);
+const eventWeekdayUppercase = eventWeekday.toLocaleUpperCase(intlLocale);
 const coOrganizer = (await getCollection('partners')).find((partner) => partner.data.coOrganizer);
 const coOrganizerLogo = coOrganizer?.data.monochromeLogo ?? coOrganizer?.data.logo;
 const coOrganizerLogoWidth = coOrganizer?.data.monochromeLogoWidth ?? coOrganizer?.data.logoWidth;
 const coOrganizerLogoHeight = coOrganizer?.data.monochromeLogoHeight ?? coOrganizer?.data.logoHeight;
+
+const copy = {
+  fr: {
+    dateLong: `${eventWeekdayUppercase} ${eventDay} ${eventMonth} ${eventYear}`,
+    capacity: `+ ${PRICING.capacity} PARTICIPANTS`,
+    bookSeat: 'Réserver ma place',
+    coOrganizerAlt: (name: string) => `${name}, coorganisatrice`,
+    coOrganizedWith: (name: string) => `Co-organisé avec la ${name}`,
+  },
+  en: {
+    dateLong: `${eventWeekdayUppercase}, ${eventMonth} ${eventDay}, ${eventYear}`,
+    capacity: `${PRICING.capacity}+ ATTENDEES`,
+    bookSeat: 'Book my seat',
+    coOrganizerAlt: (name: string) => `${name}, event co-organizer`,
+    coOrganizedWith: (name: string) => `Co-organized with the ${name}`,
+  },
+}[locale];
 ---
 
 <section class="hero-affiche" data-label-surface>
@@ -77,7 +97,7 @@ const coOrganizerLogoHeight = coOrganizer?.data.monochromeLogoHeight ?? coOrgani
                 <img
                   class="hero-affiche__label-partner"
                   src={coOrganizerLogo}
-                  alt={`${coOrganizer.data.name}, coorganisatrice`}
+                  alt={copy.coOrganizerAlt(coOrganizer.data.name)}
                   width={coOrganizerLogoWidth}
                   height={coOrganizerLogoHeight}
                   loading="eager"
@@ -88,7 +108,7 @@ const coOrganizerLogoHeight = coOrganizer?.data.monochromeLogoHeight ?? coOrgani
           </div>
         </Fragment>
         <Fragment slot="back">
-          <p class="hero-affiche__label-back">{formatEventDateLabel()} · {EVENT.venue.city}</p>
+          <p class="hero-affiche__label-back">{formatEventDateLabel(locale)} · {EVENT.venue.city}</p>
         </Fragment>
       </Label>
     </div>
@@ -102,26 +122,39 @@ const coOrganizerLogoHeight = coOrganizer?.data.monochromeLogoHeight ?? coOrgani
     <div class="hero-affiche__content">
       <div class="hero-affiche__message" data-hero-title>
         <h1 class="hero-affiche__title">
-          <span class="hero-affiche__title-primary">LA Conf Gen AI dédiée aux décideurs et leurs équipes techs</span>
-          <span class="hero-affiche__title-accent">2 tracks pour décider où investir et comprendre comment déployer</span>
+          {/* Deux phrases composées dans chaque langue, de longueur comparable
+              pour garder le même dimensionnement. Le français passe en premier :
+              scripts/build-press-kit.py lit le titre dans la première occurrence
+              de ces deux spans. */}
+          {locale === 'fr' ? (
+            <>
+              <span class="hero-affiche__title-primary">LA Conf Gen AI dédiée aux décideurs et leurs équipes techs</span>
+              <span class="hero-affiche__title-accent">2 tracks pour décider où investir et comprendre comment déployer</span>
+            </>
+          ) : (
+            <>
+              <span class="hero-affiche__title-primary">THE GenAI conference for <span class="whitespace-nowrap">decision-makers</span> and their tech teams</span>
+              <span class="hero-affiche__title-accent">2 tracks to decide where to invest and learn how to deploy</span>
+            </>
+          )}
         </h1>
         <p class="hero-affiche__practical">
           <time datetime={EVENT.date}>
-            <span class="hero-affiche__date-long">{eventWeekdayUppercase} {eventDay} {eventMonth} {eventYear}</span>
+            <span class="hero-affiche__date-long">{copy.dateLong}</span>
             <span class="hero-affiche__date-short">{formatEventDateCompact()}</span>
           </time>
           <span class="hero-affiche__venue">{EVENT.venue.shortName}<span class="hero-affiche__city">, {EVENT.venue.city}</span></span>
-          <span class="hero-affiche__capacity">{`+ ${PRICING.capacity} PARTICIPANTS`}</span>
+          <span class="hero-affiche__capacity">{copy.capacity}</span>
         </p>
         <div class="hero-affiche__cta">
-          <Button variant="accent" href={CTA_LINKS.tickets}>Réserver ma place</Button>
+          <Button variant="accent" href={CTA_LINKS.tickets}>{copy.bookSeat}</Button>
         </div>
         <div class="hero-affiche__sponsors">
           <HeroSponsorsMarquee />
         </div>
       </div>
       {coOrganizer && coOrganizerLogo && (
-        <div class="hero-affiche__coorganizer hero-affiche__coorganizer--relay" data-hero-counterweight role="group" aria-label={`Co-organisé avec la ${coOrganizer.data.name}`}>
+        <div class="hero-affiche__coorganizer hero-affiche__coorganizer--relay" data-hero-counterweight role="group" aria-label={copy.coOrganizedWith(coOrganizer.data.name)}>
           <img
             src={coOrganizerLogo}
             alt={coOrganizer.data.name}

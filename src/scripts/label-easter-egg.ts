@@ -1,5 +1,6 @@
 import confetti from '@hiseb/confetti';
 import { capture } from '../lib/analytics';
+import { getDocumentLocale, type Locale } from '../lib/i18n';
 import type { LabelPlacement } from '../lib/label-collection';
 import * as labelCollection from '../lib/label-collection';
 import { IS_MY_DAY_ENABLED } from '../lib/features';
@@ -56,6 +57,52 @@ const COMPLETION_CONFETTI_START = 480;
 const COMPLETION_CONFETTI_COUNT = 5;
 const COMPLETION_CONFETTI_COLORS = ['#3d43ce', '#fe4d1b', '#ffd447', '#f8f7f2', '#e12d28'];
 
+/* Noms accessibles et annonces des live regions, dans la langue de la page. */
+const messages = {
+  fr: {
+    progress: (percentage: number) => `${percentage} % COLLECTÉ`,
+    quotedName: (name: string) => ` « ${name} »`,
+    restickToOrigin: (quoted: string) =>
+      `Recoller l’étiquette${quoted} sur la page · Entrée ou Espace la repose à son emplacement d’origine`,
+    placeOnPage: (quoted: string) =>
+      `Déposer l’étiquette${quoted} sur la page · Entrée ou Espace la place au centre`,
+    collectedLabel: 'Étiquette collectée',
+    peel: 'Décoller l’étiquette · Entrée ou Espace l’ajoute à la collection',
+    peelAgain: 'Décoller à nouveau l’étiquette · Entrée ou Espace l’ajoute à la collection',
+    lifted: 'Étiquette soulevée. Tirez pour la décoller.',
+    detached: 'Étiquette décollée. Déplacez-la ou déposez-la dans la collection.',
+    takenFromArchive: 'Étiquette sortie de la collection. Déposez-la sur la page.',
+    restuck: 'Étiquette recollée. Son nouvel emplacement est mémorisé.',
+    snappedBack: 'L’étiquette s’est recollée.',
+    archived: 'Étiquette ajoutée à la collection.',
+    archiveBlocked: 'Impossible de classer l’étiquette : le stockage du navigateur est bloqué.',
+    liftBlocked: 'Impossible de reprendre l’étiquette : le stockage du navigateur est bloqué.',
+    restuckOnPage: 'Étiquette recollée sur la page.',
+    restuckAtOrigin: 'Étiquette recollée à son emplacement d’origine.',
+  },
+  en: {
+    progress: (percentage: number) => `${percentage}% COLLECTED`,
+    quotedName: (name: string) => ` “${name}”`,
+    restickToOrigin: (quoted: string) =>
+      `Stick the label${quoted} back on the page · Enter or Space returns it to its original spot`,
+    placeOnPage: (quoted: string) =>
+      `Place the label${quoted} on the page · Enter or Space puts it in the center`,
+    collectedLabel: 'Collected label',
+    peel: 'Peel off the label · Enter or Space adds it to the collection',
+    peelAgain: 'Peel off the label again · Enter or Space adds it to the collection',
+    lifted: 'Label lifted. Pull to peel it off.',
+    detached: 'Label peeled off. Move it or drop it in the collection.',
+    takenFromArchive: 'Label taken out of the collection. Drop it on the page.',
+    restuck: 'Label stuck back. Its new spot is saved.',
+    snappedBack: 'The label stuck back down.',
+    archived: 'Label added to the collection.',
+    archiveBlocked: 'Could not add the label to the collection: browser storage is blocked.',
+    liftBlocked: 'Could not take the label back: browser storage is blocked.',
+    restuckOnPage: 'Label stuck back on the page.',
+    restuckAtOrigin: 'Label stuck back in its original spot.',
+  },
+};
+
 export interface ModalConfettiBurst {
   delay: number;
   xRatio: number;
@@ -111,15 +158,15 @@ export interface ArchiveRestickAffordance {
 export function getArchiveRestickAffordance(
   labelName: string,
   hasOriginOnPage: boolean,
+  locale: Locale = 'fr',
 ): ArchiveRestickAffordance {
+  const copy = messages[locale];
   const name = labelName.trim();
-  const quoted = name ? ` « ${name} »` : '';
+  const quoted = name ? copy.quotedName(name) : '';
 
   return {
     enabled: true,
-    ariaLabel: hasOriginOnPage
-      ? `Recoller l’étiquette${quoted} sur la page · Entrée ou Espace la repose à son emplacement d’origine`
-      : `Déposer l’étiquette${quoted} sur la page · Entrée ou Espace la place au centre`,
+    ariaLabel: hasOriginOnPage ? copy.restickToOrigin(quoted) : copy.placeOnPage(quoted),
   };
 }
 
@@ -313,7 +360,7 @@ function openCompletionModal(root: ParentNode): void {
   labelCollection.markCompletionModalSeen();
 }
 
-function updateArchive(root: ParentNode): void {
+function updateArchive(root: ParentNode, locale: Locale): void {
   const archive = root.querySelector<HTMLElement>('[data-label-archive]');
   if (!archive) return;
 
@@ -331,7 +378,7 @@ function updateArchive(root: ParentNode): void {
   if (countLabel) countLabel.textContent = String(count).padStart(2, '0');
   const progress = archive.querySelector<HTMLElement>('[data-label-archive-progress]');
   if (progress) {
-    progress.textContent = `${percentage} % COLLECTÉ`;
+    progress.textContent = messages[locale].progress(percentage);
     progress.hidden = isComplete;
   }
   const rewardLink = archive.querySelector<HTMLElement>('[data-label-archive-reward]');
@@ -356,7 +403,7 @@ function updateArchive(root: ParentNode): void {
   if (isComplete) openCompletionModal(root);
 }
 
-function initArchiveControls(root: ParentNode): void {
+function initArchiveControls(root: ParentNode, locale: Locale): void {
   const archive = root.querySelector<HTMLElement>('[data-label-archive]');
   if (!archive) return;
 
@@ -415,7 +462,7 @@ function initArchiveControls(root: ParentNode): void {
     syncArchiveToVisualViewport();
   }
 
-  updateArchive(root);
+  updateArchive(root, locale);
 }
 
 function isPointInside(point: Point, rect: DOMRect): boolean {
@@ -506,9 +553,10 @@ const ARCHIVE_LIFT_THRESHOLD_PX = 6;
  * qu'on veut saisir dans le classeur, pas une icône de 33 px. Le bouton reste
  * à côté pour le chemin sans geste (clavier, technologie d'assistance), et la
  * fiche garde son lien au clic simple. */
-function initArchiveRestick(root: ParentNode, controls: Map<string, OriginControls>): void {
+function initArchiveRestick(root: ParentNode, controls: Map<string, OriginControls>, locale: Locale): void {
   const archive = root.querySelector<HTMLElement>('[data-label-archive]');
   if (!archive) return;
+  const copy = messages[locale];
 
   let pending: { origin: OriginControls; pointerId: number; start: Point } | null = null;
   let isGesturing = false;
@@ -588,7 +636,7 @@ function initArchiveRestick(root: ParentNode, controls: Map<string, OriginContro
       loose.dataset.looseLabel = labelId;
       loose.removeAttribute('href');
       loose.setAttribute('role', 'img');
-      loose.setAttribute('aria-label', item.querySelector('[data-label-restick-name]')?.getAttribute('data-label-restick-name') ?? 'Étiquette collectée');
+      loose.setAttribute('aria-label', item.querySelector('[data-label-restick-name]')?.getAttribute('data-label-restick-name') ?? copy.collectedLabel);
       loose.querySelectorAll('a').forEach((link) => link.replaceWith(...link.childNodes));
       loose.addEventListener('dragstart', (event) => event.preventDefault());
       loose.addEventListener('pointerdown', beginLooseMove);
@@ -648,10 +696,10 @@ function initArchiveRestick(root: ParentNode, controls: Map<string, OriginContro
       label.style.top = `${position.y}px`;
       label.style.transform = `rotate(${rotation}deg) scale(1.018)`;
       document.body.append(label);
-      updateArchive(root);
+      updateArchive(root, locale);
       keepArchiveOpen();
       const live = root.querySelector<HTMLElement>('[data-label-archive-live]');
-      if (live) live.textContent = 'Étiquette sortie de la collection. Déposez-la sur la page.';
+      if (live) live.textContent = copy.takenFromArchive;
       return true;
     };
 
@@ -676,7 +724,7 @@ function initArchiveRestick(root: ParentNode, controls: Map<string, OriginContro
         labelCollection.collect(labelId);
         loose.remove();
         loose = null;
-        updateArchive(root);
+        updateArchive(root, locale);
         return;
       }
 
@@ -747,6 +795,7 @@ function initArchiveRestick(root: ParentNode, controls: Map<string, OriginContro
     const affordance = getArchiveRestickAffordance(
       handle?.dataset.labelRestickName ?? '',
       Boolean(pageOrigin),
+      locale,
     );
 
     if (handle) {
@@ -796,7 +845,9 @@ function initArchiveRestick(root: ParentNode, controls: Map<string, OriginContro
 }
 
 export function initLabelEasterEgg(root: ParentNode = document): number {
-  initArchiveControls(root);
+  const locale = getDocumentLocale();
+  const copy = messages[locale];
+  initArchiveControls(root, locale);
   const { archive, dropzone, live } = getArchive(root);
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   archive?.querySelectorAll<HTMLElement>('[data-label-archive-item]').forEach((item) => {
@@ -923,7 +974,7 @@ export function initLabelEasterEgg(root: ParentNode = document): number {
           pinned: true,
         });
       }
-      corner.setAttribute('aria-label', 'Décoller à nouveau l’étiquette · Entrée ou Espace l’ajoute à la collection');
+      corner.setAttribute('aria-label', copy.peelAgain);
       // Rejoue l'apparition à l'emplacement restauré : l'inline du <head> a
       // masqué l'étiquette pendant que l'animation initiale tournait à vide.
       label.style.animation = 'none';
@@ -1203,7 +1254,7 @@ export function initLabelEasterEgg(root: ParentNode = document): number {
       label.style.transition = 'none';
       state.lastProgress = state.previewProgress;
       peelSound?.begin(state.previewProgress, timestamp);
-      if (live) live.textContent = 'Étiquette soulevée. Tirez pour la décoller.';
+      if (live) live.textContent = copy.lifted;
     };
 
     const detach = (point: Point) => {
@@ -1231,7 +1282,7 @@ export function initLabelEasterEgg(root: ParentNode = document): number {
       label.style.transform = `rotate(${state.rotation}deg) scale(1.018)`;
       label.style.transition = 'filter 180ms ease, transform 180ms ease';
       revealArchive();
-      if (live) live.textContent = 'Étiquette décollée. Déplacez-la ou déposez-la dans la collection.';
+      if (live) live.textContent = copy.detached;
     };
 
     const moveFloating = (point: Point) => {
@@ -1312,8 +1363,8 @@ export function initLabelEasterEgg(root: ParentNode = document): number {
       window.setTimeout(() => {
         label.style.transition = '';
       }, 320);
-      corner.setAttribute('aria-label', 'Décoller à nouveau l’étiquette · Entrée ou Espace l’ajoute à la collection');
-      if (live) live.textContent = 'Étiquette recollée. Son nouvel emplacement est mémorisé.';
+      corner.setAttribute('aria-label', copy.peelAgain);
+      if (live) live.textContent = copy.restuck;
       concealArchive();
       peelSurface?.classList.remove('is-peeling-label');
       state.mode = 'idle';
@@ -1360,7 +1411,7 @@ export function initLabelEasterEgg(root: ParentNode = document): number {
       if (shouldReturnFocusToCorner) corner.focus();
 
       if (live) {
-        live.textContent = 'Impossible de classer l’étiquette : le stockage du navigateur est bloqué.';
+        live.textContent = copy.archiveBlocked;
       }
     };
 
@@ -1388,11 +1439,11 @@ export function initLabelEasterEgg(root: ParentNode = document): number {
         origin.classList.add('is-collected');
         unobserveTease();
         label.hidden = true;
-        updateArchive(root);
+        updateArchive(root, locale);
         archive?.classList.remove('is-revealed', 'is-reveal-ready');
         archive?.classList.add('is-open', 'is-available');
         archive?.querySelector('[data-label-archive-tab]')?.setAttribute('aria-expanded', 'true');
-        if (live) live.textContent = 'Étiquette ajoutée à la collection.';
+        if (live) live.textContent = copy.archived;
         capture('sticker_collected', { label_id: labelId, method: archiveMethod });
         document.dispatchEvent(
           new CustomEvent(ARCHIVE_CHANGE_EVENT, { detail: { labelId, method: archiveMethod } }),
@@ -1486,7 +1537,7 @@ export function initLabelEasterEgg(root: ParentNode = document): number {
         state.previewProgress = 0;
         renderRestingCurl();
         scheduleTease(TEASE_PERIOD_MS);
-        if (live) live.textContent = 'L’étiquette s’est recollée.';
+        if (live) live.textContent = copy.snappedBack;
       } else if (isOverArchive(point)) {
         archiveLabel();
       } else {
@@ -1573,7 +1624,7 @@ export function initLabelEasterEgg(root: ParentNode = document): number {
 
     const reportStorageRefusal = () => {
       if (live) {
-        live.textContent = 'Impossible de reprendre l’étiquette : le stockage du navigateur est bloqué.';
+        live.textContent = copy.liftBlocked;
       }
     };
 
@@ -1647,9 +1698,9 @@ export function initLabelEasterEgg(root: ParentNode = document): number {
         ? 'none'
         : 'filter 180ms ease, transform 180ms ease';
       observeTease();
-      updateArchive(root);
+      updateArchive(root, locale);
       keepArchiveOpen();
-      if (live) live.textContent = 'Étiquette sortie de la collection. Déposez-la sur la page.';
+      if (live) live.textContent = copy.takenFromArchive;
       return true;
     };
 
@@ -1698,10 +1749,10 @@ export function initLabelEasterEgg(root: ParentNode = document): number {
           rotation: state.rotation,
           pinned: false,
         });
-        updateArchive(root);
+        updateArchive(root, locale);
         keepArchiveOpen();
         corner.focus();
-        if (live) live.textContent = 'Étiquette recollée sur la page.';
+        if (live) live.textContent = copy.restuckOnPage;
         capture('sticker_restuck', { label_id: labelId, method });
         return true;
       }
@@ -1721,14 +1772,14 @@ export function initLabelEasterEgg(root: ParentNode = document): number {
       state.size = { ...measureLabelSize(label) };
       state.rotation = baseRotation;
       pinnedPlacementAnchor = null;
-      corner.setAttribute('aria-label', 'Décoller l’étiquette · Entrée ou Espace l’ajoute à la collection');
+      corner.setAttribute('aria-label', copy.peel);
       observeTease();
       renderRestingCurl();
       scheduleTease(TEASE_PERIOD_MS);
-      updateArchive(root);
+      updateArchive(root, locale);
       keepArchiveOpen();
       corner.focus();
-      if (live) live.textContent = 'Étiquette recollée à son emplacement d’origine.';
+      if (live) live.textContent = copy.restuckAtOrigin;
       capture('sticker_restuck', { label_id: labelId, method });
       return true;
     };
@@ -1747,9 +1798,9 @@ export function initLabelEasterEgg(root: ParentNode = document): number {
     if (controls) originControls.set(controls.labelId, controls);
   });
 
-  document.addEventListener(ARCHIVE_CHANGE_EVENT, () => updateArchive(root));
-  document.addEventListener(ARCHIVE_REFRESH_REQUEST_EVENT, () => updateArchive(root));
-  initArchiveRestick(root, originControls);
+  document.addEventListener(ARCHIVE_CHANGE_EVENT, () => updateArchive(root, locale));
+  document.addEventListener(ARCHIVE_REFRESH_REQUEST_EVENT, () => updateArchive(root, locale));
+  initArchiveRestick(root, originControls, locale);
   if (IS_MY_DAY_ENABLED) initMyDay(root);
 
   return origins.length;

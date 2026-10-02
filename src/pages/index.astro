@@ -8,23 +8,41 @@ import LandingStory from '../components/LandingStory.astro';
 import LabelArchive from '../components/LabelArchive.astro';
 import { CTA_LINKS } from '../lib/cta-links';
 import { buildEventJsonLd, EVENT } from '../lib/event';
+import { getLocaleFromPath, localizePath } from '../lib/i18n';
 import { sortSpeakersByProminence } from '../lib/speakers';
 
+const locale = getLocaleFromPath(Astro.url.pathname);
 const siteUrl = (Astro.site ?? new URL(Astro.url.origin)).href;
+const pageUrl = new URL(localizePath('/', locale), siteUrl).href;
 const coOrganizer = (await getCollection('partners')).find((partner) => partner.data.coOrganizer);
 const coOrganizerName = coOrganizer?.data.name;
-const pageTitle = `${EVENT.name} ${EVENT.year} · Conférence IA générative à ${EVENT.venue.city}${coOrganizerName ? ` avec la ${coOrganizerName}` : ''}`;
-const pageDescription = `Une journée-conférence sur l’IA générative à ${EVENT.venue.city} pour décideurs et équipes techniques : retours terrain, deux parcours et Startup Contest.${coOrganizerName ? ` Co-organisée avec la ${coOrganizerName} à l’${EVENT.venue.shortName}.` : ''}`;
+const copy = {
+  fr: {
+    pageTitle: `GENAI DAYS ${EVENT.year} · Conférence IA générative à ${EVENT.venue.city}${coOrganizerName ? ` avec la ${coOrganizerName}` : ''}`,
+    pageDescription: `Une journée-conférence sur l’IA générative à ${EVENT.venue.city} pour décideurs et équipes techniques : retours terrain, deux parcours et Startup Contest.${coOrganizerName ? ` Co-organisée avec la ${coOrganizerName} à l’${EVENT.venue.shortName}.` : ''}`,
+  },
+  en: {
+    pageTitle: `GENAI DAYS ${EVENT.year} · Generative AI conference in ${EVENT.venue.city}${coOrganizerName ? ` with the ${coOrganizerName}` : ''}`,
+    pageDescription: `A one-day generative AI conference in ${EVENT.venue.city} for decision-makers and tech teams: real-world case studies, two tracks and a Startup Contest.${coOrganizerName ? ` Co-organized with the ${coOrganizerName} at the ${EVENT.venue.shortName}.` : ''} Talks are delivered in French.`,
+  },
+}[locale];
 const speakers = sortSpeakersByProminence(await getCollection('speakers'));
 const eventJsonLd = {
-  ...(await buildEventJsonLd(siteUrl, CTA_LINKS.tickets)),
-  description: pageDescription,
-  performer: speakers.map((speaker) => ({
-    '@type': 'Person',
-    '@id': `${siteUrl}speakers/${speaker.id}#person`,
-    name: speaker.data.name,
-    url: `${siteUrl}speakers/${speaker.id}`,
-  })),
+  ...(await buildEventJsonLd(siteUrl, CTA_LINKS.tickets, locale)),
+  description: copy.pageDescription,
+  /* L'URL suit la langue de la page, les @id restent communs aux deux versions. */
+  url: pageUrl,
+  mainEntityOfPage: { '@type': 'WebPage', '@id': pageUrl },
+  performer: speakers.map((speaker) => {
+    const speakerUrl = new URL(localizePath(`/speakers/${speaker.id}`, locale), siteUrl).href;
+
+    return {
+      '@type': 'Person',
+      '@id': `${speakerUrl}#person`,
+      name: speaker.data.name,
+      url: speakerUrl,
+    };
+  }),
 };
 const organizationJsonLd = {
   '@context': 'https://schema.org',
@@ -40,15 +58,15 @@ const websiteJsonLd = {
   '@id': `${siteUrl}#website`,
   name: EVENT.name.toUpperCase(),
   alternateName: 'GenAI Days Nantes',
-  url: siteUrl,
-  inLanguage: EVENT.language,
+  url: pageUrl,
+  inLanguage: locale,
   publisher: { '@id': `${siteUrl}#organizer` },
 };
 ---
 
 <BaseLayout
-  title={pageTitle}
-  description={pageDescription}
+  title={copy.pageTitle}
+  description={copy.pageDescription}
   structuredData={[eventJsonLd, organizationJsonLd, websiteJsonLd]}
 >
   <Header immersive />

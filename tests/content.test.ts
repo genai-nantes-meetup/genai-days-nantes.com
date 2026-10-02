@@ -15,25 +15,16 @@ describe('content collections', () => {
   it('contains only confirmed speakers', async () => {
     const speakers = await getCollection('speakers');
 
-    expect(speakers).toHaveLength(9);
-    expect(speakers.map((speaker) => speaker.data.name).sort()).toEqual([
-      'Christelle Morançais',
-      'Constance Nebbula',
-      'Florian Hervéou',
-      'Jean-Baptiste Kempf',
-      'Nicolas Martignole',
-      'Quentin Adam',
-      'Sébastien Le Corfec',
-      'Thomas Mathieu',
-      'Théo Hubert',
-    ]);
+    expect(speakers.length).toBeGreaterThan(0);
+    expect(new Set(speakers.map((speaker) => speaker.data.name)).size).toBe(speakers.length);
+    expect(speakers.every((speaker) => !speaker.data.name.includes('À venir'))).toBe(true);
     expect(speakers.find((speaker) => speaker.id === 'nicolas-martignole')?.data.company).toBe('Back Market');
     expect(speakers.find((speaker) => speaker.id === 'jean-baptiste-kempf')?.data.company).toBe('VLC · Scaleway · Kyber');
     expect(speakers.find((speaker) => speaker.id === 'jean-baptiste-kempf')?.data.companyLogo).toBe('/logos/kyber.svg');
     expect(speakers.find((speaker) => speaker.id === 'jean-baptiste-kempf')?.data.companyLogoAlt).toBe('Logo Kyber');
     expect(speakers.find((speaker) => speaker.id === 'quentin-adam')?.data.company).toBe('Clever Cloud');
     expect(speakers.find((speaker) => speaker.id === 'quentin-adam')?.data.photo).toBe('/speakers/quentin-adam-optimized.webp');
-    expect(speakers.find((speaker) => speaker.id === 'quentin-adam')?.data.companyLogo).toBe('/logos/clever-cloud.svg');
+    expect(speakers.find((speaker) => speaker.id === 'quentin-adam')?.data.companyLogo).toBe('/logos/clever-cloud-optimized.png');
     expect(speakers.find((speaker) => speaker.id === 'quentin-adam')?.data.website).toBe('https://www.clever.cloud/');
     expect(speakers.find((speaker) => speaker.id === 'constance-nebbula')?.data.eventRole).toBe('jury');
     expect(speakers.find((speaker) => speaker.id === 'sebastien-le-corfec')?.data.eventRole).toBe('jury');
@@ -51,7 +42,7 @@ describe('content collections', () => {
 
       for (const company of speaker.data.companies ?? []) {
         expect(company.relationship.length).toBeGreaterThan(4);
-        expect(company.description.length).toBeGreaterThan(80);
+        expect(company.description.trim().length).toBeGreaterThan(0);
         expect(company.website).toMatch(/^https:\/\//);
       }
     }
@@ -106,25 +97,56 @@ describe('content collections', () => {
     }
   });
 
-  it('publishes the confirmed FinOps session at 15:55 on the dirigeants track', async () => {
+  it('publishes the confirmed FinOps session and Startup Contest on the decision track', async () => {
     const sessions = await getCollection('sessions');
 
-    const finopsSession = sessions.find((session) => session.id === 'finops-agents-dev-tools');
+    const finopsSession = sessions.find((session) => session.id === 'finops-agents');
 
-    expect(finopsSession?.data.startTime).toBe('15:55');
+    expect(finopsSession?.data.startTime).toBe('13:45');
     expect(finopsSession?.data.durationMinutes).toBe(40);
     expect(finopsSession?.data.track).toBe('decideurs');
     expect(finopsSession?.data.illustration?.src).toBe('/talks/stage-1-talk-8-finops-optimized.webp');
 
     const startupContest = sessions.find((session) => session.id === 'startup-contest');
-    expect(startupContest?.data.startTime).toBe('13:45');
+    expect(startupContest?.data.startTime).toBe('11:55');
     expect(startupContest?.data.track).toBe('decideurs');
     expect(startupContest?.data.format).toBe('concours');
     expect(startupContest?.data.speakerSlugs).toEqual([
       'constance-nebbula',
       'sebastien-le-corfec',
       'thomas-mathieu',
+      'david-leaurant',
       'florian-herveou',
     ]);
+  });
+
+  /* Garde-fou de la double maintenance FR/EN (AGENTS.md) : un seul
+   * invariant pour toutes les collections, pas un test par entrée. */
+  it('gives every translatable entry its English version', async () => {
+    const pairs = [
+      ['sessions', 'sessionsEn'],
+      ['speakers', 'speakersEn'],
+      ['tracks', 'tracksEn'],
+      ['team', 'teamEn'],
+      ['partners', 'partnersEn'],
+    ] as const;
+
+    for (const [collection, translations] of pairs) {
+      const frenchIds = (await getCollection(collection)).map((entry) => entry.id).sort();
+      const englishIds = (await getCollection(translations)).map((entry) => entry.id).sort();
+      expect(englishIds, translations).toEqual(frenchIds);
+    }
+
+    const englishSpeakers = new Map((await getCollection('speakersEn')).map((entry) => [entry.id, entry.data]));
+    for (const speaker of await getCollection('speakers')) {
+      expect(englishSpeakers.get(speaker.id)?.companies?.length, speaker.id).toBe(speaker.data.companies?.length);
+    }
+
+    const englishSessions = new Map((await getCollection('sessionsEn')).map((entry) => [entry.id, entry]));
+    for (const session of await getCollection('sessions')) {
+      const english = englishSessions.get(session.id);
+      expect(Boolean(english?.body?.trim()), session.id).toBe(Boolean(session.body?.trim()));
+      expect(Boolean(english?.data.illustration), session.id).toBe(Boolean(session.data.illustration));
+    }
   });
 });

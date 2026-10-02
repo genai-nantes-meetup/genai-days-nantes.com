@@ -35,6 +35,39 @@ describe('BaseLayout.astro', () => {
     expect(html).not.toContain('data-label-shine-permission');
   });
 
+  it('declares the French page as default with its English alternate', async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(BaseLayout, {
+      props: { title: 'Partenaires', description: 'Les partenaires.' },
+      request: new Request('https://example.com/partenaires'),
+    });
+
+    expect(html).toContain('<html lang="fr"');
+    expect(html).toContain('rel="alternate" hreflang="fr" href="https://example.com/partenaires"');
+    expect(html).toContain('rel="alternate" hreflang="en" href="https://example.com/en/partners"');
+    expect(html).toContain('rel="alternate" hreflang="x-default" href="https://example.com/partenaires"');
+    expect(html).toContain('property="og:locale" content="fr_FR"');
+    expect(html).toContain('property="og:locale:alternate" content="en_US"');
+    expect(html).toContain('Aller au contenu');
+  });
+
+  it('switches the document language on English pages', async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(BaseLayout, {
+      props: { title: 'Partners', description: 'Our partners.' },
+      request: new Request('https://example.com/en/partners'),
+    });
+
+    expect(html).toContain('<html lang="en"');
+    expect(html).toContain('rel="canonical" href="https://example.com/en/partners"');
+    expect(html).toContain('rel="alternate" hreflang="fr" href="https://example.com/partenaires"');
+    expect(html).toContain('rel="alternate" hreflang="x-default" href="https://example.com/partenaires"');
+    expect(html).toContain('property="og:locale" content="en_US"');
+    expect(html).toContain('property="og:locale:alternate" content="fr_FR"');
+    expect(html).toContain('Skip to content');
+    expect(html).toContain('name="twitter:image:alt" content="GENAI DAYS · November 17, 2026 · Nantes"');
+  });
+
   it('renders no JSON-LD when structuredData is omitted', async () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(BaseLayout, {
@@ -96,5 +129,18 @@ describe('BaseLayout.astro', () => {
     });
 
     expect(html).toContain('name="robots" content="noindex, follow, noarchive"');
+  });
+
+  it('renders the contact dialog in English on English pages', async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(BaseLayout, {
+      props: { title: 'Contact', description: 'Reach the team.' },
+      request: new Request('https://example.com/en/contact'),
+    });
+
+    expect(html).toContain('aria-label="Write a message"');
+    expect(html).toContain('aria-label="Copy the message"');
+    expect(html).toContain('data-contact-copy="coordinate"');
+    expect(html).not.toContain('Préparer un message');
   });
 });

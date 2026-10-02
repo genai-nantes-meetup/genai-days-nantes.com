@@ -1,3 +1,5 @@
+import { getDocumentLocale } from '../lib/i18n';
+
 interface ShinePosition {
   x: number;
   y: number;
@@ -24,7 +26,21 @@ const SHINE_TRAVEL_Y = 29;
 const MOBILE_SHINE_BOOST = 1.6;
 const MAX_RENDERED_OPACITY = 0.58;
 const SHINE_PERMISSION_STORAGE_KEY = 'genai-days:shiny-permission';
-const SHINE_PERMISSION_LABEL = "Activer l'effet shiny";
+
+/* Le libellé initial du bouton est rendu par LabelArchive : il doit rester
+ * identique à permissionLabel. */
+const messages = {
+  fr: {
+    permissionLabel: "Activer l'effet shiny",
+    permissionPending: 'Activation des reflets',
+    permissionDenied: 'Reflets non autorisés',
+  },
+  en: {
+    permissionLabel: 'Turn on the shine effect',
+    permissionPending: 'Turning on the shine effect',
+    permissionDenied: 'Shine effect not allowed',
+  },
+};
 
 let activeCleanup: (() => void) | undefined;
 
@@ -115,6 +131,7 @@ function rememberPermission(granted: boolean): void {
 
 export function initLabelShine(root: ParentNode = document): () => void {
   activeCleanup?.();
+  const copy = messages[getDocumentLocale()];
 
   const shines = Array.from(root.querySelectorAll<HTMLElement>('[data-label-shine]'));
   const permissionButton = root.querySelector<HTMLButtonElement>('[data-label-shine-permission]');
@@ -147,7 +164,7 @@ export function initLabelShine(root: ParentNode = document): () => void {
     if (!permissionButton) return;
     permissionButton.hidden = !available;
     permissionButton.disabled = false;
-    permissionButton.textContent = SHINE_PERMISSION_LABEL;
+    permissionButton.textContent = copy.permissionLabel;
     permissionArchive?.classList.toggle('is-shine-available', available);
   };
 
@@ -224,7 +241,7 @@ export function initLabelShine(root: ParentNode = document): () => void {
       permissionPending = true;
       if (permissionButton) {
         permissionButton.disabled = true;
-        permissionButton.textContent = 'Activation des reflets';
+        permissionButton.textContent = copy.permissionPending;
       }
 
       try {
@@ -242,7 +259,7 @@ export function initLabelShine(root: ParentNode = document): () => void {
       rememberPermission(false);
       if (permissionButton) {
         if (showFailureFeedback) {
-          permissionButton.textContent = 'Reflets non autorisés';
+          permissionButton.textContent = copy.permissionDenied;
           permissionFeedbackTimer = window.setTimeout(() => {
             setPermissionButtonAvailable(true);
           }, 2400);

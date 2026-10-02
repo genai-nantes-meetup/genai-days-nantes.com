@@ -1,0 +1,30 @@
+---
+role: "Co-founder, President & CTO"
+bio: "Co-founder, President and CTO of AlphaEdge, Théo Hubert designs specialized, compact AI models that can be deployed as close as possible to where they are used."
+profile:
+  - "An engineer by training and an entrepreneur, Théo Hubert has spent several years exploring how to make AI more useful and more accessible. After working on AlphaPen, a connected pen that digitizes handwriting and whose patent he authored, he co-founded AlphaEdge with Fabien Fasson to apply this expertise to specialized AI systems."
+  - "At AlphaEdge, he leads technical strategy and R&D. The team develops expert models designed for specific use cases, with close attention to latency, lean infrastructure and data control."
+  - "His path connects product design, engineering and applied research. He advocates for AI that learns better with smaller models, rather than always relying on ever-larger general-purpose models."
+  - "An entrepreneur since 2017 and the winner of four startup competitions, he also shares his experience: more than 800 hours of teaching delivered and more than 110 student entrepreneurs mentored. Trained as a computer science and networking engineer specializing in IoT, he rounded out his education with a Stanford course in machine learning and deep learning."
+genaiLegitimacy: "Théo Hubert works directly on model specialization and compression. At a 2025 hearing of the Pays de la Loire CESER, the regional economic, social and environmental council, he presented an approach that shrinks models and specializes them so they can be deployed closer to the user. This work addresses real-world constraints of performance, cost, energy consumption and data privacy."
+careerHighlights:
+  - period: "Since 2023"
+    title: "Co-founder, President and CTO of AlphaEdge"
+    description: "Technical leadership and R&D at a company that designs expert, efficient AI models suited to industrial use."
+  - period: "Since 2019"
+    title: "Technical vision & mentoring"
+    description: "Drives the technology vision of his projects and passes on his expertise through teaching and mentoring student entrepreneurs."
+  - period: "Since 2020"
+    title: "Founder of AlphaPen"
+    description: "Designing a patent-protected connected pen that turns handwriting into digital data; more than 1,000 prototypes developed, plus 5 AI models and a French handwriting dataset created."
+  - period: "Since 2017"
+    title: "Entrepreneurial journey"
+    description: "The start of an entrepreneurial journey marked by four startup competition wins."
+  - period: "2025"
+    title: "Hearing at the Pays de la Loire CESER"
+    description: "Presented an approach based on compact, specialized models designed to reduce compute needs and bring processing closer to users."
+companies:
+  - relationship: "Co-founder, President and CTO since 2023"
+    description: "AlphaEdge develops expert, efficient AI systems for professional use. Its approach combines specialized models, low latency, lean infrastructure and data control."
+companyLogoAlt: "AlphaEdge logo"
+---

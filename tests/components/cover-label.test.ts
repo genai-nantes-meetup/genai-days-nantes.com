@@ -64,4 +64,33 @@ describe('CoverLabel.astro', () => {
     expect(html).toContain('--label-mark-size: clamp(2rem, 1.4vw, 1.1rem)');
     expect(html).toContain('--label-padding-x: clamp(0.65rem, 1.1vw, 0.78rem)');
   });
+
+  it('names the label and its logos in English on English pages', async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(CoverLabel, {
+      props: {
+        labelId: 'session-agentic-coding',
+        format: 'Talk',
+        room: 'For those who implement',
+        startTime: '14:25',
+        durationMinutes: 40,
+        title: 'I don’t trust my generated pull requests',
+        speakers: [
+          {
+            name: 'Ada Lovelace',
+            company: 'Analytical Engines',
+            companyLogo: '/logos/analytical-engines.jpg',
+          },
+        ],
+      },
+      request: new Request('https://example.com/en/program/agentic-coding'),
+    });
+
+    expect(html).toContain('aria-label="Session label: I don’t trust my generated pull requests"');
+    expect(html).toContain('“I don’t trust my generated pull requests”');
+    expect(html).not.toContain('&quot;I don’t trust');
+    expect(html).toContain('alt="Analytical Engines logo"');
+    expect(html).toContain('aria-label="Peel off the label · Enter or Space adds it to the collection"');
+    expect(html).not.toContain('Étiquette de la session');
+  });
 });

@@ -2,6 +2,47 @@
 import EditorialCta from './EditorialCta.astro';
 import EditorialGrid from './EditorialGrid.astro';
 import { EVENT, formatEventDateLabel } from '../lib/event';
+import { getLocaleFromPath, localizePath } from '../lib/i18n';
+
+const locale = getLocaleFromPath(Astro.url.pathname);
+const copy = {
+  fr: {
+    title: 'Au bord de la Loire, au cœur de Nantes.',
+    lede: `L’${EVENT.venue.shortName} accueille les conférences, les rencontres et les temps communs de la journée.`,
+    illustrationAlt: `L’${EVENT.venue.shortName} à ${EVENT.venue.city}, illustré en bleu et orange`,
+    dateLabel: 'Date',
+    doorsLabel: 'Accueil',
+    addressLabel: 'Adresse',
+    practicalLink: 'Préparer ma venue',
+    mapFallback: 'Plan d’accès',
+    entrance: 'Entrée côté rue de la Loire',
+    directions: 'Itinéraire ↗',
+    accessLabel: 'Accès au lieu',
+    access: [
+      { term: 'Transports', lines: ['Busway 5 · arrêt Pompidou', 'Bus 26 · terminus Hôtel de Région'] },
+      { term: 'Parking', lines: ['Parking du parc de Beaulieu et voirie alentour · stationnement payant'] },
+      { term: 'Entrée', lines: ['Rue de la Loire · portail côté œuvre de François Morellet'] },
+    ],
+  },
+  en: {
+    title: 'On the banks of the Loire, in the heart of Nantes.',
+    lede: `The ${EVENT.venue.shortName} hosts the day’s talks, networking and joint sessions.`,
+    illustrationAlt: `The ${EVENT.venue.shortName} in ${EVENT.venue.city}, illustrated in blue and orange`,
+    dateLabel: 'Date',
+    doorsLabel: 'Doors',
+    addressLabel: 'Address',
+    practicalLink: 'Plan my visit',
+    mapFallback: 'Location map',
+    entrance: 'Entrance on Rue de la Loire',
+    directions: 'Directions ↗',
+    accessLabel: 'Getting to the venue',
+    access: [
+      { term: 'Transit', lines: ['Busway 5 · Pompidou stop', 'Bus 26 · Hôtel de Région (last stop)'] },
+      { term: 'Parking', lines: ['Parc de Beaulieu parking lot and nearby streets · paid parking'] },
+      { term: 'Entrance', lines: ['Rue de la Loire · gate by the François Morellet artwork'] },
+    ],
+  },
+}[locale];
 
 const venueIllustration = '/images/hotel-region-banner-genai-days-web-optimized.webp';
 const mapDestination = [
@@ -17,10 +58,10 @@ const mapUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURICo
   <div class="venue-spotlight__shell">
     <header class="venue-spotlight__copy">
       <h2 id="venue-spotlight-title" class="type-section-title">
-        Au bord de la Loire, au cœur de Nantes.
+        {copy.title}
       </h2>
       <p>
-        L’{EVENT.venue.shortName} accueille les conférences, les rencontres et les temps communs de la journée.
+        {copy.lede}
       </p>
     </header>
 
@@ -29,7 +70,7 @@ const mapUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURICo
         <figure class="venue-spotlight__visual">
           <img
             src={venueIllustration}
-            alt={`L’${EVENT.venue.shortName} à ${EVENT.venue.city}, illustré en bleu et orange`}
+            alt={copy.illustrationAlt}
             width="1774"
             height="886"
             loading="lazy"
@@ -42,21 +83,21 @@ const mapUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURICo
 
       <dl class="venue-spotlight__facts">
         <div>
-          <dt>Date</dt>
-          <dd>{formatEventDateLabel()}</dd>
+          <dt>{copy.dateLabel}</dt>
+          <dd>{formatEventDateLabel(locale)}</dd>
         </div>
         <div>
-          <dt>Accueil</dt>
+          <dt>{copy.doorsLabel}</dt>
           <dd>{EVENT.startTime}</dd>
         </div>
         <div>
-          <dt>Adresse</dt>
+          <dt>{copy.addressLabel}</dt>
           <dd>{EVENT.venue.address}<br />{EVENT.venue.postalCode} {EVENT.venue.city}</dd>
         </div>
       </dl>
 
         <div class="venue-spotlight__cta">
-          <EditorialCta href="/infos-pratiques">Préparer ma venue</EditorialCta>
+          <EditorialCta href={localizePath('/infos-pratiques', locale)}>{copy.practicalLink}</EditorialCta>
         </div>
 
         <figure class="venue-spotlight__map">
@@ -65,28 +106,22 @@ const mapUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURICo
             data-venue-map
             aria-hidden="true"
           >
-            <span data-venue-map-fallback>Plan d’accès</span>
+            <span data-venue-map-fallback>{copy.mapFallback}</span>
           </div>
           <figcaption>
-            <span>Entrée côté rue de la Loire</span>
-            <a href={mapUrl} target="_blank" rel="noopener noreferrer">Itinéraire ↗</a>
+            <span>{copy.entrance}</span>
+            <a href={mapUrl} target="_blank" rel="noopener noreferrer">{copy.directions}</a>
           </figcaption>
         </figure>
 
-        <aside class="venue-spotlight__logistics" aria-label="Accès au lieu">
+        <aside class="venue-spotlight__logistics" aria-label={copy.accessLabel}>
           <dl class="venue-spotlight__access">
-            <div>
-              <dt>Transports</dt>
-              <dd>Busway 5 · arrêt Pompidou<br />Bus 26 · terminus Hôtel de Région</dd>
-            </div>
-            <div>
-              <dt>Parking</dt>
-              <dd>Parking du parc de Beaulieu et voirie alentour · stationnement payant</dd>
-            </div>
-            <div>
-              <dt>Entrée</dt>
-              <dd>Rue de la Loire · portail côté œuvre de François Morellet</dd>
-            </div>
+            {copy.access.map((item) => (
+              <div>
+                <dt>{item.term}</dt>
+                <dd>{item.lines.map((line, index) => <>{index > 0 && <br />}{line}</>)}</dd>
+              </div>
+            ))}
           </dl>
 
         </aside>

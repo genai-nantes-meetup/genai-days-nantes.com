@@ -14,4 +14,12 @@ describe('404.astro', () => {
     expect(html).toContain('bg-brand-blue');
     expect(html).toContain('17 novembre 2026');
   });
+
+  it('points English visitors to the English home page', async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(NotFoundPage);
+
+    expect(html).toMatch(/<p lang="en"[^>]*>\s*Page not found\. <a href="\/en"/);
+    expect(html).toContain('Back to the English site');
+  });
 });

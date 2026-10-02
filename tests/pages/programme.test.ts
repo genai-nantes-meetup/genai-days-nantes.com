@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import ProgrammePage from '../../src/pages/programme.astro';
 import { createAstroContainer } from '../utils/create-astro-container';
 import { IS_MY_DAY_ENABLED } from '../../src/lib/features';
+import { formatEventDateLabel } from '../../src/lib/event';
 
 describe('programme.astro', () => {
   it('renders the event schedule on a dedicated page', async () => {
@@ -13,7 +14,7 @@ describe('programme.astro', () => {
     expect(html).toContain('Programme');
     expect(html).toContain('id="planning"');
     expect(html).toContain('Keynote d’ouverture');
-    expect(html).toContain('Clôture visiteurs');
+    expect(html).toContain('Clôture');
     expect(html).toContain('Nicolas Martignole');
     expect(html).toContain('Startup Contest');
     expect(html).toContain('Constance Nebbula');
@@ -35,6 +36,22 @@ describe('programme.astro', () => {
     expect(html.match(/data-track-mark="tech"/g)).toHaveLength(2);
   });
 
+  it('renders the English program, says talks are in French and links to English pages', async () => {
+    const container = await createAstroContainer();
+    const html = await container.renderToString(ProgrammePage, {
+      request: new Request('https://example.com/en/program'),
+    });
+
+    expect(html).toContain('<html lang="en"');
+    expect(html).toContain('<title>2026 generative AI program in Nantes · GenAI Days</title>');
+    expect(html).toContain(formatEventDateLabel('en'));
+    expect(html).toContain('Talks are delivered in French.');
+    expect(html).toContain('"name":"Program","item":"https://example.com/en/program"');
+    expect(html).toContain('href="/en/program/startup-contest"');
+    expect(html).not.toContain('href="/programme/startup-contest"');
+    expect(html).not.toContain('Le programme IA générative de la journée');
+  });
+
   it('hosts the label collection drawer', async () => {
     const container = await createAstroContainer();
     const html = await container.renderToString(ProgrammePage);
@@ -47,6 +64,6 @@ describe('programme.astro', () => {
     const container = await createAstroContainer();
     const html = await container.renderToString(ProgrammePage);
 
-    expect(html).toContain('data-my-day-session="finops-agents-dev-tools"');
+    expect(html).toContain('data-my-day-session="finops-agents"');
   });
 });

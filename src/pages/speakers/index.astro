@@ -9,8 +9,11 @@ import Header from '../../components/Header.astro';
 import TrackMark from '../../components/TrackMark';
 import { EVENT, EVENT_YEAR } from '../../lib/event';
 import { SPEAKER_EVENT_ROLE_LABELS, SPEAKER_PORTRAIT_DIMENSIONS, SPEAKER_TARGET, sortSpeakersByProminence, getSpeakerPortraitSrcset, trackForSpeaker } from '../../lib/speakers';
+import { getLocaleFromPath, localizePath } from '../../lib/i18n';
+import { getLocalizedCollection } from '../../lib/localized-content';
 
-const speakers = sortSpeakersByProminence(await getCollection('speakers'));
+const locale = getLocaleFromPath(Astro.url.pathname);
+const speakers = sortSpeakersByProminence(await getLocalizedCollection('speakers', locale));
 const sessions = await getCollection('sessions');
 const speakerTrackById = new Map(speakers.map((speaker) => [speaker.id, trackForSpeaker(speaker.id, sessions)]));
 
@@ -31,27 +34,66 @@ const portraitPositions: Record<string, string> = {
 };
 
 const futureSpeakerSlots = Math.max(0, SPEAKER_TARGET - speakers.length);
+
+const copy = {
+  fr: {
+    pageTitle: `Intervenants ${EVENT_YEAR} · GENAI DAYS`,
+    pageDescription: `Découvrez les intervenants de GENAI DAYS ${EVENT_YEAR} à ${EVENT.venue.city}, des voix choisies pour leur expertise et leur expérience du terrain.`,
+    homeLabel: 'Accueil',
+    title: 'Intervenants',
+    lede: 'Des voix choisies pour leur expertise. Des expériences forgées sur le terrain.',
+    wallTitle: 'Intervenants annoncés',
+    trackKeyLabel: 'Repères des parcours',
+    speakerLinkLabel: (name: string) => `Découvrir le portrait de ${name}`,
+    portraitAlt: (name: string) => `Portrait de ${name}`,
+    companyLogoAlt: (company: string) => `Logo ${company}`,
+    futureSlotLabel: (position: number, total: number) => `Intervenant à venir ${position} sur ${total}`,
+    futurePlaceholder: 'À venir',
+    futureBadge: 'Programmation en cours',
+    futureName: 'Prochain intervenant',
+    futureRole: 'Annonce à venir',
+  },
+  en: {
+    pageTitle: `Speakers ${EVENT_YEAR} · GENAI DAYS`,
+    pageDescription: `Meet the GENAI DAYS ${EVENT_YEAR} speakers in ${EVENT.venue.city}: voices chosen for their expertise and their experience in the field.`,
+    homeLabel: 'Home',
+    title: 'Speakers',
+    lede: 'Voices chosen for their expertise. Experience earned in the field.',
+    wallTitle: 'Announced speakers',
+    trackKeyLabel: 'Track legend',
+    speakerLinkLabel: (name: string) => `View ${name}’s profile`,
+    portraitAlt: (name: string) => `Portrait of ${name}`,
+    companyLogoAlt: (company: string) => `${company} logo`,
+    futureSlotLabel: (position: number, total: number) => `Upcoming speaker ${position} of ${total}`,
+    futurePlaceholder: 'Coming soon',
+    futureBadge: 'Lineup in progress',
+    futureName: 'Next speaker',
+    futureRole: 'To be announced',
+  },
+}[locale];
+
 const siteUrl = (Astro.site ?? new URL(Astro.url.origin)).href;
-const pageUrl = new URL('/speakers', siteUrl).href;
-const pageTitle = `Intervenants ${EVENT_YEAR} · GENAI DAYS`;
-const pageDescription = `Découvrez les intervenants de GENAI DAYS ${EVENT_YEAR} à ${EVENT.venue.city}, des voix choisies pour leur expertise et leur expérience du terrain.`;
+const homeUrl = new URL(localizePath('/', locale), siteUrl).href;
+const pageUrl = new URL(localizePath('/speakers', locale), siteUrl).href;
+const speakerPath = (speakerId: string) => localizePath(`/speakers/${speakerId}`, locale);
 
 const collectionJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'CollectionPage',
-  name: pageTitle,
-  description: pageDescription,
+  name: copy.pageTitle,
+  description: copy.pageDescription,
   url: pageUrl,
+  inLanguage: locale,
   mainEntity: {
     '@type': 'ItemList',
     numberOfItems: speakers.length,
     itemListElement: speakers.map((speaker, index) => ({
       '@type': 'ListItem',
       position: index + 1,
-      url: new URL(`/speakers/${speaker.id}`, siteUrl).href,
+      url: new URL(speakerPath(speaker.id), siteUrl).href,
       item: {
         '@type': 'Person',
-        '@id': `${new URL(`/speakers/${speaker.id}`, siteUrl).href}#person`,
+        '@id': `${new URL(speakerPath(speaker.id), siteUrl).href}#person`,
         name: speaker.data.name,
         jobTitle: speaker.data.role,
         description: speaker.data.bio,
@@ -67,20 +109,20 @@ const breadcrumbJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Accueil', item: siteUrl },
-    { '@type': 'ListItem', position: 2, name: 'Intervenants', item: pageUrl },
+    { '@type': 'ListItem', position: 1, name: copy.homeLabel, item: homeUrl },
+    { '@type': 'ListItem', position: 2, name: copy.title, item: pageUrl },
   ],
 };
 ---
 
-<BaseLayout title={pageTitle} description={pageDescription} structuredData={[collectionJsonLd, breadcrumbJsonLd]}>
+<BaseLayout title={copy.pageTitle} description={copy.pageDescription} structuredData={[collectionJsonLd, breadcrumbJsonLd]}>
   <Header />
 
   <main class="speakers-page">
     <DirectoryHero
-      title="Intervenants"
+      title={copy.title}
       titleId="speakers-title"
-      lede="Des voix choisies pour leur expertise. Des expériences forgées sur le terrain."
+      lede={copy.lede}
       image="/images/speaker_background-optimized.webp"
       imageWidth={2544}
       imageHeight={1904}
@@ -89,11 +131,11 @@ const breadcrumbJsonLd = {
 
     <section class="speaker-wall" aria-labelledby="speaker-wall-title">
       <EditorialGrid top={false} />
-      <h2 id="speaker-wall-title" class="sr-only">Intervenants annoncés</h2>
+      <h2 id="speaker-wall-title" class="sr-only">{copy.wallTitle}</h2>
 
-      <div class="speaker-wall__track-key" aria-label="Repères des parcours">
-        <TrackMark track="decideurs" />
-        <TrackMark track="tech" />
+      <div class="speaker-wall__track-key" aria-label={copy.trackKeyLabel}>
+        <TrackMark track="decideurs" locale={locale} />
+        <TrackMark track="tech" locale={locale} />
       </div>
 
       <ol class="speaker-wall__grid" data-speaker-wall>
@@ -104,7 +146,7 @@ const breadcrumbJsonLd = {
 
           return (
             <li class="speaker-tile" data-speaker-tile={speaker.id} data-speaker-track={speakerTrack}>
-              <a href={`/speakers/${speaker.id}`} aria-label={`Découvrir le portrait de ${speaker.data.name}`}>
+              <a href={speakerPath(speaker.id)} aria-label={copy.speakerLinkLabel(speaker.data.name)}>
                 <figure class="speaker-tile__portrait">
                   {speaker.data.photo ? (
                     <img
@@ -112,7 +154,7 @@ const breadcrumbJsonLd = {
                       src={speaker.data.photo}
                       srcset={getSpeakerPortraitSrcset(speaker.id, speaker.data.photo)}
                       sizes="(min-width: 64rem) 25vw, (min-width: 40rem) 50vw, 100vw"
-                      alt={`Portrait de ${speaker.data.name}`}
+                      alt={copy.portraitAlt(speaker.data.name)}
                       width={portrait?.width}
                       height={portrait?.height}
                       loading={index < 2 ? 'eager' : 'lazy'}
@@ -128,7 +170,7 @@ const breadcrumbJsonLd = {
                     <span class="speaker-tile__company-logo">
                       <img
                         src={speaker.data.companyLogoOnDark ?? speaker.data.companyLogo}
-                        alt={speaker.data.companyLogoAlt ?? `Logo ${speaker.data.company}`}
+                        alt={speaker.data.companyLogoAlt ?? copy.companyLogoAlt(speaker.data.company)}
                         width="56"
                         height="56"
                         loading="lazy"
@@ -138,7 +180,7 @@ const breadcrumbJsonLd = {
                     </span>
                   )}
                   {speaker.data.eventRole && (
-                    <span class="speaker-tile__badge">{SPEAKER_EVENT_ROLE_LABELS[speaker.data.eventRole]}</span>
+                    <span class="speaker-tile__badge">{SPEAKER_EVENT_ROLE_LABELS[locale][speaker.data.eventRole]}</span>
                   )}
                   <figcaption class="speaker-tile__identity">
                     <h3>{speaker.data.name}</h3>
@@ -149,7 +191,7 @@ const breadcrumbJsonLd = {
               </a>
               {speakerTrack && (
                 <div class="speaker-tile__track-mark">
-                  <TrackMark track={speakerTrack} variant="icon" />
+                  <TrackMark track={speakerTrack} variant="icon" locale={locale} />
                 </div>
               )}
             </li>
@@ -160,16 +202,16 @@ const breadcrumbJsonLd = {
           <li
             class="speaker-tile speaker-tile--future"
             data-speaker-placeholder
-            aria-label={`Intervenant à venir ${index + 1} sur ${futureSpeakerSlots}`}
+            aria-label={copy.futureSlotLabel(index + 1, futureSpeakerSlots)}
           >
             <div class="speaker-tile__portrait">
               <div class="speaker-tile__placeholder" aria-hidden="true">
-                <span>À venir</span>
+                <span>{copy.futurePlaceholder}</span>
               </div>
-              <span class="speaker-tile__badge speaker-tile__badge--muted">Programmation en cours</span>
+              <span class="speaker-tile__badge speaker-tile__badge--muted">{copy.futureBadge}</span>
               <div class="speaker-tile__identity">
-                <h3>Prochain intervenant</h3>
-                <p class="speaker-tile__role">Annonce à venir</p>
+                <h3>{copy.futureName}</h3>
+                <p class="speaker-tile__role">{copy.futureRole}</p>
               </div>
             </div>
           </li>

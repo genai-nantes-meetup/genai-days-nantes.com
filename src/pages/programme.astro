@@ -6,27 +6,47 @@ import ScheduleSection from '../components/ScheduleSection.astro';
 import { formatEventDateLabel, buildEventJsonLd } from '../lib/event';
 import EVENT from '../content/event.json';
 import { CTA_LINKS } from '../lib/cta-links';
+import { getLocaleFromPath, localizePath } from '../lib/i18n';
 import AdmissionTicketSection from '../components/AdmissionTicketSection.astro';
 import EditorialGrid from '../components/EditorialGrid.astro';
 import LabelArchive from '../components/LabelArchive.astro';
 
+const locale = getLocaleFromPath(Astro.url.pathname);
 const siteUrl = (Astro.site ?? new URL(Astro.url.origin)).href;
-const eventJsonLd = await buildEventJsonLd(siteUrl, CTA_LINKS.tickets);
-const pageTitle = `Programme IA générative ${EVENT.year} à ${EVENT.venue.city} · GenAI Days`;
-const pageDescription = `Programme IA générative de GenAI Days ${EVENT.year} à ${EVENT.venue.city} : deux parcours, un Startup Contest et la liberté de passer de l’un à l’autre entre les sessions.`;
+const eventJsonLd = await buildEventJsonLd(siteUrl, CTA_LINKS.tickets, locale);
+/* Les conférences restent en français : la version anglaise le dit dès le
+ * chapô et dans la meta description. */
+const copy = {
+  fr: {
+    pageTitle: `Programme IA générative ${EVENT.year} à ${EVENT.venue.city} · GenAI Days`,
+    pageDescription: `Programme IA générative de GenAI Days ${EVENT.year} à ${EVENT.venue.city} : deux parcours, un Startup Contest et la liberté de passer de l’un à l’autre entre les sessions.`,
+    homeBreadcrumb: 'Accueil',
+    title: 'Programme',
+    heroAlt: `L’${EVENT.venue.name} à ${EVENT.venue.city}`,
+    lede: 'Le programme IA générative de la journée : deux parcours, un Startup Contest, heure par heure. Passez librement de l’un à l’autre entre les sessions.',
+  },
+  en: {
+    pageTitle: `${EVENT.year} generative AI program in ${EVENT.venue.city} · GenAI Days`,
+    pageDescription: `The GenAI Days ${EVENT.year} generative AI program in ${EVENT.venue.city}: two tracks, a Startup Contest and the freedom to switch tracks between sessions. Talks are delivered in French.`,
+    homeBreadcrumb: 'Home',
+    title: 'Program',
+    heroAlt: `The ${EVENT.venue.name} in ${EVENT.venue.city}`,
+    lede: 'The day’s generative AI program: two tracks and a Startup Contest, hour by hour. Switch tracks freely between sessions. Talks are delivered in French.',
+  },
+}[locale];
 const breadcrumbJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Accueil', item: siteUrl },
-    { '@type': 'ListItem', position: 2, name: 'Programme', item: `${siteUrl}programme` },
+    { '@type': 'ListItem', position: 1, name: copy.homeBreadcrumb, item: new URL(localizePath('/', locale), siteUrl).href },
+    { '@type': 'ListItem', position: 2, name: copy.title, item: new URL(localizePath('/programme', locale), siteUrl).href },
   ],
 };
 ---
 
 <BaseLayout
-  title={pageTitle}
-  description={pageDescription}
+  title={copy.pageTitle}
+  description={copy.pageDescription}
   structuredData={[eventJsonLd, breadcrumbJsonLd]}
 >
   <Header />
@@ -35,7 +55,7 @@ const breadcrumbJsonLd = {
       <figure class="programme-hero__visual">
         <img
           src="/images/hotel-region-banner-genai-days-optimized.webp"
-          alt={`L’${EVENT.venue.name} à ${EVENT.venue.city}`}
+          alt={copy.heroAlt}
           width="1774"
           height="886"
           loading="eager"
@@ -47,10 +67,10 @@ const breadcrumbJsonLd = {
       <EditorialGrid tone="paper" top={false} />
       <div class="programme-hero__inner">
         <div class="programme-hero__copy">
-          <p class="type-page-kicker">{formatEventDateLabel()}</p>
-          <h1 id="programme-title" class="type-page-title type-page-title--long">Programme</h1>
+          <p class="type-page-kicker">{formatEventDateLabel(locale)}</p>
+          <h1 id="programme-title" class="type-page-title type-page-title--long">{copy.title}</h1>
           <p class="type-page-lede">
-            Le programme IA générative de la journée : deux parcours, un Startup Contest, heure par heure. Passez librement de l’un à l’autre entre les sessions.
+            {copy.lede}
           </p>
         </div>
       </div>

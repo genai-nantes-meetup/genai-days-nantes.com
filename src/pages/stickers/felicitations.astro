@@ -1,9 +1,12 @@
 ---
 import { getCollection } from 'astro:content';
+import BrandText from '../../components/BrandText.astro';
 import EventName from '../../components/EventName.astro';
 import StickerRewardLayout from '../../layouts/StickerRewardLayout.astro';
 import { EVENT, EVENT_URL, formatEventDateLabel, formatEventDateShort } from '../../lib/event';
+import { getLocaleFromPath, localizePath } from '../../lib/i18n';
 
+const locale = getLocaleFromPath(Astro.url.pathname);
 const sessions = await getCollection('sessions');
 const speakers = await getCollection('speakers');
 const requiredLabelIds = [
@@ -12,37 +15,105 @@ const requiredLabelIds = [
   ...sessions.map((session) => `session-${session.id}`),
 ];
 
-/* Le rendez-vous est composé une seule fois : l'aperçu du post et le texte
- * réellement partagé par le script doivent dire exactement la même chose. */
-const shareRendezVous = `le ${formatEventDateLabel()} à ${EVENT.venue.city}`;
+const shareRendezVous = {
+  fr: `le ${formatEventDateLabel()} à ${EVENT.venue.city}`,
+  en: `on ${formatEventDateLabel('en')} in ${EVENT.venue.city}`,
+}[locale];
+const copy = {
+  fr: {
+    title: 'Félicitations · GenAI Days',
+    description: `Tu as complété l’easter egg GenAI Days. Rendez-vous ${shareRendezVous} pour récupérer ta récompense.`,
+    step: 'Récompense · 02/02',
+    eyebrow: 'MISSION ACCOMPLIE · DOSSIER CLASSÉ',
+    ticketLabel: 'Récompense validée',
+    statusLabel: 'STATUT',
+    statusValue: 'GAGNANT·E',
+    dateLabel: 'RENDEZ-VOUS',
+    shareKicker: 'À TOI DE LANCER LE DÉFI',
+    shareTitle: 'Partage ta découverte sans révéler le secret.',
+    shareIntro: 'Ce message donne juste assez d’indices pour donner envie aux autres d’explorer le site à leur tour.',
+    postPreviewLabel: 'Aperçu du post à partager',
+    postLines: [
+      'J’ai trouvé l’easter egg caché sur le site de GENAI DAYS 👀',
+      'Je garde le secret, mais le défi est lancé.',
+      'Explorez le site, ouvrez l’œil et dites-moi si vous le trouvez à votre tour.',
+      `Rendez-vous ${shareRendezVous}. #GenAIDays`,
+    ],
+    shareOnLinkedIn: 'Partager sur LinkedIn',
+    shareOnX: 'Partager sur X',
+  },
+  en: {
+    title: 'Congratulations · GenAI Days',
+    description: `You completed the GenAI Days easter egg. See you ${shareRendezVous} to collect your reward.`,
+    step: 'Reward · 02/02',
+    eyebrow: 'MISSION ACCOMPLISHED · CASE CLOSED',
+    ticketLabel: 'Reward confirmed',
+    statusLabel: 'STATUS',
+    statusValue: 'WINNER',
+    dateLabel: 'DATE',
+    shareKicker: 'YOUR TURN TO CHALLENGE OTHERS',
+    shareTitle: 'Share your find without giving away the secret.',
+    shareIntro: 'This message gives just enough hints to make others want to explore the site themselves.',
+    postPreviewLabel: 'Preview of the post to share',
+    postLines: [
+      'I found the easter egg hidden on the GENAI DAYS website 👀',
+      'I’m keeping the secret, but the challenge is on.',
+      'Explore the site, keep your eyes open and tell me if you find it too.',
+      `See you ${shareRendezVous}. #GenAIDays`,
+    ],
+    shareOnLinkedIn: 'Share on LinkedIn',
+    shareOnX: 'Share on X',
+  },
+}[locale];
+/* Le post est composé une seule fois : l'aperçu et le texte réellement
+ * partagé par le script doivent dire exactement la même chose. Depuis la
+ * version anglaise, il renvoie vers l'accueil anglais. */
+const shareText = copy.postLines.join('\n\n');
+const shareUrl = locale === 'fr' ? EVENT_URL : new URL(localizePath('/', locale), EVENT_URL).href;
 ---
 
 <StickerRewardLayout
-  title="Félicitations · GenAI Days"
-  description={`Tu as complété l’easter egg GenAI Days. Rendez-vous ${shareRendezVous} pour récupérer ta récompense.`}
-  step="Récompense · 02/02"
+  title={copy.title}
+  description={copy.description}
+  step={copy.step}
 >
   <section
     class="reward-success"
     data-reward-success-page
     data-required-labels={JSON.stringify(requiredLabelIds)}
-    data-share-rendezvous={shareRendezVous}
+    data-share-text={shareText}
+    data-share-url={shareUrl}
     hidden
   >
     <div class="reward-success__message">
-      <p class="reward-success__eyebrow">MISSION ACCOMPLIE · DOSSIER CLASSÉ</p>
-      <h1>Félicitations, <span data-reward-first-name>toi</span>&nbsp;!</h1>
+      <p class="reward-success__eyebrow">{copy.eyebrow}</p>
+      <h1>
+        {locale === 'en' ? (
+          <>Congratulations, <span data-reward-first-name>detective</span>!</>
+        ) : (
+          <>Félicitations, <span data-reward-first-name>toi</span>&nbsp;!</>
+        )}
+      </h1>
       <p class="reward-success__lead">
-        Tu as complété l’easter egg des stickers. Rendez-vous {shareRendezVous} pour récupérer
-        ton cadeau spécial auprès de l’équipe <EventName />.
+        {locale === 'en' ? (
+          <>
+            You completed the sticker easter egg. See you {shareRendezVous} to pick up
+            your special gift from the <EventName /> team.
+          </>
+        ) : (
+          <>
+            Tu as complété l’easter egg des stickers. Rendez-vous {shareRendezVous} pour récupérer
+            ton cadeau spécial auprès de l’équipe <EventName />.
+          </>
+        )}
       </p>
-      <div class="reward-success__ticket" aria-label="Récompense validée">
+      <div class="reward-success__ticket" aria-label={copy.ticketLabel}>
         <div>
-          <span>STATUT</span>
-          <strong>GAGNANT·E</strong>
+          <span>{copy.statusLabel}</span>
+          <strong>{copy.statusValue}</strong>
         </div>
         <div>
-          <span>RENDEZ-VOUS</span>
+          <span>{copy.dateLabel}</span>
           <strong>{formatEventDateShort()}</strong>
         </div>
         <b aria-hidden="true">{requiredLabelIds.length}/{requiredLabelIds.length}</b>
@@ -51,14 +122,14 @@ const shareRendezVous = `le ${formatEventDateLabel()} à ${EVENT.venue.city}`;
 
     <aside class="reward-success__share">
       <div class="reward-success__share-intro">
-        <p>À TOI DE LANCER LE DÉFI</p>
-        <h2>Partage ta découverte sans révéler le secret.</h2>
+        <p>{copy.shareKicker}</p>
+        <h2>{copy.shareTitle}</h2>
         <p>
-          Ce message donne juste assez d’indices pour donner envie aux autres d’explorer le site à leur tour.
+          {copy.shareIntro}
         </p>
       </div>
 
-      <article class="reward-success__post" aria-label="Aperçu du post à partager">
+      <article class="reward-success__post" aria-label={copy.postPreviewLabel}>
         <header>
           <span class="reward-success__avatar" aria-hidden="true">G</span>
           <div>
@@ -68,27 +139,22 @@ const shareRendezVous = `le ${formatEventDateLabel()} à ${EVENT.venue.city}`;
           <b aria-hidden="true">𝕏</b>
         </header>
         <div class="reward-success__post-copy" data-share-copy>
-          <p>J’ai trouvé l’easter egg caché sur le site de <EventName /> 👀</p>
-          <p>Je garde le secret, mais le défi est lancé.</p>
-          <p>
-            Explorez le site, ouvrez l’œil et dites-moi si vous le trouvez à votre tour.
-          </p>
-          <p>Rendez-vous {shareRendezVous}. #GenAIDays</p>
+          {copy.postLines.map((line) => <p><BrandText text={line} /></p>)}
         </div>
         <footer>
           <span>{new URL(EVENT_URL).hostname}</span>
-          <span>{formatEventDateLabel()}</span>
+          <span>{formatEventDateLabel(locale)}</span>
         </footer>
       </article>
 
       <div class="reward-success__share-actions">
         <a
-          href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(EVENT_URL)}`}
+          href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`}
           target="_blank"
           rel="noopener noreferrer"
           data-share-linkedin
         >
-          Partager sur LinkedIn
+          {copy.shareOnLinkedIn}
         </a>
         <a
           href="https://twitter.com/intent/tweet"
@@ -96,7 +162,7 @@ const shareRendezVous = `le ${formatEventDateLabel()} à ${EVENT.venue.city}`;
           rel="noopener noreferrer"
           data-share-x
         >
-          Partager sur X
+          {copy.shareOnX}
         </a>
       </div>
       <p class="reward-success__share-status" data-share-status role="status" aria-live="polite"></p>
@@ -105,20 +171,38 @@ const shareRendezVous = `le ${formatEventDateLabel()} à ${EVENT.venue.city}`;
 
   <noscript>
     <div class="reward-success__noscript">
-      JavaScript doit être activé pour vérifier ta récompense. <a href="/">Retour à l’accueil</a>
+      {locale === 'en' ? (
+        <>JavaScript must be enabled to check your reward. <a href={localizePath('/', locale)}>Back to home</a></>
+      ) : (
+        <>JavaScript doit être activé pour vérifier ta récompense. <a href="/">Retour à l’accueil</a></>
+      )}
     </div>
   </noscript>
 </StickerRewardLayout>
 
-<script define:vars={{ EVENT_URL }}>
+<script>
+  import { getDocumentLocale, localizePath } from '../../lib/i18n';
   import {
     getRewardRegistration,
     hasCollectedEvery,
   } from '../../lib/label-collection';
 
+  const messages = {
+    fr: {
+      copied: 'Texte copié. Il ne reste plus qu’à le coller dans ton post LinkedIn.',
+      previewReady: 'Le post est prêt dans l’aperçu juste au-dessus.',
+    },
+    en: {
+      copied: 'Text copied. All that’s left is to paste it into your LinkedIn post.',
+      previewReady: 'The post is ready in the preview just above.',
+    },
+  };
+
   const page = document.querySelector<HTMLElement>('[data-reward-success-page]');
 
   if (page) {
+    const locale = getDocumentLocale();
+    const copy = messages[locale];
     const requiredLabelIds = JSON.parse(page.dataset.requiredLabels || '[]') as string[];
     const registration = getRewardRegistration();
 
@@ -131,21 +215,13 @@ const shareRendezVous = `le ${formatEventDateLabel()} à ${EVENT.venue.city}`;
       if (firstName) firstName.textContent = registration.firstName;
       page.hidden = false;
     } else if (!hasCollectedEvery(requiredLabelIds)) {
-      window.location.replace('/');
+      window.location.replace(localizePath('/', locale));
     } else {
-      window.location.replace('/stickers/recompense');
+      window.location.replace(localizePath('/stickers/recompense', locale));
     }
 
-    const postText = [
-      'J’ai trouvé l’easter egg caché sur le site de GENAI DAYS 👀',
-      '',
-      'Je garde le secret, mais le défi est lancé.',
-      '',
-      'Explorez le site, ouvrez l’œil et dites-moi si vous le trouvez à votre tour.',
-      '',
-      `Rendez-vous ${page.dataset.shareRendezvous || ''}. #GenAIDays`,
-    ].join('\n');
-    const shareUrl = EVENT_URL;
+    const postText = page.dataset.shareText || '';
+    const shareUrl = page.dataset.shareUrl || '';
     const shareStatus = page.querySelector<HTMLElement>('[data-share-status]');
     const xLink = page.querySelector<HTMLAnchorElement>('[data-share-x]');
     const linkedinLink = page.querySelector<HTMLAnchorElement>('[data-share-linkedin]');
@@ -158,11 +234,11 @@ const shareRendezVous = `le ${formatEventDateLabel()} à ${EVENT.venue.city}`;
     linkedinLink?.addEventListener('click', () => {
       navigator.clipboard?.writeText(`${postText}\n\n${shareUrl}`).then(() => {
         if (shareStatus) {
-          shareStatus.textContent = 'Texte copié. Il ne reste plus qu’à le coller dans ton post LinkedIn.';
+          shareStatus.textContent = copy.copied;
         }
       }).catch(() => {
         if (shareStatus) {
-          shareStatus.textContent = 'Le post est prêt dans l’aperçu juste au-dessus.';
+          shareStatus.textContent = copy.previewReady;
         }
       });
     });
