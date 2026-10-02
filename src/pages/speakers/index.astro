@@ -8,7 +8,7 @@ import Footer from '../../components/Footer.astro';
 import Header from '../../components/Header.astro';
 import TrackMark from '../../components/TrackMark';
 import { EVENT, EVENT_YEAR } from '../../lib/event';
-import { SPEAKER_PORTRAIT_DIMENSIONS, SPEAKER_TARGET, sortSpeakersByProminence, getSpeakerPortraitSrcset, trackForSpeaker } from '../../lib/speakers';
+import { SPEAKER_EVENT_ROLE_LABELS, SPEAKER_PORTRAIT_DIMENSIONS, SPEAKER_TARGET, sortSpeakersByProminence, getSpeakerPortraitSrcset, trackForSpeaker } from '../../lib/speakers';
 
 const speakers = sortSpeakersByProminence(await getCollection('speakers'));
 const sessions = await getCollection('sessions');
@@ -137,12 +137,10 @@ const breadcrumbJsonLd = {
                       />
                     </span>
                   )}
+                  {speaker.data.eventRole && (
+                    <span class="speaker-tile__badge">{SPEAKER_EVENT_ROLE_LABELS[speaker.data.eventRole]}</span>
+                  )}
                   <figcaption class="speaker-tile__identity">
-                    {speaker.data.eventRole && (
-                      <small class="speaker-tile__status">
-                        {speaker.data.eventRole === 'jury' ? 'Jury du Startup Contest' : 'Animateur du Startup Contest'}
-                      </small>
-                    )}
                     <h3>{speaker.data.name}</h3>
                     <p class="speaker-tile__role">{speaker.data.role}</p>
                     <span class="speaker-tile__company">{speaker.data.company}</span>
@@ -168,8 +166,8 @@ const breadcrumbJsonLd = {
               <div class="speaker-tile__placeholder" aria-hidden="true">
                 <span>À venir</span>
               </div>
+              <span class="speaker-tile__badge speaker-tile__badge--muted">Programmation en cours</span>
               <div class="speaker-tile__identity">
-                <small class="speaker-tile__status">Programmation en cours</small>
                 <h3>Prochain intervenant</h3>
                 <p class="speaker-tile__role">Annonce à venir</p>
               </div>
@@ -204,7 +202,6 @@ const breadcrumbJsonLd = {
     margin-inline: auto;
   }
 
-  .speaker-tile__status,
   .speaker-tile__role,
   .speaker-tile__company {
     font-family: var(--font-nav);
@@ -264,9 +261,10 @@ const breadcrumbJsonLd = {
     position: relative;
     display: grid;
     overflow: hidden;
+    --identity-height: 6rem;
     height: clamp(22rem, 27vw, 25rem);
     background: var(--color-brand-night);
-    grid-template-rows: minmax(0, 1fr) 7.5rem;
+    grid-template-rows: minmax(0, 1fr) var(--identity-height);
   }
 
   .speaker-tile__portrait img {
@@ -286,12 +284,12 @@ const breadcrumbJsonLd = {
     transform: scale(1.025);
   }
 
-  /* 7.5rem is the identity strip height: the logo sits on the photo row, above it. */
+  /* The logo sits on the photo row, just above the identity strip. */
   .speaker-tile__company-logo {
     position: absolute;
     z-index: 3;
     right: 0.85rem;
-    bottom: calc(7.5rem + 0.85rem);
+    bottom: calc(var(--identity-height) + 0.85rem);
     display: grid;
     overflow: hidden;
     width: 3.25rem;
@@ -305,6 +303,33 @@ const breadcrumbJsonLd = {
     height: 100%;
     filter: none;
     object-fit: contain;
+    transform: none;
+  }
+
+  /* Top-left of the photo: the only corner that never meets the company logo or the identity strip. */
+  .speaker-tile__badge {
+    position: absolute;
+    z-index: 3;
+    top: 0.85rem;
+    left: 0.85rem;
+    padding: 0.4rem 0.6rem 0.35rem;
+    background: var(--color-brand-orange);
+    color: var(--color-brand-night);
+    font-family: var(--font-nav);
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    line-height: 1.1;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transform: rotate(-1.5deg);
+    transform-origin: left top;
+  }
+
+  .speaker-tile__badge--muted {
+    border: 1px solid rgb(249 244 236 / 42%);
+    background: var(--color-brand-night);
+    color: rgb(249 244 236 / 78%);
     transform: none;
   }
 
@@ -326,7 +351,7 @@ const breadcrumbJsonLd = {
     position: relative;
     z-index: 2;
     display: grid;
-    height: 7.5rem;
+    height: var(--identity-height);
     align-content: center;
     padding: 0.85rem 1rem 0.95rem;
     background: rgb(255 255 255 / 94%);
@@ -336,11 +361,12 @@ const breadcrumbJsonLd = {
     transition: background-color 220ms ease, color 220ms ease;
   }
 
+  /* Sits on the name row of the identity strip, top-right. */
   .speaker-tile__track-mark {
     position: absolute;
     z-index: 4;
     right: 0.7rem;
-    bottom: 4.7rem;
+    bottom: 3.55rem;
   }
 
   .speaker-tile__identity h3 {
@@ -358,13 +384,6 @@ const breadcrumbJsonLd = {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-  }
-
-  .speaker-tile__status {
-    color: rgb(57 54 54 / 52%);
-    font-weight: 600;
-    letter-spacing: 0.055em;
-    text-transform: uppercase;
   }
 
   .speaker-tile__role {

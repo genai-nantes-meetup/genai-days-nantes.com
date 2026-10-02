@@ -313,16 +313,12 @@ const initialVisibleSlides = Math.min(3, speakerSlides.length);
                       />
                     </span>
                   )}
+                  {slide.speaker.data.eventRole && (
+                    <span class="speaker-card__badge">
+                      {SPEAKER_EVENT_ROLE_LABELS[slide.speaker.data.eventRole]}
+                    </span>
+                  )}
                   <span class="speaker-card__identity">
-                    {slide.speaker.data.eventRole && (
-                      <small class="speaker-card__status">
-                        {
-                          SPEAKER_EVENT_ROLE_LABELS[
-                            slide.speaker.data.eventRole
-                          ]
-                        }
-                      </small>
-                    )}
                     <strong class="speaker-card__name">
                       {slide.speaker.data.name}
                     </strong>
@@ -339,10 +335,10 @@ const initialVisibleSlides = Math.min(3, speakerSlides.length);
                   <span class="speaker-card__pending-count" aria-hidden="true">
                     +{slide.count}
                   </span>
+                  <span class="speaker-card__badge speaker-card__badge--muted">
+                    Programmation en cours
+                  </span>
                   <span class="speaker-card__identity">
-                    <small class="speaker-card__status">
-                      Programmation en cours
-                    </small>
                     <strong class="speaker-card__name">
                       {slide.count} voix à annoncer
                     </strong>
@@ -744,11 +740,12 @@ const initialVisibleSlides = Math.min(3, speakerSlides.length);
 
   .speaker-card > a,
   .speaker-card__pending-surface {
+    --identity-height: 6rem;
     position: relative;
     display: grid;
     height: clamp(23rem, 30vw, 27rem);
     color: var(--color-brand-black);
-    grid-template-rows: minmax(0, 1fr) 7.5rem;
+    grid-template-rows: minmax(0, 1fr) var(--identity-height);
   }
 
   .speaker-card img,
@@ -774,12 +771,12 @@ const initialVisibleSlides = Math.min(3, speakerSlides.length);
     transform: scale(1.018);
   }
 
-  /* 7.5rem is the identity strip height: the logo sits on the photo row, above it. */
+  /* The logo sits on the photo row, just above the identity strip. */
   .speaker-card__company-logo {
     position: absolute;
     z-index: 3;
     right: 0.85rem;
-    bottom: calc(7.5rem + 0.85rem);
+    bottom: calc(var(--identity-height) + 0.85rem);
     display: grid;
     overflow: hidden;
     width: 3.25rem;
@@ -796,6 +793,33 @@ const initialVisibleSlides = Math.min(3, speakerSlides.length);
     transform: none;
   }
 
+  /* Top-left of the photo: the only corner that never meets the company logo or the identity strip. */
+  .speaker-card__badge {
+    position: absolute;
+    z-index: 3;
+    top: 0.85rem;
+    left: 0.85rem;
+    padding: 0.4rem 0.6rem 0.35rem;
+    background: var(--color-brand-orange);
+    color: var(--color-brand-night);
+    font-family: var(--font-nav);
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    line-height: 1.1;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transform: rotate(-1.5deg);
+    transform-origin: left top;
+  }
+
+  .speaker-card__badge--muted {
+    border: 1px solid rgb(249 244 236 / 42%);
+    background: transparent;
+    color: rgb(249 244 236 / 78%);
+    transform: none;
+  }
+
   .speaker-card__fallback {
     display: grid;
     place-items: center;
@@ -808,7 +832,7 @@ const initialVisibleSlides = Math.min(3, speakerSlides.length);
     position: relative;
     z-index: 2;
     display: grid;
-    height: 7.5rem;
+    height: var(--identity-height);
     align-content: center;
     gap: 0.25rem;
     padding: 0.9rem 1.15rem 1rem;
@@ -851,16 +875,6 @@ const initialVisibleSlides = Math.min(3, speakerSlides.length);
     text-transform: uppercase;
   }
 
-  .speaker-card__status {
-    color: rgb(57 54 54 / 52%);
-    font-family: var(--font-nav);
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.055em;
-    line-height: 1.3;
-    text-transform: uppercase;
-  }
-
   .speaker-card__pending-surface {
     overflow: hidden;
     background: var(--color-brand-blue);
@@ -870,7 +884,7 @@ const initialVisibleSlides = Math.min(3, speakerSlides.length);
   .speaker-card__pending-surface::before {
     position: absolute;
     top: 12%;
-    bottom: calc(7.5rem + 12%);
+    bottom: calc(var(--identity-height) + 12%);
     left: 50%;
     width: min(42%, 7rem);
     border: 1px solid currentColor;
