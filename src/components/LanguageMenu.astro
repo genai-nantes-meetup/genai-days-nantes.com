@@ -1,0 +1,175 @@
+---
+import { getAlternatePaths, getLocaleFromPath, LOCALE_NAMES, LOCALES } from '../lib/i18n';
+
+interface Props {
+  /* Identifiant du panneau, unique par instance (mobile et grand écran). */
+  id: string;
+  class?: string;
+}
+
+/* La langue actuelle et le chevron d'Explorer ; un clic ouvre les deux
+ * langues. <details> garde le menu utilisable sans JavaScript et annonce
+ * son état ; language-menu.ts ajoute les fermetures attendues. */
+const { id, class: className } = Astro.props;
+const locale = getLocaleFromPath(Astro.url.pathname);
+const alternatePaths = getAlternatePaths(Astro.url.pathname) ?? { fr: '/', en: '/en' };
+const toggleLabel = { fr: 'Langue : Français', en: 'Language: English' }[locale];
+---
+
+<details class:list={['language-menu', className]} data-language-menu>
+  <summary class="language-menu__toggle">
+    <span aria-hidden="true">{locale.toUpperCase()}</span>
+    <span class="sr-only">{toggleLabel}</span>
+    <span class="language-menu__chevron" aria-hidden="true"></span>
+  </summary>
+  <ul class="language-menu__panel" id={id}>
+    {LOCALES.map((option) => (
+      <li>
+        {option === locale ? (
+          <a class="language-menu__option" href={alternatePaths[option]} hreflang={option} lang={option} aria-current="true">
+            {LOCALE_NAMES[option]}
+          </a>
+        ) : (
+          <a class="language-menu__option" href={alternatePaths[option]} hreflang={option} lang={option} data-language-switch>
+            {LOCALE_NAMES[option]}
+          </a>
+        )}
+      </li>
+    ))}
+  </ul>
+</details>
+
+<script>
+  import { initLanguageMenus } from '../scripts/language-menu';
+
+  initLanguageMenus();
+</script>
+
+<style>
+  /* Le déclencheur parle la voix du bouton Explorer : Arial gras en
+   * capitales, même chevron, même encre de survol et d'ouverture. */
+  .language-menu {
+    position: relative;
+    display: inline-flex;
+  }
+
+  .language-menu__toggle {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    gap: 0.45rem;
+    color: currentColor;
+    cursor: pointer;
+    font-family: var(--font-nav);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    list-style: none;
+    opacity: 0.78;
+    text-transform: uppercase;
+    transition: color 180ms ease, opacity 180ms ease;
+  }
+
+  .language-menu__toggle::-webkit-details-marker {
+    display: none;
+  }
+
+  .language-menu__toggle:hover,
+  .language-menu__toggle:focus-visible,
+  .language-menu[open] .language-menu__toggle {
+    color: var(--color-brand-blue);
+    opacity: 1;
+  }
+
+  /* Sur l'affiche, l'orange du bouton Menu ouvert : le bleu ne tient pas
+   * sur la nuit du poster. */
+  :global(.site-header.is-immersed) .language-menu__toggle:hover,
+  :global(.site-header.is-immersed) .language-menu__toggle:focus-visible,
+  :global(.site-header.is-immersed) .language-menu[open] .language-menu__toggle {
+    color: var(--color-brand-orange);
+  }
+
+  .language-menu__chevron {
+    width: 0.48rem;
+    height: 0.48rem;
+    border-right: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+    transform: translateY(-0.12rem) rotate(45deg);
+    transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .language-menu[open] .language-menu__chevron {
+    transform: translateY(0.12rem) rotate(225deg);
+  }
+
+  /* Le panneau part du bord bas du header, comme le volet Explorer : le
+   * déclencheur fait 44px, centré dans la hauteur du header. */
+  .language-menu__panel {
+    position: absolute;
+    z-index: 20;
+    top: calc(100% + (var(--site-header-height) - 44px) / 2);
+    right: 0;
+    display: grid;
+    min-width: 10rem;
+    margin: 0;
+    padding: 0.35rem 0;
+    border: 1px solid rgb(57 54 54 / 16%);
+    background: var(--color-brand-cream);
+    box-shadow: 0 1.2rem 3rem rgb(13 13 18 / 12%);
+    color: var(--color-brand-black);
+    list-style: none;
+    text-shadow: none;
+  }
+
+  .language-menu__option {
+    display: flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0 1rem;
+    color: currentColor;
+    font-family: var(--font-nav);
+    font-size: 0.75rem;
+    font-weight: 650;
+    letter-spacing: 0.015em;
+    text-transform: uppercase;
+  }
+
+  .language-menu__option:hover,
+  .language-menu__option:focus-visible,
+  .language-menu__option[aria-current='true'] {
+    color: var(--color-brand-blue);
+  }
+
+  /* La langue courante porte la pastille orange de la page courante. */
+  .language-menu__option[aria-current='true']::after {
+    width: 0.34rem;
+    height: 0.34rem;
+    border-radius: 50%;
+    background: var(--color-brand-orange);
+    content: "";
+  }
+
+  /* Ouvert sur l'affiche, le panneau prend l'encre de nuit du volet
+   * Explorer immergé. */
+  :global(.site-header.is-immersed) .language-menu__panel {
+    border-color: rgb(249 244 236 / 18%);
+    background: rgb(5 5 16 / 92%);
+    color: var(--color-brand-cream);
+    backdrop-filter: blur(14px);
+  }
+
+  :global(.site-header.is-immersed) .language-menu__option:hover,
+  :global(.site-header.is-immersed) .language-menu__option:focus-visible,
+  :global(.site-header.is-immersed) .language-menu__option[aria-current='true'] {
+    color: var(--color-brand-orange);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .language-menu__toggle,
+    .language-menu__chevron {
+      transition: none;
+    }
+  }
+</style>

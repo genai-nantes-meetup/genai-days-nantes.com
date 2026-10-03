@@ -43,22 +43,21 @@ describe('Header.astro', () => {
     expect(html).not.toMatch(/href="\/speakers"[^>]*aria-current="page"/);
   });
 
-  it('offers the other language as a discreet code before the ticketing CTA', async () => {
+  it('shows the current language with a menu to the other one, before the ticketing CTA', async () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(Header, {
       request: new Request('https://example.com/programme'),
     });
 
     // Avant le bouton Menu sur mobile, avant la billetterie au-delà.
-    expect(html.match(/data-language-switch/g)).toHaveLength(2);
-    expect(html).toMatch(
-      /class="site-header__language site-header__language--compact" href="\/en\/program" hreflang="en" lang="en" data-language-switch>/,
-    );
-    expect(html).toMatch(
-      /site-header__actions[\s\S]*?<a class="site-header__language" href="\/en\/program" hreflang="en" lang="en" data-language-switch>\s*<span aria-hidden="true">EN<\/span>\s*<span class="sr-only">English<\/span>/,
-    );
+    expect(html.match(/<details class="language-menu site-header__language/g)).toHaveLength(2);
+    expect(html).toMatch(/<summary class="language-menu__toggle"[^>]*>\s*<span aria-hidden="true"[^>]*>FR<\/span>\s*<span class="sr-only"[^>]*>Langue\u00a0: Français<\/span>/);
+    expect(html).toMatch(/href="\/programme" hreflang="fr" lang="fr" aria-current="true"[^>]*>\s*Français/);
+    expect(html).toMatch(/href="\/en\/program" hreflang="en" lang="en" data-language-switch[^>]*>\s*English/);
+    const actions = html.slice(html.indexOf('site-header__actions'), html.indexOf('id="site-menu"'));
+    expect(actions).toMatch(/<details class="language-menu site-header__language"[\s\S]*?header-cta/);
     const menu = html.slice(html.indexOf('id="site-menu"'));
-    expect(menu).not.toContain('data-language-switch');
+    expect(menu).not.toContain('language-menu');
   });
 
   it('renders the English header with localized links and ticketing', async () => {
@@ -74,7 +73,8 @@ describe('Header.astro', () => {
     expect(html).toContain('href="/en/practical-info"');
     expect(html).toContain('href="/en/team"');
     expect(html).toContain('opens in a new tab');
-    expect(html).toMatch(/href="\/programme\/agentic-coding" hreflang="fr" lang="fr" data-language-switch>\s*<span aria-hidden="true">FR<\/span>\s*<span class="sr-only">Français<\/span>/);
+    expect(html).toMatch(/<span aria-hidden="true"[^>]*>EN<\/span>\s*<span class="sr-only"[^>]*>Language: English<\/span>/);
+    expect(html).toMatch(/href="\/programme\/agentic-coding" hreflang="fr" lang="fr" data-language-switch[^>]*>\s*Français/);
   });
 
   it('stays sticky, surface driven by --header-surface, with the mobile menu panel', async () => {

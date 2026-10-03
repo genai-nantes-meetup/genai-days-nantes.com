@@ -2,7 +2,7 @@
 import ArrowIcon from './ArrowIcon.astro';
 import Button from './Button.astro';
 import EventName from './EventName.astro';
-import LanguageLink from './LanguageLink.astro';
+import LanguageMenu from './LanguageMenu.astro';
 import { CTA_LINKS } from '../lib/cta-links';
 import { getLocaleFromPath, localizePath } from '../lib/i18n';
 import EVENT from '../content/event.json';
@@ -107,9 +107,9 @@ const isCurrentPage = (href: string) =>
   <a href={localizePath('/', locale)} class="site-header__brand justify-self-start shrink-0 whitespace-nowrap text-lg font-bold tracking-wide sm:text-xl" data-scroll-top><EventName showLocation /></a>
 
   <div class="site-header__navigation col-start-2 justify-self-end md:justify-self-center">
-    {/* Sur mobile, la barre n'a pas de zone d'actions : le lien de langue
-        se range avant le bouton Menu. */}
-    <LanguageLink class="site-header__language site-header__language--compact" />
+    {/* Sur mobile, la barre n'a pas de zone d'actions : le sélecteur de
+        langue se range avant le bouton Menu. */}
+    <LanguageMenu id="language-menu-compact" class="site-header__language site-header__language--compact" />
     <nav class="site-header__nav items-center" aria-label={copy.mainNavigationLabel}>
       {primaryLinks.map((link) => (
         <a
@@ -137,7 +137,7 @@ const isCurrentPage = (href: string) =>
   </div>
 
   <div class="site-header__actions col-start-3 items-center justify-self-end">
-    <LanguageLink class="site-header__language" />
+    <LanguageMenu id="language-menu" class="site-header__language" />
     <Button class:list={['header-cta header-cta--tickets', { 'header-cta--poster': immersive }]} variant="accent" href={CTA_LINKS.tickets}>{copy.ticketsCta}</Button>
   </div>
 
@@ -332,39 +332,9 @@ const isCurrentPage = (href: string) =>
     text-shadow: 0 1px 14px rgb(5 5 16 / 55%), 0 1px 2px rgb(5 5 16 / 35%);
   }
 
-  /* Le lien de langue est rendu par LanguageLink : classe globale, ancrée
-   * sur le header scopé. Volontairement discret : le seul code de l'autre
-   * langue, dans la voix de la nav mais un ton en dessous, sans pastille ni
-   * séparateur, pour ne pas concurrencer la billetterie qu'il précède. */
-  .site-header :global(.site-header__language) {
-    display: inline-flex;
-    min-width: 2rem;
-    min-height: 44px;
-    align-items: center;
-    justify-content: center;
-    color: currentColor;
-    font-family: var(--font-nav);
-    font-size: 0.68rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    opacity: 0.6;
-    text-transform: uppercase;
-    transition: color 180ms ease, opacity 180ms ease;
-  }
-
-  .site-header :global(.site-header__language:hover),
-  .site-header :global(.site-header__language:focus-visible) {
-    color: var(--color-brand-blue);
-    opacity: 1;
-  }
-
-  /* Sur l'affiche, le survol reprend l'orange du bouton Menu ouvert : le
-   * bleu ne tient pas sur la nuit du poster. */
-  .site-header.is-immersed :global(.site-header__language:hover),
-  .site-header.is-immersed :global(.site-header__language:focus-visible) {
-    color: var(--color-brand-orange);
-  }
-
+  /* Le sélecteur de langue (LanguageMenu) porte ses propres styles ; le
+   * header ne règle que sa place. Classe globale, ancrée sur le header
+   * scopé. */
   .site-header__actions :global(.site-header__language) {
     margin-inline-end: clamp(0.75rem, 1.4vw, 1.25rem);
   }
@@ -743,7 +713,8 @@ const isCurrentPage = (href: string) =>
       display: flex;
     }
 
-    /* Placé après la règle de base, à spécificité égale : il l'emporte. */
+    /* Ancré sur le conteneur scopé : le style scopé du composant (classe et
+     * attribut) l'emporterait sur une classe globale seule. */
     .site-header__navigation :global(.site-header__language--compact) {
       display: none;
     }
@@ -898,8 +869,7 @@ const isCurrentPage = (href: string) =>
     .site-header__nav-link::after,
     .menu-toggle__bars::before,
     .menu-toggle__bars::after,
-    .menu-toggle__chevron,
-    .site-header :global(.site-header__language) {
+    .menu-toggle__chevron {
       transition: none;
     }
   }
