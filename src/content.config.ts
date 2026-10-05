@@ -19,7 +19,7 @@ const speakers = defineCollection({
     name: z.string(),
     role: z.string(),
     company: z.string(),
-    eventRole: z.enum(['jury', 'animateur', 'monsieur-loyal', 'madame-loyale']).optional(),
+    eventRole: z.enum(['jury', 'animateur', 'finaliste', 'monsieur-loyal', 'madame-loyale']).optional(),
     bio: z.string(),
     profile: z.array(z.string()).min(2),
     genaiLegitimacy: z.string(),

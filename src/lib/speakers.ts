@@ -5,13 +5,15 @@ export const SPEAKER_TARGET = 19;
 export const SPEAKER_EVENT_ROLE_LABELS = {
   jury: 'Jury du Startup Contest',
   animateur: 'Animateur du Startup Contest',
-  'monsieur-loyal': 'Monsieur Loyal de la journée',
-  'madame-loyale': 'Madame Loyale de la journée',
+  finaliste: 'Finaliste du Startup Contest',
+  'monsieur-loyal': 'Monsieur Loyal',
+  'madame-loyale': 'Madame Loyale',
 } as const;
 
 export const SPEAKER_EVENT_ROLE_SHORT_LABELS = {
   jury: 'Jury',
   animateur: 'Animateur',
+  finaliste: 'Finaliste Startup Contest',
   'monsieur-loyal': 'Monsieur Loyal',
   'madame-loyale': 'Madame Loyale',
 } as const;
@@ -26,8 +28,11 @@ export const SPEAKER_PROMINENCE_ORDER = [
   'gael-brisson',
 ] as const;
 
+/* Pitcheurs du Startup Contest : après les autres speakers, avant les MC. */
+export const SPEAKER_STARTUP_CONTEST_PITCHERS_ORDER = ['emmanuel-marboeuf'] as const;
+
 /* MC de la journée : toujours en fin de liste, après tous les autres speakers. */
-export const SPEAKER_LAST_ORDER = [
+export const SPEAKER_MASTERS_OF_CEREMONIES_ORDER = [
   'annabelle-koster',
   'marie-fleur-sacreste',
   'florian-herveou',
@@ -43,6 +48,7 @@ export const SPEAKER_PORTRAIT_DIMENSIONS: Record<string, { width: number; height
   'christelle-morancais': { width: 800, height: 800 },
   'constance-nebbula': { width: 832, height: 832 },
   'david-leaurant': { width: 800, height: 800 },
+  'emmanuel-marboeuf': { width: 800, height: 800 },
   'florian-herveou': { width: 600, height: 600 },
   'gael-brisson': { width: 1024, height: 1024 },
   'jaafar-steiblen-raji': { width: 800, height: 920 },
@@ -66,6 +72,7 @@ export const SPEAKER_PORTRAIT_SMALL: Partial<Record<string, string>> = {
   'christelle-morancais': '/speakers/christelle-morancais-480-optimized.webp',
   'constance-nebbula': '/speakers/constance-nebbula-480-optimized.webp',
   'david-leaurant': '/speakers/david-leaurant-480-optimized.webp',
+  'emmanuel-marboeuf': '/speakers/emmanuel-marboeuf-480-optimized.webp',
   'gael-brisson': '/speakers/gael-brisson-480-optimized.webp',
   'jaafar-steiblen-raji': '/speakers/jaafar-steiblen-raji-480-optimized.webp',
   'julien-lesaicherre': '/speakers/julien-lesaicherre-480-optimized.webp',
@@ -82,24 +89,32 @@ export function getSpeakerPortraitSrcset(speakerId: string, fullPhoto: string): 
   return `${small} ${SPEAKER_PORTRAIT_SMALL_WIDTH}w, ${fullPhoto} ${full.width}w`;
 }
 
+/* Ordre d'affichage : speakers en vedette (SPEAKER_PROMINENCE_ORDER), autres
+ * speakers par ordre alphabétique, pitcheurs du Startup Contest, puis MC.
+ * Chaque groupe suit l'ordre de son tableau, sauf « autres » (alphabétique). */
+const SPEAKER_GROUP_OTHERS = 1;
+
+function speakerGroupAndRank(id: string): [group: number, rank: number] {
+  const prominenceIndex = (SPEAKER_PROMINENCE_ORDER as readonly string[]).indexOf(id);
+  if (prominenceIndex !== -1) return [0, prominenceIndex];
+
+  const pitcherIndex = (SPEAKER_STARTUP_CONTEST_PITCHERS_ORDER as readonly string[]).indexOf(id);
+  if (pitcherIndex !== -1) return [SPEAKER_GROUP_OTHERS + 1, pitcherIndex];
+
+  const masterOfCeremoniesIndex = (SPEAKER_MASTERS_OF_CEREMONIES_ORDER as readonly string[]).indexOf(id);
+  if (masterOfCeremoniesIndex !== -1) return [SPEAKER_GROUP_OTHERS + 2, masterOfCeremoniesIndex];
+
+  return [SPEAKER_GROUP_OTHERS, 0];
+}
+
 export function sortSpeakersByProminence<T extends { id: string; data: { name: string } }>(speakers: T[]) {
   return [...speakers].sort((left, right) => {
-    const leftIndex = SPEAKER_PROMINENCE_ORDER.indexOf(left.id as (typeof SPEAKER_PROMINENCE_ORDER)[number]);
-    const rightIndex = SPEAKER_PROMINENCE_ORDER.indexOf(right.id as (typeof SPEAKER_PROMINENCE_ORDER)[number]);
-    const leftLastIndex = SPEAKER_LAST_ORDER.indexOf(left.id as (typeof SPEAKER_LAST_ORDER)[number]);
-    const rightLastIndex = SPEAKER_LAST_ORDER.indexOf(right.id as (typeof SPEAKER_LAST_ORDER)[number]);
+    const [leftGroup, leftRank] = speakerGroupAndRank(left.id);
+    const [rightGroup, rightRank] = speakerGroupAndRank(right.id);
 
-    // Les MC passent après tout le monde, dans l'ordre de SPEAKER_LAST_ORDER.
-    if (leftLastIndex !== -1 || rightLastIndex !== -1) {
-      if (leftLastIndex === -1) return -1;
-      if (rightLastIndex === -1) return 1;
-      return leftLastIndex - rightLastIndex;
-    }
-
-    const leftRank = leftIndex === -1 ? Number.MAX_SAFE_INTEGER : leftIndex;
-    const rightRank = rightIndex === -1 ? Number.MAX_SAFE_INTEGER : rightIndex;
-
-    return leftRank - rightRank || left.data.name.localeCompare(right.data.name, 'fr');
+    return (
+      leftGroup - rightGroup || leftRank - rightRank || left.data.name.localeCompare(right.data.name, 'fr')
+    );
   });
 }
 
