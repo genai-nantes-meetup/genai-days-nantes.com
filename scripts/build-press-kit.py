@@ -1086,6 +1086,7 @@ def build_context(tmp: Path) -> dict:
     kit_contents = (
         ("README.pdf", "Ce dossier de presse"),
         (Path(event["image"]).name, "Visuel officiel · WEBP · 2560 × 1454 px"),
+        ("cover.png", "Affiche officielle · PNG"),
         ("genai-days-wordmark.svg", "Wordmark vectorisé · SVG"),
         ("Gen AI Logo.svg", "Symbole · SVG"),
         (f"illustrations/ ({len(illustrations)} fichiers)", f"Illustrations des conférences · WEBP · {ILLUSTRATION_WIDTH} px"),
@@ -1174,7 +1175,12 @@ def main() -> None:
         wordmark_svg(fonts, KIT / "genai-days-wordmark.svg")
         render_pdf(ctx)
         shutil.copy2(PDF, KIT / "README.pdf")
-        manifest += [KIT / name for name in ("README.pdf", Path(event["image"]).name, "genai-days-wordmark.svg", "Gen AI Logo.svg")]
+        # The poster (title, date, venue) is not generated: it is dropped into
+        # the kit folder by hand and only picked up by the ZIP.
+        manifest += [
+            KIT / name
+            for name in ("README.pdf", Path(event["image"]).name, "cover.png", "genai-days-wordmark.svg", "Gen AI Logo.svg")
+        ]
 
     archive = PUBLIC / "press/genai-days-press-kit.zip"
     with ZipFile(archive, "w", compression=ZIP_DEFLATED, compresslevel=9) as bundle:
