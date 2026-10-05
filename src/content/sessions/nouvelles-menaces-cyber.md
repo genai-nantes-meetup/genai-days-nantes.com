@@ -3,7 +3,7 @@ title: "Des ados de 15 ans utilisent ChatGPT pour exfiltrer mes données"
 subtitle: "Les nouvelles menaces cyber"
 seoTitle: "Des ados de 15 ans utilisent ChatGPT pour exfiltrer mes données"
 track: "decideurs"
-startTime: "14:25"
+startTime: "16:55"
 durationMinutes: 40
 room: ""
 speakerSlugs: []
