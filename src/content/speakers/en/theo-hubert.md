@@ -6,7 +6,7 @@ profile:
   - "At AlphaEdge, he leads technical strategy and R&D. The team develops expert models designed for specific use cases, with close attention to latency, lean infrastructure and data control."
   - "His path connects product design, engineering and applied research. He advocates for AI that learns better with smaller models, rather than always relying on ever-larger general-purpose models."
   - "An entrepreneur since 2017 and the winner of four startup competitions, he also shares his experience: more than 800 hours of teaching delivered and more than 110 student entrepreneurs mentored. Trained as a computer science and networking engineer specializing in IoT, he rounded out his education with a Stanford course in machine learning and deep learning."
-genaiLegitimacy: "Théo Hubert works directly on model specialization and compression. At a 2025 hearing of the Pays de la Loire CESER, the regional economic, social and environmental council, he presented an approach that shrinks models and specializes them so they can be deployed closer to the user. This work addresses real-world constraints of performance, cost, energy consumption and data privacy."
+genaiLegitimacy: "Théo Hubert works directly on model design and compression. At a 2025 hearing of the Pays de la Loire CESER, the regional economic, social and environmental council, he presented an approach that shrinks models and specializes them so they can be deployed closer to the user. This work addresses real-world constraints of performance, cost, energy consumption and data privacy."
 careerHighlights:
   - period: "Since 2023"
     title: "Co-founder, President and CTO of AlphaEdge"
