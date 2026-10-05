@@ -6,6 +6,7 @@ import { CTA_LINKS } from '../lib/cta-links';
 import { SPEAKER_EVENT_ROLE_SHORT_LABELS } from '../lib/speakers';
 import { stripMarkdownToPlainText } from '../lib/markdown';
 import { localizePath } from '../lib/i18n';
+import { getLocalizedCollection } from '../lib/localized-content';
 import EVENT from '../content/event.json';
 import PRICING from '../content/pricing.json';
 
@@ -35,10 +36,11 @@ const KEY_PAGES = [
 
 export const GET: APIRoute = async ({ site, url }) => {
   const siteUrl = (site ?? new URL(url.origin)).href;
-  const [tracks, sessions, speakers, team, partners] = await Promise.all([
+  const [tracks, sessions, speakers, englishSpeakers, team, partners] = await Promise.all([
     getCollection('tracks'),
     getCollection('sessions'),
     getCollection('speakers'),
+    getLocalizedCollection('speakers', 'en'),
     getCollection('team'),
     getCollection('partners'),
   ]);
@@ -81,6 +83,16 @@ export const GET: APIRoute = async ({ site, url }) => {
     .map((member) => `- ${member.data.name}, ${member.data.role}. ${member.data.background}.`)
     .join('\n');
 
+  const englishSpeakerById = new Map(englishSpeakers.map((speaker) => [speaker.id, speaker.data]));
+  const speakerLines = [...speakers]
+    .sort((left, right) => left.data.name.localeCompare(right.data.name, 'fr'))
+    .map((speaker) => {
+      const english = englishSpeakerById.get(speaker.id)!;
+      const path = `/speakers/${speaker.id}`;
+      return `- ${speaker.data.name} · ${speaker.data.company} · ${speaker.data.role} / ${english.role}. Fiche FR : ${new URL(path, siteUrl).href} · EN profile: ${new URL(localizePath(path, 'en'), siteUrl).href}`;
+    })
+    .join('\n');
+
   const socialSection = PUBLISHED_SOCIAL_PROFILES.length > 0
     ? `\n## Réseaux sociaux\n\n${PUBLISHED_SOCIAL_PROFILES.map((profile) => `- ${profile.label} : ${profile.url}`).join('\n')}\n`
     : '';
@@ -112,6 +124,10 @@ ${trackLines}
 ## Sessions annoncées
 
 ${sessionLines}
+
+## Intervenant·es annoncés / Announced speakers
+
+${speakerLines}
 
 ## Tarif
 

@@ -370,6 +370,7 @@ const initialVisibleSlides = Math.min(4, speakerSlides.length);
             >
               {slide.kind === "speaker" ? (
                 <a
+                  class:list={{ "speaker-card__custom-caption": !!slide.speaker.data.cardRole }}
                   href={localizePath(`/speakers/${slide.speaker.id}`, locale)}
                   aria-label={copy.speakerLinkLabel(slide.speaker.data.name)}
                 >
@@ -427,10 +428,10 @@ const initialVisibleSlides = Math.min(4, speakerSlides.length);
                       {slide.speaker.data.name}
                     </strong>
                     <span class="speaker-card__role">
-                      {slide.speaker.data.role}
+                      {slide.speaker.data.cardRole ?? slide.speaker.data.role}
                     </span>
                     <span class="speaker-card__company">
-                      {slide.speaker.data.company}
+                      {slide.speaker.data.cardCompany ?? slide.speaker.data.company}
                     </span>
                   </span>
                 </a>
@@ -972,6 +973,14 @@ const initialVisibleSlides = Math.min(4, speakerSlides.length);
   .speaker-card__role {
     color: rgb(57 54 54 / 76%);
     font-weight: 500;
+  }
+
+  .speaker-card__custom-caption .speaker-card__identity {
+    padding-block: 0.5rem;
+  }
+
+  .speaker-card__custom-caption .speaker-card__role {
+    white-space: normal;
   }
 
   .speaker-card__company {

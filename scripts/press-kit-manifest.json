@@ -33,7 +33,7 @@
   "src/content/sessions/industrialisation-projet-ia.md": "0a34ea1b72ee41926fdfe48682934f6c61c3cd232a4523668b8649dee2b6fb58",
   "src/content/sessions/inference-self-hosting.md": "f2f54c30ccac6a9dfffa759aa4d438584994772ac616f2c0cd964ec682f509ec",
   "src/content/sessions/keynote-ouverture-christelle-morancais.md": "a4e2ef98aa94887142049c35d3dd23ca62b08503faf01cc9a1d6a6db865fcabc",
-  "src/content/sessions/nouvelles-menaces-cyber.md": "db5372e982b9a49d1ec79a8790c99a7826f79aea77ab83ae52b0dc7426d6117f",
+  "src/content/sessions/nouvelles-menaces-cyber.md": "7c908cba2c0303d192a030fa4046aa6be7952ef627a74646f0e50e184358ad3d",
   "src/content/sessions/physical-ai-robotique.md": "6c4b18c1d9f30feb8e2ed4d510e8969f95a86e1e26da77dd8b2af2e1648f6eef",
   "src/content/sessions/podcast-maci.md": "3f3374138c67c05150e91a6a8a36c9f3746858c1ec1ef90cde5506db1e682dfe",
   "src/content/sessions/slm-compression-modeles.md": "684697e99d6038d82d02766a32fb3af28affe6c3231cf53c54cbb1f182f5a07e",
@@ -55,6 +55,7 @@
   "src/content/speakers/marie-fleur-sacreste.md": "3f7041fa8ac3d3d75e111bb63d3b6f26be0a7be38554be8ca8bfa5f4171d7747",
   "src/content/speakers/nicolas-martignole.md": "d3f5489e9598d40f449b58b4d1527299c3c32e7dee8d46607824640b4e106559",
   "src/content/speakers/quentin-adam.md": "02923609ea3bfac23144e10be3f3ecd9d5f6481f7671c08242968db406a0fc4e",
+  "src/content/speakers/regis-dubrulle.md": "df4389294e692f986761a9699bc9ee60cf26c81badaa29accc8219b1425b0023",
   "src/content/speakers/sebastien-le-corfec.md": "a4a2d4bbca8a62a19907d2ff0635353170eb75bb78e402df39ca1657532060d0",
   "src/content/speakers/theo-hubert.md": "a9c2e097ccf63240834ddc05699de5efa2cd1d49c9d50bbf9df8b9dd37182214",
   "src/content/speakers/thomas-mathieu.md": "22630549230161ae6b3d2ae5c689b9c340b15d5ca34925fac5a400f151c2d346",
@@ -68,6 +69,6 @@
   "src/content/tracks/tech.md": "72ee8c4ace7779e59936b0bc0e1dd20e903f40bb848299d87fc3f1a75b99ada3",
   "src/lib/cta-links.ts": "f0714d00307ad451ef193cf8806257aa9850fe11b63d647365c7311cfd1e9b96",
   "src/lib/programme.ts": "cd07d3fb61887d5c0a2c5575f92d1bd4eb3e83372b7e20d0f092871ef14908ee",
-  "src/lib/speakers.ts": "4e1d3069cbc87978be99c979661f021ab5b9b6c8a336724044fd4880db04c00d",
+  "src/lib/speakers.ts": "8d2d36d6f45c501686fdb4ae954989af97a704794a157e4946e8af5ef960b4c7",
   "src/styles/global.css": "b43522727cf5326cb703ed590143868e76e6ba9e4e0df74ed83a608feaa62cea"
 }

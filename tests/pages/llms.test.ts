@@ -48,5 +48,11 @@ describe('llms.txt', () => {
     expect(text).toContain('- Program: https://example.com/en/program');
     expect(text).toContain('- Privacy and legal notice: https://example.com/en/privacy');
     expect(text).toContain('Les conférences restent présentées en français.');
+
+    for (const speaker of await getCollection('speakers')) {
+      expect(text).toContain(speaker.data.name);
+      expect(text).toContain(`https://example.com/speakers/${speaker.id}`);
+      expect(text).toContain(`https://example.com/en/speakers/${speaker.id}`);
+    }
   });
 });

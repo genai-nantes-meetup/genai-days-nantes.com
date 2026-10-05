@@ -50,14 +50,15 @@ describe('speakers index page', () => {
     });
   });
 
-  it('shows the next announcement placeholder and closes with the shared ticket', async () => {
+  it('shows remaining announcement slots and closes with the shared ticket', async () => {
     const speakers = await getCollection('speakers');
     const container = await createAstroContainer();
     const html = await container.renderToString(SpeakersIndexPage);
 
-    expect(html).toContain('Prochain intervenant');
-    expect(html).toContain('Annonce à venir');
-    expect(html.match(/data-speaker-placeholder/g)).toHaveLength(SPEAKER_TARGET - speakers.length);
+    const remainingSlots = Math.max(0, SPEAKER_TARGET - speakers.length);
+    expect(html.includes('Prochain intervenant')).toBe(remainingSlots > 0);
+    expect(html.includes('Annonce à venir')).toBe(remainingSlots > 0);
+    expect(html.match(/data-speaker-placeholder/g) ?? []).toHaveLength(remainingSlots);
     expect(html).not.toContain('Prochaines annonces');
     expect(html).not.toContain('+17');
     expect(html).not.toContain('speaker-tile__number');
@@ -77,7 +78,7 @@ describe('speakers index page', () => {
     expect(html).toContain('<html lang="en"');
     expect(html).toContain(`<title>Speakers ${EVENT_YEAR} · GENAI DAYS</title>`);
     expect(html).toContain('Voices chosen for their expertise.');
-    expect(html).toContain('Next speaker');
+    expect(html.includes('Next speaker')).toBe(speakers.length < SPEAKER_TARGET);
     expect(html).not.toContain('Prochain intervenant');
     expect(html).toContain('Those who decide');
     expect(html).toContain('Those who implement');

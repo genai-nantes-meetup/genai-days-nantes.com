@@ -19,6 +19,8 @@ const speakers = defineCollection({
     name: z.string(),
     role: z.string(),
     company: z.string(),
+    cardRole: z.string().optional(),
+    cardCompany: z.string().optional(),
     eventRole: z.enum(['jury', 'animateur', 'finaliste', 'monsieur-loyal', 'madame-loyale']).optional(),
     bio: z.string(),
     profile: z.array(z.string()).min(2),
@@ -145,6 +147,8 @@ const speakersEn = defineCollection({
   loader: translationLoader('speakers'),
   schema: z.object({
     role: z.string(),
+    cardRole: z.string().optional(),
+    cardCompany: z.string().optional(),
     bio: z.string(),
     profile: z.array(z.string()).min(2),
     genaiLegitimacy: z.string(),

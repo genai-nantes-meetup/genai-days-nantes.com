@@ -6,7 +6,7 @@ track: "decideurs"
 startTime: "16:55"
 durationMinutes: 40
 room: ""
-speakerSlugs: []
+speakerSlugs: ["regis-dubrulle"]
 format: "talk"
 themes: ["Cybersécurité", "IA générative", "Exfiltration de données"]
 illustration:
