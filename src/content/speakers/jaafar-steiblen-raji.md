@@ -2,6 +2,7 @@
 name: "Jaafar Steiblen-Raji"
 role: "Consultant Senior"
 company: "Explore the Vault"
+eventRole: "monsieur-loyal"
 bio: "Maître de cérémonie de GenAI Days, Jaafar Steiblen-Raji a fondé Les Grandes Épopées et rejoint Explore the Vault pour aider les experts à démultiplier leur savoir-faire grâce à l’IA."
 profile:
   - "Jaafar Steiblen-Raji passe sept ans chez Theodo, cabinet de conseil et de réalisation tech. VP Project & Sales chez Theodo France, puis à la tête de Theodo Nantes dont il mène le lancement, il accompagne des dizaines d’entreprises dans le développement d’applications métiers exigeantes, dont des projets complexes intégrant de l’IA."

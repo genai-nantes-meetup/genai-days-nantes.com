@@ -2,6 +2,7 @@
 import SessionIllustration from './SessionIllustration.astro';
 import { IS_MY_DAY_ENABLED } from '../lib/features';
 import { getLocaleFromPath } from '../lib/i18n';
+import type { SPEAKER_EVENT_ROLE_LABELS } from '../lib/speakers';
 
 interface Props {
   title: string;
@@ -11,7 +12,7 @@ interface Props {
   durationMinutes: number;
   room: string;
   format: 'keynote' | 'talk' | 'table-ronde' | 'atelier' | 'concours' | 'podcast';
-  speakers: { name: string; href: string; eventRole?: 'jury' | 'animateur' }[];
+  speakers: { name: string; href: string; eventRole?: keyof typeof SPEAKER_EVENT_ROLE_LABELS.fr }[];
   sessionHref?: string;
   provisional?: boolean;
   illustration?: {

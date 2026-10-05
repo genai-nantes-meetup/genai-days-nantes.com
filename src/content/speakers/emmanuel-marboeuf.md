@@ -1,0 +1,33 @@
+---
+name: "Emmanuel Marboeuf"
+role: "Cofondateur"
+company: "BWorlds"
+eventRole: "finaliste"
+bio: "Cofondateur de BWorlds à Nantes, Emmanuel Marboeuf a été près de dix ans CTO de Visage, startup de recrutement par l’IA basée à San Francisco, avant de lancer des agents qui auditent et surveillent les applications créées avec l’IA."
+profile:
+  - "Diplômé d’un master en informatique et management de l’Université de Nantes, Emmanuel Marboeuf commence sa carrière comme ingénieur logiciel. Chez Thales, il devient expert en architectures distribuées pour la cyberdéfense et présente ses travaux notamment au Salon du Bourget, sur le stand du ministère de la Défense."
+  - "En 2016, il cofonde Visage, une startup de recrutement par l’IA basée à San Francisco et passée par l’accélérateur Alchemist. Pendant près de dix ans, il en est le CTO. Il construit le produit et ses propres modèles d’IA à partir de zéro, monte les équipes techniques et accompagne l’entreprise au-delà de 9 M$ de revenus récurrents annuels, avec des clients du Fortune 500 aux États-Unis et en Europe. Données personnelles de candidats, RGPD, AI Act européen : la sécurité et la fiabilité en production font partie de son quotidien. Il crée aussi la filiale française de Visage à Nantes."
+  - "Il se consacre désormais à BWorlds, qu’il cofonde à Nantes avec Dorian Ouvrard. L’idée : mettre cette expérience à la portée de millions de personnes, grâce à un service productisé et une solution agentique. BWorlds, c’est l’ingénierie qui ne dort jamais, pour chaque app : des agents auditent les applications créées avec l’IA, les surveillent une fois en ligne et transforment chaque problème trouvé en correction à appliquer dans l’outil avec lequel on construit déjà."
+genaiLegitimacy: "Emmanuel Marboeuf relie l’IA en production, les données sensibles et la nouvelle génération d’applications construites sans développeurs. Il a conçu ses propres modèles d’IA chez Visage, géré des données personnelles de candidats sous RGPD et AI Act, puis fait de cette expérience le produit de BWorlds. Il pitche au Startup Contest de GENAI DAYS."
+careerHighlights:
+  - period: "Début de carrière"
+    title: "Ingénieur logiciel puis expert en cyberdéfense chez Thales"
+    description: "Expertise en architectures distribuées pour la cyberdéfense, avec des travaux présentés au Salon du Bourget sur le stand du ministère de la Défense."
+  - period: "Dès 2016"
+    title: "Cofondateur et CTO de Visage"
+    description: "Construction du produit et de modèles d’IA propres, des équipes techniques et de la filiale nantaise, jusqu’à plus de 9 M$ de revenus récurrents annuels."
+  - period: "Aujourd’hui"
+    title: "Cofondateur de BWorlds"
+    description: "Des agents qui auditent, surveillent et corrigent les applications créées avec l’IA, pour mettre l’ingénierie de production à la portée de tous."
+companies:
+  - name: "BWorlds"
+    relationship: "Cofondateur"
+    description: "BWorlds aide les créateurs d’applications construites avec l’IA à les auditer, les surveiller et les améliorer en production."
+    website: "https://www.bworlds.co/"
+    logo: "/logos/bworlds.svg"
+photo: "/speakers/emmanuel-marboeuf-optimized.webp"
+companyLogo: "/logos/bworlds.svg"
+companyLogoAlt: "Logo BWorlds"
+linkedin: "https://www.linkedin.com/in/emmanuelmarboeuf/"
+website: "https://www.bworlds.co/"
+---

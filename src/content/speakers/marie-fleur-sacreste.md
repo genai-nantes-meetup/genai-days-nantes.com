@@ -2,6 +2,7 @@
 name: "Marie-Fleur Sacreste"
 role: "Consultante IA"
 company: "Marie-Fleur Sacreste Consulting"
+eventRole: "madame-loyale"
 bio: "Consultante en intelligence artificielle à Nantes, Marie-Fleur Sacreste orchestre GENAI DAYS en tant que maîtresse de cérémonie de la journée."
 profile:
   - "Ingénieure diplômée de Centrale Lille, Marie-Fleur Sacreste construit depuis douze ans une carrière de product manager, dont neuf ans consacrés à l’intelligence artificielle : robotique autonome, vision par ordinateur et prédiction des ventes. Elle occupe notamment le poste de Head of Product IA & Data chez Preligens, spécialiste français de la détection sur imagerie satellite (racheté par Safran en 2024 et devenu Safran.AI), avant de rejoindre Veesion, dont les modèles de vision analysent les flux de vidéosurveillance en magasin."
