@@ -3,6 +3,7 @@
 # https://ceser.paysdelaloire.fr/wp-content/uploads/rapport_contribution_IA_complet_web.pdf (pages 91 et 108)
 # https://www.westdatafestival.fr/intervenant/regis-dubrulle/ (intervention)
 # Portrait : https://www.lejournaldesentreprises.com/article/les-entreprises-de-loire-atlantique-et-vendee-sortent-leur-bouclier-contre-les-cyberattaques-1570385 (crédit ANSSI)
+# Logo : https://cyber.gouv.fr/
 # https://www.ride-events.com/programme-2026/ (expérience et fonction chez Terrena)
 # https://www.reussir.fr/lesmarches/comment-terrena-entretient-sa-securite-numerique (pratiques de sécurité chez Terrena)
 # https://www.terrena.fr/ (présentation de Terrena)
@@ -33,11 +34,14 @@ companies:
     relationship: "Délégué régional en Pays de la Loire"
     description: "L’Agence nationale de la sécurité des systèmes d’information est l’autorité nationale en matière de cybersécurité et de cyberdéfense en France. Elle partage des recommandations, accompagne les organisations et contribue à leur protection face aux cyberattaques."
     website: "https://cyber.gouv.fr/"
+    logo: "/logos/anssi-optimized.webp"
   - name: "Terrena"
     relationship: "Ancien responsable de la sécurité des systèmes d’information"
     description: "Groupe coopératif agricole et agroalimentaire du Grand Ouest, Terrena accompagne ses agriculteurs adhérents à travers ses filières et ses marques."
     website: "https://www.terrena.fr/"
 photo: "/speakers/regis-dubrulle-anssi-optimized.webp"
+companyLogo: "/logos/anssi-optimized.webp"
+companyLogoAlt: "Logo ANSSI"
 linkedin: "https://www.linkedin.com/in/r-dubrulle-044/"
 website: "https://cyber.gouv.fr/"
 ---
