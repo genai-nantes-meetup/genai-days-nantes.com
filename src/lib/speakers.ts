@@ -1,7 +1,7 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import type { Locale } from './i18n';
 
-export const SPEAKER_TARGET = 19;
+export const SPEAKER_TARGET = 20;
 
 type SpeakerEventRole = NonNullable<CollectionEntry<'speakers'>['data']['eventRole']>;
 
@@ -46,6 +46,7 @@ export const SPEAKER_PROMINENCE_ORDER = [
   'jean-baptiste-kempf',
   'julien-lesaicherre',
   'regis-dubrulle',
+  'charles-gorintin',
   'quentin-adam',
   'theo-hubert',
   'nicolas-martignole',
@@ -70,6 +71,7 @@ export const SPEAKER_MASTERS_OF_CEREMONIES_ORDER = [
 export const SPEAKER_PORTRAIT_DIMENSIONS: Record<string, { width: number; height: number }> = {
   'annabelle-koster': { width: 400, height: 400 },
   'camille-croze': { width: 238, height: 336 },
+  'charles-gorintin': { width: 1000, height: 1000 },
   'christelle-morancais': { width: 952, height: 952 },
   'constance-nebbula': { width: 832, height: 832 },
   'david-leaurant': { width: 800, height: 800 },

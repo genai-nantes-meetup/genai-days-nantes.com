@@ -6,7 +6,7 @@ track: "decideurs"
 startTime: "14:25"
 durationMinutes: 40
 room: ""
-speakerSlugs: []
+speakerSlugs: ["charles-gorintin"]
 format: "talk"
 themes: ["Conduite du changement", "Acceptabilité de l'IA", "Formation des équipes"]
 illustration:

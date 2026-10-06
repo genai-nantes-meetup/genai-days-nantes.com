@@ -1,0 +1,30 @@
+---
+role: "Co-founder and Chief Technology Officer"
+cardRole: "Co-founder and CTO"
+bio: "Alan’s co-founder and Chief Technology Officer, Charles Gorintin supports AI adoption across its teams. He is also a non-operating co-founder of Mistral AI."
+profile:
+  - "Charles Gorintin studied mathematics and computer science at École des Ponts ParisTech, machine learning at École normale supérieure (ENS) Paris-Saclay and financial engineering at the University of California, Berkeley (UC Berkeley). His background connects data analysis, digital product development and team organization."
+  - "He then worked in data science at Facebook, Instagram and Twitter. At Facebook, he helped tackle fake accounts before contributing to Instagram’s first advertising platform. These experiences gave him hands-on practice with systems that process large amounts of data and reach a broad audience."
+  - "In 2016, he co-founded Alan with Jean-Charles Samuelian-Werve and became its Chief Technology Officer (CTO). He helps build the product and technical teams of a healthcare partner combining insurance, prevention and access to care. He also shares Alan’s engineering principles: autonomy, accountability and access to the information needed to make decisions."
+  - "He is also a non-operating co-founder and board member of Mistral AI. With Maxime Le Bras, he wrote the introduction to Alan’s “Human Intelligence” guide on artificial intelligence (AI) adoption in business. It explores changes to jobs and workplace culture alongside the choice of tools."
+genaiLegitimacy: "Charles Gorintin combines a background in machine learning with technical leadership at Alan and a role as a non-operating co-founder of Mistral AI. His writing on team organization and AI adoption connects technical decisions to the training, autonomy and changes to jobs that concern business leaders."
+careerHighlights:
+  - period: "Since 2016"
+    title: "Co-founder and Chief Technology Officer of Alan"
+    description: "Building the product and technical teams of a healthcare partner combining insurance, prevention and access to care."
+  - period: "Mistral AI"
+    title: "Non-operating co-founder and board member"
+    description: "Contributing to the governance of a European company developing AI models and products."
+  - period: "Before Alan"
+    title: "Data science at Facebook, Instagram and Twitter"
+    description: "Data-driven work including fake-account detection at Facebook and Instagram’s first advertising platform."
+  - period: "Education"
+    title: "École des Ponts ParisTech, ENS Paris-Saclay and UC Berkeley"
+    description: "Studies in mathematics and computer science, machine learning and financial engineering."
+companies:
+  - relationship: "Co-founder and Chief Technology Officer since 2016"
+    description: "Alan is a healthcare partner combining insurance, prevention and daily support. It develops digital services that make healthcare easier to access."
+  - relationship: "Non-operating co-founder and board member"
+    description: "Mistral AI develops language models and AI products for individuals, developers and businesses."
+companyLogoAlt: "Alan logo"
+---
