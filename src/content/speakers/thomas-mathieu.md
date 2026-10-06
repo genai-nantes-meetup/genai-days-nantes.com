@@ -1,4 +1,5 @@
 ---
+# Portrait : https://together.audencia.com/public/news/870-thomas-mathieu-l-eclaireur-de-la-tech-nantaise
 name: "Thomas Mathieu"
 role: "CEO et cofondateur"
 company: "Guest Suite"
@@ -30,7 +31,7 @@ companies:
     description: "La Cantine fédère l’écosystème numérique et entrepreneurial nantais, organise des programmes d’accompagnement et soutient les rencontres entre fondateurs, entreprises et experts."
     website: "https://www.lacantine.co/"
     logo: "/logos/la-cantine-optimized.svg"
-photo: "/speakers/thomas-mathieu-optimized.webp"
+photo: "/speakers/thomas-mathieu-audencia-optimized.webp"
 companyLogo: "/logos/guest-suite-optimized.webp"
 companyLogoOnDark: "/logos/guest-suite-white.webp"
 companyLogoAlt: "Logo Guest Suite"

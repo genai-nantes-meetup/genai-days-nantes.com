@@ -1,4 +1,5 @@
 ---
+# Portrait : https://devfest.gdgnantes.com/team
 name: "Annabelle Koster"
 role: "Tech Community Ambassador"
 company: "SFEIR"
@@ -28,7 +29,7 @@ companies:
     description: "SFEIR est une société d’ingénierie spécialisée en intelligence artificielle, forte de plus de 850 ingénieurs répartis dans huit bureaux en France et au Benelux."
     website: "https://www.sfeir.com/"
     logo: "/logos/sfeir-square-optimized.svg"
-photo: "/speakers/annabelle-koster-optimized.webp"
+photo: "/speakers/annabelle-koster-devfest-optimized.webp"
 companyLogo: "/logos/sfeir-square-optimized.svg"
 companyLogoAlt: "Logo SFEIR"
 linkedin: "https://www.linkedin.com/in/annabelle-koster/"

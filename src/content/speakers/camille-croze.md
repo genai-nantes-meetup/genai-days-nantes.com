@@ -1,4 +1,5 @@
 ---
+# Portrait : https://fr.linkedin.com/posts/camille-croze-294015141_why-humanoids-ive-been-asked-this-question-activity-7419640771026477056-pVrL
 name: "Camille Croze"
 role: "Business Development Manager, robots humanoïdes"
 company: "Wandercraft"
@@ -24,7 +25,7 @@ companies:
     description: "Wandercraft est une société française de robotique, pionnière de l’exosquelette auto-équilibré, qui développe aussi le robot humanoïde Calvin pour l’industrie, en partenariat avec Renault."
     website: "https://www.wandercraft.eu/"
     logo: "/logos/wandercraft-square.svg"
-photo: "/speakers/camille-croze-optimized.webp"
+photo: "/speakers/camille-croze-linkedin-optimized.webp"
 companyLogo: "/logos/wandercraft-square.svg"
 companyLogoAlt: "Logo Wandercraft"
 linkedin: "https://www.linkedin.com/in/camille-croze-294015141/"

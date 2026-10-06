@@ -26,6 +26,10 @@ Don't add a unit test for every new content collection entry (speaker, session, 
 
 ## Images
 
+For speaker portraits, use the highest-quality original available from a reliable source (the speaker, their company, or an event organizer). If a portrait looks pixelated or blurry, look for a larger original or a sharper alternative before using it. Prefer native sources around 800 to 1200 pixels wide when available; inspect actual sharpness rather than trusting file dimensions alone. Do not upscale or use AI to reconstruct facial details unless the user explicitly requests it. If no better source is available, keep the best authentic photo and report the limitation.
+
+Record the portrait source URL in a frontmatter comment, keep the downloaded original, and create a separate optimized WebP without enlarging the source. Check the face framing in both the carousel and speaker page, and update `SPEAKER_PORTRAIT_DIMENSIONS` in `src/lib/speakers.ts` to match the optimized file. Portraits shared by French and English pages must use the same improved asset.
+
 Every image must be optimized/compressed before it is referenced anywhere on the site (components, pages, content collections): never publish a reference to an unoptimized source file.
 
 When optimizing/compressing an image (new or existing), never overwrite the original file. Keep the original filename untouched and add the optimized version alongside it with an `-optimized` suffix before the extension (e.g. `photo.jpg` + `photo-optimized.jpg`). Point performance-sensitive references (OG/Twitter meta tags, JSON-LD `image`, on-page thumbnails) at the `-optimized` file; keep references meant for full-quality downloads (press kit downloadable assets, etc.) on the original.

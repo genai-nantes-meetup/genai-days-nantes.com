@@ -69,8 +69,8 @@ export const SPEAKER_MASTERS_OF_CEREMONIES_ORDER = [
  * Partagées entre toutes les vues qui affichent un portrait, pour réserver
  * l'espace d'image avant chargement et éviter un décalage de mise en page. */
 export const SPEAKER_PORTRAIT_DIMENSIONS: Record<string, { width: number; height: number }> = {
-  'annabelle-koster': { width: 400, height: 400 },
-  'camille-croze': { width: 238, height: 336 },
+  'annabelle-koster': { width: 800, height: 800 },
+  'camille-croze': { width: 400, height: 400 },
   'charles-gorintin': { width: 1000, height: 1000 },
   'christelle-morancais': { width: 952, height: 952 },
   'constance-nebbula': { width: 832, height: 832 },
@@ -80,14 +80,14 @@ export const SPEAKER_PORTRAIT_DIMENSIONS: Record<string, { width: number; height
   'gael-brisson': { width: 1024, height: 1024 },
   'jaafar-steiblen-raji': { width: 800, height: 920 },
   'julien-lesaicherre': { width: 800, height: 800 },
-  'laurent-duthoit': { width: 238, height: 336 },
+  'laurent-duthoit': { width: 1000, height: 1000 },
   'marie-fleur-sacreste': { width: 800, height: 800 },
   'nicolas-martignole': { width: 1448, height: 1086 },
   'jean-baptiste-kempf': { width: 1200, height: 1801 },
   'quentin-adam': { width: 800, height: 800 },
   'regis-dubrulle': { width: 1000, height: 1000 },
-  'sebastien-le-corfec': { width: 400, height: 400 },
-  'thomas-mathieu': { width: 452, height: 452 },
+  'sebastien-le-corfec': { width: 760, height: 760 },
+  'thomas-mathieu': { width: 1000, height: 1000 },
   'theo-hubert': { width: 800, height: 800 },
 };
 

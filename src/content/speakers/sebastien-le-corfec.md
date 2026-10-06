@@ -1,4 +1,5 @@
 ---
+# Portrait : https://epopeegestion.fr/collaborateur/sebastien-le-corfec/
 name: "Sébastien Le Corfec"
 role: "Associé et cofondateur"
 company: "Épopée Gestion · West Web Festival"
@@ -29,7 +30,7 @@ companies:
     relationship: "Cofondateur depuis 2014"
     description: "Le West Web Festival réunit chaque année entrepreneurs, investisseurs et dirigeants à Carhaix, pendant les Vieilles Charrues, autour de conférences, d’ateliers et de challenges."
     website: "https://www.west-web-festival.fr/"
-photo: "/speakers/sebastien-le-corfec-optimized.webp"
+photo: "/speakers/sebastien-le-corfec-epopee-optimized.webp"
 companyLogo: "/logos/epopee-gestion-square-optimized.svg"
 companyLogoAlt: "Logo Épopée Gestion"
 linkedin: "https://fr.linkedin.com/in/sebastienlecorfec"

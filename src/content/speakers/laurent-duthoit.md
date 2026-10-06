@@ -1,4 +1,5 @@
 ---
+# Portrait : https://www.meudon.fr/ma-ville/vie-municipale/elus/
 name: "Laurent Duthoit"
 role: "Expert robotique Next Gen et IA physique"
 company: "Renault Group"
@@ -21,7 +22,7 @@ companies:
     description: "Renault Group est un constructeur automobile français qui expérimente la robotique humanoïde sur ses lignes de production, en partenariat avec Wandercraft."
     website: "https://www.renaultgroup.com/"
     logo: "/logos/renault-square-optimized.svg"
-photo: "/speakers/laurent-duthoit-optimized.webp"
+photo: "/speakers/laurent-duthoit-meudon-optimized.webp"
 companyLogo: "/logos/renault-square-optimized.svg"
 companyLogoAlt: "Logo Renault Group"
 companyLogoOnDark: "/logos/renault-square-white.svg"
