@@ -1,7 +1,7 @@
 ---
 role: "Regional cybersecurity delegate, Pays de la Loire"
 cardRole: "Regional cybersecurity delegate"
-cardCompany: "ANSSI · Pays de la Loire"
+cardCompany: "ANSSI"
 companyLogoAlt: "ANSSI logo"
 bio: "ANSSI’s delegate in Pays de la Loire, Régis Dubrulle previously led information systems security at Terrena."
 profile:

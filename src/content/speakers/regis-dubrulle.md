@@ -11,7 +11,7 @@ name: "Régis Dubrulle"
 role: "Délégué régional à la sécurité numérique, Pays de la Loire"
 company: "ANSSI"
 cardRole: "Délégué régional à la sécurité numérique"
-cardCompany: "ANSSI · Pays de la Loire"
+cardCompany: "ANSSI"
 bio: "Délégué de l’ANSSI en Pays de la Loire, Régis Dubrulle a auparavant été responsable sécurité de Terrena."
 profile:
   - "Régis Dubrulle cumule 25 ans d’expérience dans les systèmes d’information et la cybersécurité. Son parcours associe la sécurité en entreprise et l’accompagnement des acteurs publics et privés à l’échelle d’un territoire."
