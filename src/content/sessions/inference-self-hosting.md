@@ -4,7 +4,7 @@ subtitle: "Self-hosting, inference & infrastructure"
 seoTitle: "Je veux internaliser mon inférence, mais c'est cher et lent"
 track: "tech"
 startTime: "09:40"
-durationMinutes: 80
+durationMinutes: 40
 room: ""
 speakerSlugs: []
 format: "talk"

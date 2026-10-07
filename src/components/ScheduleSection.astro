@@ -42,8 +42,8 @@ type ConferenceCell =
   | { kind: 'placeholder' }
   | { kind: 'consumed' };
 
-/* Un talk peut durer plus longtemps qu'un créneau (l'atelier GPU de 80 min
- * occupe les créneaux de 09:40 et 10:20 côté tech) alors que l'autre parcours
+/* Un talk peut durer plus longtemps qu'un créneau (par exemple 80 min sur
+ * deux créneaux d'un parcours) alors que l'autre parcours
  * garde deux talks distincts sur ces mêmes créneaux. On calcule ici, créneau
  * par créneau, la carte à afficher pour ce parcours (avec sa hauteur en
  * nombre de créneaux) ou si la case est déjà couverte par la carte du
@@ -704,7 +704,7 @@ const dayparts = [
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    /* Un talk plus long qu'un créneau (ex. l'atelier GPU de 80 min) porte une
+    /* Un talk plus long qu'un créneau (ex. 80 min sur deux créneaux) porte une
      * carte en rowspan pendant que l'autre parcours garde une ligne par
      * créneau : la grille explicite ses lignes, chaque carte se positionne
      * via les variables posées en style inline. */
