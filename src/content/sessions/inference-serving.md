@@ -1,7 +1,7 @@
 ---
-title: "Mon inférence en local est chère et lente"
+title: "L’inférence de mon Mac mini est lente"
 subtitle: "Du GPU à la plateforme d’inférence"
-seoTitle: "Mon inférence en local est chère et lente"
+seoTitle: "L’inférence de mon Mac mini est lente"
 track: "tech"
 startTime: "10:20"
 durationMinutes: 40

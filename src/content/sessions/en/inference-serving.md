@@ -1,7 +1,7 @@
 ---
-title: "Running inference locally is slow and expensive"
+title: "Inference on my Mac mini is slow"
 subtitle: "From the GPU to the inference platform"
-seoTitle: "Running inference locally is slow and expensive"
+seoTitle: "Inference on my Mac mini is slow"
 themes: ["Inference", "Data centers", "AI infrastructure"]
 illustration:
   alt: "A line of executives, each in turn pouring molten metal into a GPU server"
