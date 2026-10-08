@@ -1,5 +1,6 @@
 ---
 title: "Running inference locally is slow and expensive"
+subtitle: "From the GPU to the inference platform"
 seoTitle: "Running inference locally is slow and expensive"
 themes: ["Inference", "Data centers", "AI infrastructure"]
 illustration:

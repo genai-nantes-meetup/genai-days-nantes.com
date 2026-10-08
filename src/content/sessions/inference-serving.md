@@ -1,6 +1,6 @@
 ---
 title: "Mon inférence en local est chère et lente"
-subtitle: ""
+subtitle: "Du GPU à la plateforme d’inférence"
 seoTitle: "Mon inférence en local est chère et lente"
 track: "tech"
 startTime: "10:20"
