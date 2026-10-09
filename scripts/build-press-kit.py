@@ -909,6 +909,12 @@ def resources_page(pdf: canvas.Canvas, ctx: dict) -> None:
         pdf.setFillColor(MUTED)
         pdf.drawString(x, top - 48, f"#{swatch.hexval()[2:].upper()}")
 
+    top -= 76
+    label(pdf, "Style Midjourney", left, top, color=ORANGE)
+    pdf.setFont("Courier", 7.5)
+    pdf.setFillColor(INK)
+    pdf.drawString(left, top - 14, ctx["midjourney_style"])
+
     # Blue contact field closes the dossier like a back cover.
     field_top = 240
     pdf.setFillColor(BLUE)
@@ -1100,6 +1106,7 @@ def build_context(tmp: Path) -> dict:
         "team": team, "programme_rows": rows, "summary": summary, "figures": figures,
         "illustrations": illustrations, "spokespeople": spokespeople,
         "kit_contents": kit_contents, "tmp": tmp,
+        "midjourney_style": json.loads((CONTENT / "press.json").read_text(encoding="utf-8"))["midjourneyStyle"],
         "programme_status": (
             f"Programme au {format_date(date.today().isoformat())}. Les créneaux « Programmation à venir » "
             "seront annoncés sur le site, qui fait foi."

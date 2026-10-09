@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import PRESS from '../../src/content/press.json';
 import PressKitPage from '../../src/pages/press-kit.astro';
 import { createAstroContainer } from '../utils/create-astro-container';
 
@@ -47,8 +48,9 @@ describe('press-kit.astro', () => {
     const container = await createAstroContainer();
     const html = await container.renderToString(PressKitPage);
 
-    expect(html).toContain('ZIP · 29 fichiers');
-    expect(html).toMatch(/19 illustrations\s+des conférences et 6 portraits/);
+    expect(html).toContain('ZIP · 31 fichiers');
+    expect(html).toContain(PRESS.midjourneyStyle);
+    expect(html).toMatch(/20 illustrations\s+des conférences et 6 portraits/);
     expect(html).toContain('href="/press/genai-days-press-kit.zip"');
     expect(html).toContain('href="/press/genai-days-press-kit/cover_v2-optimized.webp"');
     expect(html).toContain('href="/logos/Gen AI Logo.svg"');
@@ -95,7 +97,7 @@ describe('press-kit.astro', () => {
     expect(main).toContain('a program delivered entirely in French.');
     expect(main).toContain('Language: All talks are delivered in French');
     expect(main).toContain('data-copy-label="Copy the overview"');
-    expect(main).toContain('ZIP · 29 files');
+    expect(main).toContain('ZIP · 31 files');
     expect(main).toContain('href="/press/genai-days-press-kit.zip"');
     expect(main).toContain('href="/en/program"');
     expect(main).not.toContain('Télécharger');

@@ -50,9 +50,9 @@ const regionSpokesperson = PRESS.regionSpokesperson;
 const regionSpokespersonCopy = locale === "en" ? regionSpokesperson.en : regionSpokesperson;
 
 const pressTeamCount = pressTeam.length;
-// README.pdf, visuel officiel, wordmark et symbole, plus les dossiers
+// README.pdf, visuel officiel, affiche, wordmark et symbole, plus les dossiers
 // générés par scripts/build-press-kit.py.
-const pressKitFileCount = 4 + illustrationCount + pressTeamCount;
+const pressKitFileCount = 5 + illustrationCount + pressTeamCount;
 const eventDate = formatEventDateLabel(locale);
 
 const copy = {
@@ -215,6 +215,9 @@ const copy = {
       "Three spokespeople for a technical, community or regional perspective.",
     portraitAlt: (name: string) => `Portrait of ${name}`,
     requestInterview: "Request an interview",
+    promptTitle: "Midjourney style.",
+    promptLede: "Midjourney style parameters of the talk illustrations: append them to a prompt to keep new visuals in the same style.",
+    copyPrompt: "Copy the parameters",
     contactTitle: "Questions or press accreditation?",
     contactCta: "Write to our press contact",
   },
@@ -532,6 +535,13 @@ const pressKitJsonLd = {
             </div>
           </article>
         </div>
+
+        <div class="press-prompt">
+          <h3>{copy.promptTitle}</h3>
+          <p>{copy.promptLede}</p>
+          <code id="midjourney-prompt" class="press-prompt__code">{PRESS.midjourneyStyle}</code>
+          <PressCopyAction target="midjourney-prompt" label={copy.copyPrompt} />
+        </div>
       </div>
     </section>
 
@@ -817,6 +827,29 @@ const pressKitJsonLd = {
     margin-top: 0.85rem;
     color: rgb(57 54 54 / 76%);
     line-height: 1.65;
+  }
+
+  .press-prompt {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+
+  .press-prompt h3 {
+    margin: 0;
+  }
+
+  .press-prompt p {
+    margin: 0;
+  }
+
+  .press-prompt__code {
+    display: block;
+    padding: 1rem;
+    overflow-wrap: anywhere;
+    background: var(--color-brand-cream-deep);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.875rem;
   }
 
   .press-resource-grid {
