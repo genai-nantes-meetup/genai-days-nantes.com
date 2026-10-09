@@ -50,6 +50,7 @@ describe('press-kit.astro', () => {
 
     expect(html).toContain('ZIP · 31 fichiers');
     expect(html).toContain(PRESS.midjourneyStyle);
+    expect(html).toContain('À ajouter à votre prompt Midjourney.');
     expect(html).toMatch(/20 illustrations\s+des conférences et 6 portraits/);
     expect(html).toContain('href="/press/genai-days-press-kit.zip"');
     expect(html).toContain('href="/press/genai-days-press-kit/cover_v2-optimized.webp"');
@@ -98,6 +99,7 @@ describe('press-kit.astro', () => {
     expect(main).toContain('Language: All talks are delivered in French');
     expect(main).toContain('data-copy-label="Copy the overview"');
     expect(main).toContain('ZIP · 31 files');
+    expect(main).toContain('Add this to your Midjourney prompt.');
     expect(main).toContain('href="/press/genai-days-press-kit.zip"');
     expect(main).toContain('href="/en/program"');
     expect(main).not.toContain('Télécharger');

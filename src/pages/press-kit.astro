@@ -134,6 +134,9 @@ const copy = {
       "Trois porte-paroles pour apporter un éclairage technique, communautaire ou territorial.",
     portraitAlt: (name: string) => `Portrait de ${name}`,
     requestInterview: "Demander une interview",
+    promptTitle: "À ajouter à votre prompt Midjourney.",
+    promptLede: "Paramètres de style des illustrations des conférences : à coller à la fin d’un prompt pour garder la même charte graphique.",
+    copyPrompt: "Copier les paramètres",
     contactTitle: "Une question ou une accréditation ?",
     contactCta: "Écrire au contact presse",
   },
@@ -215,8 +218,8 @@ const copy = {
       "Three spokespeople for a technical, community or regional perspective.",
     portraitAlt: (name: string) => `Portrait of ${name}`,
     requestInterview: "Request an interview",
-    promptTitle: "Midjourney style.",
-    promptLede: "Midjourney style parameters of the talk illustrations: append them to a prompt to keep new visuals in the same style.",
+    promptTitle: "Add this to your Midjourney prompt.",
+    promptLede: "Style parameters of the talk illustrations: paste them at the end of a prompt to keep the same visual identity.",
     copyPrompt: "Copy the parameters",
     contactTitle: "Questions or press accreditation?",
     contactCta: "Write to our press contact",
@@ -539,8 +542,10 @@ const pressKitJsonLd = {
         <div class="press-prompt">
           <h3>{copy.promptTitle}</h3>
           <p>{copy.promptLede}</p>
-          <code id="midjourney-prompt" class="press-prompt__code">{PRESS.midjourneyStyle}</code>
-          <PressCopyAction target="midjourney-prompt" label={copy.copyPrompt} />
+          <div class="press-prompt__row">
+            <code id="midjourney-prompt" class="press-prompt__code">{PRESS.midjourneyStyle}</code>
+            <PressCopyAction target="midjourney-prompt" label={copy.copyPrompt} />
+          </div>
         </div>
       </div>
     </section>
@@ -843,8 +848,19 @@ const pressKitJsonLd = {
     margin: 0;
   }
 
+  .press-prompt__row {
+    display: flex;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .press-prompt__row :global(.press-copy-action) {
+    flex: none;
+  }
+
   .press-prompt__code {
-    display: block;
+    flex: 1;
+    min-width: 0;
     padding: 1rem;
     overflow-wrap: anywhere;
     background: var(--color-brand-cream-deep);

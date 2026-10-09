@@ -910,7 +910,7 @@ def resources_page(pdf: canvas.Canvas, ctx: dict) -> None:
         pdf.drawString(x, top - 48, f"#{swatch.hexval()[2:].upper()}")
 
     top -= 76
-    label(pdf, "Style Midjourney", left, top, color=ORANGE)
+    label(pdf, "À ajouter à votre prompt Midjourney", left, top, color=ORANGE)
     pdf.setFont("Courier", 7.5)
     pdf.setFillColor(INK)
     pdf.drawString(left, top - 14, ctx["midjourney_style"])
