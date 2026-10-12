@@ -47,6 +47,7 @@ export const SPEAKER_PROMINENCE_ORDER = [
   'julien-lesaicherre',
   'regis-dubrulle',
   'charles-gorintin',
+  'olivier-lauvray',
   'quentin-adam',
   'theo-hubert',
   'nicolas-martignole',
