@@ -6,7 +6,7 @@ track: "tech"
 startTime: "09:40"
 durationMinutes: 40
 room: ""
-speakerSlugs: []
+speakerSlugs: ["olivier-lauvray"]
 format: "talk"
 themes: ["GPU", "Architecture matérielle"]
 illustration:

@@ -84,6 +84,7 @@ export const SPEAKER_PORTRAIT_DIMENSIONS: Record<string, { width: number; height
   'marie-fleur-sacreste': { width: 800, height: 800 },
   'nicolas-martignole': { width: 1448, height: 1086 },
   'jean-baptiste-kempf': { width: 1200, height: 1801 },
+  'olivier-lauvray': { width: 301, height: 301 },
   'quentin-adam': { width: 800, height: 800 },
   'regis-dubrulle': { width: 1000, height: 1000 },
   'sebastien-le-corfec': { width: 760, height: 760 },
