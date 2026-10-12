@@ -2,6 +2,7 @@
 role: "VP International Business Development"
 cardRole: "VP International Business Development"
 cardCompany: "VSORA"
+companyLogoAlt: "VSORA logo"
 bio: "VP International Business Development at VSORA, Olivier Lauvray drives the international growth of AI inference chips designed to cut the cost of deploying models."
 profile:
   - "Olivier Lauvray is an international leader who combines deep technical experience with a business and marketing outlook. He enjoys turning expertise and innovations into valuable products and services, drawing on a company’s assets and ecosystem to accelerate its growth."

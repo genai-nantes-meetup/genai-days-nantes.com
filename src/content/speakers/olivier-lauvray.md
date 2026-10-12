@@ -2,6 +2,7 @@
 # Sources : https://www.linkedin.com/in/olivier-lauvray-ab077514/ (poste actuel, parcours)
 # https://vsora.com/ (produits Jotunn8 et Tyr)
 # https://theorg.com/org/biomemory/org-chart/olivier-lauvray (Biomemory)
+# Logo : https://vsora.com/wp-content/uploads/2025/04/vsora-logo-1.svg (SVG enveloppant un PNG 818 x 129, original conservé dans vsora.svg)
 # Portrait : https://www.linkedin.com/in/olivier-lauvray-ab077514/ (original 301 x 301 px, meilleure source disponible)
 name: "Olivier Lauvray"
 role: "VP International Business Development"
@@ -33,11 +34,14 @@ companies:
     relationship: "VP International Business Development"
     description: "Entreprise française de semi-conducteurs, VSORA conçoit des puces d’inférence IA. Jotunn8 vise les centres de données et Tyr l’edge, avec pour objectif de réduire le coût de l’inférence."
     website: "https://vsora.com/"
+    logo: "/logos/vsora-optimized.webp"
   - name: "Biomemory"
     relationship: "VP Industrialization & Partnerships, membre du conseil d’administration"
     description: "Biomemory développe une solution de stockage de données sur ADN pour les centres de données et les usines."
     website: "https://www.biomemory.com/"
 photo: "/speakers/olivier-lauvray-optimized.webp"
+companyLogo: "/logos/vsora-optimized.webp"
+companyLogoAlt: "Logo VSORA"
 linkedin: "https://www.linkedin.com/in/olivier-lauvray-ab077514/"
 website: "https://vsora.com/"
 ---
