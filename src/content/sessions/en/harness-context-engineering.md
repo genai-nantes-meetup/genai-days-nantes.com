@@ -1,6 +1,6 @@
 ---
 title: "The more context I give it, the worse it gets"
-subtitle: "Harness & Context engineering"
+subtitle: "Factory, Harness & Context engineering"
 seoTitle: "The more context I give it, the worse it gets"
 themes: ["Agent harnesses", "Orchestration", "Context engineering"]
 illustration:

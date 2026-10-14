@@ -1,6 +1,6 @@
 ---
 title: "Plus je lui donne de context, moins il est bon"
-subtitle: "Harness & Context engineering"
+subtitle: "Factory, Harness & Context engineering"
 seoTitle: "Plus je lui donne de context, moins il est bon"
 track: "tech"
 startTime: "16:00"
