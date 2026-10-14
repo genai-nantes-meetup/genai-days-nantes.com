@@ -27,7 +27,7 @@ describe('content collections', () => {
     expect(speakers.find((speaker) => speaker.id === 'quentin-adam')?.data.photo).toBe('/speakers/quentin-adam-optimized.webp');
     expect(speakers.find((speaker) => speaker.id === 'quentin-adam')?.data.companyLogo).toBe('/logos/clever-cloud-optimized.png');
     expect(speakers.find((speaker) => speaker.id === 'quentin-adam')?.data.website).toBe('https://www.clever.cloud/');
-    expect(speakers.find((speaker) => speaker.id === 'constance-nebbula')?.data.eventRole).toBe('jury');
+    expect(speakers.find((speaker) => speaker.id === 'constance-nebbula')?.data.eventRole).toBeUndefined();
     expect(speakers.find((speaker) => speaker.id === 'sebastien-le-corfec')?.data.eventRole).toBe('jury');
     expect(speakers.find((speaker) => speaker.id === 'thomas-mathieu')?.data.eventRole).toBe('jury');
     expect(speakers.find((speaker) => speaker.id === 'florian-herveou')?.data.eventRole).toBe('animateur');
@@ -83,7 +83,7 @@ describe('content collections', () => {
     const partners = await getCollection('partners');
     const orders = partners.map((partner) => partner.data.order);
 
-    expect(partners).toHaveLength(17);
+    expect(partners).toHaveLength(18);
     expect(new Set(orders).size).toBe(partners.length);
     expect(partners.every((partner) => new URL(partner.data.website).hostname !== 'example.com')).toBe(true);
   });

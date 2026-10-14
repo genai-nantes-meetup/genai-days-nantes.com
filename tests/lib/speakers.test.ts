@@ -32,9 +32,29 @@ describe('sortSpeakersByProminence', () => {
     expect(sorted.map((s) => s.id)).toEqual([
       'christelle-morancais',
       'zoe-last',
+      'florian-herveou',
       'annabelle-koster',
       'marie-fleur-sacreste',
-      'florian-herveou',
+    ]);
+  });
+
+  it('places the Startup Contest jury after the pitchers and before the MCs', () => {
+    const sorted = sortSpeakersByProminence([
+      speaker('annabelle-koster', 'Annabelle Koster'),
+      speaker('thomas-mathieu', 'Thomas Mathieu'),
+      speaker('emmanuel-marboeuf', 'Emmanuel Marboeuf'),
+      speaker('zoe-last', 'Zoe Last'),
+      speaker('sebastien-le-corfec', 'Sébastien Le Corfec'),
+      speaker('constance-nebbula', 'Constance Nebbula'),
+    ]);
+
+    expect(sorted.map((s) => s.id)).toEqual([
+      'constance-nebbula',
+      'zoe-last',
+      'emmanuel-marboeuf',
+      'sebastien-le-corfec',
+      'thomas-mathieu',
+      'annabelle-koster',
     ]);
   });
 

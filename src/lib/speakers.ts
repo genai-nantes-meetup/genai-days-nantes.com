@@ -57,13 +57,16 @@ export const SPEAKER_PROMINENCE_ORDER = [
 /* Pitcheurs du Startup Contest : après les autres speakers, avant les MC. */
 export const SPEAKER_STARTUP_CONTEST_PITCHERS_ORDER = ['emmanuel-marboeuf', 'pauline-corriou', 'gabriel-lancelot', 'amandine-musseau'] as const;
 
+/* Jury du Startup Contest : après les pitcheurs, avant les MC. */
+export const SPEAKER_STARTUP_CONTEST_JURY_ORDER = ['sebastien-le-corfec', 'thomas-mathieu', 'david-leaurant'] as const;
+
 /* MC de la journée : toujours en fin de liste, après tous les autres speakers. */
 export const SPEAKER_MASTERS_OF_CEREMONIES_ORDER = [
-  'annabelle-koster',
-  'marie-fleur-sacreste',
-  'florian-herveou',
-  'jaafar-steiblen-raji',
-  'benoit-hediard',
+    'florian-herveou',
+    'annabelle-koster',
+    'marie-fleur-sacreste',
+    'jaafar-steiblen-raji',
+    'benoit-hediard',
 ] as const;
 
 /* Dimensions réelles des fichiers portrait, non dérivables du schéma de la
@@ -129,7 +132,8 @@ export function getSpeakerPortraitSrcset(speakerId: string, fullPhoto: string): 
 }
 
 /* Ordre d'affichage : speakers en vedette (SPEAKER_PROMINENCE_ORDER), autres
- * speakers par ordre alphabétique, pitcheurs du Startup Contest, puis MC.
+ * speakers par ordre alphabétique, pitcheurs du Startup Contest, jury du
+ * Startup Contest, puis MC.
  * Chaque groupe suit l'ordre de son tableau, sauf « autres » (alphabétique). */
 const SPEAKER_GROUP_OTHERS = 1;
 
@@ -140,8 +144,11 @@ function speakerGroupAndRank(id: string): [group: number, rank: number] {
   const pitcherIndex = (SPEAKER_STARTUP_CONTEST_PITCHERS_ORDER as readonly string[]).indexOf(id);
   if (pitcherIndex !== -1) return [SPEAKER_GROUP_OTHERS + 1, pitcherIndex];
 
+  const juryIndex = (SPEAKER_STARTUP_CONTEST_JURY_ORDER as readonly string[]).indexOf(id);
+  if (juryIndex !== -1) return [SPEAKER_GROUP_OTHERS + 2, juryIndex];
+
   const masterOfCeremoniesIndex = (SPEAKER_MASTERS_OF_CEREMONIES_ORDER as readonly string[]).indexOf(id);
-  if (masterOfCeremoniesIndex !== -1) return [SPEAKER_GROUP_OTHERS + 2, masterOfCeremoniesIndex];
+  if (masterOfCeremoniesIndex !== -1) return [SPEAKER_GROUP_OTHERS + 3, masterOfCeremoniesIndex];
 
   return [SPEAKER_GROUP_OTHERS, 0];
 }
