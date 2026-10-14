@@ -13,7 +13,7 @@ bio: "Maître de cérémonie de GenAI Days, Benoit Hediard est le fondateur de G
 profile:
   - "Benoit Hediard est un entrepreneur nantais. En 2011, il cofonde Agorapulse, une plateforme française de gestion des réseaux sociaux, dont il est le CTO. Il la mène de zéro à plus de 20 M$ de revenus récurrents annuels et raconte ce parcours de startup à scale-up dans une série d’articles sur Medium."
   - "En 2024, il lance Globetrotters.ai, d’abord pensé comme un assistant de voyage qui reproduit l’expérience d’une conversation avec un expert, puis devenu une plateforme de « présence IA » pour les destinations, hôtels et sites touristiques. Elle les aide à devenir la source de confiance que les assistants IA comprennent, citent et recommandent."
-  - "Il s’intéresse à l’Agentic Web et au TravelTech, à la manière dont les voyageurs interrogent désormais les assistants IA plutôt que de chercher sur le web. Il a été interviewé en direct à SHIFT, le hackathon GenAI de Nantes, en avril 2025."
+  - "Il s’intéresse à l’Agentic Web et au TravelTech, à la manière dont les voyageurs interrogent désormais les assistants IA plutôt que de chercher sur le web."
 genaiLegitimacy: "Benoit Hediard conçoit des produits à l’heure où les voyageurs demandent aux assistants IA plutôt que de chercher. Avec Globetrotters.ai, il mesure et améliore la façon dont les assistants comprennent, citent et recommandent les destinations. Ancien CTO d’Agorapulse, il connaît aussi le passage de la startup à l’échelle."
 careerHighlights:
   - period: "Aujourd’hui"
