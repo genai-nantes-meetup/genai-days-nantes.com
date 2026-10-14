@@ -2,7 +2,6 @@
 # Sources : https://www.linkedin.com/in/benorama/ (poste actuel)
 # https://globetrotters.ai/ (produit)
 # https://benorama.medium.com/ (parcours chez Agorapulse)
-# https://podcast.ausha.co/ouest-side-story/episode-16-face-a-live-atshift-genai-de-nantes-construire-son-voyage-sur-mesure-avec-l-ai-de-globetrotters-ai (Globetrotters.ai)
 # Logo : https://globetrotters.ai/favicons/favicon_32x32.svg (favicon du site, original conservé dans globetrotters.svg)
 # Portrait : image fournie par l’équipe GENAI DAYS (PNG détouré 800 x 800 px, original conservé)
 name: "Benoit Hediard"
