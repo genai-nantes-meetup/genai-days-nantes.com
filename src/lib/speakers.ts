@@ -63,6 +63,7 @@ export const SPEAKER_MASTERS_OF_CEREMONIES_ORDER = [
   'marie-fleur-sacreste',
   'florian-herveou',
   'jaafar-steiblen-raji',
+  'benoit-hediard',
 ] as const;
 
 /* Dimensions réelles des fichiers portrait, non dérivables du schéma de la
@@ -72,6 +73,7 @@ export const SPEAKER_MASTERS_OF_CEREMONIES_ORDER = [
 export const SPEAKER_PORTRAIT_DIMENSIONS: Record<string, { width: number; height: number }> = {
   'amandine-musseau': { width: 800, height: 800 },
   'annabelle-koster': { width: 800, height: 800 },
+  'benoit-hediard': { width: 800, height: 800 },
   'camille-croze': { width: 400, height: 400 },
   'charles-gorintin': { width: 1000, height: 1000 },
   'christelle-morancais': { width: 952, height: 952 },
