@@ -15,6 +15,6 @@ illustration:
   variant: "transformation"
 ---
 
-Un GPU n’est pas un simple processeur plus rapide. Sa puissance vient de choix d’architecture précis : des milliers de cœurs en parallèle, une mémoire à très haute bande passante, des unités dédiées au calcul matriciel.
+Un accélérateur IA n’est pas un simple processeur plus rapide, et tous ne se ressemblent pas. Sa puissance vient de choix d’architecture précis : unités de calcul et leur alimentation en données, mémoire à très haute bande passante et leur intégration, jeu d’instruction et stratégie de compilation, co-design des différents éléments.
 
-Cette session ouvre le capot pour expliquer comment fonctionne un GPU et quelles caractéristiques font la différence pour l’IA. Elle montre aussi pourquoi Nvidia n’est pas toujours la bonne option, entre coût, disponibilité, consommation et alternatives (AMD, TPU, accélérateurs spécialisés).
+Cette session ouvre le capot pour expliquer comment fonctionne un accélérateur IA et quelles caractéristiques font la différence. Elle montre aussi les compromis entre les diverses solutions (Nvidia, AMD, Google, VSORA, …) en termes de coût, performance IA, consommation, versatilité, souveraineté et sécurité.

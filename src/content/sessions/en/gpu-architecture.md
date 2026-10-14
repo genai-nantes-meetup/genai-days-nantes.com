@@ -7,6 +7,6 @@ illustration:
   alt: "A giant kettle towers over a data center building and releases a plume of steam"
 ---
 
-A GPU is not just a faster processor. Its power comes from specific architecture choices: thousands of cores working in parallel, very high-bandwidth memory, units dedicated to matrix math.
+An AI accelerator is not just a faster processor, and they are not all alike. Its power comes from specific architecture choices: compute units and how they are fed with data, very high-bandwidth memory and how it is integrated, the instruction set and compiler strategy, and the co-design of all these elements.
 
-This session opens the hood to explain how a GPU works and which characteristics make the difference for AI. It also shows why Nvidia is not always the right option, weighing cost, availability, power consumption and alternatives (AMD, TPUs, specialized accelerators).
+This session opens the hood to explain how an AI accelerator works and which characteristics make the difference. It also covers the trade-offs between the different solutions (Nvidia, AMD, Google, VSORA, …) in terms of cost, AI performance, power consumption, versatility, sovereignty and security.
