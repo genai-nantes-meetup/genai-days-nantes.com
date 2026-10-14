@@ -3,7 +3,7 @@ title: "Je n'ai pas confiance dans mes pull-requests générées"
 subtitle: "Agentic dev & dev tools"
 seoTitle: "Je n'ai pas confiance dans mes pull-requests générées"
 track: "tech"
-startTime: "16:00"
+startTime: "15:20"
 durationMinutes: 40
 room: ""
 speakerSlugs: []

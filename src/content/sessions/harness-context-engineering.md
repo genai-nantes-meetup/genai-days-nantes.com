@@ -3,7 +3,7 @@ title: "Plus je lui donne de context, moins il est bon"
 subtitle: "Harness & Context engineering"
 seoTitle: "Plus je lui donne de context, moins il est bon"
 track: "tech"
-startTime: "15:20"
+startTime: "16:00"
 durationMinutes: 40
 room: ""
 speakerSlugs: []
