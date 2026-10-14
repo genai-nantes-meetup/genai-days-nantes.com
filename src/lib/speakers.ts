@@ -1,7 +1,7 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import type { Locale } from './i18n';
 
-export const SPEAKER_TARGET = 20;
+export const SPEAKER_TARGET = 28;
 
 type SpeakerEventRole = NonNullable<CollectionEntry<'speakers'>['data']['eventRole']>;
 
