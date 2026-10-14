@@ -55,7 +55,7 @@ export const SPEAKER_PROMINENCE_ORDER = [
 ] as const;
 
 /* Pitcheurs du Startup Contest : après les autres speakers, avant les MC. */
-export const SPEAKER_STARTUP_CONTEST_PITCHERS_ORDER = ['emmanuel-marboeuf', 'pauline-corriou', 'gabriel-lancelot'] as const;
+export const SPEAKER_STARTUP_CONTEST_PITCHERS_ORDER = ['emmanuel-marboeuf', 'pauline-corriou', 'gabriel-lancelot', 'amandine-musseau'] as const;
 
 /* MC de la journée : toujours en fin de liste, après tous les autres speakers. */
 export const SPEAKER_MASTERS_OF_CEREMONIES_ORDER = [
@@ -70,6 +70,7 @@ export const SPEAKER_MASTERS_OF_CEREMONIES_ORDER = [
  * Partagées entre toutes les vues qui affichent un portrait, pour réserver
  * l'espace d'image avant chargement et éviter un décalage de mise en page. */
 export const SPEAKER_PORTRAIT_DIMENSIONS: Record<string, { width: number; height: number }> = {
+  'amandine-musseau': { width: 800, height: 800 },
   'annabelle-koster': { width: 800, height: 800 },
   'camille-croze': { width: 400, height: 400 },
   'charles-gorintin': { width: 1000, height: 1000 },
@@ -102,6 +103,7 @@ export const SPEAKER_PORTRAIT_DIMENSIONS: Record<string, { width: number; height
 const SPEAKER_PORTRAIT_SMALL_WIDTH = 480;
 
 export const SPEAKER_PORTRAIT_SMALL: Partial<Record<string, string>> = {
+  'amandine-musseau': '/speakers/amandine-musseau-480-optimized.webp',
   'christelle-morancais': '/speakers/christelle-morancais-480-optimized.webp',
   'constance-nebbula': '/speakers/constance-nebbula-480-optimized.webp',
   'david-leaurant': '/speakers/david-leaurant-480-optimized.webp',
