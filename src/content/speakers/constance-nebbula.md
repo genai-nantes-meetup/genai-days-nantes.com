@@ -2,7 +2,6 @@
 name: "Constance Nebbula"
 role: "Vice-présidente Numérique et IA"
 company: "Région Pays de la Loire"
-eventRole: "jury"
 bio: "Vice-présidente de la Région Pays de la Loire en charge du numérique et de l’intelligence artificielle, Constance Nebbula porte une approche de la transformation publique fondée sur les usages, la donnée et l’impact mesurable."
 profile:
   - "Élue locale depuis 2014, Constance Nebbula a exercé plusieurs responsabilités à Angers avant de rejoindre l’exécutif régional. Son parcours relie action publique, développement économique, enseignement supérieur et transformation numérique des territoires."
