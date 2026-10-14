@@ -13,4 +13,8 @@ careerHighlights:
   - period: "Since 2023"
     title: "Co-founder and Community Lead of Generative AI Rennes"
     description: "Launched the Rennes generative AI community in November 2023 with Julien Perron, driven by a team of about ten people."
+companies:
+  - relationship: "GenAI Product Expert"
+    description: "Founded in 2005, Betclic Group is one of Europe’s leading sports betting and online gaming companies. Based in Bordeaux, it puts tech at the service of the joy of play."
+companyLogoAlt: "Betclic logo"
 ---

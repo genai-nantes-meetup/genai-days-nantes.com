@@ -1,6 +1,8 @@
 ---
 # Sources : https://www.linkedin.com/in/celinehaentzler/ (poste actuel)
 # https://www.meetup.com/generative-ai-rennes/ (Generative AI Rennes)
+# https://betclicgroup.com/ (Betclic Group)
+# Logo : https://www.betclic.fr/apple-touch-icon.png (icône de Betclic, 180 x 180 px, original conservé dans betclic.png)
 # Portrait : https://www.linkedin.com/in/celinehaentzler/ (original 800 x 800 px, photo de profil LinkedIn)
 name: "Céline Haentzler"
 role: "GenAI Product Expert"
@@ -19,6 +21,15 @@ careerHighlights:
   - period: "Depuis 2023"
     title: "Cofondatrice et Community Lead de Generative AI Rennes"
     description: "Lance en novembre 2023, avec Julien Perron, la communauté rennaise de l’IA générative, portée par une équipe d’une dizaine de personnes."
+companies:
+  - name: "Betclic Group"
+    relationship: "GenAI Product Expert"
+    description: "Créé en 2005, Betclic Group est l’un des leaders européens du pari sportif et du jeu en ligne. Basé à Bordeaux, il met la tech au service du plaisir du jeu."
+    website: "https://betclicgroup.com/"
+    logo: "/logos/betclic-optimized.webp"
 photo: "/speakers/celine-haentzler-optimized.webp"
+companyLogo: "/logos/betclic-optimized.webp"
+companyLogoAlt: "Logo Betclic"
 linkedin: "https://www.linkedin.com/in/celinehaentzler/"
+website: "https://betclicgroup.com/"
 ---
