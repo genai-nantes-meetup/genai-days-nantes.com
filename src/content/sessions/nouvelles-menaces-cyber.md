@@ -1,7 +1,7 @@
 ---
-title: "Des ados de 15 ans utilisent ChatGPT pour exfiltrer mes données"
-subtitle: "Cyberattaques : L’IA ouvre-t-elle la boîte de Pandore ?"
-seoTitle: "Des ados de 15 ans utilisent ChatGPT pour exfiltrer mes données"
+title: "Cyberattaque : l’IA ouvre-t-elle la boîte de Pandore ?"
+subtitle: "Des ados de 15 ans utilisent ChatGPT pour exfiltrer mes données"
+seoTitle: "Cyberattaque : l’IA ouvre-t-elle la boîte de Pandore ?"
 track: "decideurs"
 startTime: "16:55"
 durationMinutes: 40

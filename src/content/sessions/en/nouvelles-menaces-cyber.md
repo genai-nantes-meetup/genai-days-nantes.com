@@ -1,7 +1,7 @@
 ---
-title: "15-year-olds are using ChatGPT to exfiltrate my data"
-subtitle: "Cyberattacks: Is AI opening Pandora’s box?"
-seoTitle: "15-year-olds are using ChatGPT to exfiltrate my data"
+title: "Cyberattack: Is AI opening Pandora’s box?"
+subtitle: "15-year-olds are using ChatGPT to exfiltrate my data"
+seoTitle: "Cyberattack: Is AI opening Pandora’s box?"
 themes: ["Cybersecurity", "Generative AI", "Data exfiltration"]
 illustration:
   alt: "A figure seen from behind watches a stream of data scroll past, overlaid on a city at night"
