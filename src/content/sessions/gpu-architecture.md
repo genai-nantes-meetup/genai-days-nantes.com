@@ -1,6 +1,6 @@
 ---
 title: "Mes GPUs chauffent et ma facture grimpe"
-subtitle: "Architecture GPU, accélérateurs & alternatives à Nvidia"
+subtitle: "Architecture GPU & accélérateurs"
 seoTitle: "Mes GPUs chauffent et ma facture grimpe"
 track: "tech"
 startTime: "09:40"

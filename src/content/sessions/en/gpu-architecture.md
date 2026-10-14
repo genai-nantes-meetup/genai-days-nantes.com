@@ -1,6 +1,6 @@
 ---
 title: "My GPUs run hot and my bill keeps climbing"
-subtitle: "GPU architecture, accelerators & Nvidia alternatives"
+subtitle: "GPU architecture & accelerators"
 seoTitle: "My GPUs run hot and my bill keeps climbing"
 themes: ["GPU", "Hardware architecture"]
 illustration:
