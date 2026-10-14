@@ -55,7 +55,7 @@ export const SPEAKER_PROMINENCE_ORDER = [
 ] as const;
 
 /* Pitcheurs du Startup Contest : après les autres speakers, avant les MC. */
-export const SPEAKER_STARTUP_CONTEST_PITCHERS_ORDER = ['emmanuel-marboeuf'] as const;
+export const SPEAKER_STARTUP_CONTEST_PITCHERS_ORDER = ['emmanuel-marboeuf', 'pauline-corriou'] as const;
 
 /* MC de la journée : toujours en fin de liste, après tous les autres speakers. */
 export const SPEAKER_MASTERS_OF_CEREMONIES_ORDER = [
@@ -86,6 +86,7 @@ export const SPEAKER_PORTRAIT_DIMENSIONS: Record<string, { width: number; height
   'nicolas-martignole': { width: 1448, height: 1086 },
   'jean-baptiste-kempf': { width: 1200, height: 1801 },
   'olivier-lauvray': { width: 301, height: 301 },
+  'pauline-corriou': { width: 800, height: 800 },
   'quentin-adam': { width: 800, height: 800 },
   'regis-dubrulle': { width: 1000, height: 1000 },
   'sebastien-le-corfec': { width: 760, height: 760 },
@@ -108,6 +109,7 @@ export const SPEAKER_PORTRAIT_SMALL: Partial<Record<string, string>> = {
   'jaafar-steiblen-raji': '/speakers/jaafar-steiblen-raji-480-optimized.webp',
   'julien-lesaicherre': '/speakers/julien-lesaicherre-480-optimized.webp',
   'nicolas-martignole': '/speakers/nicolas-martignole-wide-480-optimized.webp',
+  'pauline-corriou': '/speakers/pauline-corriou-480-optimized.webp',
   'theo-hubert': '/speakers/theo-hubert-480-optimized.webp',
   'jean-baptiste-kempf': '/speakers/jean-baptiste-kempf-480-optimized.webp',
   'quentin-adam': '/speakers/quentin-adam-480-optimized.webp',
