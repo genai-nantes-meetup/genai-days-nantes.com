@@ -1,7 +1,7 @@
 ---
-title: "My entire AI strategy is designed for a screen, not a voice"
-subtitle: "Voice, the next default interface for business"
-seoTitle: "My entire AI strategy is designed for a screen, not a voice"
+title: "In the demo, my voice AI agent never makes a mistake"
+subtitle: "Making voice AI agents work in the real world"
+seoTitle: "In the demo, my voice AI agent never makes a mistake"
 themes: ["Voice agents", "AI strategy", "Transformation"]
 illustration:
   alt: "A glowing sound wave breaks through a wall of screens and icons to reveal a loudspeaker"
