@@ -83,7 +83,7 @@ describe('content collections', () => {
     const partners = await getCollection('partners');
     const orders = partners.map((partner) => partner.data.order);
 
-    expect(partners).toHaveLength(18);
+    expect(partners).toHaveLength(19);
     expect(new Set(orders).size).toBe(partners.length);
     expect(partners.every((partner) => new URL(partner.data.website).hostname !== 'example.com')).toBe(true);
   });
