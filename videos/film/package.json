@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "pnpm dlx hyperframes@0.8.140 preview",
     "check": "pnpm dlx hyperframes@0.8.140 check",
-    "render": "pnpm dlx hyperframes@0.8.140 render",
+    "render": "tools/render.sh",
     "publish": "pnpm dlx hyperframes@0.8.140 publish"
   }
 }

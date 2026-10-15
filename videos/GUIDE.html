@@ -103,7 +103,7 @@ footer{margin-top:72px;padding-top:20px;border-top:1px solid var(--line);font:12
 pnpm run dev</pre></div></li>
     <li><b>Rendu brouillon.</b> Plus rapide que le rendu final, suffisant pour juger le rythme et le son.</li>
     <li><b>Variantes côte à côte.</b> Demande des extraits courts, numérotés, et compare-les.</li>
-    <li><b>Export léger pour partager.</b> Le master pèse environ 300 Mo. L'export léger (environ 37 Mo, son normalisé) sert à faire valider.</li>
+    <li><b>Rendu à partager.</b> Un seul fichier d'environ 38&nbsp;Mo, son normalisé, prêt à faire valider. Une variante musicale se rend avec la même image.</li>
   </ol>
   <p><b>Ce que tu vérifies à l'œil</b>&nbsp;: chaque texte se lit sans effort, les impacts sonores tombent sur les coupes, le wordmark GENAI DAYS respecte la marque (GENAI gras, DAYS régulier, seul AI en italique), aucun chiffre ni nom ne sort de nulle part.</p>
   <div class="note"><b>Où arrivent les rendus.</b> Dans <code>videos/renders/</code>, ignoré par git. Les MP4 se partagent par Drive, jamais dans le repo.</div>
@@ -155,7 +155,7 @@ pnpm run dev</pre></div></li>
    ├─ BRIEF.md       <span class="c">intention, contraintes, décisions</span>
    ├─ assets/        <span class="c">copie figée&nbsp;: images, plaques, audio</span>
    ├─ music/         <span class="c">générateurs de musique</span>
-   └─ tools/         <span class="c">lecture, plaques, logos, export, vertical</span></div>
+   └─ tools/         <span class="c">lecture, plaques, logos, rendu, vertical</span></div>
 </section>
 
 <section id="pieges">
@@ -164,7 +164,6 @@ pnpm run dev</pre></div></li>
     <tr><th>Symptôme</th><th>Explication</th></tr>
     <tr><td>Le contrôle signale des textes masqués sur le wordmark final</td><td>Faux positif connu&nbsp;: une couche d'encre double le wordmark pour l'effet d'impression.</td></tr>
     <tr><td>Les impacts sonores tombent à côté des coupes</td><td>Le timing a changé sans régénérer la musique. Demande-le à l'agent.</td></tr>
-    <tr><td>Le MP4 pèse 300 Mo</td><td>Normal pour le master&nbsp;: le grain change à chaque image. Partage toujours l'export léger.</td></tr>
     <tr><td>HyperFrames propose une version plus récente</td><td>La version est figée exprès pour un rendu identique. Ne la change qu'avec un rendu de comparaison juste après.</td></tr>
     <tr><td>Un speaker ou un logo manque</td><td>Les listes du film sont un instantané du site. Demande à l'agent de les régénérer.</td></tr>
   </table>

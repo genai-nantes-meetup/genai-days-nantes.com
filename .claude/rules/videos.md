@@ -22,8 +22,9 @@ Tout le film tient dans `film/index.html` : CSS, scènes `#s1` à `#s9` (pas de 
 ```bash
 pnpm run dev                                   # Studio HyperFrames
 pnpm run check                                 # attendu : 9 text_occluded sur le wordmark final (S9), faux positifs
-pnpm run render -o ../renders/film.mp4         # master, ~300 Mo ; -q draft pour un brouillon
-tools/export-web.sh ../renders/film.mp4        # version à partager : ../renders/film-light.mp4
+pnpm run render                                # ../renders/film.mp4, ~38 Mo, prêt à partager
+pnpm run render -m M3                          # variante musicale : ../renders/film-M3.mp4
+pnpm run render -d                             # brouillon rapide ; -o <fichier> pour une autre sortie
 ```
 
 Timing et lecture :
@@ -61,6 +62,7 @@ Portraits : `scripts/normalise_faces.py <source> <sortie>` (OpenCV) recadre les 
 
 ## Sorties et git
 
+- On ne produit que la version à partager (H.264 deux passes à 7 Mb/s, -14 LUFS) : `tools/render.sh` rend le master HyperFrames (~300 Mo) dans un dossier temporaire et le supprime. Pas de suffixe `-light`, pas de master conservé.
 - Tous les rendus, aperçus et fichiers de contrôle vont dans `videos/renders/`, ignoré par git. Les MP4 se partagent par Drive, jamais dans le repo.
 - Variantes : courtes, numérotées à partir de 1, on ne garde que les deux dernières.
 - Quand une décision du film change, mettre à jour `film/BRIEF.md` (brief final, sans historique). Quand l'outillage change, mettre à jour cette règle (`.claude/rules/videos.md`) et `GUIDE.html`.

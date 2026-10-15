@@ -14,8 +14,7 @@ Démarrage rapide :
 ```bash
 cd videos/film
 pnpm run dev                            # aperçu dans le Studio HyperFrames
-pnpm run render -o ../renders/film.mp4  # rendu MP4
-tools/export-web.sh ../renders/film.mp4 # version légère à partager
+pnpm run render                         # rendu à partager : ../renders/film.mp4
 ```
 
 Ce dossier est hors du site : Astro et le `tsconfig` l'ignorent. Les rendus vont dans `videos/renders/`. Rendus, labs et fichiers générés ne sont pas versionnés (`.gitignore`).
