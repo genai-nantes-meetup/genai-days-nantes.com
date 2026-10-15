@@ -12,6 +12,7 @@ export const SPEAKER_EVENT_ROLE_LABELS = {
     finaliste: 'Finaliste du Startup Contest',
     'monsieur-loyal': 'Monsieur Loyal',
     'madame-loyale': 'Madame Loyale',
+    'moderatrice-table-ronde': 'Modératrice de la table ronde',
   },
   /* « Monsieur Loyal » est le présentateur de cirque : l'anglais garde le
    * rôle, maître de cérémonie, plutôt que la référence. */
@@ -21,6 +22,7 @@ export const SPEAKER_EVENT_ROLE_LABELS = {
     finaliste: 'Startup Contest finalist',
     'monsieur-loyal': 'Master of ceremonies',
     'madame-loyale': 'Master of ceremonies',
+    'moderatrice-table-ronde': 'Roundtable moderator',
   },
 } as const satisfies Record<Locale, Record<SpeakerEventRole, string>>;
 
@@ -31,6 +33,7 @@ export const SPEAKER_EVENT_ROLE_SHORT_LABELS = {
     finaliste: 'Finaliste Startup Contest',
     'monsieur-loyal': 'Monsieur Loyal',
     'madame-loyale': 'Madame Loyale',
+    'moderatrice-table-ronde': 'Modératrice de table ronde',
   },
   en: {
     jury: 'Judge',
@@ -38,6 +41,7 @@ export const SPEAKER_EVENT_ROLE_SHORT_LABELS = {
     finaliste: 'Startup Contest finalist',
     'monsieur-loyal': 'Master of ceremonies',
     'madame-loyale': 'Master of ceremonies',
+    'moderatrice-table-ronde': 'Roundtable moderator',
   },
 } as const satisfies Record<Locale, Record<SpeakerEventRole, string>>;
 
@@ -60,6 +64,9 @@ export const SPEAKER_STARTUP_CONTEST_PITCHERS_ORDER = ['emmanuel-marboeuf', 'pau
 /* Jury du Startup Contest : après les pitcheurs, avant les MC. */
 export const SPEAKER_STARTUP_CONTEST_JURY_ORDER = ['sebastien-le-corfec', 'thomas-mathieu', 'david-leaurant'] as const;
 
+/* Modérateur·rice de la table ronde : après le jury, juste avant les MC. */
+export const SPEAKER_ROUNDTABLE_MODERATORS_ORDER = ['celine-haentzler'] as const;
+
 /* MC de la journée : toujours en fin de liste, après tous les autres speakers. */
 export const SPEAKER_MASTERS_OF_CEREMONIES_ORDER = [
     'florian-herveou',
@@ -67,7 +74,6 @@ export const SPEAKER_MASTERS_OF_CEREMONIES_ORDER = [
     'marie-fleur-sacreste',
     'jaafar-steiblen-raji',
     'benoit-hediard',
-    'celine-haentzler',
 ] as const;
 
 /* Dimensions réelles des fichiers portrait, non dérivables du schéma de la
@@ -151,8 +157,11 @@ function speakerGroupAndRank(id: string): [group: number, rank: number] {
   const juryIndex = (SPEAKER_STARTUP_CONTEST_JURY_ORDER as readonly string[]).indexOf(id);
   if (juryIndex !== -1) return [SPEAKER_GROUP_OTHERS + 2, juryIndex];
 
+  const moderatorIndex = (SPEAKER_ROUNDTABLE_MODERATORS_ORDER as readonly string[]).indexOf(id);
+  if (moderatorIndex !== -1) return [SPEAKER_GROUP_OTHERS + 3, moderatorIndex];
+
   const masterOfCeremoniesIndex = (SPEAKER_MASTERS_OF_CEREMONIES_ORDER as readonly string[]).indexOf(id);
-  if (masterOfCeremoniesIndex !== -1) return [SPEAKER_GROUP_OTHERS + 3, masterOfCeremoniesIndex];
+  if (masterOfCeremoniesIndex !== -1) return [SPEAKER_GROUP_OTHERS + 4, masterOfCeremoniesIndex];
 
   return [SPEAKER_GROUP_OTHERS, 0];
 }

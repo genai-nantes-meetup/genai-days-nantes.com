@@ -58,6 +58,22 @@ describe('sortSpeakersByProminence', () => {
     ]);
   });
 
+  it('places the roundtable moderator after the jury and just before the MCs', () => {
+    const sorted = sortSpeakersByProminence([
+      speaker('annabelle-koster', 'Annabelle Koster'),
+      speaker('celine-haentzler', 'Céline Haentzler'),
+      speaker('thomas-mathieu', 'Thomas Mathieu'),
+      speaker('zoe-last', 'Zoe Last'),
+    ]);
+
+    expect(sorted.map((s) => s.id)).toEqual([
+      'zoe-last',
+      'thomas-mathieu',
+      'celine-haentzler',
+      'annabelle-koster',
+    ]);
+  });
+
   it('does not mutate the input array', () => {
     const input = [speaker('b', 'B'), speaker('a', 'A')];
     sortSpeakersByProminence(input);

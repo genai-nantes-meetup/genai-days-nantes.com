@@ -21,7 +21,7 @@ const speakers = defineCollection({
     company: z.string(),
     cardRole: z.string().optional(),
     cardCompany: z.string().optional(),
-    eventRole: z.enum(['jury', 'animateur', 'finaliste', 'monsieur-loyal', 'madame-loyale']).optional(),
+    eventRole: z.enum(['jury', 'animateur', 'finaliste', 'monsieur-loyal', 'madame-loyale', 'moderatrice-table-ronde']).optional(),
     bio: z.string(),
     profile: z.array(z.string()).min(2),
     genaiLegitimacy: z.string(),

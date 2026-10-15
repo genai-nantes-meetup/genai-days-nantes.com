@@ -6,8 +6,8 @@ track: "decideurs"
 startTime: "14:25"
 durationMinutes: 40
 room: ""
-speakerSlugs: []
-format: "talk"
+speakerSlugs: ["celine-haentzler"]
+format: "table-ronde"
 themes: ["Conduite du changement", "Acceptabilité de l'IA", "Formation des équipes"]
 illustration:
   alt: "Une foule lève le poing face à l'ombre d'un visage robotique qui la surplombe"

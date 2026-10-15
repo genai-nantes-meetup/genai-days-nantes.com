@@ -1,6 +1,6 @@
 ---
 role: "GenAI Product Expert"
-bio: "GenAI Product Expert at Betclic Group and co-founder of the Generative AI Rennes community, Céline Haentzler is master of ceremonies at GENAI DAYS."
+bio: "GenAI Product Expert at Betclic Group and co-founder of the Generative AI Rennes community, Céline Haentzler moderates a roundtable at GENAI DAYS."
 profile:
   - "Céline Haentzler works in product and digital. She is now GenAI Product Expert at Betclic Group, where she helps teams design generative AI features when the product offers no certainty."
   - "In November 2023, she launched the Generative AI Rennes community with Julien Perron, as its Community Leads, and runs generative AI meetups with a team of about ten people."
