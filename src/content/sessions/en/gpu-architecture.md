@@ -9,4 +9,4 @@ illustration:
 
 An AI accelerator is not just a faster processor, and they are not all alike. Its power comes from specific architecture choices: compute units and how they are fed with data, very high-bandwidth memory and how it is integrated, the instruction set and compiler strategy, and the co-design of all these elements.
 
-This session opens the hood to explain how an AI accelerator works and which characteristics make the difference. It also covers the trade-offs between the different solutions (Nvidia, AMD, Google, VSORA, …) in terms of cost, AI performance, power consumption, versatility, sovereignty and security.
+This session opens the hood to explain how an AI accelerator works and which characteristics make the difference. It also covers the trade-offs in terms of cost, AI performance, power consumption, versatility, sovereignty and security. VSORA’s architecture will be used as an example to illustrate this.
