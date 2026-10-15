@@ -35,6 +35,8 @@ Timing et lecture :
 
 Musique : synthétisée en Python (`music/french_kit.py` pour les instruments, `music/music_lab.py` pour la table des temps, les bruitages et le mastering). Seule `assets/audio/music-M2.wav` est versionnée. Les variantes M1, M3, M4 et B1 se régénèrent à la demande et restent hors git.
 
+Ne pas utiliser les SFX fournis par le skill `media-use` (`whoosh`, `riser`, `impact-bass`, `glitch`...) sans demande explicite : ce sont les mêmes fichiers dans toutes les vidéos HyperFrames. Les bruitages se synthétisent dans `music_lab.py`. Pour une nouvelle musique, partir d'une direction donnée (tonalité, suite d'accords, tempo, référence) plutôt que de la partition par défaut à 120 BPM sur La mineur, Fa, Do, Sol.
+
 Visuels :
 
 - Plaques sérigraphie : `uv run tools/plates.py [nom]` les calcule depuis `public/` du site vers `assets/plates/`. Une nouvelle illustration s'ajoute dans `SOURCES`.
