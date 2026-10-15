@@ -101,6 +101,7 @@ export const SPEAKER_PORTRAIT_DIMENSIONS: Record<string, { width: number; height
   'sebastien-le-corfec': { width: 760, height: 760 },
   'thomas-mathieu': { width: 1000, height: 1000 },
   'theo-hubert': { width: 800, height: 800 },
+  'tristan-fransen': { width: 390, height: 390 },
 };
 
 /* Variante basse résolution disponible uniquement pour les portraits dont le

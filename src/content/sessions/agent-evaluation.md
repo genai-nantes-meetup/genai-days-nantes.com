@@ -6,7 +6,7 @@ track: "tech"
 startTime: "16:55"
 durationMinutes: 40
 room: ""
-speakerSlugs: []
+speakerSlugs: ["tristan-fransen"]
 format: "talk"
 themes: ["Évaluation d'agents", "Observabilité", "Benchmarks"]
 illustration:
