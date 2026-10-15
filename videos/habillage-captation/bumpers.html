@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bumpers d'intro</title>
+<style>
+@font-face{font-family:"EB Garamond";src:url(assets/fonts/eb-garamond-latin-wght-normal.woff2) format("woff2");font-weight:400 800;font-style:normal;font-display:block}
+@font-face{font-family:"EB Garamond";src:url(assets/fonts/eb-garamond-latin-wght-italic.woff2) format("woff2");font-weight:400 800;font-style:italic;font-display:block}
+
+:root{
+  --blue:#3D43CE;--orange:#FE4D1B;--cream:#F9F4EC;--ink:#393636;--night:#09122E;
+  --page:#F9F4EC;--text:#393636;--muted:#6f6a66;--line:#e2d9cb;--accent:#3D43CE;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--page:#09122E;--text:#F2ECE2;--muted:#a7a9bd;--line:#232c52;--accent:#8f93ff}
+}
+:root[data-theme="dark"]{--page:#09122E;--text:#F2ECE2;--muted:#a7a9bd;--line:#232c52;--accent:#8f93ff}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--page);color:var(--text);font:16px/1.55 Arial,Helvetica,sans-serif}
+.wrap{max-width:1480px;margin:0 auto;padding:0 max(16px,3vw)}
+.lb{font-family:Arial,Helvetica,sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.12em}
+
+.masthead{padding:56px 0 28px;border-bottom:1px solid var(--line)}
+.masthead .kicker{font-size:12px;color:var(--accent)}
+.masthead h1{font-family:"EB Garamond",serif;font-weight:600;font-size:clamp(40px,6vw,76px);line-height:1;margin:14px 0 18px;letter-spacing:-.01em}
+.masthead h1 em{font-style:italic;color:var(--orange)}
+.masthead p{max-width:860px;margin:0 0 10px}
+.masthead .facts{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:20px;font-size:11px;color:var(--muted)}
+.slot{padding:44px 0 4px}
+.slot h2{display:flex;align-items:baseline;gap:16px;margin:0 0 18px;font-family:"EB Garamond",serif;font-weight:600;font-size:34px}
+.slot h2 .lb{font-size:11px;color:var(--muted)}
+.cards{display:grid;gap:28px 24px;grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:820px){.cards{grid-template-columns:1fr}}
+.card h3{margin:12px 0 2px;font-family:"EB Garamond",serif;font-size:21px;font-weight:600;line-height:1.2}
+.card p{margin:0;font-size:11px;color:var(--muted)}
+.fr{display:block}
+.fallback .cards{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.fallback h2{font-size:22px;color:var(--muted)}
+footer{margin:64px 0 0;padding:24px 0 48px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+
+/* Frame: a fixed 1920x1080 canvas scaled to the card width */
+.fr{position:relative;aspect-ratio:16/9;overflow:hidden;border-radius:6px;background:#09122E;box-shadow:0 1px 0 var(--line),0 10px 30px rgba(9,18,46,.14)}
+.cv{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:left top;overflow:hidden;color:var(--cream);background:var(--night);font-family:Arial,Helvetica,sans-serif}
+.cv *{box-sizing:border-box}
+.abs{position:absolute}
+.full{position:absolute;inset:0}
+.serif{font-family:"EB Garamond",serif}
+.wm{font-family:"EB Garamond",serif;font-weight:400;letter-spacing:.02em;white-space:nowrap}
+.wm b{font-weight:700}.wm i{font-style:italic}
+.mark{display:inline-block;fill:currentColor}
+.grain::after{content:"";position:absolute;inset:0;background:url(assets/img/grain.png);mix-blend-mode:overlay;opacity:.22;pointer-events:none}
+
+/* Solo mode (?session=slug): the frame alone, native size, for OBS */
+body.solo{background:#09122E;overflow:hidden}
+body.solo .cv{position:relative;transform:none}
+
+/* Poster in two passes: the session art, then an orange copy of its darks printed off register */
+.poster{position:absolute;overflow:hidden;background:var(--cream);isolation:isolate}
+.poster img{position:absolute;max-width:none}
+.poster img.pass2{mix-blend-mode:multiply;opacity:.3;filter:grayscale(1) contrast(1.5) brightness(1.1) sepia(1) saturate(9) hue-rotate(-28deg);transform:translate(9px,6px)}
+
+/* Ink portrait: normalised crop, greyscale lightened by the track ink, second ink off register */
+.inkp{position:relative;flex:none;overflow:hidden;border-radius:50%;background:var(--cream);isolation:isolate;box-shadow:0 0 0 5px var(--cream)}
+.inkp .pl{position:absolute;inset:0;mix-blend-mode:multiply;isolation:isolate}
+/* Same zoom for every norm crop, small enough that the tallest hair stays inside the disc */
+.inkp .pl img{width:100%;height:100%;object-fit:cover;transform:scale(1.1);transform-origin:50% 44%;filter:grayscale(1) contrast(1.2) brightness(1.08)}
+.inkp .pl::after{content:"";position:absolute;inset:0;background:var(--k);mix-blend-mode:lighten}
+.inkp .pl.o{transform:translate(5px,3px);opacity:.42}
+.inkp .pl.o::after{background:var(--k2)}
+
+.chip{display:inline-flex;align-items:center;padding:9px 16px 8px;border-radius:999px;font:700 19px Arial,Helvetica,sans-serif;text-transform:uppercase;letter-spacing:.12em;white-space:nowrap}
+.t-decide{--k:#3D43CE;--k2:#FE4D1B;--relief:#FE4D1B}
+.t-impl{--k:#3D43CE;--k2:#FE4D1B;--relief:#FE4D1B}
+.t-common{--k:#3D43CE;--k2:#FE4D1B;--relief:#FE4D1B}
+.t-decide .chip{background:var(--blue);color:var(--cream)}
+.t-impl .chip{background:var(--orange);color:var(--cream)}
+.t-common .chip{background:var(--cream);color:var(--night)}
+.lay-C.t-decide{--relief:#5a60f0}
+
+/* Text column */
+.col{position:absolute;top:170px;bottom:150px;display:flex;flex-direction:column;justify-content:center}
+.meta{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.meta .lb{font-size:20px}
+.title{font-family:"EB Garamond",serif;font-weight:600;line-height:.99;letter-spacing:-.01em;margin:34px 0 0;text-shadow:.04em .04em 0 var(--relief);text-wrap:balance}
+.lay-A .col,.lay-A .foot{text-shadow:0 2px 18px rgba(9,18,46,.7)}
+.lay-A .title{text-shadow:.04em .04em 0 var(--relief),0 4px 34px rgba(9,18,46,.6)}
+.lay-A.paper .col,.lay-A.paper .foot{text-shadow:none;color:var(--night)}
+.lay-A.paper .title{text-shadow:.04em .04em 0 var(--relief)}
+.lay-A.paper .tba .seat{border-color:rgba(9,18,46,.45)}
+.lay-A.paper .inkp{box-shadow:0 0 0 5px var(--night)}
+.foot{position:absolute;bottom:72px;font-size:16px;opacity:.78}
+
+/* Speakers */
+.spk{margin-top:56px}
+.solo-spk{display:flex;align-items:center;gap:30px}
+.solo-spk .name{font-family:"EB Garamond",serif;font-size:54px;font-weight:600;line-height:1}
+.solo-spk .role{font-size:18px;line-height:1.5;margin-top:12px;opacity:.88}
+.list-spk{display:flex;flex-direction:column;gap:20px}
+.list-spk .row{display:flex;align-items:center;gap:24px}
+.list-spk .name{font-family:"EB Garamond",serif;font-size:38px;font-weight:600;line-height:1}
+.list-spk .role{font-size:14px;line-height:1.45;margin-top:8px;opacity:.88}
+.grid-spk{display:grid;gap:18px}
+.grid-spk .cell{display:flex;flex-direction:column;align-items:center;text-align:center}
+.grid-spk .name{font-family:"EB Garamond",serif;font-size:27px;font-weight:600;line-height:1.02;margin-top:20px}
+.grid-spk .role{font-size:12px;line-height:1.45;margin-top:8px;opacity:.85}
+.grid-spk .tag{display:inline-block;margin-top:10px;padding:4px 9px 3px;border-radius:999px;font-size:11px;background:rgba(249,244,236,.14)}
+.tba{display:flex;align-items:center;gap:30px}
+.tba .seat{flex:none;width:150px;height:150px;border-radius:50%;border:3px dashed rgba(249,244,236,.55);display:grid;place-items:center}
+.tba .seat svg{width:60px;height:60px;color:var(--k)}
+.t-impl .tba .seat svg{color:var(--orange)}
+.t-decide .tba .seat svg,.t-common .tba .seat svg{color:#7d82ff}
+.tba .name{font-family:"EB Garamond",serif;font-size:48px;font-weight:500;font-style:italic;line-height:1}
+.tba .role{font-size:16px;margin-top:14px;opacity:.75}
+.host{display:flex;align-items:center;gap:30px}
+.host img{height:76px}
+.host .role{font-size:18px;opacity:.88;line-height:1.5}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="genai-mark" viewBox="0 0 199 199"><path d="M91 136.117C91 112.734 122 108 135 121L163 149L149 164L120 135C116.5 131.5 111 134.5 111 138V199H91V136.117ZM62.8828 90C86.2656 90 90.9999 121 78 134L50 162L35 148L64 119C67.5 115.5 64.5 110 61 110H0V90H62.8828ZM163.999 51L134.999 80C131.5 83.4999 134.499 88.9995 137.999 89H199V109H136.116C112.734 109 107.999 78 120.999 65L148.999 37L163.999 51ZM99.5 91C104.194 91 108 94.8056 108 99.5C108 104.194 104.194 108 99.5 108C94.8056 108 91 104.194 91 99.5C91 94.8056 94.8056 91 99.5 91ZM110 62.8828C110 86.2656 79 90.9999 66 78L38 50L52 35L81 64C84.5 67.5 90 64.5 90 61V0H110V62.8828Z"/></symbol>
+</svg>
+
+<div id="board">
+<header class="wrap masthead">
+  <div class="kicker lb">GENAI DAYS 2026 · Captations des conférences</div>
+  <h1>Bumpers <em>d'intro</em></h1>
+  <div class="facts lb"><span>Mardi 17 novembre 2026</span><span>Hôtel de Région · Nantes</span></div>
+</header>
+<main class="wrap" id="slots"></main>
+</div>
+
+<script>
+// Content from genai-days-nantes.com/llms.txt and session pages (og:image).
+// side: where the text sits on the poster (its calm zone). fx: horizontal focus, used by the fallback layout.
+// paper: square poster shown whole on its own paper tone instead of filling the frame.
+const DECIDE = "decide", IMPL = "impl", COMMON = "common";
+const P = (name, slug, role, company, tag) => ({name, slug, role, company, tag});
+const SESSIONS = [
+  {slug:"keynote-ouverture", time:"09:15", dur:15, track:COMMON, format:"Keynote", title:"Keynote d’ouverture", art:"stage-0-keynote", side:"left", fx:.5,
+   speakers:[P("Christelle Morançais","christelle-morancais","Présidente du Conseil régional","Région Pays de la Loire")]},
+  {slug:"agents-entreprise-shadowai-knowledge", time:"09:40", dur:40, track:DECIDE, format:"Conférence", title:"Je ne sais pas ce que mes équipes mettent dans ChatGPT", art:"agents-enterprise", side:"left", fx:.82,
+   speakers:[P("Gaël Brisson","gael-brisson","Cofondateur & CFO","Swiftask")]},
+  {slug:"gpu-architecture", time:"09:40", dur:40, track:IMPL, format:"Conférence", title:"Mes GPUs chauffent et ma facture grimpe", art:"datacenter", side:"left", fx:.6,
+   speakers:[P("Olivier Lauvray","olivier-lauvray","VP International Business Development","VSORA")]},
+  {slug:"souverainete-ia", time:"10:20", dur:40, track:DECIDE, format:"Table ronde", title:"Les Américains ont pris en otage mon SI", art:"souverainete", side:"left", fx:.5,
+   speakers:[P("Quentin Adam","quentin-adam","CEO & Cofondateur","Clever Cloud"),P("Constance Nebbula","constance-nebbula","Vice-présidente Numérique et IA","Région Pays de la Loire"),P("Jean-Baptiste Kempf","jean-baptiste-kempf","Entrepreneur tech","VLC · Scaleway · Kyber")]},
+  {slug:"inference-serving", time:"10:20", dur:40, track:IMPL, format:"Conférence", title:"L’inférence de mon Mac mini est lente", art:"inference", side:"left", fx:.66, speakers:[]},
+  {slug:"voice-agents", time:"11:15", dur:40, track:DECIDE, format:"Conférence", title:"Toute ma stratégie IA est pensée pour un écran, pas pour une voix", art:"voice-agents", side:"left", fx:.5,
+   speakers:[P("Julien Lesaicherre","julien-lesaicherre","General Manager France","ElevenLabs")]},
+  {slug:"slm-compression-modeles", time:"11:15", dur:40, track:IMPL, format:"Conférence", title:"Mon modèle ne tient pas sur une puce embarquée", art:"stage-2-talk-3-slm", side:"right", fx:.22,
+   speakers:[P("Théo Hubert","theo-hubert","Cofondateur, Président & CTO","AlphaEdge")]},
+  {slug:"startup-contest", time:"11:55", dur:30, track:DECIDE, format:"Concours", title:"Startup Contest", art:"stage-1-talk-5-startup-contest", side:"left", fx:.5,
+   speakers:[P("Florian Hervéou","florian-herveou","Cofondateur","Startup Palace · _icilundi","Animateur"),P("Constance Nebbula","constance-nebbula","Vice-présidente Numérique et IA","Région Pays de la Loire","Jury"),P("Sébastien Le&nbsp;Corfec","sebastien-le-corfec","Associé et cofondateur","Épopée Gestion · West Web Festival","Jury"),P("Thomas Mathieu","thomas-mathieu","CEO et cofondateur","Guest Suite","Jury"),P("David Léaurant","david-leaurant","Président","ADN Ouest","Jury")]},
+  {slug:"product-velocity", time:"11:55", dur:30, track:IMPL, format:"Conférence", title:"Je shippe plus vite que jamais, et je ne sais plus pourquoi", art:"product-velocity", side:"left", fx:.5, paper:true, speakers:[]},
+  {slug:"finops-agents", time:"13:45", dur:40, track:DECIDE, format:"Conférence", title:"J'ai consommé mon budget IA en mai. Comment finir l'année&nbsp;?", art:"stage-1-talk-8-finops", side:"left", fx:.66,
+   speakers:[P("Nicolas Martignole","nicolas-martignole","Principal Engineer","Back Market")]},
+  {slug:"physical-ai-robotique", time:"13:45", dur:40, track:IMPL, format:"Conférence", title:"Mon modèle a le droit de se tromper. Mon robot, non", art:"physical-ai", side:"left", fx:.74, speakers:[]},
+  {slug:"conduite-changement-ia", time:"14:25", dur:40, track:DECIDE, format:"Conférence", title:"Une partie de mon équipe a peur que l'IA lui prenne son poste", art:"conduite-changement", side:"left", fx:.5, speakers:[]},
+  {slug:"cyber-ai", time:"14:25", dur:40, track:IMPL, format:"Conférence", title:"Ma défense ne s'adapte pas assez vite aux attaques des agents autonomes", art:"cyber-ai", side:"right", fx:.24, speakers:[]},
+  {slug:"industrialisation-projet-ia", time:"15:20", dur:40, track:DECIDE, format:"Conférence", title:"Nos POCs ne passent jamais en production", art:"industrialisation", side:"left", fx:.5, speakers:[]},
+  {slug:"harness-context-engineering", time:"15:20", dur:40, track:IMPL, format:"Conférence", title:"Plus je lui donne de context, moins il est bon", art:"context-engineering", side:"left", fx:.5, speakers:[]},
+  {slug:"ia-pour-industrie", time:"16:00", dur:40, track:DECIDE, format:"Conférence", title:"Mon concurrent utilise des humanoïdes dans sa chaine de production", art:"ia-industrie", side:"left", fx:.7,
+   speakers:[P("Laurent Duthoit","laurent-duthoit","Expert robotique Next Gen et IA physique","Renault Group"),P("Camille Croze","camille-croze","Business Development Manager, robots humanoïdes","Wandercraft")]},
+  {slug:"agentic-coding", time:"16:00", dur:40, track:IMPL, format:"Conférence", title:"Je n'ai pas confiance dans mes pull&#8209;requests générées", art:"agentic-coding", side:"left", fx:.72, speakers:[]},
+  {slug:"nouvelles-menaces-cyber", time:"16:55", dur:40, track:DECIDE, format:"Conférence", title:"Des ados de 15 ans utilisent ChatGPT pour exfiltrer mes données", art:"nouvelles-menaces-cyber", side:"left", fx:.7,
+   speakers:[P("Régis Dubrulle","regis-dubrulle","Délégué régional à la sécurité numérique, Pays de la Loire","ANSSI")]},
+  {slug:"agent-evaluation", time:"16:55", dur:40, track:IMPL, format:"Conférence", title:"Je n'arrive pas à savoir si mes agents sont performants ou non", art:"agent-evaluation", side:"left", fx:.5, speakers:[]},
+  {slug:"podcast-maci", time:"18:00", dur:120, track:COMMON, format:"Podcast en public", title:"Podcast Message à caractère informatique", art:"podcast-maci-clever-cloud", side:"left", fx:.5, speakers:[], host:"clever-cloud"},
+];
+const TRACK_LABEL = {decide:"Ceux qui décident", impl:"Ceux qui implémentent", common:"Temps commun"};
+const W = 1920, H = 1080, C_PANEL_LEFT = 800;
+
+const markSvg = `<svg class="mark" viewBox="0 0 199 199"><use href="#genai-mark"/></svg>`;
+const inkPortrait = (slug, size) => {
+  const src = `assets/speakers/norm/${slug}.webp`;
+  return `<div class="inkp" style="width:${size}px;height:${size}px"><div class="pl b"><img src="${src}" alt=""></div><div class="pl o"><img src="${src}" alt=""></div></div>`;
+};
+
+function speakersMarkup(s, colWidth) {
+  if (s.host) return `<div class="spk host"><img src="assets/partners/${s.host}.png" alt="Clever Cloud"><div class="role lb">Enregistré en public<br>pendant l'apéro</div></div>`;
+  const people = s.speakers;
+  if (!people.length) return `<div class="spk tba"><div class="seat">${markSvg}</div><div><div class="name">Speaker To Be Announced</div><div class="role lb">Programme sur genai-days-nantes.com</div></div></div>`;
+  if (people.length === 1) {
+    const p = people[0];
+    return `<div class="spk solo-spk">${inkPortrait(p.slug, 168)}<div><div class="name">${p.name}</div><div class="role lb">${p.role}<br>${p.company}</div></div></div>`;
+  }
+  if (people.length <= 3) {
+    const size = people.length === 2 ? 128 : 112;
+    return `<div class="spk list-spk">${people.map(p => `<div class="row">${inkPortrait(p.slug, size)}<div><div class="name">${p.name}</div><div class="role lb">${p.role}<br>${p.company}</div></div></div>`).join("")}</div>`;
+  }
+  const cols = people.length, size = Math.min(140, Math.floor((colWidth - 18 * (cols - 1)) / cols) - 24);
+  return `<div class="spk grid-spk" style="grid-template-columns:repeat(${cols},1fr)">${people.map(p => `<div class="cell">${inkPortrait(p.slug, size)}<div class="name">${p.name}</div><div class="role lb">${p.company}</div>${p.tag ? `<span class="tag lb">${p.tag}</span>` : ""}</div>`).join("")}</div>`;
+}
+
+// Place the art so its focus point lands at targetX, without ever uncovering the frame
+// Trim cuts the printed paper margin some posters carry.
+function artPlacement(s, boxW, boxH, targetX) {
+  const [iw, ih] = ART_SIZES[s.art], trim = ART_TRIMS[s.art] || 0;
+  const cw = iw * (1 - 2 * trim), ch = ih * (1 - 2 * trim);
+  const scale = Math.max(boxW / cw, boxH / ch);
+  const visibleLeft = Math.min(0, Math.max(boxW - cw * scale, targetX - s.fx * cw * scale));
+  const left = visibleLeft - iw * trim * scale, top = (boxH - ch * scale) / 2 - ih * trim * scale;
+  return `left:${left.toFixed(0)}px;top:${top.toFixed(0)}px;width:${(iw * scale).toFixed(0)}px;height:${(ih * scale).toFixed(0)}px`;
+}
+const ART_TRIMS = {
+  "agent-evaluation":.04,"cyber-ai":.025,"datacenter":.02,"ia-industrie":.042,"industrialisation":.035,"inference":.05,
+  "nouvelles-menaces-cyber":.04,"physical-ai":.05,"podcast-maci-clever-cloud":.025,"product-velocity":.06,"stage-0-keynote":.025,
+  "stage-1-talk-5-startup-contest":.04,"stage-2-talk-3-slm":.016,"context-engineering":.02,"conduite-changement":.06,
+};
+const ART_SIZES = {
+  "agent-evaluation":[2560,1433],"agentic-coding":[2560,1433],"agents-enterprise":[2560,1425],"conduite-changement":[2560,1433],
+  "context-engineering":[2560,1433],"cyber-ai":[2560,1433],"datacenter":[2560,1433],"ia-industrie":[2560,1433],
+  "industrialisation":[2560,1433],"inference":[2560,1433],"nouvelles-menaces-cyber":[2560,1433],"physical-ai":[2560,1433],
+  "podcast-maci-clever-cloud":[2560,1433],"product-velocity":[2000,2000],"souverainete":[2560,1433],"stage-0-keynote":[2560,1434],
+  "stage-1-talk-5-startup-contest":[2560,1434],"stage-1-talk-8-finops":[1600,697],"stage-2-talk-3-slm":[2560,1434],"voice-agents":[2560,1433],
+};
+
+function poster(s, box, targetX) {
+  const src = `assets/sessions/${s.art}.webp`, pos = artPlacement(s, box.w, box.h, targetX);
+  return `<div class="poster grain" style="left:${box.x}px;top:0;width:${box.w}px;height:${box.h}px"><img src="${src}" alt="" style="${pos}"><img class="pass2" src="${src}" alt="" style="${pos}"></div>`;
+}
+
+function frameMarkup(s, layout = "a") {
+  const meta = `<div class="meta"><span class="chip">${TRACK_LABEL[s.track]}</span><span class="lb">${s.format} · ${s.time} · ${s.dur} min</span></div>`;
+  const foot = `Mardi 17 novembre 2026 · Hôtel de Région · Nantes`;
+  if (layout === "c") {
+    const colW = 700;
+    return `<div class="cv lay-C t-${s.track}" data-slug="${s.slug}">
+      ${poster(s, {x:C_PANEL_LEFT, w:W - C_PANEL_LEFT, h:H}, (W - C_PANEL_LEFT) / 2)}
+      <div class="abs" style="left:${C_PANEL_LEFT}px;top:0;bottom:0;width:340px;background:linear-gradient(90deg,#09122E,rgba(9,18,46,.6) 40%,rgba(9,18,46,0))"></div>
+      <div class="col" style="left:110px;width:${colW}px">${meta}<div class="title" style="font-size:92px">${s.title}</div>${speakersMarkup(s, colW)}</div>
+      <div class="foot lb" style="left:110px">${foot}</div>
+    </div>`;
+  }
+  const isRight = s.side === "right";
+  if (s.paper) {
+    // Square poster kept whole on the right, its paper tone extends under the text
+    const colW = 760, src = `assets/sessions/${s.art}.webp`;
+    return `<div class="cv lay-A paper t-${s.track}" data-slug="${s.slug}" style="background:linear-gradient(90deg,#c2bab7,#bbb2af)">
+      <div class="poster grain" style="left:${W - H}px;top:0;width:${H}px;height:${H}px;background:none;-webkit-mask-image:linear-gradient(90deg,transparent,#000 140px);mask-image:linear-gradient(90deg,transparent,#000 140px)"><img src="${src}" alt="" style="left:0;top:0;width:${H}px;height:${H}px"><img class="pass2" src="${src}" alt="" style="left:0;top:0;width:${H}px;height:${H}px"></div>
+      <div class="col" style="left:110px;width:${colW}px">${meta}<div class="title" style="font-size:104px">${s.title}</div>${speakersMarkup(s, colW)}</div>
+      <div class="foot lb" style="left:110px">${foot}</div>
+    </div>`;
+  }
+  const colW = 900, colX = isRight ? W - 110 - colW : 110;
+  // Light scrim only: the poster stays fully visible
+  const scrim = `linear-gradient(${isRight ? 270 : 90}deg,rgba(9,18,46,.6) 0%,rgba(9,18,46,.42) 34%,rgba(9,18,46,0) 60%)`;
+  return `<div class="cv lay-A t-${s.track}" data-slug="${s.slug}">
+    ${poster(s, {x:0, w:W, h:H}, W / 2)}
+    <div class="full" style="background:${scrim}"></div>
+    <div class="col" style="left:${colX}px;width:${colW}px">${meta}<div class="title" style="font-size:112px">${s.title}</div>${speakersMarkup(s, colW)}</div>
+    <div class="foot lb" style="left:${colX}px">${foot}</div>
+  </div>`;
+}
+
+// Shrink the title until the column fits between the corner signature and the footer
+function fitTitles(root) {
+  root.querySelectorAll(".cv").forEach(cv => {
+    const col = cv.querySelector(".col"), title = cv.querySelector(".title");
+    let size = parseFloat(title.style.fontSize);
+    while (col.scrollHeight > col.clientHeight + 1 && size > 56) {
+      size -= 2;
+      title.style.fontSize = size + "px";
+    }
+  });
+}
+
+function fitFrames() {
+  document.querySelectorAll(".fr").forEach(frame => {
+    const canvas = frame.querySelector(".cv");
+    if (canvas) canvas.style.transform = `scale(${frame.clientWidth / W})`;
+  });
+}
+
+const params = new URLSearchParams(location.search);
+const soloSession = SESSIONS.find(s => s.slug === params.get("session"));
+const FALLBACK_EXAMPLE = "souverainete-ia";
+const card = (s, layout) => `<article class="card" id="${layout === "c" ? "secours-" : ""}${s.slug}">
+  <a class="fr" href="?session=${s.slug}${layout === "c" ? "&layout=c" : ""}">${frameMarkup(s, layout)}</a>
+  <h3>${s.title}</h3><p class="lb">${s.time} · ${TRACK_LABEL[s.track]}</p></article>`;
+if (soloSession) {
+  document.body.classList.add("solo");
+  document.getElementById("board").outerHTML = frameMarkup(soloSession, params.get("layout") === "c" ? "c" : "a");
+} else {
+  const slotTimes = [...new Set(SESSIONS.map(s => s.time))];
+  document.getElementById("slots").innerHTML = slotTimes.map(time => {
+    const sessions = SESSIONS.filter(s => s.time === time);
+    return `<section class="slot"><h2>${time}</h2><div class="cards">${sessions.map(s => card(s, "a")).join("")}</div></section>`;
+  }).join("") + `<section class="slot fallback"><h2>Variante de secours</h2><div class="cards">${card(SESSIONS.find(s => s.slug === FALLBACK_EXAMPLE), "c")}</div></section>`;
+  fitFrames();
+  new ResizeObserver(fitFrames).observe(document.body);
+}
+fitTitles(document);
+document.fonts.ready.then(() => fitTitles(document));
+</script>
+</body>
+</html>

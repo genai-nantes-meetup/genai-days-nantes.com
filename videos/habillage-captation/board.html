@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Habillage de captation</title>
+<style>
+@font-face{font-family:"EB Garamond";src:url(assets/fonts/eb-garamond-latin-wght-normal.woff2) format("woff2");font-weight:400 800;font-style:normal;font-display:block}
+@font-face{font-family:"EB Garamond";src:url(assets/fonts/eb-garamond-latin-wght-italic.woff2) format("woff2");font-weight:400 800;font-style:italic;font-display:block}
+@font-face{font-family:"Special Elite";src:url(assets/fonts/special-elite-latin-400-normal.woff2) format("woff2");font-display:block}
+@font-face{font-family:"Azeret Mono";src:url(assets/fonts/azeret-mono-latin-500-normal.woff2) format("woff2");font-weight:500;font-display:block}
+
+/* Board tokens (the 16:9 frames keep brand colours whatever the theme) */
+:root{
+  --blue:#3D43CE;--orange:#FE4D1B;--cream:#F9F4EC;--ink:#393636;--night:#09122E;
+  --page:#F9F4EC;--text:#393636;--muted:#6f6a66;--line:#e2d9cb;--card:#fffdf8;--accent:#3D43CE;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--page:#09122E;--text:#F2ECE2;--muted:#a7a9bd;--line:#232c52;--card:#0f1a3d;--accent:#8f93ff}
+}
+:root[data-theme="dark"]{--page:#09122E;--text:#F2ECE2;--muted:#a7a9bd;--line:#232c52;--card:#0f1a3d;--accent:#8f93ff}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--page);color:var(--text);font:16px/1.55 Arial,Helvetica,sans-serif}
+.wrap{max-width:1480px;margin:0 auto;padding:0 max(16px,3vw)}
+.lb{font-family:Arial,Helvetica,sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.12em}
+
+/* Board header */
+.masthead{padding:56px 0 28px;border-bottom:1px solid var(--line)}
+.masthead .kicker{font-size:12px;color:var(--accent)}
+.masthead h1{font-family:"EB Garamond",serif;font-weight:600;font-size:clamp(40px,6vw,76px);line-height:1;margin:14px 0 18px;letter-spacing:-.01em}
+.masthead h1 em{font-style:italic;color:var(--orange)}
+.masthead p{max-width:860px;margin:0 0 10px;color:var(--text)}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 0;padding:0;list-style:none}
+.toc a{display:inline-block;padding:6px 12px;border:1px solid var(--line);border-radius:999px;color:var(--text);text-decoration:none;font-size:13px}
+.toc a:hover{border-color:var(--accent)}
+
+/* Sections */
+section.el{padding:56px 0 8px}
+.el-head{display:grid;grid-template-columns:auto 1fr;gap:4px 22px;align-items:baseline;margin-bottom:24px}
+.el-num{font-family:"EB Garamond",serif;font-size:64px;line-height:.9;color:var(--orange);font-weight:500}
+.el-head h2{font-family:"EB Garamond",serif;font-weight:600;font-size:34px;line-height:1.1;margin:0}
+.el-head p{grid-column:2;margin:0;color:var(--muted);max-width:900px}
+.opts{display:grid;gap:30px 24px;grid-template-columns:repeat(3,minmax(0,1fr))}
+.opts.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:1100px){.opts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:720px){.opts,.opts.two{grid-template-columns:1fr}.el-head{grid-template-columns:1fr}.el-head p{grid-column:1}}
+.opt h3{display:flex;align-items:baseline;gap:10px;margin:12px 0 4px;font-family:"EB Garamond",serif;font-size:22px;font-weight:600}
+.opt h3 .tag{font-size:11px;color:var(--accent)}
+.opt p{margin:0;font-size:14px;color:var(--muted)}
+.opt p b{color:var(--text);font-weight:700}
+.sub{margin:36px 0 14px;font-size:12px;color:var(--accent)}
+.zoomrow{display:grid;gap:8px;margin-top:8px}
+.zoomlabel{font-size:10px;color:var(--muted)}
+.minirow{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;margin-top:18px}
+.minirow figure{margin:0;width:240px}
+.minirow figcaption{font-size:11px;color:var(--muted);margin-top:4px}
+.examples{display:grid;gap:16px;grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:720px){.examples{grid-template-columns:1fr}}
+.examples figure{margin:0}
+.examples img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:6px;box-shadow:0 10px 30px rgba(9,18,46,.14)}
+.examples figcaption{font-size:12px;color:var(--muted);margin-top:6px}
+.cta{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:22px 0 0;padding:22px 26px;border-radius:8px;background:var(--blue);color:#F9F4EC;text-decoration:none;box-shadow:6px 6px 0 var(--orange)}
+.cta strong{font-family:"EB Garamond",serif;font-size:30px;font-weight:600;line-height:1.1}
+.cta span{font-size:13px}
+.cta:hover{transform:translate(-1px,-1px);box-shadow:8px 8px 0 var(--orange)}
+footer{margin:64px 0 0;padding:24px 0 48px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+
+/* Frame: a fixed 1920x1080 canvas scaled to the card width by fitFrames() */
+.fr{position:relative;aspect-ratio:16/9;overflow:hidden;border-radius:6px;background:#1c1c20;box-shadow:0 1px 0 var(--line),0 10px 30px rgba(9,18,46,.14)}
+.fr.zoom{aspect-ratio:32/9}
+.cv{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:left top;overflow:hidden;color:var(--cream);font-family:Arial,Helvetica,sans-serif}
+.cv *{box-sizing:border-box}
+.abs{position:absolute}
+.full{position:absolute;inset:0}
+
+/* Brand primitives */
+.serif{font-family:"EB Garamond",serif}
+.stamp{font-family:"Special Elite",monospace}
+.mono{font-family:"Azeret Mono",monospace}
+.wm{font-family:"EB Garamond",serif;font-weight:400;letter-spacing:.02em;white-space:nowrap}
+.wm b{font-weight:700}
+.wm i{font-style:italic}
+.relief{text-shadow:.04em .04em 0 var(--orange)}
+.relief-b{text-shadow:.035em .035em 0 var(--blue)}
+.mark{display:inline-block;fill:currentColor}
+.c-orange{color:var(--orange)}
+
+/* Two-ink print: key plate (blue) + signal plate (orange) multiplied, slightly out of register */
+.print{position:absolute;inset:0;background:var(--cream);overflow:hidden}
+.print img{position:absolute;inset:-10px;width:calc(100% + 20px);height:calc(100% + 20px);object-fit:cover;mix-blend-mode:multiply}
+.print img.sig{transform:translate(7px,5px)}
+
+/* Session poster from the site programme; scaled a little to drop the printed paper margin */
+.poster{position:absolute;overflow:hidden;background:#09122E}
+.poster img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.07)}
+
+/* Ink portrait: grey photo lightened by an ink colour, the orange copy printed off register */
+.inkp{position:absolute;overflow:hidden;background:var(--cream);isolation:isolate}
+.inkp .pl{position:absolute;inset:0;mix-blend-mode:multiply;isolation:isolate}
+.inkp .pl img{position:absolute;width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.25) brightness(1.08)}
+.inkp .pl::after{content:"";position:absolute;inset:0;background:var(--blue);mix-blend-mode:lighten}
+.inkp .pl.o{transform:translate(6px,4px);opacity:.55}
+.inkp .pl.o::after{background:var(--orange)}
+
+/* Footage stand-in (live camera): darkened, desaturated portrait on a grey stage */
+.footage{position:absolute;inset:0;overflow:hidden;background:radial-gradient(ellipse 60% 70% at 50% 30%,#55565c 0%,#2b2c31 55%,#17171a 100%)}
+.footage::before{content:"";position:absolute;left:0;right:0;bottom:0;height:22%;background:linear-gradient(#1d1d21,#121214)}
+.footage .who{position:absolute;bottom:0;height:96%;aspect-ratio:1/1;left:50%;transform:translateX(-50%);object-fit:cover;filter:grayscale(1) brightness(.55) contrast(.95);-webkit-mask-image:linear-gradient(90deg,transparent,#000 24%,#000 76%,transparent),linear-gradient(transparent,#000 17%,#000 82%,transparent);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent,#000 24%,#000 76%,transparent),linear-gradient(transparent,#000 17%,#000 82%,transparent);mask-composite:intersect}
+.cam{position:absolute;overflow:hidden;background:#17171a}
+.camtag{position:absolute;right:14px;top:12px;font:500 15px "Azeret Mono",monospace;letter-spacing:.1em;color:rgba(255,255,255,.45)}
+.camtag::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;background:#e33;margin-right:8px;vertical-align:0}
+
+/* Slides stand-in (always 16:9) */
+.slide{position:absolute;aspect-ratio:16/9;background:#fff;color:#2c2c30;overflow:hidden}
+.slide .sl-t{position:absolute;left:7%;top:10%;width:58%;height:7%;background:#3b3b42;border-radius:4px}
+.slide .sl-l{position:absolute;left:7%;height:3.2%;background:#c9c9cf;border-radius:3px}
+.slide .sl-c{position:absolute;right:7%;top:30%;width:34%;height:52%;border:3px solid #d5d5da;border-radius:6px;background:repeating-linear-gradient(90deg,transparent 0 18%,#e6e6ea 18% 20%)}
+.slide .sl-c i{position:absolute;bottom:0;width:12%;background:#9a9aa3}
+.slide .sl-n{position:absolute;right:3%;bottom:4%;font:500 15px "Azeret Mono",monospace;color:#9a9aa3;letter-spacing:.1em}
+
+/* Lower third C (filet sérigraphié) */
+.filet .rule{width:110px;height:6px;background:var(--orange);margin-bottom:22px}
+.filet .name{font-family:"EB Garamond",serif;font-weight:600;line-height:1;text-shadow:.04em .04em 0 var(--orange)}
+.filet .role{font:700 17px/1.45 Arial,Helvetica,sans-serif;text-transform:uppercase;letter-spacing:.12em;margin-top:14px;opacity:.9}
+.scrim-b{position:absolute;left:0;right:0;bottom:0;height:420px;background:linear-gradient(transparent,rgba(9,18,46,.8))}
+
+.chip{display:inline-flex;align-items:center;gap:10px;padding:8px 14px 7px;border-radius:999px;font:700 18px Arial,Helvetica,sans-serif;text-transform:uppercase;letter-spacing:.12em}
+.chip.decide{background:var(--blue);color:var(--cream)}
+.chip.impl{background:var(--orange);color:var(--cream)}
+.dot{display:inline-block;width:14px;height:14px;border-radius:50%}
+
+/* Corner signature B, injected in every .cv[data-bug] */
+.bug{position:absolute;left:64px;top:56px;display:flex;align-items:center;gap:16px;opacity:.72;color:var(--cream);z-index:50}
+.bug svg{width:38px;height:38px;fill:currentColor}
+.bug .wm{font-size:34px}
+.bug .lb{font-size:13px;opacity:.85;margin-left:4px}
+.safe{position:absolute;left:0;top:0;width:560px;height:150px;border:3px dashed var(--orange);background:rgba(254,77,27,.08)}
+
+/* Partner strip (logos are cream mono PNGs) */
+.partners{display:flex;flex-wrap:wrap;justify-content:center;align-items:center}
+.partners img{object-fit:contain}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="genai-mark" viewBox="0 0 199 199"><path d="M91 136.117C91 112.734 122 108 135 121L163 149L149 164L120 135C116.5 131.5 111 134.5 111 138V199H91V136.117ZM62.8828 90C86.2656 90 90.9999 121 78 134L50 162L35 148L64 119C67.5 115.5 64.5 110 61 110H0V90H62.8828ZM163.999 51L134.999 80C131.5 83.4999 134.499 88.9995 137.999 89H199V109H136.116C112.734 109 107.999 78 120.999 65L148.999 37L163.999 51ZM99.5 91C104.194 91 108 94.8056 108 99.5C108 104.194 104.194 108 99.5 108C94.8056 108 91 104.194 91 99.5C91 94.8056 94.8056 91 99.5 91ZM110 62.8828C110 86.2656 79 90.9999 66 78L38 50L52 35L81 64C84.5 67.5 90 64.5 90 61V0H110V62.8828Z"/></symbol>
+</svg>
+
+<header class="wrap masthead">
+  <div class="kicker lb">GENAI DAYS 2026 · Captations des conférences</div>
+  <h1>Habillage de <em>captation</em></h1>
+  <p>L'habillage des vidéos des talks filmés le 17 novembre à l'Hôtel de Région. Ce sont des overlays HTML joués dans OBS : les zones « caméra live » et « slides » sont des emplacements de sources, le reste est l'overlay. Les affiches de la DA en sont la base.</p>
+  <p>Sur cette planche, la caméra est figurée par un portrait assombri sur fond de scène gris, les slides par une maquette grise en 16:9. Sessions, noms, rôles et horaires viennent du programme publié sur genai-days-nantes.com.</p>
+  <ul class="toc">
+    <li><a href="#e1">01 Bumper d'intro</a></li>
+    <li><a href="#e2">02 Signature d'angle</a></li>
+    <li><a href="#e3">03 Bandeau nom</a></li>
+    <li><a href="#e4">04 Slides et intervenant</a></li>
+    <li><a href="#e5">05 Carton de fin</a></li>
+    <li><a href="#e6">06 Miniature YouTube</a></li>
+    <li><a href="#annexe">Annexe · chapitre</a></li>
+  </ul>
+</header>
+
+<main class="wrap">
+
+<!-- ============ 01 INTRO BUMPER ============ -->
+<section class="el" id="e1">
+  <div class="el-head"><div class="el-num">01</div><h2>Bumper d'intro</h2><p>Carton de 3 à 5 s avant le talk : titre de la session, intervenant·es, parcours, horaire.</p></div>
+  <div class="opts two">
+    <article class="opt">
+      <div class="fr"><div class="cv" id="b1">
+        <div class="print"><img src="assets/plates/sovereignty-key.webp" alt=""><img class="sig" src="assets/plates/sovereignty-signal.webp" alt=""></div>
+        <div class="full" style="background:linear-gradient(90deg,rgba(9,18,46,.92) 0%,rgba(9,18,46,.78) 48%,rgba(9,18,46,.05) 80%)"></div>
+        <div class="abs wm" style="left:110px;top:90px;font-size:46px"><b>GEN<i>AI</i></b> DAYS</div>
+        <div class="abs lb" style="right:110px;top:104px;font-size:20px">17.11.2026 · Nantes</div>
+        <div class="abs" style="left:110px;top:330px;width:1100px">
+          <div style="display:flex;gap:18px;align-items:center"><span class="chip decide">Parcours Décider</span><span class="lb" style="font-size:20px">Table ronde · 10:20</span></div>
+          <div class="serif relief" style="font-size:118px;line-height:.98;font-weight:600;margin-top:34px;letter-spacing:-.01em">Les Américains ont pris en otage mon SI</div>
+          <div class="lb" style="font-size:19px;line-height:1.9;margin-top:46px;opacity:.92">Quentin Adam · Clever Cloud<br>Constance Nebbula · Région Pays de la Loire<br>Jean-Baptiste Kempf · VLC · Scaleway · Kyber</div>
+        </div>
+      </div></div>
+      <h3><span class="tag lb">Option 1</span>Affiche en deux passes</h3>
+      <p>L'art de la session imprimé en bleu puis orange, légèrement hors repérage, titre crème en relief orange.</p>
+    </article>
+    <article class="opt">
+      <div class="fr"><div class="cv" id="b3" style="background:#0b1230">
+        <img class="full" src="assets/img/speaker_background-optimized.webp" alt="" style="width:100%;height:100%;object-fit:cover;object-position:50% 40%;left:380px">
+        <div class="full" style="background:linear-gradient(90deg,#09122E 0%,#09122E 30%,rgba(9,18,46,.35) 62%,rgba(9,18,46,0) 80%)"></div>
+        <div class="abs" style="left:110px;top:120px;width:960px">
+          <div style="display:flex;gap:18px;align-items:center"><span class="chip impl">Parcours Implémenter</span><span class="lb" style="font-size:20px">Talk · 11:15</span></div>
+          <div class="serif relief-b" style="font-size:104px;line-height:1;font-weight:600;margin-top:36px">Mon modèle ne tient pas sur une puce embarquée</div>
+          <div style="display:flex;align-items:center;gap:28px;margin-top:64px">
+            <div class="inkp" style="position:relative;width:150px;height:150px;border-radius:50%"><div class="pl b"><img src="assets/speakers/norm/theo-hubert.webp" alt=""></div><div class="pl o"><img src="assets/speakers/norm/theo-hubert.webp" alt=""></div></div>
+            <div><div class="serif" style="font-size:50px;font-weight:600;line-height:1">Théo Hubert</div><div class="lb" style="font-size:18px;margin-top:12px;opacity:.85">Cofondateur, Président &amp; CTO · AlphaEdge</div></div>
+          </div>
+        </div>
+        <div class="abs wm" style="left:110px;bottom:84px;font-size:40px"><b>GEN<i>AI</i></b> DAYS <span class="lb" style="font-size:16px;margin-left:16px;vertical-align:middle;opacity:.8">17.11.2026</span></div>
+      </div></div>
+      <h3><span class="tag lb">Variante de secours</span>Sous le projecteur</h3>
+      <p>Le pupitre éclairé de la DA, portrait encré, toute la droite laissée libre.</p>
+    </article>
+  </div>
+  <div class="sub lb">Exemples</div>
+  <div class="examples">
+    <figure><img src="exports/bumper-solo.webp" alt="Bumper d'un talk solo"><figcaption>Talk solo</figcaption></figure>
+    <figure><img src="exports/bumper-table-ronde.webp" alt="Bumper d'une table ronde"><figcaption>Table ronde</figcaption></figure>
+    <figure><img src="exports/bumper-tba.webp" alt="Bumper d'une session sans intervenant annoncé"><figcaption>Intervenant à annoncer</figcaption></figure>
+  </div>
+  <a class="cta" href="bumpers.html"><strong>Tous les bumpers d'intro &rarr;</strong><span class="lb">Une page, chaque session du programme</span></a>
+</section>
+
+<!-- ============ 02 BUG ============ -->
+<section class="el" id="e2">
+  <div class="el-head"><div class="el-num">02</div><h2>Signature d'angle</h2><p>Symbole, mot-symbole compact et « Nantes 2026 », en haut à gauche, pendant tout le talk. Elle n'apparaît pas sur les bumpers d'intro ni sur les cartons de fin, qui portent déjà le logo. La zone de 560 × 150 px (sur 1920 × 1080) lui est réservée : aucun autre élément ne s'y pose.</p></div>
+  <div class="opts two">
+    <article class="opt">
+      <div class="fr"><div class="cv" id="g2" data-bug>
+        <div class="footage"><img class="who" src="assets/speakers/norm/jean-baptiste-kempf.webp" alt=""></div>
+      </div></div>
+      <div class="zoomrow"><div class="fr zoom" data-clone="g2" data-zoom="3" data-anchor="left top"></div><div class="zoomlabel lb">Coin haut gauche × 3</div></div>
+      <h3>Pendant le talk</h3>
+      <p>Crème à 72 % d'opacité, présente aussi sur les extraits.</p>
+    </article>
+    <article class="opt">
+      <div class="fr"><div class="cv" id="g4" data-bug>
+        <div class="footage"><img class="who" src="assets/speakers/norm/jean-baptiste-kempf.webp" alt=""></div>
+        <div class="safe"></div>
+        <div class="abs lb" style="left:24px;top:166px;font-size:20px;color:var(--orange)">Zone réservée 560 × 150</div>
+      </div></div>
+      <h3>Zone réservée</h3>
+      <p>Repère de mise en page commun à tous les habillages de captation.</p>
+    </article>
+  </div>
+</section>
+
+<!-- ============ 03 LOWER THIRD ============ -->
+<section class="el" id="e3">
+  <div class="el-head"><div class="el-num">03</div><h2>Bandeau nom (synthé)</h2><p>Le nom, le rôle et l'entreprise s'affichent en bas de l'image la première fois que chaque intervenant·e apparaît à l'écran, pendant 5 s environ. Nom en Garamond avec relief orange, rôle en capitales, filet orange. Décliné pour 1, 2, 3 et 4 personnes à l'image.</p></div>
+  <div class="opts two">
+    <article class="opt">
+      <div class="fr"><div class="cv" id="l1" data-bug>
+        <div class="footage"><img class="who" src="assets/speakers/norm/constance-nebbula.webp" alt=""></div>
+        <div class="scrim-b"></div>
+        <div class="abs filet" style="left:110px;bottom:110px">
+          <div class="rule"></div><div class="name" style="font-size:72px">Constance Nebbula</div>
+          <div class="role" style="font-size:19px">Vice-présidente Numérique et IA · Région Pays de la Loire</div>
+        </div>
+      </div></div>
+      <h3>Une personne</h3>
+      <p>Talks solo et keynotes.</p>
+    </article>
+    <article class="opt">
+      <div class="fr"><div class="cv" id="l2" data-bug>
+        <div class="footage"><img class="who" src="assets/speakers/norm/laurent-duthoit.webp" alt="" style="left:30%;height:100%"><img class="who" src="assets/speakers/norm/camille-croze.webp" alt="" style="left:70%;height:88%"></div>
+        <div class="scrim-b"></div>
+        <div class="abs lb" style="right:110px;top:66px;font-size:17px;opacity:.85"><span class="dot" style="background:var(--blue);margin-right:12px;vertical-align:-1px"></span>Mon concurrent utilise des humanoïdes dans sa chaine de production</div>
+        <div class="abs filet" style="left:150px;bottom:100px;width:760px">
+          <div class="rule"></div><div class="name" style="font-size:60px">Laurent Duthoit</div>
+          <div class="role">Expert robotique Next Gen et IA physique · Renault Group</div>
+        </div>
+        <div class="abs filet" style="left:1070px;bottom:100px;width:720px">
+          <div class="rule"></div><div class="name" style="font-size:60px">Camille Croze</div>
+          <div class="role">Business Development Manager, robots humanoïdes · Wandercraft</div>
+        </div>
+      </div></div>
+      <h3>Deux personnes</h3>
+      <p>Un bandeau sous chaque personne, rappel de session en haut à droite.</p>
+    </article>
+    <article class="opt">
+      <div class="fr"><div class="cv" id="l3" data-bug>
+        <div class="footage"><img class="who" src="assets/speakers/norm/quentin-adam.webp" alt="" style="left:19%;height:92%"><img class="who" src="assets/speakers/norm/constance-nebbula.webp" alt="" style="left:50%;height:92%"><img class="who" src="assets/speakers/norm/jean-baptiste-kempf.webp" alt="" style="left:81%;height:92%"></div>
+        <div class="scrim-b"></div>
+        <div class="abs lb" style="right:110px;top:66px;font-size:17px;opacity:.85"><span class="dot" style="background:var(--blue);margin-right:12px;vertical-align:-1px"></span>Table ronde · Les Américains ont pris en otage mon SI</div>
+        <div class="abs filet" style="left:110px;bottom:96px;width:540px">
+          <div class="rule"></div><div class="name" style="font-size:52px">Quentin Adam</div>
+          <div class="role" style="font-size:15px">CEO &amp; Cofondateur · Clever Cloud</div>
+        </div>
+        <div class="abs filet" style="left:700px;bottom:96px;width:540px">
+          <div class="rule"></div><div class="name" style="font-size:52px">Constance Nebbula</div>
+          <div class="role" style="font-size:15px">Vice-présidente Numérique et IA · Région Pays de la Loire</div>
+        </div>
+        <div class="abs filet" style="left:1290px;bottom:96px;width:540px">
+          <div class="rule"></div><div class="name" style="font-size:52px">Jean-Baptiste Kempf</div>
+          <div class="role" style="font-size:15px">Entrepreneur tech · VLC · Scaleway · Kyber</div>
+        </div>
+      </div></div>
+      <h3>Table ronde à trois</h3>
+      <p>Trois colonnes égales, calées sur les tiers de l'image.</p>
+    </article>
+    <article class="opt">
+      <div class="fr"><div class="cv" id="l4" data-bug>
+        <div class="footage"><img class="who" src="assets/speakers/norm/constance-nebbula.webp" alt="" style="left:14%;height:80%"><img class="who" src="assets/speakers/norm/sebastien-le-corfec.webp" alt="" style="left:38%;height:80%"><img class="who" src="assets/speakers/norm/thomas-mathieu.webp" alt="" style="left:62%;height:80%"><img class="who" src="assets/speakers/norm/david-leaurant.webp" alt="" style="left:86%;height:80%"></div>
+        <div class="scrim-b"></div>
+        <div class="abs lb" style="right:110px;top:66px;font-size:17px;opacity:.85"><span class="dot" style="background:var(--blue);margin-right:12px;vertical-align:-1px"></span>Startup Contest · Jury</div>
+        <div class="abs filet" style="left:70px;bottom:90px;width:420px">
+          <div class="rule" style="width:80px"></div><div class="name" style="font-size:42px">Constance Nebbula</div>
+          <div class="role" style="font-size:13px">Vice-présidente Numérique et IA · Région Pays de la Loire</div>
+        </div>
+        <div class="abs filet" style="left:530px;bottom:90px;width:420px">
+          <div class="rule" style="width:80px"></div><div class="name" style="font-size:42px">Sébastien Le Corfec</div>
+          <div class="role" style="font-size:13px">Associé et cofondateur · Épopée Gestion · West Web Festival</div>
+        </div>
+        <div class="abs filet" style="left:990px;bottom:90px;width:420px">
+          <div class="rule" style="width:80px"></div><div class="name" style="font-size:42px">Thomas Mathieu</div>
+          <div class="role" style="font-size:13px">CEO et cofondateur · Guest Suite</div>
+        </div>
+        <div class="abs filet" style="left:1450px;bottom:90px;width:420px">
+          <div class="rule" style="width:80px"></div><div class="name" style="font-size:42px">David Léaurant</div>
+          <div class="role" style="font-size:13px">Président · ADN Ouest</div>
+        </div>
+      </div></div>
+      <h3>Jury à quatre</h3>
+      <p>Quatre colonnes, corps réduit, rôles sur deux lignes au besoin.</p>
+    </article>
+  </div>
+</section>
+
+<!-- ============ 04 SLIDES + LIVE CAMERA ============ -->
+<section class="el" id="e4">
+  <div class="el-head"><div class="el-num">04</div><h2>Slides et intervenant</h2><p>La majorité du temps de vidéo. L'affiche de la session tient une bande verticale à gauche avec le titre et la caméra live (16:9), les slides occupent la droite en 16:9, le plus grand possible, le nom de l'intervenant·e se lit dessous. La signature reste dans son coin. Même mise en page pour toutes les sessions, ici avec deux d'entre elles.</p></div>
+  <div class="opts two">
+    <article class="opt">
+      <div class="fr"><div class="cv" id="s1" data-bug style="background:#09122E">
+        <div class="poster" style="left:0;top:0;width:520px;height:1080px"><img src="assets/sessions/stage-2-talk-3-slm.webp" alt="" style="object-position:28% 50%"></div>
+        <div class="abs" style="left:0;top:0;width:520px;height:200px;background:linear-gradient(rgba(9,18,46,.5),rgba(9,18,46,0))"></div>
+        <div class="abs" style="left:24px;top:190px;width:472px;padding:22px 24px 24px;background:rgba(9,18,46,.42);border-radius:4px">
+          <div style="display:flex;gap:14px;align-items:center"><span class="chip impl" style="font-size:15px">Implémenter</span><span class="lb" style="font-size:16px">11:15</span></div>
+          <div class="serif relief" style="font-size:44px;line-height:1.02;font-weight:600;margin-top:16px">Mon modèle ne tient pas sur une puce embarquée</div>
+        </div>
+        <div class="cam" style="left:24px;top:536px;width:472px;height:266px;box-shadow:0 0 0 6px var(--cream)"><div class="footage"><img class="who" src="assets/speakers/norm/theo-hubert.webp" alt=""></div><span class="camtag">CAMÉRA LIVE</span></div>
+        <div class="slide" style="left:560px;top:60px;width:1320px"><div class="sl-t"></div><div class="sl-l" style="top:30%;width:40%"></div><div class="sl-l" style="top:38%;width:44%"></div><div class="sl-l" style="top:46%;width:36%"></div><div class="sl-l" style="top:54%;width:42%"></div><div class="sl-c"><i style="left:12%;height:30%"></i><i style="left:34%;height:52%"></i><i style="left:56%;height:70%"></i><i style="left:78%;height:88%"></i></div><div class="sl-n">SLIDES 16:9</div></div>
+        <div class="abs filet" style="left:560px;top:846px"><div class="rule"></div><div class="name" style="font-size:58px">Théo Hubert</div><div class="role">Cofondateur, Président &amp; CTO · AlphaEdge</div></div>
+        <div class="abs lb" style="right:40px;top:1000px;font-size:15px;opacity:.7">genai-days-nantes.com</div>
+      </div></div>
+      <h3>Talk du parcours Implémenter</h3>
+      <p>Mon modèle ne tient pas sur une puce embarquée, Théo Hubert.</p>
+    </article>
+    <article class="opt">
+      <div class="fr"><div class="cv" id="s2" data-bug style="background:#09122E">
+        <div class="poster" style="left:0;top:0;width:520px;height:1080px"><img src="assets/sessions/stage-1-talk-8-finops.webp" alt="" style="object-position:30% 50%"></div>
+        <div class="abs" style="left:0;top:0;width:520px;height:200px;background:linear-gradient(rgba(9,18,46,.5),rgba(9,18,46,0))"></div>
+        <div class="abs" style="left:24px;top:190px;width:472px;padding:22px 24px 24px;background:rgba(9,18,46,.42);border-radius:4px">
+          <div style="display:flex;gap:14px;align-items:center"><span class="chip decide" style="font-size:15px">Décider</span><span class="lb" style="font-size:16px">13:45</span></div>
+          <div class="serif relief" style="font-size:44px;line-height:1.02;font-weight:600;margin-top:16px">J'ai consommé mon budget IA en mai. Comment finir l'année&nbsp;?</div>
+        </div>
+        <div class="cam" style="left:24px;top:536px;width:472px;height:266px;box-shadow:0 0 0 6px var(--cream)"><div class="footage"><img class="who" src="assets/speakers/norm/nicolas-martignole.webp" alt=""></div><span class="camtag">CAMÉRA LIVE</span></div>
+        <div class="slide" style="left:560px;top:60px;width:1320px"><div class="sl-t"></div><div class="sl-l" style="top:30%;width:40%"></div><div class="sl-l" style="top:38%;width:44%"></div><div class="sl-l" style="top:46%;width:36%"></div><div class="sl-l" style="top:54%;width:42%"></div><div class="sl-c"><i style="left:12%;height:30%"></i><i style="left:34%;height:52%"></i><i style="left:56%;height:70%"></i><i style="left:78%;height:88%"></i></div><div class="sl-n">SLIDES 16:9</div></div>
+        <div class="abs filet" style="left:560px;top:846px"><div class="rule"></div><div class="name" style="font-size:58px">Nicolas Martignole</div><div class="role">Principal Engineer · Back Market</div></div>
+        <div class="abs lb" style="right:40px;top:1000px;font-size:15px;opacity:.7">genai-days-nantes.com</div>
+      </div></div>
+      <h3>Talk du parcours Décider</h3>
+      <p>J'ai consommé mon budget IA en mai. Comment finir l'année&nbsp;? Nicolas Martignole.</p>
+    </article>
+  </div>
+</section>
+
+<!-- ============ 05 OUTRO ============ -->
+<section class="el" id="e5">
+  <div class="el-head"><div class="el-num">05</div><h2>Carton de fin</h2><p>6 à 10 s en fin de vidéo : une affiche de la DA, le lockup GENAI DAYS, la signature « L'intelligence artificielle, ici et maintenant. » et les partenaires en logos crème.</p></div>
+  <div class="opts">
+    <article class="opt">
+      <div class="fr"><div class="cv" id="o3">
+        <div class="print"><img src="assets/plates/rails-key.webp" alt=""><img class="sig" src="assets/plates/rails-signal.webp" alt=""></div>
+        <div class="full" style="background:radial-gradient(ellipse 60% 42% at 50% 26%,rgba(9,18,46,.6),rgba(9,18,46,0) 100%),linear-gradient(transparent 52%,rgba(9,18,46,.78) 72%)"></div>
+        <div class="abs" style="left:0;right:0;top:110px;text-align:center">
+          <div class="wm relief" style="font-size:150px;line-height:1"><b>GEN<i>AI</i></b> DAYS</div>
+          <div class="serif" style="font-size:46px;font-style:italic;margin-top:22px">L'intelligence artificielle, ici et maintenant.</div>
+          <div class="lb" style="font-size:20px;margin-top:30px;opacity:.9">17.11.2026 · Hôtel de Région · Nantes · genai-days-nantes.com</div>
+        </div>
+        <div class="abs lb" style="left:0;right:0;top:640px;text-align:center;font-size:16px;opacity:.8">Avec le soutien de</div>
+        <div class="abs partners" data-partners="46" style="left:150px;right:150px;top:690px;gap:26px 54px"></div>
+      </div></div>
+      <h3><span class="tag lb">Option 1</span>Les deux voies</h3>
+      <p>Mot-symbole en relief au centre, signature, mur des 17 partenaires.</p>
+    </article>
+    <article class="opt">
+      <div class="fr"><div class="cv" id="o1">
+        <div class="print"><img src="assets/plates/chateau-key.webp" alt=""><img class="sig" src="assets/plates/chateau-signal.webp" alt=""></div>
+        <div class="full" style="background:linear-gradient(90deg,rgba(9,18,46,.62),rgba(9,18,46,.2) 50%,rgba(9,18,46,0)),linear-gradient(transparent 62%,rgba(9,18,46,.78) 80%)"></div>
+        <div class="abs" style="left:110px;top:90px;display:flex;align-items:center;gap:22px">
+          <svg class="mark" style="width:70px;height:70px"><use href="#genai-mark"/></svg><span class="wm" style="font-size:64px"><b>GEN<i>AI</i></b> DAYS</span>
+        </div>
+        <div class="abs serif relief" style="left:104px;top:250px;font-size:220px;font-weight:600;line-height:1">Merci.</div>
+        <div class="abs serif" style="left:112px;top:500px;font-size:46px;font-style:italic">L'intelligence artificielle, ici et maintenant.</div>
+        <div class="abs lb" style="left:114px;top:590px;font-size:20px;opacity:.9">Toutes les vidéos sur genai-days-nantes.com</div>
+        <div class="abs lb" style="left:110px;top:840px;font-size:16px;opacity:.8">Avec le soutien de</div>
+        <div class="abs partners" data-partners="40" style="left:90px;right:90px;top:880px;gap:22px 46px"></div>
+      </div></div>
+      <h3><span class="tag lb">Option 2</span>Merci sur le château</h3>
+      <p>« Merci. » en grand sur l'affiche du château, adresse des vidéos, partenaires en pied.</p>
+    </article>
+    <article class="opt">
+      <div class="fr"><div class="cv" id="o4">
+        <div class="print"><img src="assets/plates/cover-key.webp" alt=""><img class="sig" src="assets/plates/cover-signal.webp" alt=""></div>
+        <div class="full" style="background:linear-gradient(rgba(9,18,46,.55),rgba(9,18,46,0) 32%,rgba(9,18,46,0) 58%,rgba(9,18,46,.8) 78%)"></div>
+        <div class="abs" style="left:0;right:0;top:70px;text-align:center">
+          <div class="wm relief" style="font-size:120px;line-height:1"><b>GEN<i>AI</i></b> DAYS</div>
+          <div class="serif" style="font-size:40px;font-style:italic;margin-top:14px">L'intelligence artificielle, ici et maintenant.</div>
+        </div>
+        <div class="abs lb" style="left:0;right:0;top:770px;text-align:center;font-size:16px;opacity:.85">genai-days-nantes.com · Avec le soutien de</div>
+        <div class="abs partners" data-partners="42" style="left:150px;right:150px;top:815px;gap:24px 50px"></div>
+      </div></div>
+      <h3><span class="tag lb">Option 3</span>L'affiche officielle</h3>
+      <p>L'art de couverture, lockup dans le ciel, partenaires posés sur la route.</p>
+    </article>
+  </div>
+</section>
+
+<!-- ============ 06 THUMBNAIL ============ -->
+<section class="el" id="e6">
+  <div class="el-head"><div class="el-num">06</div><h2>Miniature YouTube</h2><p>Image 1280 × 720 : affiche de la session, visages en pastilles, titre plein pied. Les portraits sont normalisés pour que chaque tête ait la même taille, quel que soit le cadrage de la photo d'origine. La ligne du bas montre la taille réelle dans une liste YouTube.</p></div>
+  <div class="opts">
+    <article class="opt">
+      <div class="fr"><div class="cv" id="t1">
+        <div class="poster" style="inset:0"><img src="assets/sessions/stage-1-talk-8-finops.webp" alt=""></div>
+        <div class="full" style="background:linear-gradient(rgba(9,18,46,.15),rgba(9,18,46,.88) 72%)"></div>
+        <div class="abs" style="left:90px;top:80px;display:flex">
+          <div class="inkp" style="position:relative;width:260px;height:260px;border-radius:50%;border:8px solid var(--cream)"><div class="pl b"><img src="assets/speakers/norm/nicolas-martignole.webp" alt=""></div><div class="pl o"><img src="assets/speakers/norm/nicolas-martignole.webp" alt=""></div></div>
+        </div>
+        <span class="abs chip decide" style="right:90px;top:100px;font-size:26px;padding:14px 24px 12px">Décider</span>
+        <div class="abs serif relief" style="left:90px;bottom:90px;width:1740px;font-size:150px;line-height:.95;font-weight:700;letter-spacing:-.02em">J'ai consommé mon budget IA en&nbsp;mai.</div>
+      </div></div>
+      <h3><span class="tag lb">Solo</span>Une pastille</h3>
+      <p>Nicolas Martignole, affiche de la session.</p>
+    </article>
+    <article class="opt">
+      <div class="fr"><div class="cv" id="t2">
+        <div class="poster" style="inset:0"><img src="assets/sessions/ia-industrie.webp" alt=""></div>
+        <div class="full" style="background:linear-gradient(rgba(9,18,46,.15),rgba(9,18,46,.9) 66%)"></div>
+        <div class="abs" style="left:90px;top:80px;display:flex">
+          <div class="inkp" style="position:relative;width:260px;height:260px;border-radius:50%;border:8px solid var(--cream)"><div class="pl b"><img src="assets/speakers/norm/laurent-duthoit.webp" alt=""></div><div class="pl o"><img src="assets/speakers/norm/laurent-duthoit.webp" alt=""></div></div>
+          <div class="inkp" style="position:relative;width:260px;height:260px;border-radius:50%;border:8px solid var(--cream);margin-left:-40px"><div class="pl b"><img src="assets/speakers/norm/camille-croze.webp" alt=""></div><div class="pl o"><img src="assets/speakers/norm/camille-croze.webp" alt=""></div></div>
+        </div>
+        <span class="abs chip decide" style="right:90px;top:100px;font-size:26px;padding:14px 24px 12px">Décider</span>
+        <div class="abs serif relief" style="left:90px;bottom:80px;width:1740px;font-size:122px;line-height:.95;font-weight:700;letter-spacing:-.02em">Mon concurrent utilise des humanoïdes dans sa chaine de production</div>
+      </div></div>
+      <h3><span class="tag lb">Duo</span>Deux pastilles</h3>
+      <p>Laurent Duthoit et Camille Croze, affiche de la session.</p>
+    </article>
+    <article class="opt">
+      <div class="fr"><div class="cv" id="t3">
+        <div class="poster" style="inset:0"><img src="assets/sessions/souverainete.webp" alt=""></div>
+        <div class="full" style="background:linear-gradient(rgba(9,18,46,.15),rgba(9,18,46,.88) 72%)"></div>
+        <div class="abs" style="left:90px;top:80px;display:flex">
+          <div class="inkp" style="position:relative;width:260px;height:260px;border-radius:50%;border:8px solid var(--cream)"><div class="pl b"><img src="assets/speakers/norm/quentin-adam.webp" alt=""></div><div class="pl o"><img src="assets/speakers/norm/quentin-adam.webp" alt=""></div></div>
+          <div class="inkp" style="position:relative;width:260px;height:260px;border-radius:50%;border:8px solid var(--cream);margin-left:-40px"><div class="pl b"><img src="assets/speakers/norm/constance-nebbula.webp" alt=""></div><div class="pl o"><img src="assets/speakers/norm/constance-nebbula.webp" alt=""></div></div>
+          <div class="inkp" style="position:relative;width:260px;height:260px;border-radius:50%;border:8px solid var(--cream);margin-left:-40px"><div class="pl b"><img src="assets/speakers/norm/jean-baptiste-kempf.webp" alt=""></div><div class="pl o"><img src="assets/speakers/norm/jean-baptiste-kempf.webp" alt=""></div></div>
+        </div>
+        <span class="abs chip decide" style="right:90px;top:100px;font-size:26px;padding:14px 24px 12px">Table ronde</span>
+        <div class="abs serif relief" style="left:90px;bottom:90px;width:1740px;font-size:150px;line-height:.95;font-weight:700;letter-spacing:-.02em">Les Américains ont pris en otage mon&nbsp;SI</div>
+      </div></div>
+      <h3><span class="tag lb">Table ronde</span>Trois pastilles</h3>
+      <p>Quentin Adam, Constance Nebbula, Jean-Baptiste Kempf, affiche de la session.</p>
+    </article>
+  </div>
+  <div class="minirow">
+    <figure><div class="fr" data-clone="t1"></div><figcaption>Solo à 240 px</figcaption></figure>
+    <figure><div class="fr" data-clone="t2"></div><figcaption>Duo à 240 px</figcaption></figure>
+    <figure><div class="fr" data-clone="t3"></div><figcaption>Table ronde à 240 px</figcaption></figure>
+  </div>
+</section>
+
+<!-- ============ ANNEXE ============ -->
+<section class="el" id="annexe">
+  <div class="el-head"><div class="el-num" style="color:var(--muted)">+</div><h2>Annexe · carton de chapitre</h2><p>En bonus, au montage, quand le plan du talk est connu : un carton de 1,5 s entre deux parties, aussi exportable en chapitres YouTube. Les intitulés reprennent ici les techniques citées dans le résumé de la session.</p></div>
+  <div class="opts two">
+    <article class="opt">
+      <div class="fr"><div class="cv" id="c1" data-bug>
+        <div class="poster" style="inset:0"><img src="assets/sessions/stage-2-talk-3-slm.webp" alt=""></div>
+        <div class="full" style="background:linear-gradient(90deg,rgba(9,18,46,.92),rgba(9,18,46,.6) 60%,rgba(9,18,46,.35))"></div>
+        <div class="abs lb" style="right:110px;top:66px;font-size:17px;opacity:.8">Mon modèle ne tient pas sur une puce embarquée · Théo Hubert</div>
+        <div class="abs stamp c-orange" style="left:104px;top:270px;font-size:200px;line-height:1">02</div>
+        <div class="abs serif relief" style="left:110px;top:500px;font-size:180px;font-weight:600;line-height:1;letter-spacing:-.015em">Quantification</div>
+        <div class="abs" style="left:110px;right:110px;bottom:120px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
+          <div><div style="height:10px;background:var(--orange)"></div><div class="lb" style="font-size:17px;margin-top:14px;opacity:.6">01 Trimming</div></div>
+          <div><div style="height:10px;background:var(--orange)"></div><div class="lb" style="font-size:17px;margin-top:14px">02 Quantification</div></div>
+          <div><div style="height:10px;background:rgba(249,244,236,.25)"></div><div class="lb" style="font-size:17px;margin-top:14px;opacity:.6">03 Pruning</div></div>
+          <div><div style="height:10px;background:rgba(249,244,236,.25)"></div><div class="lb" style="font-size:17px;margin-top:14px;opacity:.6">04 Fine-tuning</div></div>
+        </div>
+      </div></div>
+      <h3>Carton de chapitre</h3>
+      <p>Numéro tamponné, intitulé en relief, progression par parties, sur l'affiche de la session.</p>
+    </article>
+  </div>
+</section>
+
+<footer>
+  GENAI DAYS · 17 novembre 2026 · Hôtel de Région, Nantes · genai-days-nantes.com · #GenAIDaysNantes
+</footer>
+</main>
+
+<script>
+// Partner logos, cream mono versions; the data-partners value is the logo height in canvas px
+const PARTNER_LOGOS = ["clever-cloud","alphaedge","bworlds","adn-ouest","club-eti","explore-the-vault","externatic","icilundi","ippon","jems","la-cantine","leboncoin-tech","elastic","techtown","cross-data","swiftask","region-pdl"];
+document.querySelectorAll("[data-partners]").forEach(strip => {
+  const height = +strip.dataset.partners;
+  strip.innerHTML = PARTNER_LOGOS.map(slug => `<img src="assets/partners/${slug}.png" alt="" style="height:${height}px">`).join("");
+});
+
+// Corner signature on every talk frame
+const BUG_MARKUP = '<svg viewBox="0 0 199 199"><use href="#genai-mark"/></svg><span class="wm"><b>GEN<i>AI</i></b> DAYS</span><span class="lb">Nantes 2026</span>';
+document.querySelectorAll(".cv[data-bug]").forEach(canvas => {
+  const bug = document.createElement("div");
+  bug.className = "bug";
+  bug.innerHTML = BUG_MARKUP;
+  canvas.appendChild(bug);
+});
+
+// Clones after bugs, so zoom and mini frames reuse the exact canvas markup
+document.querySelectorAll(".fr[data-clone]").forEach(frame => {
+  const copy = document.getElementById(frame.dataset.clone).cloneNode(true);
+  copy.removeAttribute("id");
+  frame.appendChild(copy);
+});
+
+function fitFrames() {
+  document.querySelectorAll(".fr").forEach(frame => {
+    const canvas = frame.querySelector(".cv");
+    if (!canvas) return;
+    const w = frame.clientWidth, h = frame.clientHeight;
+    const zoom = +frame.dataset.zoom || 1;
+    const [ax, ay] = (frame.dataset.anchor || "left top").split(" ");
+    canvas.style.left = (ax === "right" ? w - 1920 : 0) + "px";
+    canvas.style.top = (ay === "bottom" ? h - 1080 : 0) + "px";
+    canvas.style.transformOrigin = `${ax} ${ay}`;
+    canvas.style.transform = `scale(${(w / 1920) * zoom})`;
+  });
+}
+fitFrames();
+new ResizeObserver(fitFrames).observe(document.body);
+</script>
+</body>
+</html>

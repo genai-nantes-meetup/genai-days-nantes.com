@@ -1,0 +1,59 @@
+{
+ "why": "Reading holds from tools/reading.py (17 chars/s, min 0.83 s of still text), plus fixed holds for the speaker corridor, partners and lockup. Multiples of 0.25 s stay on the eighth-note grid at 120 BPM.",
+ "holds": [
+  [
+   2.545,
+   0.75
+  ],
+  [
+   3.715,
+   0.75
+  ],
+  [
+   4.995,
+   0.75
+  ],
+  [
+   6.545,
+   1.0
+  ],
+  [
+   7.275,
+   0.75
+  ],
+  [
+   7.775,
+   0.75
+  ],
+  [
+   8.275,
+   0.75
+  ],
+  [
+   8.715,
+   0.75
+  ],
+  [
+   11.495,
+   1.5
+  ],
+  [
+   14.55,
+   2.5
+  ],
+  [
+   21.495,
+   2.75
+  ],
+  [
+   24.6,
+   0.5
+  ],
+  [
+   27.4,
+   2.0
+  ]
+ ],
+ "speed": 0.6,
+ "outlier": 0.6
+}

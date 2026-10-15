@@ -1,0 +1,12 @@
+# Generated: rebuild with the commands in GUIDE.html
+# Every render goes to videos/renders/; the pattern also catches a stray film/renders/
+renders/
+snapshots/
+film/tools/labs/
+habillage-captation/habillage-captation-genai-days.html
+__pycache__/
+.hyperframes/
+
+# Music variants are regenerated on demand, only the film's track (M2) is versioned
+film/assets/audio/music-*.wav
+!film/assets/audio/music-M2.wav

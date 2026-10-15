@@ -1,0 +1,11 @@
+{
+  "name": "genai-days-film",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm dlx hyperframes@0.8.140 preview",
+    "check": "pnpm dlx hyperframes@0.8.140 check",
+    "render": "pnpm dlx hyperframes@0.8.140 render",
+    "publish": "pnpm dlx hyperframes@0.8.140 publish"
+  }
+}

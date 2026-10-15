@@ -1,0 +1,2433 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <title>GENAI DAYS 2026 · Film</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "EB Garamond";
+        src: url("assets/fonts/eb-garamond-latin-wght-normal.woff2") format("woff2");
+        font-weight: 400 800;
+        font-style: normal;
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      @font-face {
+        font-family: "EB Garamond";
+        src: url("assets/fonts/eb-garamond-latin-ext-wght-normal.woff2") format("woff2");
+        font-weight: 400 800;
+        font-style: normal;
+        unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1E00-1E9F, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+      }
+      @font-face {
+        font-family: "EB Garamond";
+        src: url("assets/fonts/eb-garamond-latin-wght-italic.woff2") format("woff2");
+        font-weight: 400 800;
+        font-style: italic;
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      @font-face {
+        font-family: "EB Garamond";
+        src: url("assets/fonts/eb-garamond-latin-ext-wght-italic.woff2") format("woff2");
+        font-weight: 400 800;
+        font-style: italic;
+        unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1E00-1E9F, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+      }
+      @font-face {
+        font-family: "Arial Label";
+        src: local("Arial Bold"), local("Arial-BoldMT");
+        font-weight: 700;
+      }
+      @font-face {
+        font-family: "Special Elite";
+        src: url("assets/fonts/special-elite-latin-400-normal.woff2") format("woff2");
+        font-weight: 400;
+      }
+
+      :root {
+        --blue: #3d43ce;
+        --orange: #fe4d1b;
+        --cream: #f9f4ec;
+        --cream-deep: #f2eadf;
+        --white: #ffffff;
+        --ink: #393636;
+        --night: #09122e;
+        --serif: "EB Garamond", Georgia, serif;
+        --label: "Arial Label", Arial, Helvetica, sans-serif;
+        --type: "Special Elite", "Courier New", monospace;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--cream);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: var(--cream);
+        font-family: var(--serif);
+        color: var(--ink);
+      }
+      .scene {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+      }
+      .layer {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+      }
+      /* Functional labels: Arial bold, uppercase, 0.12em (DESIGN.md label role). */
+      .lab {
+        font-family: var(--label);
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        line-height: 1.2;
+      }
+      .m {
+        display: inline-block;
+        overflow: hidden;
+        vertical-align: top;
+        padding: 0.04em 0.03em 0.16em;
+        margin: -0.04em -0.03em -0.16em;
+      }
+      .m.it {
+        padding-right: 0.12em;
+        margin-right: -0.12em;
+      }
+      .ch,
+      .wd {
+        display: inline-block;
+      }
+
+      /* ---------- screen-print: paper + two ink plates multiplied, then the original art */
+      .print {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+      }
+      .print .sheet {
+        position: absolute;
+        inset: 0;
+        background: var(--cream);
+        overflow: hidden;
+      }
+      .print img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .print .signal {
+        mix-blend-mode: multiply;
+      }
+      .print .key {
+        mix-blend-mode: multiply;
+      }
+      .print .orig {
+        opacity: 0;
+      }
+      .print .trame {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: repeating-linear-gradient(0deg, rgba(57, 54, 54, 0.13) 0 2px, transparent 2px 5px);
+        mix-blend-mode: multiply;
+      }
+      .scrim-top {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 60%;
+        background: linear-gradient(180deg, rgba(9, 18, 46, 0.78), rgba(9, 18, 46, 0));
+      }
+      .scrim-bottom {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 62%;
+        background: linear-gradient(0deg, rgba(9, 18, 46, 0.9), rgba(9, 18, 46, 0.55) 55%, rgba(9, 18, 46, 0));
+      }
+      .scrim-left {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 70%;
+        background: linear-gradient(90deg, rgba(9, 18, 46, 0.82), rgba(9, 18, 46, 0.45) 60%, rgba(9, 18, 46, 0));
+      }
+
+      /* ---------- wordmark (GENAI bold, DAYS regular, only AI italic) */
+      .wordmark {
+        font-family: var(--serif);
+        line-height: 1;
+        letter-spacing: 0.015em;
+        white-space: nowrap;
+        text-transform: uppercase;
+      }
+      .wordmark .g {
+        font-weight: 700;
+      }
+      .wordmark .d {
+        font-weight: 400;
+      }
+      .wordmark .i {
+        font-style: italic;
+      }
+      .wordmark .sp {
+        margin-left: 0.08em;
+      }
+      .mark {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+      }
+
+      /* ---------- metal label (site Label.astro, scaled for 1080p) */
+      .obj {
+        position: absolute;
+        --lift: 0;
+      }
+      .obj .shadow {
+        position: absolute;
+        inset: 0;
+        border-radius: var(--r, 12px);
+        box-shadow: 0 2px 3px rgba(57, 54, 54, 0.3),
+          0 calc(6px + var(--lift) * 34px) calc(10px + var(--lift) * 56px) -4px rgba(20, 25, 60, 0.45);
+      }
+      .obj .front {
+        position: absolute;
+        inset: 0;
+        border-radius: var(--r, 12px);
+        overflow: hidden;
+      }
+      .metal .front {
+        border: 1px solid rgba(57, 54, 54, 0.72);
+        background: linear-gradient(105deg, rgba(255, 255, 255, 0.42), transparent 37%, rgba(30, 32, 33, 0.12) 100%),
+          linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(89, 92, 93, 0.1)),
+          url("assets/img/brushed-metal.jpg") center / cover;
+        background-blend-mode: screen, multiply, normal;
+      }
+      .metal .front::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(102deg, transparent 0 13%, rgba(255, 255, 255, 0.28) 13.2%, transparent 13.5%),
+          linear-gradient(82deg, transparent 0 61%, rgba(24, 25, 26, 0.14) 61.2%, transparent 61.5%),
+          linear-gradient(168deg, transparent 0 72%, rgba(255, 255, 255, 0.27) 72.2%, transparent 72.5%),
+          repeating-linear-gradient(176deg, transparent 0 8px, rgba(18, 19, 20, 0.03) 8.5px 9px);
+        mix-blend-mode: multiply;
+        opacity: 0.72;
+      }
+      .metal .front::after {
+        content: "";
+        position: absolute;
+        inset: 6px;
+        border: 1.5px solid rgba(255, 255, 255, 0.86);
+        box-shadow: 0 0 0 1px rgba(57, 54, 54, 0.35);
+        border-radius: calc(var(--r, 12px) - 5px);
+      }
+      .metal .shine {
+        position: absolute;
+        inset: -18%;
+        background: radial-gradient(ellipse 48% 84% at var(--sx, 30%) 42%, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0.25) 26%, transparent 66%),
+          linear-gradient(112deg, transparent 28%, rgba(170, 208, 225, 0.12) 39%, rgba(255, 252, 230, 0.38) 49%, rgba(255, 193, 166, 0.11) 57%, transparent 69%);
+        mix-blend-mode: screen;
+        opacity: 0.3;
+      }
+      .obj .content {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        padding: 24px 30px 22px;
+        color: var(--ink);
+      }
+      .obj .head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+      .obj .head .wordmark {
+        font-size: 30px;
+      }
+      .obj .markicon {
+        width: 46px;
+        height: 46px;
+        background: var(--ink);
+        -webkit-mask: url("assets/logos/genai-mark.svg") center / contain no-repeat;
+        mask: url("assets/logos/genai-mark.svg") center / contain no-repeat;
+      }
+      .obj .body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      /* ---------- S1 */
+      .regmark {
+        position: absolute;
+        width: 70px;
+        height: 70px;
+        overflow: visible;
+        z-index: 3;
+      }
+      .regmark * {
+        fill: none;
+        stroke: var(--ink);
+        stroke-width: 2.5;
+      }
+      .s1-meta {
+        position: absolute;
+        font-size: 20px;
+        color: var(--ink);
+        z-index: 3;
+      }
+      #s1-sheetframe {
+        position: absolute;
+        inset: 0;
+      }
+      #s1-squeegee {
+        position: absolute;
+        top: -80px;
+        bottom: -80px;
+        left: 0;
+        width: 54px;
+        border-radius: 10px;
+        background: linear-gradient(90deg, #1f1f1f, #5a5a5a 35%, #2a2a2a 70%, var(--orange) 70% 100%);
+        box-shadow: 18px 0 30px rgba(0, 0, 0, 0.35);
+        transform: translateX(-200px) rotate(3deg);
+        z-index: 5;
+      }
+      #s1-row {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 150px;
+        height: 230px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 52px;
+      }
+      #s1-mark {
+        position: relative;
+        width: 200px;
+        height: 200px;
+        flex: 0 0 auto;
+      }
+      #s1-wm {
+        color: var(--cream);
+        font-size: 190px;
+        margin-top: 20px;
+      }
+      #s1-pass {
+        left: 1250px;
+        top: 590px;
+        width: 580px;
+        height: 414px;
+        --r: 18px;
+      }
+      .pass .pdate {
+        display: flex;
+        align-items: flex-end;
+        gap: 22px;
+        text-transform: uppercase;
+      }
+      .pass .pdate strong {
+        font-size: 170px;
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        line-height: 0.8;
+      }
+      .pass .pdate span {
+        display: flex;
+        flex-direction: column;
+        font-size: 46px;
+        font-weight: 700;
+        line-height: 0.95;
+        padding-bottom: 6px;
+      }
+      .pass .pbottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+      }
+      .pass .pvenue strong {
+        display: block;
+        font-size: 36px;
+        font-weight: 800;
+        line-height: 1;
+      }
+      .pass .pvenue span {
+        display: block;
+        font-size: 30px;
+        font-style: italic;
+        font-weight: 600;
+      }
+      .region-logo {
+        background: var(--ink);
+        -webkit-mask: url("assets/logos/logo-pays_de_la_loire.svg") center / contain no-repeat;
+        mask: url("assets/logos/logo-pays_de_la_loire.svg") center / contain no-repeat;
+      }
+
+      /* ---------- S2 */
+      #s2-ko {
+        position: absolute;
+        inset: 0;
+        width: 1920px;
+        height: 1080px;
+      }
+      .s2-big {
+        position: absolute;
+        font-weight: 800;
+        line-height: 0.86;
+        letter-spacing: -0.035em;
+        color: var(--cream);
+        white-space: nowrap;
+      }
+      .s2-big.it {
+        font-style: italic;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+      }
+      #s2-gen {
+        left: 130px;
+        bottom: 120px;
+        font-size: 300px;
+      }
+      #s2-l1 {
+        left: 130px;
+        top: 300px;
+        font-size: 230px;
+      }
+      #s2-l2 {
+        left: 130px;
+        top: 520px;
+        font-size: 230px;
+      }
+      #s2-bar {
+        position: absolute;
+        left: 130px;
+        top: 790px;
+        width: 1060px;
+        height: 20px;
+        background: var(--orange);
+        transform-origin: 0 50%;
+      }
+      #s2-cream-block {
+        position: absolute;
+        left: 150px;
+        top: 300px;
+      }
+      #s2-now {
+        font-size: 250px;
+        font-weight: 800;
+        line-height: 0.86;
+        letter-spacing: -0.035em;
+        color: var(--blue);
+        white-space: nowrap;
+        perspective: 900px;
+      }
+      #s2-now .ch {
+        transform-origin: 50% 80%;
+      }
+      #s2-complex {
+        position: relative;
+        margin-top: 60px;
+        font-size: 158px;
+        font-style: italic;
+        font-weight: 600;
+        line-height: 1;
+        white-space: nowrap;
+        height: 180px;
+      }
+      #s2-complex .copy {
+        position: absolute;
+        left: 0;
+        top: 0;
+      }
+      #s2-complex .ghost-b {
+        color: var(--blue);
+        mix-blend-mode: multiply;
+      }
+      #s2-complex .ghost-o {
+        color: var(--orange);
+        mix-blend-mode: multiply;
+      }
+      #s2-complex .main {
+        color: var(--ink);
+      }
+      .hud {
+        position: absolute;
+        top: 60px;
+        font-size: 20px;
+        z-index: 4;
+      }
+
+      /* ---------- S3 */
+      #s3 {
+        background: var(--cream);
+      }
+      #s3-art {
+        position: absolute;
+        left: 1060px;
+        top: 290px;
+        width: 730px;
+        height: 500px;
+        overflow: hidden;
+      }
+      .s3-crop {
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        background: var(--orange);
+      }
+      #s3-band {
+        position: absolute;
+        left: 130px;
+        top: 270px;
+        width: 860px;
+      }
+      #s3-kicker {
+        display: flex;
+        justify-content: space-between;
+        font-size: 24px;
+        letter-spacing: 0.2em;
+        padding-bottom: 18px;
+        border-bottom: 4px solid var(--ink);
+      }
+      #s3-count {
+        color: var(--blue);
+      }
+      #s3-names {
+        position: relative;
+        margin-top: 36px;
+        height: 170px;
+        overflow: hidden;
+      }
+      .s3-name {
+        position: absolute;
+        left: 0;
+        top: 0;
+        font-size: 150px;
+        font-weight: 800;
+        line-height: 1;
+        letter-spacing: -0.035em;
+        color: var(--blue);
+        white-space: nowrap;
+      }
+      #s3-words {
+        position: relative;
+        margin-top: 8px;
+        height: 110px;
+        overflow: hidden;
+      }
+      .s3-word {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 860px;
+        font-size: 40px;
+        font-style: italic;
+        font-weight: 500;
+        line-height: 1.15;
+        color: var(--ink);
+      }
+      #s3-progress {
+        margin-top: 34px;
+        display: flex;
+        gap: 14px;
+      }
+      #s3-progress i {
+        flex: 1;
+        height: 10px;
+        background: rgba(57, 54, 54, 0.14);
+        position: relative;
+      }
+      #s3-progress i::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: var(--orange);
+        transform: scaleX(var(--fill, 0));
+        transform-origin: 0 50%;
+      }
+
+      /* ---------- S4 */
+      #s4-title {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 90px;
+        text-align: center;
+        font-size: 124px;
+        font-weight: 800;
+        line-height: 0.86;
+        letter-spacing: -0.03em;
+        color: var(--cream);
+        white-space: nowrap;
+      }
+      #s4-title .it {
+        font-style: italic;
+        font-weight: 600;
+      }
+      .s4-cap {
+        position: absolute;
+        bottom: 96px;
+        color: var(--cream);
+      }
+      #s4-cap-l {
+        left: 120px;
+      }
+      #s4-cap-r {
+        right: 120px;
+        text-align: right;
+      }
+      .s4-cap .lab {
+        font-size: 20px;
+        opacity: 0.85;
+      }
+      .s4-cap .who {
+        margin-top: 8px;
+        font-size: 120px;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        line-height: 0.95;
+      }
+      .s4-cap .who .m {
+        display: inline-block;
+        overflow: hidden;
+        padding-bottom: 0.12em;
+        vertical-align: top;
+      }
+      .s4-cap .who .m > span {
+        display: inline-block;
+      }
+      .s4-cap .what {
+        font-size: 34px;
+        font-style: italic;
+        font-weight: 500;
+      }
+
+      /* ---------- S5 */
+      .poster {
+        position: absolute;
+        --lift: 0;
+      }
+      .poster .card {
+        position: absolute;
+        inset: 0;
+        background: var(--cream);
+        box-shadow: 0 2px 3px rgba(57, 54, 54, 0.3), 0 calc(6px + var(--lift) * 30px) calc(10px + var(--lift) * 50px) -4px rgba(9, 18, 46, 0.55);
+        display: flex;
+        flex-direction: column;
+      }
+      .poster .ph {
+        flex: 1;
+        overflow: hidden;
+        position: relative;
+      }
+      .poster .ph img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        filter: url(#duotone);
+      }
+      .poster .band {
+        background: var(--cream);
+        border-top: 4px solid var(--ink);
+        padding: 12px 16px 14px;
+      }
+      .poster .band b {
+        display: block;
+        font-weight: 800;
+        line-height: 1;
+        letter-spacing: -0.01em;
+        white-space: nowrap;
+      }
+      .poster .band span {
+        display: block;
+        margin-top: 8px;
+        color: var(--blue);
+        white-space: nowrap;
+      }
+      .poster.small .band {
+        padding: 8px 10px 10px;
+        border-top-width: 3px;
+      }
+      .poster.small .band b {
+        font-size: 21px;
+      }
+      .poster.small .band span {
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        margin-top: 5px;
+        white-space: normal;
+        line-height: 1.25;
+      }
+      /* The speaker art and its plates carry a ~7 px white scan margin; cover fits the width, so it showed as cream bands
+         at the frame sides. A 1.5 % overscan crops it on every side. */
+      #p-speakers {
+        transform: scale(1.015);
+      }
+      /* The wall is laid out in frame coordinates; the camera is a transform on it (scale 1 is the final frame). */
+      #s5-world {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1920px;
+        height: 1080px;
+        transform-origin: 0 0;
+      }
+      /* A slot is the 196 x 274 place of a poster on the table; it carries the paste gesture. */
+      .s5-slot {
+        position: absolute;
+        width: 196px;
+        height: 274px;
+        transform-origin: 50% 50%;
+        opacity: 0;
+        --lift: 0;
+      }
+      .s5-slot > .poster {
+        left: 0;
+        top: 0;
+        width: 300px;
+        height: 420px;
+        transform: scale(0.6533);
+        transform-origin: 0 0;
+        --lift: inherit;
+      }
+      .s5-slot > .poster.small .band b {
+        font-size: 29px;
+      }
+      .s5-slot > .poster.small .band span {
+        font-size: 15px;
+      }
+      #s5-title {
+        position: absolute;
+        width: 280px;
+        height: 274px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: var(--cream);
+        opacity: 0;
+      }
+      #s5-title b {
+        font-size: 190px;
+        font-weight: 800;
+        line-height: 0.8;
+        letter-spacing: -0.03em;
+      }
+      #s5-title i {
+        font-size: 42px;
+        font-weight: 600;
+        margin-top: 16px;
+        white-space: nowrap;
+      }
+
+      /* ---------- S6 */
+      #s6-num {
+        position: absolute;
+        left: 90px;
+        top: 180px;
+        font-size: 520px;
+        font-weight: 800;
+        line-height: 0.86;
+        letter-spacing: -0.04em;
+        white-space: nowrap;
+        color: var(--cream);
+      }
+      #s6-num-ghost {
+        position: absolute;
+        left: 90px;
+        top: 180px;
+        font-size: 520px;
+        font-weight: 800;
+        line-height: 0.86;
+        letter-spacing: -0.04em;
+        white-space: nowrap;
+        color: var(--orange);
+        mix-blend-mode: multiply;
+      }
+      #s6-places {
+        position: absolute;
+        left: 110px;
+        top: 660px;
+        color: var(--cream);
+      }
+      #s6-places i {
+        display: block;
+        font-size: 120px;
+        font-weight: 600;
+        line-height: 0.9;
+      }
+      #s6-places .lab {
+        font-size: 22px;
+        margin-bottom: 14px;
+      }
+      #s6-tstage {
+        position: absolute;
+        left: 930px;
+        top: 590px;
+        width: 900px;
+        height: 357px;
+        perspective: 1500px;
+      }
+      #s6-ticket {
+        position: absolute;
+        inset: 0;
+        filter: drop-shadow(0 26px 34px rgba(9, 18, 46, 0.5));
+      }
+      #s6-ticket img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+      #s6-tbody {
+        position: absolute;
+        left: 46px;
+        top: 34px;
+        width: 520px;
+        color: var(--ink);
+      }
+      #s6-tbody .thead {
+        display: flex;
+        justify-content: space-between;
+        font-family: var(--type);
+        font-size: 17px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding-bottom: 10px;
+        border-bottom: 1.5px dashed rgba(57, 54, 54, 0.55);
+      }
+      #s6-price {
+        margin-top: 10px;
+        font-size: 104px;
+        font-weight: 600;
+        letter-spacing: -0.035em;
+        line-height: 1;
+        white-space: nowrap;
+      }
+      #s6-price small {
+        font-size: 44px;
+      }
+      #s6-facts {
+        margin-top: 12px;
+        font-family: var(--type);
+        font-size: 18px;
+        line-height: 1.45;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      #s6-facts em {
+        font-style: normal;
+        opacity: 0.7;
+        display: inline-block;
+        width: 110px;
+      }
+      #s6-tstub {
+        position: absolute;
+        left: 623px;
+        top: 26px;
+        width: 243px;
+        height: 305px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 18px 14px 16px 24px;
+        color: var(--night);
+      }
+      #s6-tstub .wordmark {
+        font-size: 24px;
+      }
+      #s6-tstub .sd {
+        display: flex;
+        align-items: flex-end;
+        gap: 10px;
+      }
+      #s6-tstub .sd strong {
+        font-size: 100px;
+        font-weight: 600;
+        letter-spacing: -0.04em;
+        line-height: 0.8;
+      }
+      #s6-tstub .sd span,
+      #s6-tstub .sm {
+        font-family: var(--type);
+        font-size: 16px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        line-height: 1.3;
+      }
+
+      /* ---------- poster peel (S6 to S7) */
+      #s6 {
+        z-index: 3;
+      }
+      #frag-ink {
+        z-index: 20;
+      }
+      #grain {
+        z-index: 21;
+      }
+      .peel-flap {
+        position: absolute;
+        inset: 0;
+        z-index: 30;
+        pointer-events: none;
+        filter: drop-shadow(-18px -12px 22px rgba(9, 18, 46, 0.5));
+      }
+      .peel-back {
+        position: absolute;
+        inset: 0;
+        background: repeating-linear-gradient(45deg, rgba(94, 84, 64, 0.06) 0 1px, transparent 1px 5px), #efe6d6;
+      }
+      .peel-shade {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 4800px;
+        height: 420px;
+        transform-origin: 0 0;
+        background: linear-gradient(to bottom, rgba(57, 54, 54, 0.32) 0, rgba(255, 255, 255, 0.45) 14%, rgba(57, 54, 54, 0.08) 55%, rgba(57, 54, 54, 0) 100%);
+      }
+
+      /* ---------- S7: a real 12-hour clock runs through the day; a mirror ball drops in for the DJ set */
+      #s7-title {
+        position: absolute;
+        left: 160px;
+        top: 96px;
+        font-size: 96px;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        line-height: 0.95;
+        color: var(--cream);
+        white-space: nowrap;
+      }
+      #s7-title .it {
+        font-style: italic;
+        font-weight: 600;
+      }
+      #s7-dim {
+        position: absolute;
+        inset: 0;
+        background: rgba(9, 18, 46, 0.5);
+      }
+      #s7-clock {
+        position: absolute;
+        left: 260px;
+        top: 290px;
+        width: 680px;
+        height: 680px;
+        overflow: visible;
+      }
+      /* Read-out under the face, clear of the hands and numerals. */
+      #s7-read {
+        position: absolute;
+        left: 260px;
+        top: 944px;
+        width: 680px;
+        text-align: center;
+        color: var(--cream);
+        font-size: 56px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        line-height: 1;
+        font-variant-numeric: tabular-nums;
+      }
+      .s7-item {
+        position: absolute;
+        left: 1080px;
+        width: 600px;
+        color: var(--cream);
+      }
+      #s7-m1 {
+        top: 318px;
+      }
+      #s7-m2 {
+        top: 548px;
+      }
+      #s7-m3 {
+        top: 778px;
+      }
+      .s7-item .lab {
+        font-size: 20px;
+        color: var(--orange);
+      }
+      .s7-item b {
+        display: block;
+        margin-top: 8px;
+        font-size: 68px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        line-height: 1;
+      }
+      /* Podcast partner, mono mark in cream: discreet, about the title's cap height. */
+      .s7-cc {
+        display: inline-block;
+        width: 206px;
+        height: 54px;
+        margin-left: 28px;
+        vertical-align: -2px;
+        background: var(--cream);
+        -webkit-mask: url("assets/partners/mono/clever-cloud.png") left center / contain no-repeat;
+        mask: url("assets/partners/mono/clever-cloud.png") left center / contain no-repeat;
+      }
+      .s7-item em {
+        display: block;
+        margin-top: 8px;
+        max-width: 560px;
+        font-size: 30px;
+        font-weight: 500;
+        line-height: 1.15;
+        text-wrap: balance;
+      }
+      .s7-item em.dj {
+        margin-top: 10px;
+        font-size: 42px;
+        font-weight: 800;
+      }
+      #s7-ball {
+        position: absolute;
+        left: 1700px;
+        top: 768px;
+        width: 120px;
+        height: 120px;
+        transform-origin: 50% -1300px;
+      }
+      #s7-ball svg {
+        position: absolute;
+        inset: 0;
+        overflow: visible;
+        filter: drop-shadow(0 10px 14px rgba(9, 18, 46, 0.55));
+      }
+      #s7-ball .string {
+        position: absolute;
+        left: 59px;
+        bottom: 112px;
+        width: 2px;
+        height: 1400px;
+        background: var(--ink);
+      }
+      #s7-specks {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+      }
+      #s7-specks i {
+        position: absolute;
+        left: 0;
+        top: 0;
+        display: block;
+      }
+
+      /* ---------- S9 */
+      #s9-partners {
+        position: absolute;
+        inset: 0;
+      }
+      /* A soft night pool behind the board: logos keep their contrast over the orange fragments, the château stays readable around it. */
+      #s9-pscrim {
+        position: absolute;
+        left: 110px;
+        right: 110px;
+        top: 150px;
+        height: 760px;
+        background: radial-gradient(closest-side, rgba(9, 18, 46, 0.5), rgba(9, 18, 46, 0.32) 60%, rgba(9, 18, 46, 0));
+      }
+      #s9-ptitle {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 124px;
+        text-align: center;
+        font-family: var(--serif);
+        font-size: 100px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: var(--cream);
+        /* A second ink out of register: sets the title apart from the cream logo layer. */
+        text-shadow: 5px 4px 0 var(--orange), 0 0 28px rgba(9, 18, 46, 0.6);
+      }
+      #s9-ptitle i {
+        font-style: italic;
+      }
+      .prow {
+        position: absolute;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      /* The halo sits on the wrapper: a filter on the masked element itself would be masked away. */
+      .ptile {
+        flex: none;
+        filter: drop-shadow(0 0 10px rgba(9, 18, 46, 0.7)) drop-shadow(0 2px 2px rgba(9, 18, 46, 0.55));
+      }
+      .plogo {
+        width: 100%;
+        height: 100%;
+        background: var(--cream);
+        -webkit-mask: var(--logo) center / contain no-repeat;
+        mask: var(--logo) center / contain no-repeat;
+      }
+      .prow.t1 {
+        top: 320px;
+        height: 150px;
+      }
+      .prow.t2 {
+        top: 535px;
+        height: 110px;
+      }
+      .prow.t3 {
+        top: 715px;
+        height: 90px;
+      }
+      #s9-frame {
+        position: absolute;
+        inset: 0;
+      }
+      #s9-row,
+      #s9-ghost {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 470px;
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 46px;
+      }
+      #s9-ghost {
+        opacity: 0;
+      }
+      .s9-mark {
+        position: relative;
+        width: 170px;
+        height: 170px;
+        flex: 0 0 auto;
+      }
+      .s9-wm {
+        font-size: 170px;
+        margin-top: 18px;
+      }
+      #s9-row .s9-wm {
+        color: var(--cream);
+      }
+      #s9-ghost .s9-wm {
+        color: var(--orange);
+      }
+      #s9-sig {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 700px;
+        text-align: center;
+        font-size: 58px;
+        font-style: italic;
+        font-weight: 500;
+        color: var(--cream);
+        white-space: nowrap;
+      }
+      #s9-rule {
+        position: absolute;
+        left: 200px;
+        width: 1520px;
+        top: 812px;
+        height: 3px;
+        background: var(--cream);
+      }
+      #s9-info {
+        position: absolute;
+        left: 200px;
+        right: 200px;
+        top: 842px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 24px;
+        color: var(--cream);
+      }
+      #s9-url {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        font-size: 30px;
+        letter-spacing: 0.04em;
+        text-transform: none;
+      }
+      #s9-url i {
+        display: block;
+        width: 18px;
+        height: 18px;
+        background: var(--orange);
+      }
+      #s9-foot {
+        position: absolute;
+        left: 200px;
+        right: 200px;
+        top: 950px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 20px;
+        color: var(--cream);
+      }
+      #s9-coorg {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+      }
+      #s9-region {
+        width: 170px;
+        height: 82px;
+        background: var(--cream);
+      }
+
+      #frag-ink {
+        position: absolute;
+        inset: 0;
+        width: 1920px;
+        height: 1080px;
+        z-index: 50;
+        pointer-events: none;
+      }
+      #grain {
+        position: absolute;
+        inset: -64px;
+        z-index: 60;
+        pointer-events: none;
+        background: url("assets/img/grain.png") 0 0 / 512px 512px repeat;
+        opacity: 0.24;
+        mix-blend-mode: overlay;
+      }
+    </style>
+  </head>
+  <body>
+    <div data-hf-id="hf-zfnl" id="root" data-composition-id="main" data-start="0" data-duration="43.5" data-width="1920" data-height="1080" data-composition-variables="[{&quot;id&quot;:&quot;origFade&quot;,&quot;type&quot;:&quot;boolean&quot;,&quot;label&quot;:&quot;S1: original art over the two plates&quot;,&quot;default&quot;:true}]">
+      <svg data-hf-id="hf-p3r6" width="0" height="0" style="position: absolute" aria-hidden="true">
+        <filter data-hf-id="hf-gdul" id="duotone" color-interpolation-filters="sRGB">
+          <fecolormatrix data-hf-id="hf-r3no" type="matrix" values="0.30 0.59 0.11 0 0  0.30 0.59 0.11 0 0  0.30 0.59 0.11 0 0  0 0 0 1 0" />
+          <fecomponenttransfer data-hf-id="hf-u8mo">
+            <fefuncr data-hf-id="hf-nfcf" type="linear" slope="1.35" intercept="-0.12" />
+            <fefuncg data-hf-id="hf-8kak" type="linear" slope="1.35" intercept="-0.12" />
+            <fefuncb data-hf-id="hf-24qn" type="linear" slope="1.35" intercept="-0.12" />
+          </fecomponenttransfer>
+          <fecomponenttransfer data-hf-id="hf-l5oo">
+            <fefuncr data-hf-id="hf-2vq3" type="table" tableValues="0.239 0.976" />
+            <fefuncg data-hf-id="hf-omay" type="table" tableValues="0.263 0.957" />
+            <fefuncb data-hf-id="hf-jdv5" type="table" tableValues="0.808 0.925" />
+          </fecomponenttransfer>
+        </filter>
+      </svg>
+
+      <!-- S1 · 0 to 3 · the cover poster is screen-printed in two flat coats, the wordmark lands, the hero pass is stuck on -->
+      <section data-hf-id="hf-dss8" id="s1" class="clip scene" data-start="0" data-duration="3.8" data-track-index="1">
+        <svg data-hf-id="hf-nrhe" class="regmark" style="left: 64px; top: 64px" viewBox="0 0 70 70"><circle data-hf-id="hf-8bm0" cx="35" cy="35" r="15" /><path data-hf-id="hf-0fhc" d="M35 0V70M0 35H70" /></svg>
+        <svg data-hf-id="hf-yjed" class="regmark" style="right: 64px; top: 64px" viewBox="0 0 70 70"><circle data-hf-id="hf-tlxc" cx="35" cy="35" r="15" /><path data-hf-id="hf-q2qg" d="M35 0V70M0 35H70" /></svg>
+        <svg data-hf-id="hf-u3ay" class="regmark" style="left: 64px; bottom: 64px" viewBox="0 0 70 70"><circle data-hf-id="hf-sf09" cx="35" cy="35" r="15" /><path data-hf-id="hf-ovtd" d="M35 0V70M0 35H70" /></svg>
+        <svg data-hf-id="hf-78g3" class="regmark" style="right: 64px; bottom: 64px" viewBox="0 0 70 70"><circle data-hf-id="hf-stba" cx="35" cy="35" r="15" /><path data-hf-id="hf-pa4e" d="M35 0V70M0 35H70" /></svg>
+        <div data-hf-id="hf-p1h4" class="s1-meta lab" id="s1-meta-a" style="left: 160px; top: 88px">Naomakers · Nantes</div>
+        <div data-hf-id="hf-wv5o" class="s1-meta lab" id="s1-meta-b" style="right: 160px; top: 88px">Première édition · 2026</div>
+        <div data-hf-id="hf-juji" id="s1-sheetframe">
+          <div data-hf-id="hf-1vtz" class="print" id="p-cover"></div>
+          <div data-hf-id="hf-09qf" class="scrim-top" id="s1-scrim"></div>
+          <div data-hf-id="hf-5jym" id="s1-row">
+            <div data-hf-id="hf-axnh" id="s1-mark"></div>
+            <div data-hf-id="hf-abpa" id="s1-wm" class="wordmark"></div>
+          </div>
+        </div>
+        <div data-hf-id="hf-wvkq" id="s1-squeegee"></div>
+        <div data-hf-id="hf-algn" class="obj metal pass" id="s1-pass"></div>
+      </section>
+
+      <!-- S2 · 2.55 to 7 · tagline: letters as windows onto the art, Nantes, then ink misregistration -->
+      <section data-hf-id="hf-ba08" id="s2" class="clip scene" data-start="3.3" data-duration="7" data-track-index="2">
+        <div data-hf-id="hf-hdnc" class="layer" id="s2-a">
+          <div data-hf-id="hf-0qmw" class="print" id="p-manifesto"></div>
+          <div data-hf-id="hf-8deu" class="scrim-bottom" id="s2-scrim"></div>
+          <div data-hf-id="hf-0oqt" class="s2-big it" id="s2-gen"><span data-hf-id="hf-p04l" class="m it"><span data-hf-id="hf-8cgq" class="ch">générative</span></span></div>
+          <svg data-hf-id="hf-va9p" id="s2-ko" viewBox="0 0 1920 1080" aria-hidden="true">
+            <defs data-hf-id="hf-mh0t">
+              <mask data-hf-id="hf-19yw" id="s2-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="1920" height="1080">
+                <rect data-hf-id="hf-ha5x" width="1920" height="1080" fill="#fff" />
+                <text data-hf-id="hf-8d48" id="s2-ko-text" x="120" y="840" font-family="EB Garamond" font-weight="800" font-size="760" letter-spacing="-26" fill="#000">L’IA</text>
+              </mask>
+            </defs>
+            <rect data-hf-id="hf-2tik" id="s2-paper" width="1920" height="1080" fill="#F9F4EC" mask="url(#s2-mask)" />
+            <g data-hf-id="hf-ga0b" mask="url(#s2-mask)"><text data-hf-id="hf-u0ca" id="s2-ko-ghost" x="120" y="840" font-family="EB Garamond" font-weight="800" font-size="760" letter-spacing="-26" fill="#FE4D1B" style="mix-blend-mode: multiply">L’IA</text></g>
+          </svg>
+        </div>
+        <div data-hf-id="hf-q1j7" class="layer" id="s2-b">
+          <div data-hf-id="hf-8yes" class="print" id="p-miroir"></div>
+          <div data-hf-id="hf-5das" class="scrim-left"></div>
+          <div data-hf-id="hf-aihp" class="s2-big" id="s2-l1"></div>
+          <div data-hf-id="hf-vdzb" class="s2-big it" id="s2-l2"></div>
+          <div data-hf-id="hf-kc1y" id="s2-bar"></div>
+        </div>
+        <div data-hf-id="hf-w1e4" class="layer" id="s2-c" style="background: var(--cream)">
+          <div data-hf-id="hf-o1wb" id="s2-cream-block">
+            <div data-hf-id="hf-7bd9" id="s2-now"></div>
+            <div data-hf-id="hf-iy0l" id="s2-complex">
+              <div data-hf-id="hf-u0es" class="copy ghost-o" aria-hidden="true" data-layout-ignore="">que ça se complique.</div>
+              <div data-hf-id="hf-b2pd" class="copy ghost-b" aria-hidden="true" data-layout-ignore="">que ça se complique.</div>
+              <div data-hf-id="hf-6rk2" class="copy main" id="s2-complex-main"></div>
+            </div>
+          </div>
+        </div>
+        <div data-hf-id="hf-3xa4" class="hud lab" id="s2-hud-l" style="left: 130px">#GenAIDaysNantes</div>
+        <div data-hf-id="hf-fhh8" class="hud lab" id="s2-hud-r" style="right: 130px">L’IA générative · 2026</div>
+      </section>
+
+      <!-- S3 · 6.55 to 9 · the four issues, one poster pulled per beat -->
+      <section data-hf-id="hf-oe1u" id="s3" class="clip scene" data-start="9.8" data-duration="5.5" data-track-index="3">
+        <div data-hf-id="hf-yz7r" id="s3-art">
+          <div data-hf-id="hf-gxuc" class="print" id="p-costs"></div>
+          <div data-hf-id="hf-m2w2" class="print" id="p-shadow"></div>
+          <div data-hf-id="hf-6glj" class="print" id="p-sovereignty"></div>
+          <div data-hf-id="hf-y0l3" class="print" id="p-production"></div>
+        </div>
+        <i data-hf-id="hf-kn6o" class="s3-crop" style="left: 1052px; top: 282px"></i>
+        <i data-hf-id="hf-q3z8" class="s3-crop" style="left: 1782px; top: 282px"></i>
+        <i data-hf-id="hf-ixhp" class="s3-crop" style="left: 1052px; top: 782px"></i>
+        <i data-hf-id="hf-hixl" class="s3-crop" style="left: 1782px; top: 782px"></i>
+        <div data-hf-id="hf-chz9" id="s3-band">
+          <div data-hf-id="hf-fvg1" id="s3-kicker" class="lab"><span data-hf-id="hf-4fb6">Quatre enjeux</span><span data-hf-id="hf-wb0k" id="s3-count">01 / 04</span></div>
+          <div data-hf-id="hf-9mi8" id="s3-names">
+            <div data-hf-id="hf-mz9o" class="s3-name" data-layout-allow-overlap="">Coûts.</div>
+            <div data-hf-id="hf-gojg" class="s3-name" data-layout-allow-overlap="">Shadow AI.</div>
+            <div data-hf-id="hf-vcmg" class="s3-name" data-layout-allow-overlap="">Souveraineté.</div>
+            <div data-hf-id="hf-m79b" class="s3-name" data-layout-allow-overlap="">Production.</div>
+          </div>
+          <!-- Session titles from the live programme, one per issue. -->
+          <div data-hf-id="hf-fukb" id="s3-words">
+            <div data-hf-id="hf-9z0m" class="s3-word" data-layout-allow-overlap="">« J’ai consommé mon budget IA en mai. Comment finir l’année ? »</div>
+            <div data-hf-id="hf-5pc7" class="s3-word" data-layout-allow-overlap="">« Je ne sais pas ce que mes équipes mettent dans ChatGPT »</div>
+            <div data-hf-id="hf-5zzj" class="s3-word" data-layout-allow-overlap="">« Les Américains ont pris en otage mon SI »</div>
+            <div data-hf-id="hf-obru" class="s3-word" data-layout-allow-overlap="">« Nos POCs ne passent jamais en production »</div>
+          </div>
+          <div data-hf-id="hf-fqk1" id="s3-progress"><i data-hf-id="hf-wt6k"></i><i data-hf-id="hf-zeb8"></i><i data-hf-id="hf-y7e5"></i><i data-hf-id="hf-ylp6"></i></div>
+        </div>
+      </section>
+
+      <!-- S4 · 8.55 to 12 · two tracks: labels laid on the rails, then the vanishing point -->
+      <section data-hf-id="hf-rrrr" id="s4" class="clip scene" data-start="14.05" data-duration="5.7" data-track-index="4">
+        <div data-hf-id="hf-tjh5" class="layer" id="s4-b">
+          <div data-hf-id="hf-bvym" class="layer" id="s4-b-inner">
+            <div data-hf-id="hf-3otl" class="print" id="p-rails"></div>
+            <div data-hf-id="hf-0bcg" class="scrim-top"></div>
+            <div data-hf-id="hf-wqqi" id="s4-title">Deux parcours, <span data-hf-id="hf-sp6e" class="it">une journée.</span></div>
+            <div data-hf-id="hf-7mtu" class="scrim-bottom" style="height: 48%"></div>
+            <div data-hf-id="hf-e1vp" class="s4-cap" id="s4-cap-l"><div data-hf-id="hf-ao6i" class="lab">Parcours 01 · Pour ceux qui</div><div data-hf-id="hf-xhzk" class="who"><span data-hf-id="hf-7yfe" class="m"><span data-hf-id="hf-5qcr">décident</span></span></div><div data-hf-id="hf-q2ec" class="what">DSI, DG, innovation</div></div>
+            <div data-hf-id="hf-qgwr" class="s4-cap" id="s4-cap-r"><div data-hf-id="hf-3v3v" class="lab">Parcours 02 · Pour ceux qui</div><div data-hf-id="hf-e2p4" class="who"><span data-hf-id="hf-48ge" class="m"><span data-hf-id="hf-769n">implémentent</span></span></div><div data-hf-id="hf-a8y4" class="what">Ingénieurs, data, archi</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- S5 · 12 to 15.05 · speakers pasted as snapshots, then the avalanche onto a loose table of photos -->
+      <section data-hf-id="hf-971m" id="s5" class="clip scene" data-start="19.75" data-duration="5.55" data-track-index="5">
+        <div data-hf-id="hf-mh37" class="layer" id="s5-bg"><div data-hf-id="hf-jgto" class="print" id="p-speakers"></div></div>
+        <div data-hf-id="hf-u4pe" id="s5-world"><div data-hf-id="hf-cdao" id="s5-title" data-layout-allow-overlap=""><b data-hf-id="hf-d4oi" id="s5-count">20</b><i data-hf-id="hf-38t1">intervenant·es</i></div></div>
+      </section>
+
+      <!-- S6 · 14.6 to 18 · the numbers on the château poster, the ticket -->
+      <section data-hf-id="hf-6mn0" id="s6" class="clip scene" data-start="24.85" data-duration="3.45" data-track-index="6">
+        <div data-hf-id="hf-7nq6" class="print" id="p-castle"></div>
+        <div data-hf-id="hf-9ytp" class="scrim-left" style="width: 60%"></div>
+        <div data-hf-id="hf-zqyf" id="s6-num-ghost" aria-hidden="true" data-layout-ignore="">400</div>
+        <div data-hf-id="hf-6h8r" id="s6-num" data-layout-allow-overlap="">0</div>
+        <div data-hf-id="hf-cux7" id="s6-places"><div data-hf-id="hf-6id7" class="lab" data-layout-allow-overlap="">Jauge</div><i data-hf-id="hf-0acb" data-layout-allow-overlap="">places</i></div>
+        <div data-hf-id="hf-dfip" id="s6-tstage">
+          <div data-hf-id="hf-yqqr" id="s6-ticket">
+            <img data-hf-id="hf-ljez" src="assets/img/admission-ticket-blank-brick-v1-optimized.webp" alt="">
+            <div data-hf-id="hf-6hzh" id="s6-tbody">
+              <div data-hf-id="hf-zf02" class="thead"><span data-hf-id="hf-yaas">Billet participant · GENAI DAYS</span><span data-hf-id="hf-t0f1">17·11·26</span></div>
+              <div data-hf-id="hf-l36e" id="s6-price" data-layout-allow-overlap="">0 € <small data-hf-id="hf-3b0d">TTC</small></div>
+              <div data-hf-id="hf-ovts" id="s6-facts"><div data-hf-id="hf-y0bz"><em data-hf-id="hf-jq2b">Date</em>Mardi 17 novembre 2026</div><div data-hf-id="hf-s6js"><em data-hf-id="hf-7f4m">Lieu</em>Hôtel de Région</div><div data-hf-id="hf-nc99"><em data-hf-id="hf-tah7">Accueil</em>08:30</div></div>
+            </div>
+            <div data-hf-id="hf-k9ul" id="s6-tstub">
+              <div data-hf-id="hf-iho4" class="wordmark" id="s6-stub-wm"></div>
+              <div data-hf-id="hf-upf9" class="sd"><strong data-hf-id="hf-o3c2">17</strong><span data-hf-id="hf-dq7f">Novembre<br data-hf-id="hf-x5px">2026</span></div>
+              <div data-hf-id="hf-5y38" class="sm">Nantes<br data-hf-id="hf-rsrt">Accès journée · 400 places</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- S7 · 17.55 to 22.05 · the day on a real clock over the Hôtel de Région; a mirror ball drops in for the DJ set -->
+      <section data-hf-id="hf-r5s4" id="s7" class="clip scene" data-start="27.8" data-duration="7.25" data-track-index="7">
+        <div data-hf-id="hf-df9k" class="print" id="p-hotel"></div>
+        <div data-hf-id="hf-sjih" class="scrim-bottom" style="height: 78%"></div>
+        <div data-hf-id="hf-4352" id="s7-dim"></div>
+        <div data-hf-id="hf-q6o4" id="s7-title">Une journée <span data-hf-id="hf-u9ll" class="it">ponctuée de temps forts.</span></div>
+        <svg data-hf-id="hf-vp25" id="s7-clock" viewBox="-340 -340 680 680" aria-hidden="true" />
+        <div data-hf-id="hf-8cix" id="s7-read" data-layout-allow-overlap="">08:30</div>
+        <div data-hf-id="hf-kvnd" class="s7-item" id="s7-m1"><div data-hf-id="hf-grxf" class="lab">Midi · Ceux qui décident</div><b data-hf-id="hf-srgi">Startup Contest</b><em data-hf-id="hf-55jj">Pitchs des plus belles startups IA des Pays de la Loire</em></div>
+        <div data-hf-id="hf-r1d6" class="s7-item" id="s7-m2"><div data-hf-id="hf-hli3" class="lab">18:00 · En public</div><b data-hf-id="hf-wbdv">Podcast<i data-hf-id="hf-zwtx" class="s7-cc" data-layout-allow-overlap=""></i></b><em data-hf-id="hf-ye5r">Message à caractère informatique</em></div>
+        <div data-hf-id="hf-uzh7" class="s7-item" id="s7-m3"><div data-hf-id="hf-daga" class="lab">18:00 à 22:00 · Afterwork</div><b data-hf-id="hf-oeay">Apéro networking</b><em data-hf-id="hf-it0w" class="dj">DJ set jusqu’à 22:00</em></div>
+        <div data-hf-id="hf-zdqt" id="s7-ball" aria-hidden="true" data-layout-ignore=""><div data-hf-id="hf-149v" class="string"></div><svg data-hf-id="hf-rso1" viewBox="-60 -60 120 120" /></div>
+        <div data-hf-id="hf-wk8d" id="s7-specks" aria-hidden="true" data-layout-ignore=""></div>
+      </section>
+
+      <!-- S9 · 21.5 to 25 · Footer Echo: the château, revealed through its own fragmentation, carries the lockup -->
+      <section data-hf-id="hf-1sw5" id="s9" class="clip scene" data-start="34.5" data-duration="9" data-track-index="8">
+        <div data-hf-id="hf-qtm5" id="s9-frame"><div data-hf-id="hf-xdsn" class="print" id="p-chateau"></div></div>
+        <div data-hf-id="hf-oqg0" class="scrim-bottom" style="height: 60%"></div>
+        <div data-hf-id="hf-fpqr" id="s9-partners">
+          <div data-hf-id="hf-x7tk" id="s9-pscrim"></div>
+          <div data-hf-id="hf-wjlc" id="s9-ptitle">Nos <i data-hf-id="hf-o0ve">partenaires</i></div>
+          <div data-hf-id="hf-wwo1" class="prow t1"></div>
+          <div data-hf-id="hf-0us2" class="prow t2"></div>
+          <div data-hf-id="hf-4sw3" class="prow t3"></div>
+        </div>
+        <div data-hf-id="hf-cv21" id="s9-ghost" aria-hidden="true" data-layout-ignore=""></div>
+        <div data-hf-id="hf-c1qe" id="s9-row"></div>
+        <div data-hf-id="hf-ilh1" id="s9-sig"></div>
+        <div data-hf-id="hf-8fh4" id="s9-rule"></div>
+        <div data-hf-id="hf-365s" id="s9-info" class="lab">
+          <span data-hf-id="hf-ga0h" id="s9-date">17.11.2026 · Hôtel de Région, Nantes</span>
+          <span data-hf-id="hf-rdw9" id="s9-url"><i data-hf-id="hf-0l8b"></i>genai-days-nantes.com</span>
+        </div>
+        <div data-hf-id="hf-tyig" id="s9-foot" class="lab">
+          <span data-hf-id="hf-68my" id="s9-tag">#GenAIDaysNantes</span>
+          <span data-hf-id="hf-fzd1" id="s9-coorg"><span data-hf-id="hf-6303">Avec le soutien de</span><span data-hf-id="hf-en5a" id="s9-region" class="region-logo"></span></span>
+        </div>
+      </section>
+
+      <canvas data-hf-id="hf-bx1a" id="frag-ink" class="clip" data-start="0" data-duration="43.5" data-track-index="9" width="1920" height="1080" data-layout-allow-overflow="" data-layout-allow-occlusion=""></canvas>
+      <div data-hf-id="hf-u6f0" id="grain" class="clip" data-start="0" data-duration="43.5" data-track-index="10"></div>
+
+      <audio data-hf-id="hf-4pdn" id="bgm" src="assets/audio/music-M2.wav" data-start="0" data-duration="43.5" data-track-index="12" data-volume="0.72"></audio>
+    </div>
+
+    <script>
+      (function () {
+        "use strict";
+
+        var DROP = 1.0;
+        var SVG_NS = "http://www.w3.org/2000/svg";
+        var MARK_PATHS = {
+          bottom: "M91 136.117C91 112.734 122 108 135 121L163 149L149 164L120 135C116.5 131.5 111 134.5 111 138V199H91V136.117Z",
+          left: "M62.8828 90C86.2656 90 90.9999 121 78 134L50 162L35 148L64 119C67.5 115.5 64.5 110 61 110H0V90H62.8828Z",
+          right: "M163.999 51L134.999 80C131.5 83.4999 134.499 88.9995 137.999 89H199V109H136.116C112.734 109 107.999 78 120.999 65L148.999 37L163.999 51Z",
+          top: "M110 62.8828C110 86.2656 79 90.9999 66 78L38 50L52 35L81 64C84.5 67.5 90 64.5 90 61V0H110V62.8828Z",
+          dot: "M99.5 91C104.194 91 108 94.8056 108 99.5C108 104.194 104.194 108 99.5 108C94.8056 108 91 104.194 91 99.5C91 94.8056 94.8056 91 99.5 91Z",
+        };
+        var ARM_KEYS = ["top", "right", "bottom", "left"];
+        var ARM_VECTORS = { top: [0, -1], right: [1, 0], bottom: [0, 1], left: [-1, 0] };
+
+        function $(s) {
+          return document.querySelector(s);
+        }
+        function $$(s) {
+          return Array.prototype.slice.call(document.querySelectorAll(s));
+        }
+        function seededRandom(seed) {
+          var state = seed >>> 0;
+          return function () {
+            state = (Math.imul(1664525, state) + 1013904223) >>> 0;
+            return state / 4294967296;
+          };
+        }
+        // GSAP writes through this setter even on silent seeks: procedural painters stay a pure function of time.
+        function driver(apply) {
+          var value = 0;
+          var target = {};
+          Object.defineProperty(target, "v", {
+            get: function () {
+              return value;
+            },
+            set: function (next) {
+              value = next;
+              apply(next);
+            },
+          });
+          return target;
+        }
+        function el(tag, cls, html) {
+          var node = document.createElement(tag);
+          if (cls) node.className = cls;
+          if (html != null) node.innerHTML = html;
+          return node;
+        }
+        function markSvg(key, color, cls) {
+          var svg = document.createElementNS(SVG_NS, "svg");
+          svg.setAttribute("viewBox", "0 0 199 199");
+          svg.setAttribute("class", cls);
+          var path = document.createElementNS(SVG_NS, "path");
+          path.setAttribute("d", MARK_PATHS[key]);
+          path.setAttribute("fill", color);
+          svg.appendChild(path);
+          return svg;
+        }
+        function buildWordmark(node, masked) {
+          var parts = [["G", "g"], ["E", "g"], ["N", "g"], ["A", "g i"], ["I", "g i"], [" ", "sp"], ["D", "d"], ["A", "d"], ["Y", "d"], ["S", "d"]];
+          var letters = [];
+          parts.forEach(function (part) {
+            var ch = el("span", "ch " + part[1]);
+            ch.textContent = part[0] === " " ? " " : part[0];
+            if (masked) {
+              var mask = el("span", "m" + (part[1].indexOf("i") >= 0 ? " it" : ""));
+              mask.appendChild(ch);
+              node.appendChild(mask);
+            } else {
+              node.appendChild(ch);
+            }
+            if (part[0] !== " ") letters.push(ch);
+          });
+          return letters;
+        }
+        function wordmarkHtml() {
+          return '<span class="g">GEN</span><span class="g i">AI</span><span class="d sp">DAYS</span>';
+        }
+        function splitWords(node, text, masked) {
+          var words = [];
+          text.split(" ").forEach(function (word, i) {
+            if (i > 0) node.appendChild(document.createTextNode(" "));
+            var wd = el("span", "wd");
+            wd.textContent = word;
+            if (masked) {
+              var mask = el("span", "m" + (masked === "it" ? " it" : ""));
+              mask.appendChild(wd);
+              node.appendChild(mask);
+            } else {
+              node.appendChild(wd);
+            }
+            words.push(wd);
+          });
+          return words;
+        }
+        function splitChars(node, text) {
+          var chars = [];
+          Array.prototype.forEach.call(text, function (c) {
+            var ch = el("span", "ch");
+            ch.textContent = c === " " ? " " : c;
+            node.appendChild(ch);
+            chars.push(ch);
+          });
+          return chars;
+        }
+
+        // ---------------------------------------------------------------- print plates
+        var PRINT_SRC = {
+          cover: "assets/img/cover_v2-1920-optimized.webp",
+          manifesto: "assets/img/manifesto-civic-optimized.webp",
+          miroir: "assets/img/chateau-nantes-miroir-eau-banner-genai-days-optimized.webp",
+          costs: "assets/img/issue-costs-optimized.webp",
+          shadow: "assets/img/issue-shadow-ai-optimized.webp",
+          sovereignty: "assets/img/issue-sovereignty-optimized.webp",
+          production: "assets/img/issue-production-optimized.webp",
+          rails: "assets/img/tracks-rails-v2-optimized.webp",
+          speakers: "assets/img/speaker_background-optimized.webp",
+          castle: "assets/img/nantes_castle-optimized.webp",
+          hotel: "assets/img/hotel-region-banner-genai-days-optimized.webp",
+          chateau: "assets/img/affiche-chateau-nantes-2306.webp",
+        };
+        var prints = {};
+        function buildPrint(name, position) {
+          var host = $("#p-" + name);
+          var sheet = el("div", "sheet");
+          var key = el("img", "key");
+          key.src = "assets/plates/" + name + "-key.webp";
+          var signal = el("img", "signal");
+          signal.src = "assets/plates/" + name + "-signal.webp";
+          sheet.appendChild(key);
+          host.appendChild(sheet);
+          host.appendChild(signal);
+          var orig = null;
+          if (PRINT_SRC[name]) {
+            orig = el("img", "orig");
+            orig.src = PRINT_SRC[name];
+            host.appendChild(orig);
+          }
+          host.appendChild(el("div", "trame"));
+          [key, signal, orig].forEach(function (img) {
+            if (img) {
+              img.alt = "";
+              if (position) img.style.objectPosition = position;
+            }
+          });
+          prints[name] = { host: host, sheet: sheet, key: key, signal: signal, orig: orig };
+          return prints[name];
+        }
+        buildPrint("cover", "50% 60%");
+        buildPrint("manifesto", "50% 12%");
+        buildPrint("miroir", "50% 50%");
+        buildPrint("costs");
+        buildPrint("shadow");
+        buildPrint("sovereignty");
+        buildPrint("production");
+        buildPrint("rails");
+        buildPrint("speakers", "50% 30%");
+        buildPrint("castle", "58% 50%");
+        buildPrint("hotel");
+        buildPrint("chateau", "50% 40%");
+
+        var WIPES = {
+          down: ["inset(0% 0% 100% 0%)", "inset(0% 0% 0% 0%)"],
+          right: ["inset(0% 100% 0% 0%)", "inset(0% 0% 0% 0%)"],
+          left: ["inset(0% 0% 0% 100%)", "inset(0% 0% 0% 0%)"],
+        };
+        // Pull a poster: the sheet and key plate are squeegeed across, the orange plate follows out of
+        // register, snaps into register on `register`, then the original art settles in.
+        function pull(tl, name, at, opts) {
+          var p = prints[name];
+          var wipe = WIPES[opts.dir || "down"];
+          var dur = opts.dur || 0.3;
+          var off = opts.offset || [34, 24];
+          var register = opts.register != null ? opts.register : at + dur + 0.2;
+          tl.fromTo(p.sheet, { clipPath: wipe[0] }, { clipPath: wipe[1], duration: dur, ease: "power2.inOut" }, at);
+          tl.fromTo(p.signal, { clipPath: wipe[0], x: off[0], y: off[1] }, { clipPath: wipe[1], duration: dur, ease: "power2.inOut" }, at + dur * 0.55);
+          tl.to(p.signal, { x: 0, y: 0, duration: 0.24, ease: "expo.out" }, register);
+          if (p.orig) {
+            tl.fromTo(p.orig, { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.inOut", immediateRender: false }, register + 0.12);
+            tl.set(p.orig, { opacity: 0 }, 0);
+          }
+        }
+
+        // Re-register a print already on screen: the orange plate snaps, then the original art settles in.
+        function register(tl, name, at, offset) {
+          var p = prints[name];
+          var off = offset || [34, 24];
+          tl.fromTo(p.signal, { x: off[0], y: off[1] }, { x: 0, y: 0, duration: 0.26, ease: "expo.out" }, at);
+          if (p.orig) tl.fromTo(p.orig, { opacity: 0 }, { opacity: 1, duration: 0.45, ease: "power1.inOut" }, at + 0.14);
+        }
+
+        // ---------------------------------------------------------------- rectangular fragmentation
+        // The key art's own language: stepped rectangular blocks. Each block flashes as a flat ink
+        // (blue or orange) and then opens onto the incoming shot. One canvas paints every active cut.
+        var fragCanvas = $("#frag-ink");
+        var fragCtx = fragCanvas.getContext("2d");
+        var fragCuts = [];
+        function makeBlocks(seed, mode) {
+          var rand = seededRandom(seed);
+          var rows = 22;
+          var rowH = 1080 / rows;
+          var list = [];
+          for (var r = 0; r < rows; r += 1) {
+            var x = 0;
+            while (x < 1920) {
+              var w = Math.round(60 + rand() * 300);
+              if (x + w > 1920) w = 1920 - x;
+              var cx = (x + w / 2) / 1920;
+              var cy = (r + 0.5) / rows;
+              var base = mode === "rise" ? 1 - cy : mode === "center" ? Math.hypot(cx - 0.5, cy - 0.5) * 1.3 : cx;
+              var th = Math.max(0, Math.min(1, base * 0.72 + rand() * 0.28));
+              list.push({ x: x, y: Math.round(r * rowH), w: w, h: Math.ceil(rowH), th: th * 0.86, ink: rand() < 0.5 ? "#FE4D1B" : "#3D43CE" });
+              x += w;
+            }
+          }
+          return list;
+        }
+        function repaintFragments() {
+          fragCtx.clearRect(0, 0, 1920, 1080);
+          fragCuts.forEach(function (cut) {
+            var p = cut.p;
+            if (p <= 0 || p >= 1) return;
+            for (var i = 0; i < cut.blocks.length; i += 1) {
+              var b = cut.blocks[i];
+              if (p > b.th && p < b.th + 0.14) {
+                fragCtx.fillStyle = b.ink;
+                fragCtx.fillRect(b.x, b.y, b.w, b.h);
+              }
+            }
+          });
+        }
+        function fragment(tl, target, at, dur, seed, mode) {
+          var node = typeof target === "string" ? $(target) : target;
+          var cut = { p: 0, blocks: makeBlocks(seed, mode) };
+          fragCuts.push(cut);
+          function apply(p) {
+            cut.p = p;
+            if (p >= 1) {
+              node.style.clipPath = "none";
+            } else if (p <= 0) {
+              node.style.clipPath = 'path("M 0 0 Z")';
+            } else {
+              var parts = [];
+              for (var i = 0; i < cut.blocks.length; i += 1) {
+                var b = cut.blocks[i];
+                if (p >= b.th + 0.14) parts.push("M" + b.x + " " + b.y + "h" + b.w + "v" + b.h + "h" + -b.w + "Z");
+              }
+              node.style.clipPath = parts.length ? 'path("' + parts.join("") + '")' : 'path("M 0 0 Z")';
+            }
+            repaintFragments();
+          }
+          apply(0);
+          tl.fromTo(driver(apply), { v: 0 }, { v: 1, duration: dur, ease: "none" }, at);
+        }
+
+        // ---------------------------------------------------------------- physical objects
+        function objShell(node) {
+          node.appendChild(el("div", "shadow"));
+          var front = el("div", "front");
+          if (node.classList.contains("metal")) front.appendChild(el("div", "shine"));
+          var content = el("div", "content");
+          front.appendChild(content);
+          node.appendChild(front);
+          return content;
+        }
+
+        // ---------------------------------------------------------------- poster peel transition
+        // A fold line sweeps from one corner across the frame. The scene keeps the half-plane past the fold;
+        // the peeled part is mirrored across the fold as the cream back of the poster.
+        function clipHalfPlane(points, keep) {
+          var out = [];
+          for (var i = 0; i < points.length; i += 1) {
+            var a = points[i];
+            var b = points[(i + 1) % points.length];
+            var da = keep(a);
+            var db = keep(b);
+            if (da >= 0) out.push(a);
+            if ((da >= 0) !== (db >= 0)) {
+              var k = da / (da - db);
+              out.push([a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k]);
+            }
+          }
+          return out;
+        }
+        function polygonCss(points) {
+          if (points.length < 3) return 'polygon(0 0, 0 0, 0 0)';
+          return "polygon(" + points.map(function (q) {
+            return q[0].toFixed(1) + "px " + q[1].toFixed(1) + "px";
+          }).join(", ") + ")";
+        }
+        function peelScene(tl, node, at, dur) {
+          var flap = el("div", "peel-flap");
+          var back = el("div", "peel-back");
+          var shade = el("div", "peel-shade");
+          back.appendChild(shade);
+          flap.appendChild(back);
+          node.appendChild(flap);
+          var corner = [1920, 1080];
+          var angle = Math.atan2(-1080, -1920) + 0.16;
+          var u = [Math.cos(angle), Math.sin(angle)];
+          var rect = [[0, 0], [1920, 0], [1920, 1080], [0, 1080]];
+          var reach = Math.max.apply(null, rect.map(function (q) {
+            return (q[0] - corner[0]) * u[0] + (q[1] - corner[1]) * u[1];
+          }));
+          function apply(p) {
+            if (p <= 0) {
+              node.style.clipPath = "";
+              flap.style.display = "none";
+              return;
+            }
+            var dist = p * (reach + 40);
+            function side(q) {
+              return (q[0] - corner[0]) * u[0] + (q[1] - corner[1]) * u[1] - dist;
+            }
+            var kept = clipHalfPlane(rect, side);
+            var peeled = clipHalfPlane(rect, function (q) {
+              return -side(q);
+            });
+            var mirrored = peeled.map(function (q) {
+              var d = side(q);
+              return [q[0] - 2 * d * u[0], q[1] - 2 * d * u[1]];
+            });
+            node.style.clipPath = polygonCss(kept);
+            flap.style.display = "block";
+            back.style.clipPath = polygonCss(mirrored);
+            var fold = [corner[0] + dist * u[0], corner[1] + dist * u[1]];
+            var theta = (Math.atan2(-u[0], u[1]) * 180) / Math.PI;
+            shade.style.transform = "translate(" + fold[0].toFixed(1) + "px," + fold[1].toFixed(1) + "px) rotate(" + theta.toFixed(2) + "deg) translate(-2400px, 0)";
+          }
+          apply(0);
+          tl.fromTo(driver(apply), { v: 0 }, { v: 1, duration: dur, ease: "power2.in" }, at);
+        }
+
+        // ---------------------------------------------------------------- static DOM
+        var s1Mark = $("#s1-mark");
+        var s1Arms = {};
+        ["orange", "cream"].forEach(function (ink) {
+          var layer = el("div", "");
+          layer.style.position = "absolute";
+          layer.style.inset = "0";
+          layer.id = "s1-ink-" + ink;
+          ARM_KEYS.concat(["dot"]).forEach(function (key) {
+            var svg = markSvg(key, ink === "cream" ? "#F9F4EC" : "#FE4D1B", "mark");
+            layer.appendChild(svg);
+            (s1Arms[key] = s1Arms[key] || []).push(svg);
+          });
+          s1Mark.appendChild(layer);
+        });
+        var s1Letters = buildWordmark($("#s1-wm"), true);
+
+        // Hero pass, after HeroAffiche.astro: brand, over-title, date, venue with the Région.
+        var passContent = objShell($("#s1-pass"));
+        passContent.setAttribute("data-layout-allow-overlap", "");
+        passContent.innerHTML =
+          '<div class="head"><div class="wordmark">' +
+          wordmarkHtml() +
+          '</div><div class="markicon"></div></div>' +
+          '<div class="body" style="gap: 14px"><div class="lab" style="font-size: 20px">Mardi · Accueil 08:30</div>' +
+          '<div class="pdate"><strong>17</strong><span><b>Novembre</b><b>2026</b></span></div></div>' +
+          '<div class="pbottom"><div class="pvenue"><strong>Hôtel de Région</strong><span>Nantes</span></div>' +
+          '<div class="region-logo" style="width: 150px; height: 72px"></div></div>';
+        passContent.querySelectorAll("*").forEach(function (n) {
+          n.setAttribute("data-layout-allow-overlap", "");
+        });
+
+        var s2L1 = splitWords($("#s2-l1"), "est déjà", true);
+        var s2L2 = splitWords($("#s2-l2"), "chez vous.", "it");
+        var s2Now = splitChars($("#s2-now"), "C’est maintenant");
+        s2Now.forEach(function (ch) {
+          ch.setAttribute("data-layout-allow-overlap", "");
+        });
+        var s2Complex = splitWords($("#s2-complex-main"), "que ça se complique.", false);
+
+
+        // Live /speakers order on genai-days-nantes.com, 2026-10-12 (20 speakers).
+        var SPEAKERS = [
+          ["christelle-morancais", "Christelle Morançais", "Région Pays de la Loire"],
+          ["jean-baptiste-kempf", "Jean-Baptiste Kempf", "VLC · Scaleway · Kyber"],
+          ["julien-lesaicherre", "Julien Lesaicherre", "ElevenLabs"],
+          ["regis-dubrulle-anssi", "Régis Dubrulle", "ANSSI"],
+          ["olivier-lauvray", "Olivier Lauvray", "VSORA"],
+          ["quentin-adam", "Quentin Adam", "Clever Cloud"],
+          ["theo-hubert", "Théo Hubert", "AlphaEdge"],
+          ["nicolas-martignole-wide", "Nicolas Martignole", "Back Market"],
+          ["gael-brisson", "Gaël Brisson", "Swiftask"],
+          ["camille-croze-linkedin", "Camille Croze", "Wandercraft"],
+          ["constance-nebbula", "Constance Nebbula", "Région Pays de la Loire"],
+          ["david-leaurant", "David Léaurant", "ADN Ouest"],
+          ["laurent-duthoit-meudon", "Laurent Duthoit", "Renault Group"],
+          ["sebastien-le-corfec-epopee", "Sébastien Le Corfec", "Épopée Gestion · West Web Festival"],
+          ["thomas-mathieu-audencia", "Thomas Mathieu", "Guest Suite"],
+          ["emmanuel-marboeuf", "Emmanuel Marboeuf", "BWorlds"],
+          ["annabelle-koster-devfest", "Annabelle Koster", "SFEIR"],
+          ["marie-fleur-sacreste", "Marie-Fleur Sacreste", "Marie-Fleur Sacreste Consulting"],
+          ["florian-herveou", "Florian Hervéou", "Startup Palace · _icilundi"],
+          ["jaafar-steiblen-raji", "Jaafar Steiblen-Raji", "Explore the Vault"],
+        ];
+        // The final arrangement: photos laid on a table. Equal cards of 196 x 274 on a loose 7/7/6 base, each with a seeded
+        // offset (up to +-36 / +-32 px) and turn (3 to 7 deg). A card may only overlap the top 22 % of a card under it (hair,
+        // never a face or a name) and never the count; a candidate that breaks this is redrawn.
+        var S5_CARD = { w: 196, h: 274, scale: 196 / 300 };
+        var S5_BASE = { left: 222, top: 118, pitchX: 214, pitchY: 292 };
+        var S5_TITLE_BOX = { x: 1496, y: 702, w: 280, h: 274 };
+        function s5Base(k) {
+          return { x: S5_BASE.left + (k % 7) * S5_BASE.pitchX, y: S5_BASE.top + Math.floor(k / 7) * S5_BASE.pitchY };
+        }
+        // Corners of a card rect, inset [left, top, right, bottom], turned by rot degrees around the card centre.
+        function s5Quad(c, inset) {
+          var cx = c.x + S5_CARD.w / 2;
+          var cy = c.y + S5_CARD.h / 2;
+          var a = (c.rot * Math.PI) / 180;
+          var cos = Math.cos(a);
+          var sin = Math.sin(a);
+          var l = -S5_CARD.w / 2 + inset[0];
+          var t = -S5_CARD.h / 2 + inset[1];
+          var r = S5_CARD.w / 2 - inset[2];
+          var b = S5_CARD.h / 2 - inset[3];
+          return [[l, t], [r, t], [r, b], [l, b]].map(function (q) {
+            return [cx + q[0] * cos - q[1] * sin, cy + q[0] * sin + q[1] * cos];
+          });
+        }
+        // Separating-axis test for two convex quads.
+        function s5Overlap(A, B) {
+          return ![A, B].some(function (P) {
+            return P.some(function (p1, i) {
+              var p2 = P[(i + 1) % P.length];
+              var nx = p2[1] - p1[1];
+              var ny = p1[0] - p2[0];
+              var a = A.map(function (q) {
+                return q[0] * nx + q[1] * ny;
+              });
+              var b = B.map(function (q) {
+                return q[0] * nx + q[1] * ny;
+              });
+              return Math.max.apply(null, a) < Math.min.apply(null, b) || Math.max.apply(null, b) < Math.min.apply(null, a);
+            });
+          });
+        }
+        var S5_FACE = [6, 0.22 * 274, 6, 0];
+        var s5TitleQuad = [[S5_TITLE_BOX.x, S5_TITLE_BOX.y], [S5_TITLE_BOX.x + S5_TITLE_BOX.w, S5_TITLE_BOX.y], [S5_TITLE_BOX.x + S5_TITLE_BOX.w, S5_TITLE_BOX.y + S5_TITLE_BOX.h], [S5_TITLE_BOX.x, S5_TITLE_BOX.y + S5_TITLE_BOX.h]];
+        var s5Rand = seededRandom(1911);
+        var s5Layout = [];
+        SPEAKERS.forEach(function (sp, k) {
+          var base = s5Base(k);
+          // Upper rows lie on top, so a card below can only lose its hair under the name band above it.
+          var z = (3 - Math.floor(k / 7)) * 30 + (k % 7);
+          var pick = null;
+          for (var attempt = 0; attempt < 400 && !pick; attempt += 1) {
+            var amp = attempt < 200 ? 1 : attempt < 300 ? 0.6 : 0.3;
+            var turn = (s5Rand() < 0.5 ? -1 : 1) * (3 + s5Rand() * 4) * amp;
+            var c = { x: base.x + (s5Rand() - 0.5) * 72 * amp, y: base.y + (s5Rand() - 0.5) * 64 * amp, rot: turn, z: z };
+            var card = s5Quad(c, [0, 0, 0, 0]);
+            var face = s5Quad(c, S5_FACE);
+            var inFrame = card.every(function (q) {
+              return q[0] > 24 && q[0] < 1896 && q[1] > 24 && q[1] < 1056;
+            });
+            var clear =
+              inFrame &&
+              !s5Overlap(card, s5TitleQuad) &&
+              s5Layout.every(function (m) {
+                return c.z > m.z ? !s5Overlap(card, s5Quad(m, S5_FACE)) : !s5Overlap(s5Quad(m, [0, 0, 0, 0]), face);
+              });
+            if (clear) pick = c;
+          }
+          s5Layout.push(pick || { x: base.x, y: base.y, rot: 0, z: z });
+        });
+        function s5SlotOf(k) {
+          return s5Layout[k];
+        }
+        var s5Title = $("#s5-title");
+        s5Title.style.left = S5_TITLE_BOX.x + "px";
+        s5Title.style.top = S5_TITLE_BOX.y + "px";
+        $("#s5-count").textContent = String(SPEAKERS.length);
+        var s5Slots = SPEAKERS.map(function (sp, k) {
+          var node = el("div", "s5-slot");
+          node.innerHTML =
+            '<div class="poster small"><div class="card"><div class="ph"><img src="assets/speakers/' +
+            sp[0] +
+            '-optimized.webp" alt="" /></div><div class="band"><b>' +
+            sp[1] +
+            '</b><span class="lab">' +
+            sp[2] +
+            "</span></div></div></div>";
+          node.dataset.rot = s5Layout[k].rot.toFixed(2);
+          node.dataset.z = String(s5Layout[k].z);
+          node.style.left = s5Layout[k].x.toFixed(1) + "px";
+          node.style.top = s5Layout[k].y.toFixed(1) + "px";
+          node.style.zIndex = node.dataset.z;
+          node.setAttribute("data-layout-allow-overlap", "");
+          node.querySelectorAll("*").forEach(function (n) {
+            n.setAttribute("data-layout-allow-overlap", "");
+          });
+          $("#s5-world").appendChild(node);
+          return node;
+        });
+
+        $("#s6-stub-wm").innerHTML = wordmarkHtml();
+
+        // Programme checked against the live /programme, 2026-10-07: unchanged since v4.
+        // S7 clock: a real 12-hour face (hours at their true positions) for the day, 08:30 to 22:00 (event.json).
+        var CLOCK_R = 290;
+        function clockPolar(deg, r) {
+          var a = (deg * Math.PI) / 180;
+          return (r * Math.sin(a)).toFixed(1) + " " + (-r * Math.cos(a)).toFixed(1);
+        }
+        (function () {
+          var R = CLOCK_R;
+          var s = '<circle r="' + R + '" fill="rgba(9,18,46,0.35)" stroke="#F9F4EC" stroke-width="4" />';
+          // Afterwork sector, 18:00 to 22:00 (6 to 10 on the face), drawn as the hands pass.
+          s += '<path id="s7-sector" d="M' + clockPolar(180, R - 14) + " A" + (R - 14) + " " + (R - 14) + " 0 0 1 " + clockPolar(300, R - 14) + '" fill="none" stroke="#FE4D1B" stroke-width="16" />';
+          for (var m = 0; m < 60; m += 1) {
+            var major = m % 5 === 0;
+            var a = clockPolar(m * 6, R - 8).split(" ");
+            var b = clockPolar(m * 6, R - (major ? 34 : 18)).split(" ");
+            s += '<line x1="' + a[0] + '" y1="' + a[1] + '" x2="' + b[0] + '" y2="' + b[1] + '" stroke="#F9F4EC" stroke-width="' + (major ? 5 : 2) + '" />';
+          }
+          for (var h = 1; h <= 12; h += 1) {
+            var q = clockPolar(h * 30, R - 72).split(" ");
+            s += '<text x="' + q[0] + '" y="' + (Number(q[1]) + 17).toFixed(1) + '" text-anchor="middle" font-family="EB Garamond" font-weight="800" font-size="48" fill="#F9F4EC">' + h + "</text>";
+          }
+          s += '<g id="s7-hour"><path d="M-11 26 L-7 ' + -Math.round(R * 0.52) + " L0 " + -Math.round(R * 0.58) + " L7 " + -Math.round(R * 0.52) + ' L11 26 Z" fill="#FE4D1B" /></g>';
+          s += '<g id="s7-min"><path d="M-6 34 L-4 ' + -Math.round(R * 0.84) + " L0 " + -Math.round(R * 0.9) + " L4 " + -Math.round(R * 0.84) + ' L6 34 Z" fill="#F9F4EC" /></g>';
+          s += '<circle r="16" fill="#F9F4EC" /><circle r="6" fill="#FE4D1B" />';
+          $("#s7-clock").innerHTML = s;
+        })();
+        var s7Sector = $("#s7-sector");
+        var s7SectorLen = s7Sector.getTotalLength();
+        s7Sector.style.strokeDasharray = s7SectorLen + " " + s7SectorLen;
+        var s7Hour = $("#s7-hour");
+        var s7Min = $("#s7-min");
+        var s7Read = $("#s7-read");
+        function s7Clock(h) {
+          s7Hour.setAttribute("transform", "rotate(" + (((h % 12) / 12) * 360).toFixed(2) + ")");
+          s7Min.setAttribute("transform", "rotate(" + (((h * 60) % 60) * 6).toFixed(2) + ")");
+          s7Sector.style.strokeDashoffset = (s7SectorLen * (1 - Math.max(0, Math.min(1, (h - 18) / 4)))).toFixed(2);
+          var mins = Math.round((h * 60) / 5) * 5;
+          var hh = Math.floor(mins / 60);
+          var mm = mins % 60;
+          s7Read.textContent = (hh < 10 ? "0" : "") + hh + ":" + (mm < 10 ? "0" : "") + mm;
+        }
+        s7Clock(8.5);
+
+        // S7 mirror ball: latitude bands of facets; spinning moves the facets in longitude, so it really turns.
+        var BALL_R = 56;
+        var BALL_BANDS = 9;
+        var ballSvg = $("#s7-ball svg");
+        ballSvg.innerHTML =
+          '<defs><radialGradient id="s7-ball-g" cx="38%" cy="32%" r="75%"><stop offset="0" stop-color="#e9ebf0" /><stop offset="0.55" stop-color="#8f94a6" /><stop offset="1" stop-color="#2b2f45" /></radialGradient>' +
+          '<clipPath id="s7-ball-c"><circle r="' + BALL_R + '" /></clipPath></defs><rect x="-6" y="-66" width="12" height="9" fill="#393636" />' +
+          '<circle r="' + BALL_R + '" fill="url(#s7-ball-g)" /><g clip-path="url(#s7-ball-c)" id="s7-facets"></g><circle r="' + BALL_R + '" fill="none" stroke="#393636" stroke-width="2" />';
+        var ballTiles = [];
+        for (var j = 0; j < BALL_BANDS; j += 1) {
+          var lat = (-80 + (j + 0.5) * (160 / BALL_BANDS)) * (Math.PI / 180);
+          var count = Math.max(4, Math.round(16 * Math.cos(lat)));
+          for (var k = 0; k < count; k += 1) {
+            var tile = document.createElementNS(SVG_NS, "rect");
+            tile.setAttribute("stroke", "rgba(30, 32, 48, 0.55)");
+            tile.setAttribute("stroke-width", "0.8");
+            $("#s7-facets").appendChild(tile);
+            ballTiles.push({ node: tile, lat: lat, lon: (k / count) * Math.PI * 2, count: count, shade: ((j * 31 + k * 17) % 7) / 6 });
+          }
+        }
+        var BALL_BAND_H = (2 * BALL_R * Math.sin((80 * Math.PI) / 180)) / BALL_BANDS;
+        function spinBall(rot) {
+          ballTiles.forEach(function (t) {
+            var th = t.lon + rot;
+            var c = Math.cos(th);
+            if (c <= 0.02) {
+              t.node.setAttribute("opacity", "0");
+              return;
+            }
+            var w = ((2 * Math.PI * BALL_R * Math.cos(t.lat)) / t.count) * c;
+            var x = BALL_R * Math.cos(t.lat) * Math.sin(th);
+            var y = -BALL_R * Math.sin(t.lat);
+            var light = Math.max(0, 0.25 + 0.55 * t.shade * c - 0.3 * (x / BALL_R) - 0.25 * (y / BALL_R));
+            t.node.setAttribute("x", (x - w / 2).toFixed(2));
+            t.node.setAttribute("y", (y - BALL_BAND_H / 2).toFixed(2));
+            t.node.setAttribute("width", Math.max(0.5, w - 0.6).toFixed(2));
+            t.node.setAttribute("height", (BALL_BAND_H * Math.cos(t.lat) * 0.92 + 1).toFixed(2));
+            t.node.setAttribute("fill", "rgba(255, 255, 255, " + Math.min(0.92, light).toFixed(3) + ")");
+            t.node.setAttribute("opacity", "1");
+          });
+        }
+        // Light specks thrown by the ball: crisp squares turning across the whole frame.
+        var speckRand = seededRandom(1811);
+        var specks = [];
+        for (var sp = 0; sp < 48; sp += 1) {
+          var speck = el("i", "");
+          var size = 9 + Math.round(speckRand() * 10);
+          speck.style.width = size + "px";
+          speck.style.height = size + "px";
+          speck.style.background = sp % 5 === 0 ? "#FE4D1B" : "#F9F4EC";
+          speck.style.opacity = (0.45 + speckRand() * 0.45).toFixed(2);
+          $("#s7-specks").appendChild(speck);
+          specks.push({ node: speck, r: 90 + speckRand() * 1050, a: speckRand() * Math.PI * 2 });
+        }
+        function paintDisco(u) {
+          var rot = u * 1.6;
+          spinBall(rot);
+          specks.forEach(function (s) {
+            var a = s.a + rot * 0.35;
+            s.node.style.transform = "translate(" + (960 + s.r * Math.cos(a)).toFixed(1) + "px," + (560 + s.r * 0.6 * Math.sin(a)).toFixed(1) + "px) rotate(45deg)";
+          });
+          // The string sways once the drop has landed, damped: a pendulum settling, no bounce.
+          var sway = u - 0.5;
+          $("#s7-ball").style.rotate = sway > 0 ? (3 * Math.exp(-1.1 * sway) * Math.sin(2.4 * sway)).toFixed(3) + "deg" : "0deg";
+        }
+        paintDisco(0);
+
+        // Live /partenaires order and tiers, rechecked 2026-10-12. The site sizes tiers and names none; so does the board.
+        // Each entry: mono mask in assets/partners/mono/ (tools/partners_mono.py), trimmed aspect ratio, ink density.
+        var PARTNER_ROWS = [
+          [["logo-pays_de_la_loire", 2.09, 0.341], ["clever-cloud", 3.857, 0.257], ["swiftask-optimized", 4.298, 0.299], ["adn-ouest-optimized", 2.36, 0.293]],
+          [["club-eti-pdll-optimized", 1.12, 0.214], ["ippon-optimized", 3.456, 0.541], ["alphaedge", 5.981, 0.257], ["Logo Elastic-optimized", 3.119, 0.299], ["Logo techtown-optimized", 5.836, 0.453], ["Logo_Cross_Data-optimized", 6.207, 0.334]],
+          [["Jems-logo-optimized", 1.69, 0.373], ["icilundi-optimized", 4.855, 0.373], ["bworlds-lockup-mono-black-optimized", 3.678, 0.463], ["externatic_horizontal-optimized", 5.926, 0.344], ["explore-the-vault-logo-optimized", 6.647, 0.609], ["leboncoin-tech-optimized", 2.754, 0.271], ["la-cantine-french-tech-optimized", 2.273, 0.136]],
+        ];
+        // Optical size, not box size: every logo in a tier gets the same box area weighted by the square root of its ink
+        // density, so wide wordmarks come out shorter, square or airy marks taller. maxHeight tames square marks.
+        var PARTNER_TIERS = [
+          { area: 22000, maxHeight: 140, gap: 64 },
+          { area: 9400, maxHeight: 105, gap: 46 },
+          { area: 7000, maxHeight: 84, gap: 36 },
+        ];
+        var PARTNER_ROW_MAX_WIDTH = 1720;
+        $$("#s9-partners .prow").forEach(function (row, r) {
+          var tier = PARTNER_TIERS[r];
+          var sizes = PARTNER_ROWS[r].map(function (logo) {
+            var height = Math.min(tier.maxHeight, Math.sqrt(tier.area / (logo[1] * Math.sqrt(logo[2]))));
+            return [height * logo[1], height];
+          });
+          var rowWidth = sizes.reduce(function (sum, size) {
+            return sum + size[0];
+          }, tier.gap * (sizes.length - 1));
+          var fit = Math.min(1, PARTNER_ROW_MAX_WIDTH / rowWidth);
+          row.style.gap = tier.gap * fit + "px";
+          PARTNER_ROWS[r].forEach(function (logo, i) {
+            var tile = el("div", "ptile");
+            tile.style.width = sizes[i][0] * fit + "px";
+            tile.style.height = sizes[i][1] * fit + "px";
+            var mark = el("div", "plogo");
+            mark.style.setProperty("--logo", 'url("assets/partners/mono/' + encodeURIComponent(logo[0] + ".png") + '")');
+            tile.appendChild(mark);
+            row.appendChild(tile);
+          });
+        });
+
+        function buildLockup(row, color) {
+          var mark = el("div", "s9-mark");
+          ARM_KEYS.concat(["dot"]).forEach(function (key) {
+            mark.appendChild(markSvg(key, color, "mark"));
+          });
+          row.appendChild(mark);
+          var wm = el("div", "wordmark s9-wm");
+          row.appendChild(wm);
+          return { mark: mark, letters: buildWordmark(wm, true) };
+        }
+        var s9Main = buildLockup($("#s9-row"), "#F9F4EC");
+        buildLockup($("#s9-ghost"), "#FE4D1B");
+        var s9Sig = splitWords($("#s9-sig"), "L’intelligence artificielle, ici et maintenant.", false);
+
+        // ---------------------------------------------------------------- timeline
+        function build() {
+          // v5: the v4 choreography is authored in source seconds; reading holds (tools/holds.json,
+          // mirrored in music/music_lab.py) push everything after each hold point, so text sits still to be read.
+          var HOLDS = [[2.545, 0.75], [3.715, 0.75], [4.995, 0.75], [6.545, 1.0], [7.275, 0.75], [7.775, 0.75], [8.275, 0.75], [8.715, 0.75], [11.495, 1.5], [14.55, 2.5], [21.495, 2.75], [24.6, 0.5], [27.4, 2.0]];
+          function T(t) {
+            var out = t;
+            HOLDS.forEach(function (h) {
+              if (t >= h[0]) out += h[1];
+            });
+            return out;
+          }
+          var master = gsap.timeline({ paused: true });
+          var tl = {
+            to: function (a, b, at) {
+              return master.to(a, b, T(at));
+            },
+            fromTo: function (a, b, c, at) {
+              return master.fromTo(a, b, c, T(at));
+            },
+            set: function (a, b, at) {
+              return master.set(a, b, T(at));
+            },
+          };
+          var TOTAL = T(28);
+
+          var grainRand = seededRandom(20261117);
+          var grain = $("#grain");
+          for (var g = 0; g < TOTAL * 15; g += 1) {
+            master.set(grain, { backgroundPosition: Math.floor(grainRand() * 512) + "px " + Math.floor(grainRand() * 512) + "px" }, g / 15);
+          }
+
+          // ============ S1 · printing the cover poster (0 to 3)
+          // Two flat coats: the squeegee lays the blue key plate, then the orange plate directly in register,
+          // the second pass landing on the drop. origFade (composition variable, the user is choosing) lets the
+          // original art settle over the plates; off, the two plates stay the final image.
+          // music/music_lab.py keys its scrape, press and swipe SFX to these times.
+          var vars = (window.__hyperframes && window.__hyperframes.getVariables && window.__hyperframes.getVariables()) || {};
+          var ORIG_FADE = vars.origFade !== false;
+          var cover = prints.cover;
+          var COAT = ["inset(0% 100% 0% 0%)", "inset(0% 0% 0% 0%)"];
+          tl.fromTo(".s1-meta", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out", stagger: 0.08 }, 0.05);
+          tl.fromTo(cover.sheet, { clipPath: COAT[0] }, { clipPath: COAT[1], duration: 0.42, ease: "power1.inOut" }, 0.08);
+          tl.fromTo("#s1-squeegee", { x: -120 }, { x: 1990, duration: 0.42, ease: "power1.inOut" }, 0.08);
+          tl.fromTo(cover.signal, { clipPath: COAT[0] }, { clipPath: COAT[1], duration: 0.4, ease: "power1.inOut" }, DROP - 0.4);
+          tl.fromTo("#s1-squeegee", { x: -120 }, { x: 1990, duration: 0.4, ease: "power1.inOut", immediateRender: false }, DROP - 0.4);
+          tl.set([".regmark", ".s1-meta"], { opacity: 0 }, DROP);
+          if (ORIG_FADE) tl.fromTo(cover.orig, { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.inOut" }, DROP + 0.12);
+          tl.fromTo("#s1-scrim", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" }, DROP);
+          // Mark: four arms arrive, the orange plate lands out of register and snaps on the beat.
+          ARM_KEYS.forEach(function (key, i) {
+            var v = ARM_VECTORS[key];
+            s1Arms[key].forEach(function (svg) {
+              tl.fromTo(svg, { x: v[0] * 260, y: v[1] * 260, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.5, ease: "expo.out" }, 1.0 + i * 0.03);
+            });
+          });
+          s1Arms.dot.forEach(function (svg) {
+            tl.fromTo(svg, { scale: 0, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.3, ease: "expo.out" }, 1.2);
+          });
+          tl.fromTo("#s1-ink-orange", { x: 16, y: 12 }, { x: 5, y: 4, duration: 0.3, ease: "expo.out" }, 1.5);
+          tl.fromTo(s1Letters.slice(0, 5), { yPercent: 115 }, { yPercent: 0, duration: 0.5, ease: "expo.out", stagger: 0.045 }, 1.25);
+          tl.fromTo(s1Letters.slice(5), { yPercent: 115 }, { yPercent: 0, duration: 0.5, ease: "expo.out", stagger: 0.045 }, 1.55);
+          // The hero pass is stuck on and stays: it presses flat on 2.2 (frame 66), then a thumb smooths it.
+          tl.fromTo("#s1-pass", { opacity: 0 }, { opacity: 1, duration: 0.1, ease: "none" }, 1.9);
+          tl.fromTo("#s1-pass", { scale: 1.16, rotation: 6, y: -24, "--lift": 1 }, { scale: 1, rotation: 2, y: 0, "--lift": 0, duration: 0.3, ease: "power2.in" }, 1.9);
+          tl.fromTo("#s1-pass", { "--sx": "-20%" }, { "--sx": "30%", duration: 0.25, ease: "power2.out" }, 2.22);
+          // Cut: the cover breaks into its own rectangular blocks onto the next poster.
+          fragment(tl, "#s2", 2.55, 0.5, 301, "ltr");
+
+          // ============ S2 · tagline (2.55 to 7)
+          var koText = $("#s2-ko-text");
+          var koGhost = $("#s2-ko-ghost");
+          tl.fromTo(koGhost, { x: 30, y: 22 }, { x: 0, y: 0, duration: 0.26, ease: "expo.out" }, 3.0);
+          tl.to(koGhost, { opacity: 0, duration: 0.2, ease: "none" }, 3.18);
+          register(tl, "manifesto", 3.0, [30, 22]);
+          tl.fromTo(prints.manifesto.host, { scale: 1.08 }, { scale: 1, duration: 1.5, ease: "power2.out" }, 2.55);
+          // Through the letterform: the counter of the I opens onto the whole poster.
+          var bbox = koText.getBBox();
+          var holeX = bbox.x + bbox.width * 0.56;
+          var holeY = bbox.y + bbox.height * 0.55;
+          tl.fromTo(koText, { scale: 1 }, { scale: 26, svgOrigin: holeX + " " + holeY, duration: 0.3, ease: "power4.in" }, 3.2);
+          tl.set("#s2-ko", { opacity: 0 }, 3.5);
+          tl.fromTo("#s2-scrim", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 3.45);
+          tl.fromTo("#s2-gen .ch", { yPercent: 110 }, { yPercent: 0, duration: 0.42, ease: "expo.out" }, 3.5);
+          // Nantes: the château mirror poster breaks in through its blocks.
+          fragment(tl, "#s2-b", 3.72, 0.34, 402, "rise");
+          register(tl, "miroir", 4.0, [30, 22]);
+          tl.fromTo(prints.miroir.host, { scale: 1.06 }, { scale: 1, duration: 1.2, ease: "power2.out" }, 3.8);
+          tl.fromTo(s2L1, { yPercent: 110 }, { yPercent: 0, duration: 0.42, ease: "power4.out", stagger: 0.07 }, 4.0);
+          tl.fromTo(s2L2, { yPercent: 110 }, { yPercent: 0, duration: 0.42, ease: "power4.out", stagger: 0.07 }, 4.5);
+          tl.fromTo("#s2-bar", { scaleX: 0 }, { scaleX: 1, duration: 0.45, ease: "expo.out" }, 4.62);
+          // Hard cut on the beat to bare paper.
+          tl.set("#s2-c", { opacity: 0 }, 0);
+          tl.set("#s2-c", { opacity: 1 }, 5.0);
+          tl.set("#s2-a", { opacity: 0 }, 4.08);
+          tl.set("#s2-b", { opacity: 0 }, 5.0);
+          tl.set(["#s2-hud-l", "#s2-hud-r"], { color: "#393636" }, 0);
+          tl.set(["#s2-hud-l", "#s2-hud-r"], { color: "#F9F4EC" }, 3.5);
+          tl.set(["#s2-hud-l", "#s2-hud-r"], { color: "#393636" }, 5.0);
+          tl.fromTo(s2Now, { rotationX: -95, opacity: 0 }, { rotationX: 0, opacity: 1, duration: 0.5, ease: "expo.out", stagger: 0.022 }, 5.0);
+          var ghosts = $$("#s2-complex .ghost-b, #s2-complex .ghost-o");
+          tl.set(ghosts, { opacity: 0 }, 0);
+          var gap = 0.05;
+          var at = 5.75;
+          s2Complex.forEach(function (wd) {
+            tl.fromTo(wd, { x: 230, opacity: 0.35 }, { x: 0, opacity: 1, duration: 0.3, ease: "power4.out", immediateRender: false }, at);
+            at += gap;
+            gap *= 0.84;
+          });
+          tl.set(s2Complex, { opacity: 0 }, 0);
+          tl.set(ghosts, { opacity: 1 }, 6.0);
+          var tear = seededRandom(1711);
+          for (var f = 0; f < 13; f += 1) {
+            var amp = 28 * (1 - f / 13);
+            tl.set("#s2-complex .ghost-o", { x: (tear() - 0.3) * amp * 2, y: (tear() - 0.5) * amp * 0.6 }, 6.0 + f / 30);
+            tl.set("#s2-complex .ghost-b", { x: -(tear() - 0.3) * amp * 2, y: (tear() - 0.5) * amp * 0.6 }, 6.0 + f / 30);
+          }
+          tl.set(ghosts, { x: 0, y: 0 }, 6.44);
+          tl.set("#s2-complex .ghost-o", { x: 5, y: 3 }, 6.44);
+
+          // ============ S3 · the four issues, a poster pulled per beat (6.55 to 9)
+          var words = $$(".s3-word");
+          var names = $$(".s3-name");
+          tl.fromTo("#s3-kicker", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }, 6.6);
+          tl.fromTo("#s3-progress", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "none" }, 6.7);
+          tl.fromTo(".s3-crop", { scale: 0 }, { scale: 1, duration: 0.3, ease: "expo.out", stagger: 0.04 }, 6.6);
+          var issueNames = ["costs", "shadow", "sovereignty", "production"];
+          var count = $("#s3-count");
+          pull(tl, "costs", 6.55, { dir: "right", dur: 0.36, offset: [40, 26], register: 7.0 });
+          // Layers fully covered by the next print leave the page.
+          tl.set("#s2", { opacity: 0 }, 6.92);
+          ["shadow", "sovereignty", "production"].forEach(function (name, i) {
+            var beat = 7.5 + i * 0.5;
+            pull(tl, name, beat - 0.22, { dir: "right", dur: 0.2, offset: [30, 20], register: beat });
+          });
+          issueNames.forEach(function (name, i) {
+            tl.fromTo(prints[name].host, { scale: 1.08 }, { scale: 1, duration: 0.9, ease: "power2.out" }, i === 0 ? 6.55 : 7.28 + (i - 1) * 0.5);
+          });
+          [7.0, 7.5, 8.0, 8.5].forEach(function (beat, i) {
+            // Only the words and the picture change: the issue name rises out of its mask, its session title follows.
+            tl.fromTo(names[i], { yPercent: 105 }, { yPercent: 0, duration: 0.34, ease: "power4.out" }, beat);
+            tl.fromTo(words[i], { y: 120, opacity: 0 }, { y: 0, opacity: 1, duration: 0.36, ease: "power3.out" }, beat + 0.06);
+            if (i < 3) {
+              tl.to(names[i], { yPercent: -105, duration: 0.18, ease: "power4.in" }, beat + 0.32);
+              tl.to(words[i], { y: -120, opacity: 0, duration: 0.18, ease: "power4.in" }, beat + 0.32);
+            }
+            tl.set(count, { textContent: "0" + (i + 1) + " / 04" }, beat);
+            tl.fromTo($$("#s3-progress i")[i], { "--fill": 0 }, { "--fill": 1, duration: 0.35, ease: "expo.out" }, beat);
+          });
+          fragment(tl, "#s4", 8.72, 0.34, 503, "ltr");
+
+          // ============ S4 · two tracks (8.55 to 12)
+          register(tl, "rails", 9.0, [36, 24]);
+          tl.fromTo(prints.rails.host, { scale: 1.07 }, { scale: 1, duration: 1.4, ease: "power2.out" }, 8.55);
+          // Each track is set in type on its own rail: the name rises out of its mask, audience and kicker follow.
+          [["#s4-cap-l", 9.5], ["#s4-cap-r", 10.0]].forEach(function (cap) {
+            tl.fromTo(cap[0] + " .who .m > span", { yPercent: 110 }, { yPercent: 0, duration: 0.5, ease: "expo.out" }, cap[1]);
+            tl.fromTo([cap[0] + " .lab", cap[0] + " .what"], { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out", stagger: 0.08 }, cap[1] + 0.12);
+          });
+          tl.fromTo("#s4-title", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 10.6);
+          tl.to("#s4-b-inner", { scale: 3.4, duration: 0.5, ease: "power3.in", transformOrigin: "50% 60%" }, 11.5);
+          tl.to("#s4-b-inner", { filter: "blur(20px)", duration: 0.5, ease: "power3.in" }, 11.5);
+
+          // ============ S5 · speakers pasted as snapshots, then the avalanche onto the full wall (12 to 15.05)
+          // From speakers-lab iteration 6, variant 1. Authored in scene seconds on the master timeline from T(12):
+          // the structural hold at 14.55 only sets how long the full wall holds before the cut to S6.
+          var S5_AT = T(12.0);
+          var S5_LEN = T(15.05) - S5_AT;
+          // The background is shown registered from its first frame: no plate snap here.
+          tl.set(prints.speakers.orig, { opacity: 1 }, 12.0);
+          tl.fromTo("#s5-bg", { scale: 1.3, filter: "blur(18px)" }, { scale: 1, filter: "blur(0px)", duration: 0.55, ease: "expo.out" }, 12.0);
+          // Travelling on the first row, zoomed so a card is 576 px wide, at 949 px/s on screen (r9: every arrival time x1.12).
+          // Poster 0 appears at once with its left edge at x 1150; posters 1 and 2 appear as their left edge reaches x 1640.
+          var S5_SLOW = 1.12;
+          var S5_ZOOM = 576 / S5_CARD.w;
+          var S5_SPEED = 850 / 0.8 / S5_SLOW / S5_ZOOM;
+          var S5_CX0 = s5SlotOf(0).x - (1150 - 960) / S5_ZOOM;
+          var S5_CY0 = s5SlotOf(0).y + S5_CARD.h / 2;
+          var s5Paste = [0, 1, 2].map(function (k) {
+            return k === 0 ? 0 : (960 + (s5SlotOf(k).x - S5_CX0) * S5_ZOOM - 1640) / (S5_SPEED * S5_ZOOM);
+          });
+          var S5_BURST = s5Paste[2] + 0.6 * S5_SLOW;
+          var S5_SETTLE = 0.75 * S5_SLOW;
+          var S5_LAND = S5_BURST + S5_SETTLE + 0.1 * S5_SLOW;
+          var s5PullEase = gsap.parseEase("expo.inOut");
+          var s5World = $("#s5-world");
+          var S5_BEAM_X = 960;
+          var S5_BEAM_R = 350;
+          var s5Travellers = [0, 1, 2].map(function (k) {
+            return s5Slots[k].querySelector(".poster");
+          });
+          function s5Camera(t) {
+            var p = s5PullEase(Math.max(0, Math.min(1, (t - S5_BURST) / S5_SETTLE)));
+            var drift = Math.max(0, Math.min(1, (t - S5_LAND - 0.25) / (S5_LEN - S5_LAND - 0.25)));
+            var z = (S5_ZOOM + (1 - S5_ZOOM) * p) * (1 + 0.015 * drift * drift * (3 - 2 * drift));
+            var cx = S5_CX0 + S5_SPEED * t + (960 - S5_CX0 - S5_SPEED * t) * p;
+            var cy = S5_CY0 + (540 - S5_CY0) * p;
+            s5World.style.transform = "translate(" + (960 - cx * z).toFixed(2) + "px," + (540 - cy * z).toFixed(2) + "px) scale(" + z.toFixed(4) + ")";
+            // The spotlight beam of the background art stands at the frame centre: a travelling poster grows as it crosses it
+            // (cosine bell over +-350 px of screen x, up to x1.27, a little brighter), then shrinks back. Fades out with the pull back.
+            s5Travellers.forEach(function (poster, k) {
+              var screenX = 960 + (s5SlotOf(k).x + S5_CARD.w / 2 - cx) * z;
+              var d = Math.abs(screenX - S5_BEAM_X);
+              var bell = (d < S5_BEAM_R ? 0.5 + 0.5 * Math.cos((Math.PI * d) / S5_BEAM_R) : 0) * (1 - p);
+              var g = 1 + 0.27 * bell;
+              poster.style.transform = "translate(" + (-(S5_CARD.w / 2) * (g - 1)).toFixed(2) + "px," + (-(S5_CARD.h / 2) * (g - 1)).toFixed(2) + "px) scale(" + (S5_CARD.scale * g).toFixed(4) + ")";
+              poster.style.filter = bell > 0.001 ? "brightness(" + (1 + 0.12 * bell).toFixed(3) + ")" : "none";
+              s5Slots[k].style.zIndex = bell > 0.001 ? "200" : s5Slots[k].dataset.z;
+            });
+          }
+          s5Camera(0);
+          master.fromTo(driver(s5Camera), { v: 0 }, { v: S5_LEN, duration: S5_LEN, ease: "none" }, S5_AT);
+          // The first three arrive as snapshots that grow: opaque from their first frame, scaled up from 0.55.
+          s5Paste.forEach(function (at, k) {
+            var rot = Number(s5Slots[k].dataset.rot);
+            master.set(s5Slots[k], { opacity: 1 }, S5_AT + at);
+            master.fromTo(s5Slots[k], { scale: 0.55, rotation: rot + 3, "--lift": 1 }, { scale: 1, rotation: rot, "--lift": 0, duration: 0.5 * S5_SLOW, ease: "expo.out" }, S5_AT + at);
+          });
+          // The avalanche: the others rain down, slap a little off their marks, then settle onto the table.
+          var s5Rest = [];
+          for (var s5k = 3; s5k < SPEAKERS.length; s5k += 1) s5Rest.push(s5k);
+          s5Rest.sort(function (a, b) {
+            return ((a * 7919) % 31) - ((b * 7919) % 31);
+          });
+          var s5Fall = seededRandom(4242);
+          s5Rest.forEach(function (k, i) {
+            var rot = Number(s5Slots[k].dataset.rot);
+            var at = S5_AT + S5_BURST + (0.08 + i * 0.022) * S5_SLOW;
+            var dx = (s5Fall() - 0.5) * 70;
+            var dy = (s5Fall() - 0.5) * 50;
+            var drot = (s5Fall() - 0.5) * 14;
+            master.fromTo(s5Slots[k], { opacity: 1, x: dx + (s5Fall() - 0.5) * 300, y: -1300 - s5Fall() * 300, rotation: rot + (s5Fall() - 0.5) * 50, scale: 1.1, "--lift": 1 }, { x: dx, y: dy, rotation: rot + drot, scale: 1, "--lift": 0.3, duration: 0.32 * S5_SLOW, ease: "power2.in" }, at);
+            master.to(s5Slots[k], { x: 0, y: 0, rotation: rot, "--lift": 0, duration: 0.32 * S5_SLOW, ease: "power3.out" }, at + (0.32 + 0.12 + s5Fall() * 0.12) * S5_SLOW);
+          });
+          master.fromTo(s5Title, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6, ease: "expo.out" }, S5_AT + S5_LAND);
+          fragment(tl, "#s6", 14.6, 0.46, 604, "rise");
+
+          // ============ S6 · numbers on the château poster (14.6 to 18)
+          tl.fromTo(prints.castle.host, { scale: 1.07 }, { scale: 1, duration: 1.6, ease: "power2.out" }, 14.6);
+          register(tl, "castle", 15.0, [34, 24]);
+          var num = $("#s6-num");
+          var numGhost = $("#s6-num-ghost");
+          tl.fromTo(
+            driver(function (v) {
+              num.textContent = String(Math.round(v));
+              numGhost.textContent = String(Math.round(v));
+            }),
+            { v: 0 },
+            { v: 400, duration: 0.95, ease: "expo.out" },
+            15.05,
+          );
+          tl.fromTo("#s6-num-ghost", { x: 40, y: 28, opacity: 0.9 }, { x: 0, y: 0, duration: 0.24, ease: "expo.out" }, 16.0);
+          tl.to("#s6-num-ghost", { opacity: 0, duration: 0.3, ease: "none" }, 16.2);
+          tl.set("#s6-num-ghost", { opacity: 0 }, 0);
+          tl.set("#s6-num-ghost", { opacity: 0.9 }, 15.05);
+          tl.fromTo("#s6-places", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 15.3);
+          // The ticket is set down on the poster, then its price is counted.
+          tl.fromTo(
+            "#s6-ticket",
+            { x: 180, y: 80, rotation: 9, rotationX: 18, scale: 1.08, opacity: 0 },
+            { x: 0, y: 0, rotation: -4, rotationX: 4, scale: 1, opacity: 1, duration: 0.55, ease: "power3.out" },
+            15.45,
+          );
+          var price = $("#s6-price");
+          tl.fromTo(
+            driver(function (v) {
+              price.innerHTML = Math.round(v) + " € <small>TTC</small>";
+            }),
+            { v: 0 },
+            { v: 147, duration: 0.5, ease: "expo.out" },
+            16.0,
+          );
+
+          // ============ S7 · the day on a clock (17.55 to 22)
+          // The château poster is peeled off the wall from its bottom-right corner; the Hôtel de Région is already pasted under it.
+          peelScene(tl, $("#s6"), 17.5, 0.5);
+          register(tl, "hotel", 17.95, [-40, 26]);
+          tl.fromTo(prints.hotel.host, { scale: 1.06 }, { scale: 1, duration: 2.2, ease: "power2.out" }, 17.55);
+          tl.fromTo("#s7-dim", { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power2.out" }, 17.75);
+          tl.fromTo("#s7-title", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 17.95);
+          tl.fromTo(["#s7-clock", "#s7-read"], { opacity: 0, scale: 0.94, transformOrigin: "50% 50%" }, { opacity: 1, scale: 1, duration: 0.5, ease: "expo.out" }, 18.05);
+          // The hands run through the day and stop on each highlight: noon (Startup Contest), 18:00, then on to 22:00.
+          var hours = driver(s7Clock);
+          tl.fromTo(hours, { v: 8.5 }, { v: 12, duration: 0.7, ease: "power3.inOut" }, 18.3);
+          tl.fromTo(hours, { v: 12 }, { v: 18, duration: 0.65, ease: "power3.inOut", immediateRender: false }, 19.55);
+          tl.fromTo(hours, { v: 18 }, { v: 22, duration: 0.9, ease: "power2.inOut", immediateRender: false }, 21.2);
+          // Podcast and the Apéro are both at 18:00; the Apéro waits 0.8 s so each is read on its own.
+          [["#s7-m1", 19.0], ["#s7-m2", 20.2], ["#s7-m3", 21.0]].forEach(function (m) {
+            tl.fromTo(m[0] + " > *", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.45, ease: "power3.out", stagger: 0.05 }, m[1]);
+          });
+          tl.fromTo(".s7-cc", { opacity: 0, scale: 0.8, transformOrigin: "0% 60%" }, { opacity: 1, scale: 1, duration: 0.4, ease: "expo.out" }, 20.55);
+          // The DJ set: the mirror ball drops in on its string as the hands leave 18:00; its specks sweep the frame
+          // until the cut (painted in output seconds, so they keep turning through the reading hold).
+          tl.fromTo("#s7-ball", { y: -1000 }, { y: 0, duration: 0.7, ease: "power3.out" }, 21.2);
+          tl.fromTo("#s7-specks", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" }, 21.35);
+          var discoDur = T(22.05) - T(21.2);
+          tl.fromTo(driver(paintDisco), { v: 0 }, { v: discoDur, duration: discoDur, ease: "none" }, 21.2);
+          fragment(tl, "#s9", 21.5, 0.55, 905, "rise");
+          // ============ S9 · partners board, then Footer Echo on the château (21.5 to 28)
+          tl.fromTo("#s9-frame", { scale: 1.22, transformOrigin: "50% 30%" }, { scale: 1.12, duration: 7.5, ease: "power2.out" }, 21.5);
+          register(tl, "chateau", 22.0, [38, 26]);
+          // Partners first, on the same poster the lockup will use; the tiles lift off before the wordmark lands.
+          tl.fromTo("#s9-pscrim", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power1.out" }, 22.05);
+          tl.fromTo("#s9-ptitle", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 22.15);
+          $$("#s9-partners .prow").forEach(function (row, r) {
+            tl.fromTo(row.children, { opacity: 0, y: 34, scale: 0.94 }, { opacity: 1, y: 0, scale: 1, duration: 0.42, ease: "power3.out", stagger: 0.045 }, 22.35 + r * 0.25);
+          });
+          tl.to("#s9-partners .ptile", { opacity: 0, y: -40, duration: 0.3, ease: "power2.in", stagger: 0.012 }, 24.65);
+          tl.to("#s9-ptitle", { opacity: 0, duration: 0.25, ease: "none" }, 24.75);
+          tl.to("#s9-pscrim", { opacity: 0, duration: 0.4, ease: "power1.in" }, 24.75);
+          tl.fromTo(s9Main.mark.children, { scale: 0.4, opacity: 0, transformOrigin: "50% 50%" }, { scale: 1, opacity: 1, duration: 0.45, ease: "expo.out", stagger: 0.03 }, 25);
+          tl.fromTo(s9Main.letters, { yPercent: 115 }, { yPercent: 0, duration: 0.5, ease: "expo.out", stagger: 0.04 }, 25.05);
+          tl.fromTo("#s9-ghost", { opacity: 0, x: 42, y: 30 }, { opacity: 1, x: 7, y: 5, duration: 0.4, ease: "expo.out" }, 25.45);
+          var sigGap = 0.05;
+          var sigAt = 25.75;
+          s9Sig.forEach(function (wd) {
+            tl.fromTo(wd, { x: 230, opacity: 0 }, { x: 0, opacity: 1, duration: 0.34, ease: "power4.out" }, sigAt);
+            sigAt += sigGap;
+            sigGap *= 0.84;
+          });
+          tl.fromTo("#s9-rule", { scaleX: 0, transformOrigin: "50% 50%" }, { scaleX: 1, duration: 0.6, ease: "expo.out" }, 26.05);
+          tl.fromTo("#s9-date", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 26.2);
+          tl.fromTo("#s9-url", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 26.3);
+          tl.fromTo("#s9-foot", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 26.5);
+          // Last hit: the orange plate locks into register.
+          tl.to("#s9-ghost", { x: 0, y: 0, duration: 0.3, ease: "expo.out" }, 27);
+
+          window.__timelines["main"] = master;
+        }
+
+        Promise.all([
+          document.fonts.load('700 100px "EB Garamond"'),
+          document.fonts.load('800 100px "EB Garamond"'),
+          document.fonts.load('400 100px "EB Garamond"'),
+          document.fonts.load('italic 600 100px "EB Garamond"'),
+          document.fonts.load('700 30px "Arial Label"'),
+          document.fonts.load('400 30px "Special Elite"'),
+        ]).then(build, build);
+      })();
+    </script>
+  </body>
+</html>
