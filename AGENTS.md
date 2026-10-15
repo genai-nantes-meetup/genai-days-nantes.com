@@ -53,6 +53,10 @@ Known issues recorded rather than fixed, so they are not rediscovered from scrat
 - A second, undocumented palette (`#FAF8F3`, `#22357D`, `#FF4B2B`, `#0D0D12`) is still hardcoded in `src/components/SessionIllustration.astro`, `src/pages/confidentialite.astro` and `src/pages/stickers/*`, alongside the brand tokens of `src/styles/global.css`. It predates the current design system and drifts from it; `DESIGN.md` documents only the brand palette. `src/components/LabelArchive.astro` has already been moved onto the brand tokens and is no longer affected.
 - « Ma journée » (adding programme sessions to a personal day) is disabled for visitors until it is stable enough: `IS_MY_DAY_ENABLED` in `src/lib/features.ts` is `false`, which hides the session toggles and skips `initMyDay`. The label collection stays active. Flip the flag to `true` to re-enable it; the test suite passes in both states.
 
+## Videos
+
+Motion design (event film, live-stream graphics) lives in `videos/`, outside the site build. Its rules live in `.claude/rules/videos.md` (loaded by Claude Code for `videos/**`; other agents read it before working there); the HyperFrames skills it relies on are vendored in `.claude/skills/` and locked by `skills-lock.json`.
+
 ## Development
 
 When starting the dev server, use background mode:
