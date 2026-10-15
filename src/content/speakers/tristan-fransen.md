@@ -2,7 +2,7 @@
 # Sources : bio fournie par l’organisation (parcours, approche, repères, écosystème)
 # https://www.linkedin.com/in/tristan-fransen-24a8916a/ (profil)
 # Portrait : https://www.linkedin.com/in/tristan-fransen-24a8916a/ (original 390 x 390 px, photo de profil LinkedIn, aucune version plus grande disponible, original conservé dans tristan-fransen.jpg)
-# Logo : à ajouter (Pennylane)
+# Logo : fourni par l’organisation (500 x 574 px, PNG transparent, original conservé dans pennylane.png)
 name: "Tristan Fransen"
 role: "Senior Machine Learning Engineer"
 company: "Pennylane"
@@ -27,7 +27,9 @@ companies:
     relationship: "Senior Machine Learning Engineer"
     description: "Fintech française (plus de 1,5 million d’utilisateurs, plus de 400 M€ levés) qui édite le logiciel comptable et financier des PME et de leurs experts-comptables."
     website: "https://www.pennylane.com/fr/"
+    logo: "/logos/pennylane-optimized.webp"
 photo: "/speakers/tristan-fransen-optimized.webp"
+companyLogo: "/logos/pennylane-optimized.webp"
 companyLogoAlt: "Logo Pennylane"
 linkedin: "https://www.linkedin.com/in/tristan-fransen-24a8916a/"
 ---
