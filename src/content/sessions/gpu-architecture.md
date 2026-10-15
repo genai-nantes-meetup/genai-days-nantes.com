@@ -3,8 +3,8 @@ title: "Mes GPUs chauffent et ma facture grimpe"
 subtitle: "Architecture GPU & accélérateurs"
 seoTitle: "Mes GPUs chauffent et ma facture grimpe"
 track: "tech"
-startTime: "09:40"
-durationMinutes: 40
+startTime: "11:55"
+durationMinutes: 30
 room: ""
 speakerSlugs: ["olivier-lauvray"]
 format: "talk"

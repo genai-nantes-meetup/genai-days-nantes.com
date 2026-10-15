@@ -3,8 +3,8 @@ title: "Je shippe plus vite que jamais, et je ne sais plus pourquoi"
 subtitle: "Remettre le produit au premier plan quand tout le monde peut tout construire"
 seoTitle: "Je shippe plus vite que jamais, et je ne sais plus pourquoi"
 track: "tech"
-startTime: "11:55"
-durationMinutes: 30
+startTime: "09:40"
+durationMinutes: 40
 room: ""
 speakerSlugs: []
 format: "talk"
