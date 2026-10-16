@@ -1,6 +1,7 @@
 ---
 import EditorialCta from './EditorialCta.astro';
 import EditorialGrid from './EditorialGrid.astro';
+import VenueMap from './VenueMap.astro';
 import { EVENT, formatEventDateLabel } from '../lib/event';
 import { getLocaleFromPath, localizePath } from '../lib/i18n';
 
@@ -14,9 +15,6 @@ const copy = {
     doorsLabel: 'Accueil',
     addressLabel: 'Adresse',
     practicalLink: 'Préparer ma venue',
-    mapFallback: 'Plan d’accès',
-    entrance: 'Entrée côté rue de la Loire',
-    directions: 'Itinéraire ↗',
     accessLabel: 'Accès au lieu',
     access: [
       { term: 'Transports', lines: ['Busway 5 · arrêt Pompidou', 'Bus 26 · terminus Hôtel de Région'] },
@@ -32,9 +30,6 @@ const copy = {
     doorsLabel: 'Doors',
     addressLabel: 'Address',
     practicalLink: 'Plan my visit',
-    mapFallback: 'Location map',
-    entrance: 'Entrance on Rue de la Loire',
-    directions: 'Directions ↗',
     accessLabel: 'Getting to the venue',
     access: [
       { term: 'Transit', lines: ['Busway 5 · Pompidou stop', 'Bus 26 · Hôtel de Région (last stop)'] },
@@ -45,12 +40,6 @@ const copy = {
 }[locale];
 
 const venueIllustration = '/images/hotel-region-banner-genai-days-web-optimized.webp';
-const mapDestination = [
-  EVENT.venue.name,
-  EVENT.venue.address,
-  `${EVENT.venue.postalCode} ${EVENT.venue.city}`,
-].join(', ');
-const mapUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(mapDestination)}`;
 ---
 
 <section id="lieu" class="venue-spotlight" aria-labelledby="venue-spotlight-title">
@@ -100,19 +89,9 @@ const mapUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURICo
           <EditorialCta href={localizePath('/infos-pratiques', locale)}>{copy.practicalLink}</EditorialCta>
         </div>
 
-        <figure class="venue-spotlight__map">
-          <div
-            class="venue-spotlight__map-canvas"
-            data-venue-map
-            aria-hidden="true"
-          >
-            <span data-venue-map-fallback>{copy.mapFallback}</span>
-          </div>
-          <figcaption>
-            <span>{copy.entrance}</span>
-            <a href={mapUrl} target="_blank" rel="noopener noreferrer">{copy.directions}</a>
-          </figcaption>
-        </figure>
+        <div class="venue-spotlight__map-slot">
+          <VenueMap />
+        </div>
 
         <aside class="venue-spotlight__logistics" aria-label={copy.accessLabel}>
           <dl class="venue-spotlight__access">
@@ -130,161 +109,6 @@ const mapUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURICo
   </div>
 </section>
 
-<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css" />
-<script is:inline src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
-<script is:inline>
-  (() => {
-    const mapContainer = document.querySelector('[data-venue-map]');
-    if (!mapContainer || !window.maplibregl || mapContainer.dataset.mapReady === 'true') return;
-
-    mapContainer.dataset.mapReady = 'true';
-
-    const rootStyles = getComputedStyle(document.documentElement);
-    const color = (name) => rootStyles.getPropertyValue(name).trim();
-    const mapTheme = {
-      land: color('--color-brand-cream'),
-      landDeep: color('--color-brand-cream-deep'),
-      water: color('--color-brand-blue'),
-      ink: color('--color-brand-black'),
-      route: color('--color-brand-blue'),
-      accent: color('--color-brand-orange'),
-      paper: color('--color-brand-white'),
-    };
-    const streetAccess = [-1.526327, 47.211736];
-    const venueParvis = [-1.525261, 47.211925];
-    const venueEntrance = [-1.525113, 47.211681];
-
-    const map = new window.maplibregl.Map({
-      container: mapContainer,
-      style: 'https://tiles.openfreemap.org/styles/positron',
-      center: [-1.52548, 47.21178],
-      zoom: 15.5,
-      bearing: 158,
-      pitch: 38,
-      interactive: false,
-      attributionControl: false,
-    });
-
-    map.addControl(new window.maplibregl.AttributionControl({ compact: true }), 'bottom-right');
-
-    map.on('load', () => {
-      mapContainer.querySelector('[data-venue-map-fallback]')?.remove();
-      const attribution = mapContainer.querySelector('details.maplibregl-ctrl-attrib');
-      if (attribution) {
-        attribution.open = false;
-        attribution.classList.remove('maplibregl-compact-show');
-      }
-
-      for (const layer of map.getStyle().layers ?? []) {
-        const id = layer.id.toLowerCase();
-
-        try {
-          if (layer.type === 'background') {
-            map.setPaintProperty(layer.id, 'background-color', mapTheme.land);
-          }
-
-          if (layer.type === 'fill') {
-            const isWater = id.includes('water');
-            const isBuilding = id.includes('building');
-            map.setPaintProperty(
-              layer.id,
-              'fill-color',
-              isWater ? mapTheme.water : isBuilding ? mapTheme.landDeep : mapTheme.land,
-            );
-            map.setPaintProperty(layer.id, 'fill-opacity', isWater ? 0.18 : isBuilding ? 0.88 : 1);
-          }
-
-          if (layer.type === 'line') {
-            map.setPaintProperty(layer.id, 'line-color', mapTheme.paper);
-          }
-
-          if (layer.type === 'symbol') {
-            if (/(poi|airport|aeroway|transit)/.test(id)) {
-              map.setLayoutProperty(layer.id, 'visibility', 'none');
-            } else {
-              map.setPaintProperty(layer.id, 'text-color', mapTheme.ink);
-              map.setPaintProperty(layer.id, 'text-halo-color', mapTheme.land);
-              map.setPaintProperty(layer.id, 'text-halo-width', 1.5);
-            }
-          }
-        } catch {
-          /* Certaines couches utilisent des motifs. Leur rendu natif reste en place. */
-        }
-      }
-
-      map.addSource('venue-route', {
-        type: 'geojson',
-        data: {
-          type: 'Feature',
-          properties: {},
-          geometry: {
-            type: 'LineString',
-            coordinates: [streetAccess, venueParvis, venueEntrance],
-          },
-        },
-      });
-
-      map.addLayer({
-        id: 'venue-route-casing',
-        type: 'line',
-        source: 'venue-route',
-        layout: { 'line-cap': 'round', 'line-join': 'round' },
-        paint: { 'line-color': mapTheme.paper, 'line-width': 8 },
-      });
-
-      map.addLayer({
-        id: 'venue-route-line',
-        type: 'line',
-        source: 'venue-route',
-        layout: { 'line-cap': 'round', 'line-join': 'round' },
-        paint: { 'line-color': mapTheme.route, 'line-width': 4 },
-      });
-
-      map.addSource('venue-points', {
-        type: 'geojson',
-        data: {
-          type: 'FeatureCollection',
-          features: [streetAccess, venueEntrance].map((coordinates, index) => ({
-            type: 'Feature',
-            properties: { kind: index === 0 ? 'street' : 'entrance' },
-            geometry: { type: 'Point', coordinates },
-          })),
-        },
-      });
-
-      map.addLayer({
-        id: 'venue-points-halo',
-        type: 'circle',
-        source: 'venue-points',
-        paint: { 'circle-radius': 8, 'circle-color': mapTheme.paper },
-      });
-
-      map.addLayer({
-        id: 'venue-points-fill',
-        type: 'circle',
-        source: 'venue-points',
-        paint: {
-          'circle-radius': 4.5,
-          'circle-color': ['match', ['get', 'kind'], 'entrance', mapTheme.route, mapTheme.accent],
-        },
-      });
-
-      map.fitBounds(
-        [
-          [-1.52655, 47.21152],
-          [-1.52488, 47.21208],
-        ],
-        {
-          padding: { top: 26, right: 26, bottom: 26, left: 26 },
-          maxZoom: 16.6,
-          duration: 0,
-        },
-      );
-
-      map.jumpTo({ bearing: 158, pitch: 38, zoom: map.getZoom() - 0.3 });
-    });
-  })();
-</script>
 
 <style>
   .venue-spotlight {
@@ -330,73 +154,6 @@ const mapUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURICo
     height: 100%;
     object-fit: cover;
     object-position: 50% 50%;
-  }
-
-  .venue-spotlight__map {
-    display: grid;
-    margin: 0;
-    overflow: hidden;
-    border: 1px solid rgb(from var(--color-brand-black) r g b / 16%);
-    background: var(--color-brand-cream);
-    grid-template-rows: minmax(0, 1fr) auto;
-  }
-
-  .venue-spotlight__map-canvas {
-    position: relative;
-    min-height: 13rem;
-  }
-
-  .venue-spotlight__map-canvas > span {
-    position: absolute;
-    inset: 0;
-    display: grid;
-    place-items: center;
-    color: rgb(from var(--color-brand-black) r g b / 58%);
-    font-family: var(--font-nav);
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  .venue-spotlight__map figcaption {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    min-height: 2.75rem;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.65rem 0.9rem;
-    border-top: 1px solid rgb(from var(--color-brand-black) r g b / 14%);
-    background: var(--color-brand-cream);
-    color: rgb(from var(--color-brand-black) r g b / 72%);
-    font-family: var(--font-sans);
-    font-size: 0.75rem;
-    gap: 1rem;
-  }
-
-  .venue-spotlight__map figcaption a {
-    flex: none;
-    color: var(--color-brand-blue);
-    font-family: var(--font-nav);
-    font-weight: 700;
-    letter-spacing: 0.025em;
-    text-transform: uppercase;
-    text-underline-offset: 0.2em;
-  }
-
-  .venue-spotlight__map figcaption a:hover,
-  .venue-spotlight__map figcaption a:focus-visible {
-    text-decoration: underline;
-  }
-
-  .venue-spotlight__map :global(.maplibregl-canvas) {
-    outline: none;
-  }
-
-  .venue-spotlight__map :global(.maplibregl-ctrl-attrib) {
-    color: rgb(from var(--color-brand-black) r g b / 64%);
-    font-size: 0.75rem;
   }
 
   .venue-spotlight__card {
@@ -569,7 +326,7 @@ const mapUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURICo
       grid-area: cta;
     }
 
-    .venue-spotlight__map {
+    .venue-spotlight__map-slot {
       grid-area: map;
     }
 

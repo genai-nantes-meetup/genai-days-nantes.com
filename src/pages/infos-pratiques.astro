@@ -6,6 +6,7 @@ import EditorialGrid from "../components/EditorialGrid.astro";
 import EventName from "../components/EventName.astro";
 import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
+import VenueMap from "../components/VenueMap.astro";
 import { EVENT, formatEventDateLabel } from "../lib/event";
 import { getLocaleFromPath, localizePath } from "../lib/i18n";
 
@@ -259,16 +260,19 @@ const structuredData = [
             </a>
           </div>
 
-          <dl class="access-ledger">
-            {
-              copy.accessOptions.map((option) => (
-                <div>
-                  <dt>{option.mode}</dt>
-                  <dd>{option.details}</dd>
-                </div>
-              ))
-            }
-          </dl>
+          <div class="practical-section__body practical-section__body--arrival">
+            <VenueMap />
+            <dl class="access-ledger">
+              {
+                copy.accessOptions.map((option) => (
+                  <div>
+                    <dt>{option.mode}</dt>
+                    <dd>{option.details}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
         </section>
 
         <section
@@ -469,6 +473,11 @@ const structuredData = [
   .hotel-ledger a:focus-visible {
     outline: 2px solid var(--color-brand-blue);
     outline-offset: 4px;
+  }
+
+  .practical-section__body--arrival {
+    display: grid;
+    gap: 1.5rem;
   }
 
   .access-ledger,
