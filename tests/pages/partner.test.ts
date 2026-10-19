@@ -8,10 +8,14 @@ describe('partner directory', () => {
     const confirmedPartners = (await getCollection('partners')).sort((a, b) => a.data.order - b.data.order);
     const container = await AstroContainer.create();
     const html = await container.renderToString(PartnersIndexPage);
+    const main = html.slice(html.indexOf('<main'), html.indexOf('</main>'));
 
     expect(confirmedPartners.length).toBeGreaterThan(0);
-    expect(html).toContain('partner-board__group--with-coorganizer');
-    expect(html).toContain('partner-tile--coorganizer');
+    expect(main).toContain('partner-wall__item--coorganizer');
+    expect(main.match(/class="partner-wall__link"/g)).toHaveLength(confirmedPartners.length);
+    expect(main).not.toContain('partner-tile');
+    expect(main).not.toContain('À venir');
+    expect(main).not.toContain('emplacements à venir');
     expect(html).toContain('La Région Pays de la Loire soutient cette édition et l’accueille à l’Hôtel de Région');
 
     confirmedPartners.forEach((partner) => {
@@ -40,6 +44,8 @@ describe('partner directory', () => {
     expect(main).toContain('Want your organization to take part in the day?');
     expect(main).toContain('id="devenir-partenaire"');
     expect(main).not.toContain('Devenir partenaire');
+    expect(main).not.toContain('Coming soon');
+    expect(main).not.toContain('Upcoming partner');
     expect(html).toContain('"url":"https://example.com/en/partners","inLanguage":"en"');
     expect(html).toContain('{"@type":"ListItem","position":1,"name":"Home","item":"https://example.com/en"}');
   });

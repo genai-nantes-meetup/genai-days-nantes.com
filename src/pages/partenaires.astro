@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import ArrowIcon from '../components/ArrowIcon.astro';
 import Button from '../components/Button.astro';
 import EditorialGrid from '../components/EditorialGrid.astro';
 import Footer from '../components/Footer.astro';
@@ -8,12 +7,10 @@ import Header from '../components/Header.astro';
 import { EVENT } from '../lib/event';
 import { getLocaleFromPath, localizePath } from '../lib/i18n';
 import { getLocalizedCollection } from '../lib/localized-content';
-import { PARTNER_TIER_CAPACITIES } from '../lib/partners';
 
 const locale = getLocaleFromPath(Astro.url.pathname);
 
 const tierSequence = ['platinum', 'gold', 'silver'] as const;
-type PartnerTier = (typeof tierSequence)[number];
 
 const partners = (await getLocalizedCollection('partners', locale)).sort((a, b) => a.data.order - b.data.order);
 const coOrganizer = partners.find((partner) => partner.data.coOrganizer);
@@ -27,11 +24,9 @@ const copy = {
     listName: `Partenaires de ${EVENT.name}`,
     homeLabel: 'Accueil',
     title: 'Partenaires',
-    boardTitle: 'Partenaires confirmés et emplacements à venir',
+    boardTitle: 'Les partenaires de la journée',
     websiteLabel: (name: string) => `Visiter le site de ${name}`,
     logoAlt: (name: string) => `Logo ${name}`,
-    upcomingLabel: (position: number, total: number) => `Partenaire à venir ${position} sur ${total}`,
-    upcoming: 'À venir',
     invitationTitle: 'Votre organisation veut prendre part à la journée ?',
     invitationText: 'Échangez avec l’équipe sur les formats de partenariat et la manière de contribuer à l’édition.',
     becomePartner: 'Devenir partenaire',
@@ -45,11 +40,9 @@ const copy = {
     listName: `${EVENT.name} partners`,
     homeLabel: 'Home',
     title: 'Partners',
-    boardTitle: 'Confirmed partners, with more to come',
+    boardTitle: 'Partners supporting the day',
     websiteLabel: (name: string) => `Visit the ${name} website`,
     logoAlt: (name: string) => `${name} logo`,
-    upcomingLabel: (position: number, total: number) => `Upcoming partner ${position} of ${total}`,
-    upcoming: 'Coming soon',
     invitationTitle: 'Want your organization to take part in the day?',
     invitationText: 'Talk with the team about partnership options and how you can contribute to this edition.',
     becomePartner: 'Become a partner',
@@ -61,23 +54,18 @@ const partnerGroups = tierSequence.map((tier) => {
     .filter((partner) => partner.data.tier === tier)
     .map((partner) => {
       const logo = {
-        src: partner.data.logo,
-        width: partner.data.logoWidth,
-        height: partner.data.logoHeight,
+        src: partner.data.monochromeLogo ?? partner.data.logo,
+        width: partner.data.monochromeLogoWidth ?? partner.data.logoWidth,
+        height: partner.data.monochromeLogoHeight ?? partner.data.logoHeight,
       };
 
       return { partner, logo };
     });
-  const capacity = PARTNER_TIER_CAPACITIES[tier];
-  const placeholderCount = capacity === null ? 8 : Math.max(0, capacity - tierPartners.length);
-
   return {
     tier,
     partners: tierPartners,
-    placeholderCount,
-    hasCoOrganizer: tierPartners.some(({ partner }) => partner.data.coOrganizer),
   };
-});
+}).filter((group) => group.partners.length > 0);
 
 const publishedPartners = partnerGroups.flatMap((group) => group.partners);
 const siteUrl = Astro.site ?? new URL(Astro.url.origin);
@@ -148,65 +136,43 @@ const structuredData = [
       </div>
     </section>
 
-    <section class="partner-board" aria-labelledby="partner-board-title">
+    <section class="partner-wall" aria-labelledby="partner-wall-title">
       <EditorialGrid top={false} />
-      <h2 id="partner-board-title" class="sr-only">{copy.boardTitle}</h2>
+      <h2 id="partner-wall-title" class="sr-only">{copy.boardTitle}</h2>
 
-      <div class="partner-board__inner">
+      <div class="partner-wall__inner">
         {partnerGroups.map((group) => (
           <ul
             class:list={[
-              'partner-board__group',
-              `partner-board__group--${group.tier}`,
-              group.hasCoOrganizer && 'partner-board__group--with-coorganizer',
+              'partner-wall__group',
+              `partner-wall__group--${group.tier}`,
             ]}
           >
             {group.partners.map(({ partner, logo }) => (
               <li
                 class:list={[
-                  'partner-tile',
-                  `partner-tile--${group.tier}`,
-                  partner.data.coOrganizer && 'partner-tile--coorganizer',
+                  'partner-wall__item',
+                  partner.data.coOrganizer && 'partner-wall__item--coorganizer',
+                  partner.id === 'leboncoin' && 'partner-wall__item--padded-logo',
                 ]}
               >
                 <a
+                  class="partner-wall__link"
                   href={partner.data.website}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={copy.websiteLabel(partner.data.name)}
+                  style={`--partner-logo: url("${encodeURI(logo.src)}");`}
                 >
-                  <figure class="partner-tile__card">
-                    <div class="partner-tile__logo">
-                      <img
-                        src={logo.src}
-                        alt={copy.logoAlt(partner.data.name)}
-                        width={logo.width}
-                        height={logo.height}
-                        loading="eager"
-                        decoding="async"
-                      />
-                    </div>
-                    <figcaption class="sr-only">{partner.data.name}</figcaption>
-                    <ArrowIcon direction="external" class="partner-tile__arrow" />
-                  </figure>
+                  <img
+                    src={logo.src}
+                    alt={copy.logoAlt(partner.data.name)}
+                    width={logo.width}
+                    height={logo.height}
+                    loading="eager"
+                    decoding="async"
+                  />
                 </a>
-              </li>
-            ))}
-
-            {Array.from({ length: group.placeholderCount }, (_, index) => (
-              <li
-                class:list={[
-                  'partner-tile',
-                  'partner-tile--future',
-                  `partner-tile--${group.tier}`,
-                ]}
-                aria-label={copy.upcomingLabel(index + 1, group.placeholderCount)}
-              >
-                <div class="partner-tile__card">
-                  <div class="partner-tile__logo partner-tile__placeholder" aria-hidden="true">
-                    <span>{copy.upcoming}</span>
-                  </div>
-                </div>
               </li>
             ))}
           </ul>
@@ -243,13 +209,13 @@ const structuredData = [
   }
 
   .partners-hero,
-  .partner-board,
+  .partner-wall,
   .partners-invitation {
     position: relative;
   }
 
   .partners-hero__inner,
-  .partner-board__inner,
+  .partner-wall__inner,
   .partners-invitation__inner {
     position: relative;
     z-index: 3;
@@ -310,136 +276,99 @@ const structuredData = [
     line-height: 1.6;
   }
 
-  .partner-board {
-    padding: var(--space-section-close) 0 clamp(1.5rem, 2vw, 2rem);
+  .partner-wall {
+    padding-block: var(--space-section-compact);
     background: var(--color-brand-cream);
   }
 
-  .partner-board__inner {
+  .partner-wall__inner {
     display: grid;
-    gap: clamp(1rem, 2vw, 1.5rem);
+    padding-inline: clamp(1.25rem, 3vw, 2.75rem);
+    gap: clamp(2.5rem, 5vw, 4.5rem);
   }
 
-  .partner-board__group {
-    display: grid;
-    overflow: hidden;
-    margin: 0;
+  .partner-wall__group {
+    --partner-height: 4rem;
+    --partner-gap: 1.5rem;
+    --partner-inset: 0.375rem;
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
     padding: 0;
-    border: 1px solid rgb(57 54 54 / 16%);
-    background: rgb(57 54 54 / 16%);
-    gap: 1px;
+    gap: 1.25rem var(--partner-gap);
     list-style: none;
   }
 
-  .partner-tile {
-    min-width: 0;
-    background: var(--color-brand-white);
+  .partner-wall__group--platinum {
+    --partner-height: 6rem;
+    --partner-gap: 2rem;
   }
 
-  .partner-tile a {
-    display: block;
-    height: 100%;
+  .partner-wall__group--gold {
+    --partner-height: 4.5rem;
+    width: 88%;
+    max-width: 52rem;
+    row-gap: 0.25rem;
+  }
+
+  .partner-wall__group--silver {
+    --partner-height: 3rem;
+    --partner-gap: 1rem;
+    max-width: 58rem;
+  }
+
+  .partner-wall__item {
+    min-width: 0;
+    flex: 0 0 calc((100% - var(--partner-gap)) / 2);
+  }
+
+  .partner-wall__group--silver .partner-wall__item {
+    flex-basis: calc((100% - 2 * var(--partner-gap)) / 3);
+  }
+
+  .partner-wall__link {
+    position: relative;
+    display: grid;
+    height: var(--partner-height);
+    place-items: center;
     color: inherit;
   }
 
-  .partner-tile a:focus-visible {
-    position: relative;
-    z-index: 2;
-    outline: 3px solid var(--color-brand-blue);
-    outline-offset: -3px;
+  .partner-wall__link:focus-visible {
+    outline: 2px solid var(--color-brand-blue);
+    outline-offset: 0.5rem;
   }
 
-  .partner-tile__card {
-    position: relative;
-    display: grid;
-    overflow: hidden;
-    height: 7rem;
-    margin: 0;
-    background: var(--color-brand-white);
-  }
-
-  .partner-tile__logo {
-    display: grid;
-    min-height: 0;
-    place-items: center;
-    padding: clamp(1rem, 2vw, 1.75rem);
-    background: var(--color-brand-white);
-  }
-
-  .partner-tile__logo img {
-    width: auto;
-    max-width: 78%;
-    height: auto;
-    max-height: 5rem;
-    filter: grayscale(100%) contrast(1.04);
+  /* L’image porte l’alternative textuelle, le masque unifie l’encre des logos. */
+  .partner-wall__link img {
+    width: 100%;
+    height: 100%;
     object-fit: contain;
-    transition: filter 360ms ease, transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 0;
   }
 
-  :global(.partner-tile__arrow) {
+  .partner-wall__link::before {
     position: absolute;
-    right: 0.65rem;
-    bottom: 0.65rem;
-    width: 1rem;
-    opacity: 0.42;
-    transition: opacity 180ms ease, transform 180ms ease;
-  }
-
-  .partner-tile a:hover .partner-tile__logo img,
-  .partner-tile a:focus-visible .partner-tile__logo img {
-    filter: grayscale(0%) contrast(1);
-    transform: scale(1.035);
-  }
-
-  .partner-tile a:hover :global(.partner-tile__arrow),
-  .partner-tile a:focus-visible :global(.partner-tile__arrow) {
-    opacity: 1;
-    transform: translate(0.12rem, -0.12rem);
-  }
-
-  .partner-tile__placeholder {
-    position: relative;
-    overflow: hidden;
-    background:
-      radial-gradient(circle at 50% 38%, rgb(57 54 54 / 5%) 0 17%, transparent 17.4%),
-      radial-gradient(ellipse at 50% 92%, rgb(57 54 54 / 4%) 0 36%, transparent 36.4%),
-      var(--color-brand-cream-deep);
-  }
-
-  .partner-tile__placeholder::after {
-    position: absolute;
-    inset: 0.75rem;
-    border: 1px solid rgb(57 54 54 / 16%);
+    inset: var(--partner-inset);
+    background: var(--color-brand-black);
     content: '';
+    -webkit-mask: var(--partner-logo) center / contain no-repeat;
+    mask: var(--partner-logo) center / contain no-repeat;
+    pointer-events: none;
+    transition: opacity 180ms ease;
   }
 
-  .partner-tile__placeholder span {
-    position: relative;
-    z-index: 1;
-    text-align: center;
-    color: rgb(57 54 54 / 48%);
-    font-family: var(--font-serif);
-    font-size: 1.5rem;
-    font-style: italic;
-    font-weight: 400;
+  .partner-wall__link:hover::before {
+    opacity: 0.65;
   }
 
-  .partner-tile--platinum .partner-tile__card {
-    height: clamp(10rem, 13vw, 12rem);
-  }
-
-  .partner-tile--platinum .partner-tile__logo img {
-    max-width: 88%;
-    max-height: 8.25rem;
-  }
-
-  .partner-tile--coorganizer .partner-tile__logo img {
-    max-width: 82%;
-    max-height: 7.5rem;
-  }
-
-  .partner-tile--gold .partner-tile__card {
-    height: clamp(8rem, 10vw, 9.5rem);
+  /* Le logo leboncoin est centré dans un carré avec de larges marges transparentes. */
+  .partner-wall__item--padded-logo .partner-wall__link::before {
+    -webkit-mask-size: min(100%, calc((var(--partner-height) - 2 * var(--partner-inset)) * 800 / 279)) auto;
+    mask-size: min(100%, calc((var(--partner-height) - 2 * var(--partner-inset)) * 800 / 279)) auto;
   }
 
   .partners-invitation {
@@ -471,24 +400,21 @@ const structuredData = [
   }
 
   @media (min-width: 40rem) {
-    .partner-board__group--platinum {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+    .partner-wall__group--platinum {
+      --partner-height: 7rem;
     }
 
-    .partner-board__group--platinum.partner-board__group--with-coorganizer {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+    .partner-wall__group--gold {
+      --partner-height: 5rem;
+      --partner-gap: 2rem;
     }
 
-    .partner-tile--coorganizer {
-      grid-column: 1 / -1;
+    .partner-wall__group--gold .partner-wall__item {
+      flex-basis: calc((100% - 2 * var(--partner-gap)) / 3);
     }
 
-    .partner-board__group--gold {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .partner-board__group--silver {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+    .partner-wall__group--silver .partner-wall__item {
+      flex-basis: calc((100% - 4 * var(--partner-gap)) / 5);
     }
   }
 
@@ -499,41 +425,36 @@ const structuredData = [
   }
 
   @media (min-width: 64rem) {
-    .partner-board__group--platinum {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+    .partner-wall__group--platinum {
+      --partner-height: 8.5rem;
+      --partner-gap: 3rem;
     }
 
-    .partner-board__group--platinum.partner-board__group--with-coorganizer {
-      grid-template-columns: repeat(5, minmax(0, 1fr));
+    .partner-wall__group--gold {
+      --partner-height: 6rem;
+      --partner-gap: 2.5rem;
+      width: 72%;
     }
 
-    .partner-tile--coorganizer {
-      grid-column: span 2;
+    .partner-wall__group--platinum .partner-wall__item,
+    .partner-wall__group--gold .partner-wall__item {
+      flex-basis: calc((100% - 3 * var(--partner-gap)) / 4);
     }
 
-    /* Sept colonnes, autant que de partenaires gold confirmés dans
-     * src/content/partners/ : le rang tient sur une seule ligne. */
-    .partner-board__group--gold {
-      grid-template-columns: repeat(7, minmax(0, 1fr));
+    .partner-wall__group--silver {
+      --partner-height: 3.5rem;
+      --partner-gap: 1.5rem;
+      width: 90%;
     }
 
-    .partner-board__group--silver {
-      grid-template-columns: repeat(8, minmax(0, 1fr));
+    .partner-wall__group--silver .partner-wall__item {
+      flex-basis: calc((100% - 7 * var(--partner-gap)) / 8);
     }
-
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .partner-tile__logo img,
-    :global(.partner-tile__arrow) {
+    .partner-wall__link::before {
       transition: none;
-    }
-
-    .partner-tile a:hover .partner-tile__logo img,
-    .partner-tile a:focus-visible .partner-tile__logo img,
-    .partner-tile a:hover :global(.partner-tile__arrow),
-    .partner-tile a:focus-visible :global(.partner-tile__arrow) {
-      transform: none;
     }
   }
 </style>
