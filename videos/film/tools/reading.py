@@ -40,9 +40,9 @@ BEATS = [
 ]
 # Base tempo: the original v4 cut, no reading holds; only the structural holds (speaker corridor,
 # partners board, lockup). User 2026-10-12: "revenir sur le tempo du début et juste corriger les outliers".
-BASE = [[14.55, 2.5], [24.6, 0.5], [27.4, 2.0]]
+BASE = [[14.55, 4.0], [24.6, 0.5], [27.4, 2.0]]
 # Holds that are not reading holds (speaker corridor, partners board, final lockup) are kept as they are.
-FIXED = [[14.55, 2.5], [24.6, 0.5], [27.4, 2.0]]
+FIXED = [[14.55, 4.0], [24.6, 0.5], [27.4, 2.0]]
 
 
 def factor_from_args(stored):

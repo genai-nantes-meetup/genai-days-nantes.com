@@ -6,7 +6,7 @@ Guide de prise en main : ouvrir [`GUIDE.html`](GUIDE.html) dans un navigateur.
 
 | Dossier | Contenu |
 | --- | --- |
-| `film/` | Film de l'événement (43,5 s, 16:9, musique M2), variantes musicales, lab des formats verticaux |
+| `film/` | Film de l'événement (45 s, 16:9, musique M2), variantes musicales, lab des formats verticaux |
 | `habillage-captation/` | Habillage des captations pour le montage et OBS (bumpers, synthés, cartons, miniatures) |
 
 Démarrage rapide :

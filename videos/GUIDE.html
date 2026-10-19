@@ -167,13 +167,13 @@ pnpm run dev</pre></div></li>
 
 <section id="film">
   <h2><span class="n">05</span>Comment on a fait le film</h2>
-  <p>Film d'annonce sans voix off de 43,5 s, en 16:9. Il dit l'essentiel (date, lieu, enjeux, parcours, speakers, billet, temps forts, partenaires) et chaque scène montre une technique différente. Le détail scène par scène et les décisions validées sont dans <a href="film/BRIEF.md"><code>film/BRIEF.md</code></a>.</p>
+  <p>Film d'annonce sans voix off de 45 s, en 16:9. Il dit l'essentiel (date, lieu, enjeux, parcours, speakers, billet, temps forts, partenaires) et chaque scène montre une technique différente. Le détail scène par scène et les décisions validées sont dans <a href="film/BRIEF.md"><code>film/BRIEF.md</code></a>.</p>
   <ul>
     <li><b>Un seul fichier.</b> Tout le film tient dans <code>film/index.html</code>&nbsp;: style, scènes S1 à S9 (pas de S8) et timeline.</li>
     <li><b>Temps de lecture.</b> La chorégraphie est écrite rapide, puis des pauses sont insérées là où un texte doit être lu. Règle des sous-titres&nbsp;: 17 caractères par seconde, jamais moins de 0,83 s. On garde le tempo vif et on ne corrige que les textes vraiment trop courts.</li>
     <li><b>Musique dérivée du timing.</b> Les pauses tombent sur la grille de 120 BPM et la musique est générée depuis la même table. Tout changement de timing impose de régénérer la musique.</li>
     <li><b>Plaques de sérigraphie.</b> Chaque illustration est calculée en plaque bleue et plaque orange. Le décalage puis le recalage des plaques est le geste qui met le film en mouvement.</li>
-    <li><b>Assets figés.</b> Images, portraits, logos et polices sont une copie figée dans <code>film/assets/</code>, toujours en version optimisée. Le film rend à l'identique même si le site change.</li>
+    <li><b>Assets figés.</b> Images, logos et polices sont une copie figée dans <code>film/assets/</code>, toujours en version optimisée. Les portraits sont l’exception&nbsp;: <code>film/assets/speakers</code> est un lien vers <code>public/speakers/</code> du site, donc une photo changée sur le site change aussi dans le film au prochain rendu.</li>
     <li><b>Rien d'inventé.</b> Les données viennent du site. Les listes de speakers et de partenaires du film sont un instantané, à régénérer quand le site bouge.</li>
     <li><b>Choix à l'œil.</b> Les scènes, la musique (cinq variantes, M2 retenue) et l'export ont été tranchés sur des variantes rendues côte à côte.</li>
   </ul>
