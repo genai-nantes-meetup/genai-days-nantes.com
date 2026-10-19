@@ -5,11 +5,14 @@ import BrandText from '../../components/BrandText.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import TrackMark from '../../components/TrackMark';
+import SessionIllustration from '../../components/SessionIllustration.astro';
 import { EVENT, EVENT_YEAR } from '../../lib/event';
-import { SPEAKER_EVENT_ROLE_LABELS, SPEAKER_PORTRAIT_DIMENSIONS, getSpeakerPagePaths, getSpeakerPortraitSrcset, trackForSpeaker } from '../../lib/speakers';
+import { SPEAKER_EVENT_ROLE_LABELS, SPEAKER_PORTRAIT_DIMENSIONS, getSpeakerPagePaths, getSpeakerPortraitSrcset, getCompanyLogoBackdrop, trackForSpeaker } from '../../lib/speakers';
 import { getLocaleFromPath, localizePath } from '../../lib/i18n';
 import { getLocalizedCollection, localizeEntry } from '../../lib/localized-content';
 import { stripMarkdownToPlainText } from '../../lib/markdown';
+import sharp from 'sharp';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 export const getStaticPaths = getSpeakerPagePaths;
 
@@ -41,6 +44,7 @@ const copy = {
     websiteLabel: 'Site web',
     profileKicker: 'Portrait',
     profileTitle: 'Son parcours',
+    pendingBio: 'Sa biographie sera complétée prochainement.',
     legitimacyKicker: 'Son regard',
     legitimacyTitle: 'Sa légitimité numérique et GenAI',
     timelineKicker: 'Repères',
@@ -55,6 +59,14 @@ const copy = {
     quotedTitle: (title: string) => `"${title}"`,
     themesLabel: 'Thématiques',
     sharedSessionRoom: 'Temps commun',
+    formatLabels: {
+      keynote: 'Keynote',
+      talk: 'Talk',
+      'table-ronde': 'Table ronde',
+      atelier: 'Atelier',
+      concours: 'Startup Contest',
+      podcast: 'Podcast en public',
+    },
   },
   en: {
     pageTitle: `${speaker.data.name} · ${eventRoleLabel ?? 'Speaker'} · GENAI DAYS ${EVENT_YEAR}`,
@@ -68,6 +80,7 @@ const copy = {
     websiteLabel: 'Website',
     profileKicker: 'Profile',
     profileTitle: 'Background',
+    pendingBio: 'Full bio coming soon.',
     legitimacyKicker: 'Perspective',
     legitimacyTitle: 'Digital and GenAI credentials',
     timelineKicker: 'Milestones',
@@ -82,6 +95,14 @@ const copy = {
     quotedTitle: (title: string) => `“${title}”`,
     themesLabel: 'Topics',
     sharedSessionRoom: 'All tracks',
+    formatLabels: {
+      keynote: 'Keynote',
+      talk: 'Talk',
+      'table-ronde': 'Panel',
+      atelier: 'Workshop',
+      concours: 'Startup Contest',
+      podcast: 'Live podcast',
+    },
   },
 }[locale];
 
@@ -94,6 +115,23 @@ const roomFor = (session: CollectionEntry<'sessions'>) =>
   session.data.room ||
   (trackById.get(session.data.track)?.name ?? (session.data.track === 'commun' ? copy.sharedSessionRoom : session.data.track));
 
+/* Dimensions réelles de chaque illustration, lues au build, pour réserver la
+ * place de la vignette et éviter un décalage de mise en page au chargement. */
+/* Résolu depuis la racine du projet : relatif à import.meta.url, le chemin
+ * pointerait vers dist/ une fois la page compilée. */
+const publicDirectory = pathToFileURL(`${process.cwd()}/public/`);
+const illustrationDimensionsBySessionId = new Map(
+  await Promise.all(
+    sessions
+      .filter((session) => session.data.illustration?.src)
+      .map(async (session) => {
+        const src = session.data.illustration!.src!.replace(/^\//, '');
+        const { width, height } = await sharp(fileURLToPath(new URL(src, publicDirectory))).metadata();
+        return [session.id, { width, height }] as const;
+      }),
+  ),
+);
+
 // Tronque au dernier espace avant la limite pour ne jamais couper un mot en deux.
 function truncateAtWordBoundary(text: string, maxLength: number): string {
   if (text.length <= maxLength) return text;
@@ -101,6 +139,8 @@ function truncateAtWordBoundary(text: string, maxLength: number): string {
   const lastSpace = truncated.lastIndexOf(' ');
   return `${(lastSpace > 0 ? truncated.slice(0, lastSpace) : truncated).trimEnd()}…`;
 }
+
+const { profile, genaiLegitimacy, careerHighlights } = speaker.data;
 
 // Dérivée de la bio (unique par intervenant·e) plutôt que du gabarit nom/rôle/entreprise,
 // identique à quelques mots près d'une fiche à l'autre.
@@ -183,9 +223,9 @@ const socialLinks = [
               <span class="speaker-page-photo__fallback" aria-hidden="true">{speaker.data.name.slice(0, 1)}</span>
             )}
             {speaker.data.companyLogo && (
-              <span class="speaker-page-company-logo">
+              <span class="speaker-page-company-logo photo-logo-halo" data-logo-tone={getCompanyLogoBackdrop(speaker.data)}>
                 <img
-                  src={speaker.data.companyLogoOnDark ?? speaker.data.companyLogo}
+                  src={speaker.data.companyLogo}
                   alt={speaker.data.companyLogoAlt ?? copy.companyLogoAlt(speaker.data.company)}
                   width="56"
                   height="56"
@@ -213,13 +253,14 @@ const socialLinks = [
       </div>
     </section>
 
+    {profile && genaiLegitimacy && careerHighlights ? (
     <section class="mx-auto max-w-5xl px-6 py-14 sm:py-20">
       <div class="speaker-story-grid">
         <article>
           <p class="type-section-kicker text-brand-blue">{copy.profileKicker}</p>
           <h2 class="type-section-title mt-3">{copy.profileTitle}</h2>
           <div class="speaker-prose mt-6">
-            {speaker.data.profile.map((paragraph) => (
+            {profile.map((paragraph) => (
               <p><BrandText text={paragraph} /></p>
             ))}
           </div>
@@ -228,7 +269,7 @@ const socialLinks = [
             <p class="type-section-kicker text-brand-blue">{copy.legitimacyKicker}</p>
             <h2 id="speaker-legitimacy-title" class="type-section-title mt-3">{copy.legitimacyTitle}</h2>
             <p class="mt-5 text-lg leading-relaxed text-black/72">
-              <BrandText text={speaker.data.genaiLegitimacy} />
+              <BrandText text={genaiLegitimacy} />
             </p>
           </section>
         </article>
@@ -237,7 +278,7 @@ const socialLinks = [
           <p class="type-section-kicker text-brand-blue">{copy.timelineKicker}</p>
           <h2 id="speaker-timeline-title" class="mt-2 text-2xl font-extrabold">{copy.timelineTitle}</h2>
           <ol class="mt-7 space-y-7">
-            {speaker.data.careerHighlights.map((highlight) => (
+            {careerHighlights.map((highlight) => (
               <li>
                 <p class="speaker-timeline__period">{highlight.period}</p>
                 <h3 class="mt-1 text-lg font-extrabold leading-tight">{highlight.title}</h3>
@@ -250,6 +291,13 @@ const socialLinks = [
         </aside>
       </div>
     </section>
+    ) : (
+    <section class="mx-auto max-w-5xl px-6 py-14 sm:py-20">
+      <p class="type-section-kicker text-brand-blue">{copy.profileKicker}</p>
+      <h2 class="type-section-title mt-3">{copy.profileTitle}</h2>
+      <p class="mt-6 text-lg leading-relaxed text-black/72">{copy.pendingBio}</p>
+    </section>
+    )}
 
     {speaker.data.companies && (
     <section class="speaker-companies px-6 py-14 sm:py-20" aria-labelledby="speaker-companies-title">
@@ -295,27 +343,56 @@ const socialLinks = [
           {sessions.length > 1 ? copy.sessionsTitle : copy.singleSessionTitle}
         </h2>
         <div class="mt-8 grid gap-5">
-          {sessions.map((session) => (
-            <a class="speaker-session-card" href={localizePath(`/programme/${session.id}`, locale)}>
-              <div class="speaker-session-card__meta">
-                <span>{session.data.startTime}</span>
-                <span>{roomFor(session)}</span>
-                <span>{session.data.durationMinutes} min</span>
-              </div>
-              <div>
-                <h3>{session.data.quoteTitle ? copy.quotedTitle(session.data.title) : session.data.title}</h3>
-                {session.body?.trim() && (
-                  <p><BrandText text={stripMarkdownToPlainText(session.body)} /></p>
+          {sessions.map((session) => {
+            const illustration = session.data.illustration;
+            const illustrationDimensions = illustrationDimensionsBySessionId.get(session.id);
+            return (
+              <a
+                class={`speaker-session-card speaker-session-card--${session.data.track}`}
+                href={localizePath(`/programme/${session.id}`, locale)}
+              >
+                {/* Vignette décorative, comme sur la carte « Précédent / Suivant » :
+                  * le titre suffit à nommer le lien, la description de l'image
+                  * l'alourdirait. */}
+                {illustration?.src ? (
+                  <img
+                    class="speaker-session-card__thumb"
+                    src={illustration.src}
+                    alt=""
+                    width={illustrationDimensions?.width}
+                    height={illustrationDimensions?.height}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ) : (
+                  <SessionIllustration
+                    class="speaker-session-card__thumb"
+                    variant={illustration?.variant}
+                    decorative
+                    size="thumb"
+                  />
                 )}
-                {session.data.themes && (
-                  <ul aria-label={copy.themesLabel}>
-                    {session.data.themes.map((theme) => <li>{theme}</li>)}
-                  </ul>
-                )}
-              </div>
-              <span class="speaker-session-card__arrow" aria-hidden="true">→</span>
-            </a>
-          ))}
+                <div class="speaker-session-card__content">
+                  <p class="speaker-session-card__kicker">
+                    {session.data.startTime} · {roomFor(session)}
+                  </p>
+                  <p class="speaker-session-card__meta">
+                    {session.data.durationMinutes} min · {copy.formatLabels[session.data.format]}
+                  </p>
+                  <h3>{session.data.quoteTitle ? copy.quotedTitle(session.data.title) : session.data.title}</h3>
+                  {session.body?.trim() && (
+                    <p class="speaker-session-card__summary"><BrandText text={stripMarkdownToPlainText(session.body)} /></p>
+                  )}
+                  {session.data.themes && (
+                    <ul aria-label={copy.themesLabel}>
+                      {session.data.themes.map((theme) => <li>{theme}</li>)}
+                    </ul>
+                  )}
+                </div>
+                <span class="speaker-session-card__arrow" aria-hidden="true">→</span>
+              </a>
+            );
+          })}
         </div>
       </section>
     )}
@@ -391,17 +468,19 @@ const socialLinks = [
     right: 0.8rem;
     bottom: 0.8rem;
     display: grid;
-    overflow: hidden;
-    width: 3.5rem;
+    min-width: 3.5rem;
     height: 3.5rem;
     place-items: center;
     border-radius: 0.4rem;
+    --photo-logo-corner-gap: 0.8rem;
   }
 
   .speaker-page-company-logo img {
-    width: 100%;
+    width: auto;
+    max-width: 8rem;
     height: 100%;
     object-fit: contain;
+    object-position: 100% 100%;
   }
 
   .speaker-social-links {
@@ -565,19 +644,39 @@ const socialLinks = [
     color: var(--color-brand-orange);
   }
 
+  /* Hybride entre l'ancienne carte session et la carte « Précédent / Suivant »
+   * des fiches session : vignette carrée à gauche, filet à la couleur du
+   * parcours, horaire et parcours en surtitre. */
   .speaker-session-card {
     position: relative;
     display: grid;
-    grid-template-columns: minmax(8rem, 11rem) minmax(0, 1fr) auto;
-    gap: clamp(1.25rem, 4vw, 2.5rem);
-    align-items: center;
+    grid-template-columns: clamp(9rem, 22vw, 13rem) minmax(0, 1fr) auto;
+    gap: 0;
+    align-items: stretch;
+    overflow: hidden;
     border: 1px solid rgb(13 13 18 / 12%);
-    border-left: 0.45rem solid var(--color-brand-blue);
+    border-left: 0.45rem solid var(--speaker-session-accent, var(--color-brand-blue));
     background: var(--color-brand-white);
-    padding: clamp(1.25rem, 4vw, 2rem);
     transition:
       transform 160ms ease,
       box-shadow 160ms ease;
+  }
+
+  .speaker-session-card--decideurs {
+    --speaker-session-accent: var(--color-brand-blue);
+    --speaker-session-text-accent: var(--color-brand-blue);
+  }
+
+  /* Le filet garde l'orange du parcours tech ; le libellé passe en bleu,
+   * l'orange restant sous le seuil texte sur blanc. */
+  .speaker-session-card--tech {
+    --speaker-session-accent: var(--color-brand-orange);
+    --speaker-session-text-accent: var(--color-brand-blue);
+  }
+
+  .speaker-session-card--commun {
+    --speaker-session-accent: var(--color-brand-black);
+    --speaker-session-text-accent: var(--color-brand-black);
   }
 
   .speaker-session-card:hover {
@@ -585,29 +684,57 @@ const socialLinks = [
     transform: translate(-0.15rem, -0.15rem);
   }
 
+  .speaker-session-card__thumb {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: clamp(9rem, 22vw, 13rem);
+    object-fit: cover;
+  }
+
+  .speaker-session-card__content {
+    min-width: 0;
+    align-self: center;
+    padding: clamp(1.25rem, 3vw, 1.75rem) clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .speaker-session-card__kicker,
   .speaker-session-card__meta {
-    display: grid;
-    gap: 0.35rem;
-    color: rgb(13 13 18 / 68%);
     font-size: 0.7rem;
     font-weight: 900;
     letter-spacing: var(--tracking-label);
+    line-height: 1.2;
     text-transform: uppercase;
   }
 
+  .speaker-session-card__kicker {
+    color: var(--speaker-session-text-accent, var(--color-brand-blue));
+  }
+
+  .speaker-session-card__meta {
+    margin-top: 0.35rem;
+    color: rgb(13 13 18 / 68%);
+  }
+
   .speaker-session-card h3 {
+    margin-top: 0.7rem;
     font-family: var(--font-serif);
-    font-size: clamp(1.5rem, 4vw, 2.15rem);
+    font-size: clamp(1.4rem, 3.4vw, 2rem);
     font-weight: 800;
     line-height: 1.05;
   }
 
-  .speaker-session-card p {
+  .speaker-session-card__summary {
+    display: -webkit-box;
     margin-top: 0.7rem;
     max-width: 44rem;
+    overflow: hidden;
     color: rgb(13 13 18 / 66%);
     font-size: 0.92rem;
     line-height: 1.55;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
   }
 
   .speaker-session-card ul {
@@ -627,6 +754,8 @@ const socialLinks = [
   }
 
   .speaker-session-card__arrow {
+    align-self: center;
+    padding-right: clamp(1.25rem, 3vw, 2rem);
     color: var(--color-brand-orange);
     font-size: 1.8rem;
     font-weight: 900;
@@ -645,14 +774,22 @@ const socialLinks = [
     }
 
     .speaker-session-card {
-      grid-template-columns: 1fr auto;
+      grid-template-columns: minmax(0, 1fr) auto;
     }
 
-    .speaker-session-card__meta {
+    .speaker-session-card__thumb {
       grid-column: 1 / -1;
-      grid-template-columns: repeat(3, auto);
-      justify-content: start;
-      gap: 0.7rem;
+      height: auto;
+      min-height: 0;
+      aspect-ratio: 16 / 9;
+    }
+
+    .speaker-session-card__content {
+      padding: 1.1rem 0.75rem 1.25rem 1.1rem;
+    }
+
+    .speaker-session-card__arrow {
+      padding-right: 1.1rem;
     }
   }
 </style>

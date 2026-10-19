@@ -25,7 +25,6 @@ companies:
 photo: "/speakers/laurent-duthoit-meudon-optimized.webp"
 companyLogo: "/logos/renault-square-optimized.svg"
 companyLogoAlt: "Logo Renault Group"
-companyLogoOnDark: "/logos/renault-square-white.svg"
 linkedin: "https://www.linkedin.com/in/laurent-duthoit-137414166/"
 x: "https://x.com/duthoit92"
 ---

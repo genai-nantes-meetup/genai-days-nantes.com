@@ -49,13 +49,15 @@ export const SPEAKER_PROMINENCE_ORDER = [
   'christelle-morancais',
   'jean-baptiste-kempf',
   'julien-lesaicherre',
+  'tiffany-souterre',
+  'frederic-didier',
   'regis-dubrulle',
-  'charles-gorintin',
   'olivier-lauvray',
   'quentin-adam',
-  'theo-hubert',
+  'laurent-duthoit',
   'nicolas-martignole',
-  'gael-brisson',
+  'theo-hubert',
+  'jean-yves-simon',
 ] as const;
 
 /* Pitcheurs du Startup Contest : après les autres speakers, avant les MC. */
@@ -85,15 +87,17 @@ export const SPEAKER_PORTRAIT_DIMENSIONS: Record<string, { width: number; height
   'celine-haentzler': { width: 800, height: 800 },
   'benoit-hediard': { width: 800, height: 800 },
   'camille-croze': { width: 400, height: 400 },
-  'charles-gorintin': { width: 1000, height: 1000 },
   'christelle-morancais': { width: 952, height: 952 },
   'constance-nebbula': { width: 832, height: 832 },
   'david-leaurant': { width: 800, height: 800 },
+  'delphine-ziegler': { width: 800, height: 800 },
   'emmanuel-marboeuf': { width: 800, height: 800 },
   'florian-herveou': { width: 600, height: 600 },
+  'frederic-didier': { width: 490, height: 490 },
   'gabriel-lancelot': { width: 800, height: 800 },
   'gael-brisson': { width: 1024, height: 1024 },
   'jaafar-steiblen-raji': { width: 800, height: 920 },
+  'jean-yves-simon': { width: 512, height: 512 },
   'julien-lesaicherre': { width: 800, height: 800 },
   'laurent-duthoit': { width: 1000, height: 1000 },
   'marie-fleur-sacreste': { width: 800, height: 800 },
@@ -105,6 +109,7 @@ export const SPEAKER_PORTRAIT_DIMENSIONS: Record<string, { width: number; height
   'regis-dubrulle': { width: 1000, height: 1000 },
   'sebastien-le-corfec': { width: 760, height: 760 },
   'thomas-mathieu': { width: 1000, height: 1000 },
+  'tiffany-souterre': { width: 610, height: 610 },
   'theo-hubert': { width: 800, height: 800 },
   'tristan-fransen': { width: 1000, height: 1170 },
 };
@@ -119,6 +124,7 @@ export const SPEAKER_PORTRAIT_SMALL: Partial<Record<string, string>> = {
   'christelle-morancais': '/speakers/christelle-morancais-480-optimized.webp',
   'constance-nebbula': '/speakers/constance-nebbula-480-optimized.webp',
   'david-leaurant': '/speakers/david-leaurant-480-optimized.webp',
+  'delphine-ziegler': '/speakers/delphine-ziegler-480-optimized.webp',
   'emmanuel-marboeuf': '/speakers/emmanuel-marboeuf-480-optimized.webp',
   'gabriel-lancelot': '/speakers/gabriel-lancelot-480-optimized.webp',
   'gael-brisson': '/speakers/gael-brisson-480-optimized.webp',
@@ -131,6 +137,10 @@ export const SPEAKER_PORTRAIT_SMALL: Partial<Record<string, string>> = {
   'jean-baptiste-kempf': '/speakers/jean-baptiste-kempf-480-optimized.webp',
   'quentin-adam': '/speakers/quentin-adam-480-optimized.webp',
 };
+
+export function getCompanyLogoBackdrop(speaker: CollectionEntry<'speakers'>['data']): 'light' | 'dark' {
+  return speaker.companyLogoBackdrop ?? 'light';
+}
 
 export function getSpeakerPortraitSrcset(speakerId: string, fullPhoto: string): string | undefined {
   const small = SPEAKER_PORTRAIT_SMALL[speakerId];

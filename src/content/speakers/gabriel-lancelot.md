@@ -36,6 +36,7 @@ companies:
     logo: "/logos/barkan-optimized.webp"
 photo: "/speakers/gabriel-lancelot-optimized.webp"
 companyLogo: "/logos/barkan-optimized.webp"
+companyLogoBackdrop: "dark"
 companyLogoAlt: "Logo Barkan"
 linkedin: "https://www.linkedin.com/in/gabriel-lct/"
 website: "https://trybarkan.com/"

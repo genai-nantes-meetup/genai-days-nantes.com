@@ -27,6 +27,7 @@ companies:
     logo: "/logos/bworlds.svg"
 photo: "/speakers/emmanuel-marboeuf-optimized.webp"
 companyLogo: "/logos/bworlds.svg"
+companyLogoBackdrop: "dark"
 companyLogoAlt: "Logo BWorlds"
 linkedin: "https://www.linkedin.com/in/emmanuelmarboeuf/"
 website: "https://www.bworlds.co/"

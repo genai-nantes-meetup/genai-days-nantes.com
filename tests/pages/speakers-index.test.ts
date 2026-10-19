@@ -46,7 +46,7 @@ describe('speakers index page', () => {
     expect(withLogo.length).toBeGreaterThan(0);
     expect(html.match(/<span class="speaker-tile__company-logo/g)).toHaveLength(withLogo.length);
     withLogo.forEach((speaker) => {
-      expect(html).toContain(`src="${speaker.data.companyLogoOnDark ?? speaker.data.companyLogo}"`);
+      expect(html).toContain(`src="${speaker.data.companyLogo}"`);
     });
   });
 

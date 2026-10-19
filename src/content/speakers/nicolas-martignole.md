@@ -29,5 +29,6 @@ companies:
     logo: "/logos/back-market.jpg"
 photo: "/speakers/nicolas-martignole-wide-optimized.webp"
 companyLogo: "/logos/back-market.jpg"
+companyLogoBackdrop: "dark"
 linkedin: "https://www.linkedin.com/in/nmartignole/"
 ---

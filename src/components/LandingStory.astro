@@ -15,6 +15,7 @@ import {
   SPEAKER_TARGET,
   sortSpeakersByProminence,
   getSpeakerPortraitSrcset,
+  getCompanyLogoBackdrop,
   trackForSpeaker,
 } from "../lib/speakers";
 import { getLocaleFromPath, localizePath } from "../lib/i18n";
@@ -157,17 +158,15 @@ const copy = {
   },
 }[locale];
 
-const carouselSpeakers = speakers.slice(0, SPEAKER_TARGET);
-
 // Les voix encore a annoncer tiennent dans une seule diapo de synthese : dix-sept cartes
 // identiques ne se traversent pas au doigt, une carte qui donne le reste a venir se lit.
 const pendingSpeakerCount = Math.max(
   0,
-  SPEAKER_TARGET - carouselSpeakers.length,
+  SPEAKER_TARGET - speakers.length,
 );
 
 const speakerSlides = [
-  ...carouselSpeakers.map((speaker) => ({
+  ...speakers.map((speaker) => ({
     kind: "speaker" as const,
     speaker,
     track: trackForSpeaker(speaker.id, sessions),
@@ -176,7 +175,7 @@ const speakerSlides = [
     ? [{ kind: "pending" as const, count: pendingSpeakerCount }]
     : []),
 ];
-const initialVisibleSlides = Math.min(4, speakerSlides.length);
+const initialVisibleSlides = Math.min(5, speakerSlides.length);
 ---
 
 <section
@@ -400,12 +399,12 @@ const initialVisibleSlides = Math.min(4, speakerSlides.length);
                     </span>
                   )}
                   {slide.speaker.data.companyLogo && (
-                    <span class="speaker-card__company-logo">
+                    <span
+                      class="speaker-card__company-logo photo-logo-halo"
+                      data-logo-tone={getCompanyLogoBackdrop(slide.speaker.data)}
+                    >
                       <img
-                        src={
-                          slide.speaker.data.companyLogoOnDark ??
-                          slide.speaker.data.companyLogo
-                        }
+                        src={slide.speaker.data.companyLogo}
                         alt={
                           slide.speaker.data.companyLogoAlt ??
                           copy.companyLogoAlt(slide.speaker.data.company)
@@ -837,7 +836,7 @@ const initialVisibleSlides = Math.min(4, speakerSlides.length);
 
   .speaker-card {
     position: relative;
-    flex: 0 0 calc((100% - 3px) / 4);
+    flex: 0 0 calc((100% - 4px) / 5);
     min-width: 0;
     overflow: hidden;
     background: var(--color-brand-white);
@@ -885,18 +884,19 @@ const initialVisibleSlides = Math.min(4, speakerSlides.length);
     right: 0.85rem;
     bottom: calc(var(--identity-height) + 0.85rem);
     display: grid;
-    overflow: hidden;
-    width: 3.25rem;
+    min-width: 3.25rem;
     height: 3.25rem;
     place-items: center;
     border-radius: 0.3rem;
   }
 
   .speaker-card > a .speaker-card__company-logo img {
-    width: 100%;
+    width: auto;
+    max-width: 7.5rem;
     height: 100%;
     filter: none;
     object-fit: contain;
+    object-position: 100% 100%;
     transform: none;
   }
 

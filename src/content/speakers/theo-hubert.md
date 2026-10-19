@@ -33,7 +33,6 @@ companies:
     logo: "/logos/alphaedge-square-optimized.svg"
 photo: "/speakers/theo-hubert-optimized.webp"
 companyLogo: "/logos/alphaedge-square-optimized.svg"
-companyLogoOnDark: "/logos/alphaedge-square-white.svg"
 companyLogoAlt: "Logo AlphaEdge"
 linkedin: "https://www.linkedin.com/in/theohubertlozere/"
 website: "https://alphaedge-ai.com/"

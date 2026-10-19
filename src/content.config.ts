@@ -23,8 +23,8 @@ const speakers = defineCollection({
     cardCompany: z.string().optional(),
     eventRole: z.enum(['jury', 'animateur', 'finaliste', 'monsieur-loyal', 'madame-loyale', 'moderatrice-table-ronde']).optional(),
     bio: z.string(),
-    profile: z.array(z.string()).min(2),
-    genaiLegitimacy: z.string(),
+    profile: z.array(z.string()).min(2).optional(),
+    genaiLegitimacy: z.string().optional(),
     careerHighlights: z
       .array(
         z.object({
@@ -33,7 +33,8 @@ const speakers = defineCollection({
           description: z.string(),
         }),
       )
-      .min(2),
+      .min(2)
+      .optional(),
     companies: z
       .array(
         z.object({
@@ -49,10 +50,25 @@ const speakers = defineCollection({
     photo: z.string().optional(),
     companyLogo: z.string().optional(),
     companyLogoAlt: z.string().optional(),
-    companyLogoOnDark: z.string().optional(),
+    /* Ton du dégradé posé sous le logo sur la photo : clair par défaut, sous
+     * le logo d’origine en couleur ou en noir. Foncé pour un logo qui n’existe
+     * qu’en blanc, ou posé sur une tuile pleine qui se fondrait dans le blanc. */
+    companyLogoBackdrop: z.enum(['light', 'dark']).optional(),
     linkedin: z.string().url().optional(),
     website: z.string().url().optional(),
     x: z.string().url().optional(),
+  }).superRefine((speaker, context) => {
+    /* Tant que la bio n'est pas validée avec l'intervenant·e, la fiche omet les
+     * trois blocs détaillés et la page affiche « biographie à venir ». Un bloc
+     * isolé serait un oubli : c'est tout ou rien. */
+    const detailedFields = ['profile', 'genaiLegitimacy', 'careerHighlights'] as const;
+    const presentFields = detailedFields.filter((field) => speaker[field] !== undefined);
+    if (presentFields.length > 0 && presentFields.length < detailedFields.length) {
+      context.addIssue({
+        code: 'custom',
+        message: `profile, genaiLegitimacy et careerHighlights vont ensemble (présents : ${presentFields.join(', ')})`,
+      });
+    }
   }),
 });
 
@@ -150,8 +166,8 @@ const speakersEn = defineCollection({
     cardRole: z.string().optional(),
     cardCompany: z.string().optional(),
     bio: z.string(),
-    profile: z.array(z.string()).min(2),
-    genaiLegitimacy: z.string(),
+    profile: z.array(z.string()).min(2).optional(),
+    genaiLegitimacy: z.string().optional(),
     careerHighlights: z
       .array(
         z.object({
@@ -160,7 +176,8 @@ const speakersEn = defineCollection({
           description: z.string(),
         }),
       )
-      .min(2),
+      .min(2)
+      .optional(),
     /* Même ordre que les companies de l'entrée française : la fusion se
      * fait par position et garde website et logo du français. `name` ne se
      * renseigne que si le nom contient du français (« VideoLAN et VLC »). */
