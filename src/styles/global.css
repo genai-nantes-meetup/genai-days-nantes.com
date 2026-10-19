@@ -257,7 +257,7 @@ h4,
  * pour que le dégradé parte exactement de ce coin. */
 .photo-logo-halo {
   --photo-logo-halo: 255 255 255;
-  --photo-logo-halo-strength: 92%;
+  --photo-logo-halo-strength: 80%;
   --photo-logo-corner-gap: 0.85rem;
   isolation: isolate;
 }
@@ -280,5 +280,5 @@ h4,
 
 .photo-logo-halo[data-logo-tone='dark'] {
   --photo-logo-halo: 9 18 46;
-  --photo-logo-halo-strength: 72%;
+  --photo-logo-halo-strength: 50%;
 }
