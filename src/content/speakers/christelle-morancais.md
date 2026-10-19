@@ -1,6 +1,6 @@
 ---
 name: "Christelle Morançais"
-role: "Présidente du Conseil régional"
+role: "Présidente du Conseil Régional"
 company: "Région Pays de la Loire"
 bio: "Présidente du Conseil régional des Pays de la Loire, Christelle Morançais ouvre la journée à l’Hôtel de Région de Nantes."
 profile:
