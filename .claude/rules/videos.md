@@ -41,7 +41,7 @@ Visuels :
 
 - Plaques sérigraphie : `uv run tools/plates.py [nom]` les calcule depuis `public/` du site vers `assets/plates/`. Une nouvelle illustration s'ajoute dans `SOURCES`.
 - Logos partenaires : `DYLD_FALLBACK_LIBRARY_PATH=/opt/homebrew/lib uv run --with cairosvg --with pillow --with numpy python -I tools/partners_mono.py <dossier-logos>` (nécessite `brew install cairo`). Reporter le ratio et la densité affichés dans `PARTNER_ROWS`.
-- Les assets du film sont une copie figée et élaguée, sauf les portraits : `film/assets/speakers` est un lien symbolique vers `public/speakers/` du site, pour ne pas dupliquer les photos. Pour le reste, toujours copier la version `-optimized` depuis `public/` et ne jamais référencer un fichier hors de `film/assets/`.
+- Les assets du film sont une copie figée et élaguée, sauf les portraits : `film/assets/speakers` et `film/assets/team` sont des liens symboliques vers `public/speakers/` et `public/organisateurs/` du site, pour ne pas dupliquer les photos. Pour le reste, toujours copier la version `-optimized` depuis `public/` et ne jamais référencer un fichier hors de `film/assets/`.
 
 Formats verticaux (lab) : `uv run tools/make-vertical-lab.py`, puis `pnpm dlx hyperframes@0.8.140 render -c tools/labs/vertical/vertical-4x5.html -q draft -f 24 -o ../renders/vertical-4x5.mp4` (ou `9x16`). C'est une recomposition des scènes : le lab recopie le CSS et les fonctions d'`index.html` à chaque génération.
 
