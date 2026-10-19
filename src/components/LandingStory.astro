@@ -158,17 +158,15 @@ const copy = {
   },
 }[locale];
 
-const carouselSpeakers = speakers.slice(0, SPEAKER_TARGET);
-
 // Les voix encore a annoncer tiennent dans une seule diapo de synthese : dix-sept cartes
 // identiques ne se traversent pas au doigt, une carte qui donne le reste a venir se lit.
 const pendingSpeakerCount = Math.max(
   0,
-  SPEAKER_TARGET - carouselSpeakers.length,
+  SPEAKER_TARGET - speakers.length,
 );
 
 const speakerSlides = [
-  ...carouselSpeakers.map((speaker) => ({
+  ...speakers.map((speaker) => ({
     kind: "speaker" as const,
     speaker,
     track: trackForSpeaker(speaker.id, sessions),
