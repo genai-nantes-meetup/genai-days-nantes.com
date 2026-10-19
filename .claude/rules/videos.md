@@ -41,7 +41,7 @@ Visuels :
 
 - Plaques sérigraphie : `uv run tools/plates.py [nom]` les calcule depuis `public/` du site vers `assets/plates/`. Une nouvelle illustration s'ajoute dans `SOURCES`.
 - Logos partenaires : `DYLD_FALLBACK_LIBRARY_PATH=/opt/homebrew/lib uv run --with cairosvg --with pillow --with numpy python -I tools/partners_mono.py <dossier-logos>` (nécessite `brew install cairo`). Reporter le ratio et la densité affichés dans `PARTNER_ROWS`.
-- Les assets du film sont une copie figée et élaguée. Toujours copier la version `-optimized` depuis `public/`, ne jamais référencer un fichier hors de `film/assets/`.
+- Les assets du film sont une copie figée et élaguée, sauf les portraits : `film/assets/speakers` est un lien symbolique vers `public/speakers/` du site, pour ne pas dupliquer les photos. Pour le reste, toujours copier la version `-optimized` depuis `public/` et ne jamais référencer un fichier hors de `film/assets/`.
 
 Formats verticaux (lab) : `uv run tools/make-vertical-lab.py`, puis `pnpm dlx hyperframes@0.8.140 render -c tools/labs/vertical/vertical-4x5.html -q draft -f 24 -o ../renders/vertical-4x5.mp4` (ou `9x16`). C'est une recomposition des scènes : le lab recopie le CSS et les fonctions d'`index.html` à chaque génération.
 
@@ -49,7 +49,7 @@ Formats verticaux (lab) : `uv run tools/make-vertical-lab.py`, puis `pnpm dlx hy
 
 Speakers, partenaires, sessions, prix et horaires viennent du site : `src/content/` (speakers, partners, sessions), `src/content/event.json`, `src/content/pricing.json`, images dans `public/`. Ne rien inventer. Pas de chiffre de places restantes qui ne viendrait pas de Billetweb.
 
-Le film (`SPEAKERS`, `PARTNER_ROWS` dans `index.html`) et l'habillage (`SESSIONS` dans `habillage-captation/bumpers.html`, `PARTNER_LOGOS` dans `board.html`) sont des copies figées. Ils prennent du retard sur le site et sont régénérés depuis `src/content/` sur demande. Portraits du film : `public/speakers/<slug>-optimized.webp` vers `film/assets/speakers/`.
+Le film (`SPEAKERS`, `PARTNER_ROWS` dans `index.html`) et l'habillage (`SESSIONS` dans `habillage-captation/bumpers.html`, `PARTNER_LOGOS` dans `board.html`) sont des copies figées. Ils prennent du retard sur le site et sont régénérés depuis `src/content/` sur demande. Portraits du film : rien à copier, `film/assets/speakers` pointe sur `public/speakers/` ; `SPEAKERS` reprend le nom de fichier du champ `photo` de chaque speaker.
 
 ## Habillage captation (`habillage-captation/`)
 
