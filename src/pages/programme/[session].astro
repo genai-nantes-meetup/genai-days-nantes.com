@@ -821,8 +821,21 @@ const breadcrumbJsonLd = {
     text-wrap: pretty;
   }
 
-  .session-description :global(p + p) {
+  .session-description :global(p + p),
+  .session-description :global(p + ul),
+  .session-description :global(ul + p) {
     margin-top: 1em;
+  }
+
+  /* Le reset global retire les puces : on les rétablit pour les listes de la
+   * description, qui viennent du Markdown de la session. */
+  .session-description :global(ul) {
+    padding-left: 1.25em;
+    list-style: disc;
+  }
+
+  .session-description :global(li + li) {
+    margin-top: 0.35em;
   }
 
   .session-tags {
