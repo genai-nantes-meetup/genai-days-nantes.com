@@ -251,8 +251,8 @@ h4,
 
 /* Logo d'entreprise posé sur un portrait : un dégradé part du coin de la photo
  * et s'efface vers l'intérieur, sans contour, pour garder le logo lisible quelle
- * que soit la zone de la photo derrière lui. Clair sous un logo coloré ou
- * sombre, foncé sous une variante blanche (companyLogoOnDark).
+ * que soit la zone de la photo derrière lui. Clair par défaut, foncé sous un logo
+ * blanc ou une tuile pleine (companyLogoBackdrop).
  * --photo-logo-corner-gap reprend l'écart entre le badge et le coin de la photo,
  * pour que le dégradé parte exactement de ce coin. */
 .photo-logo-halo {

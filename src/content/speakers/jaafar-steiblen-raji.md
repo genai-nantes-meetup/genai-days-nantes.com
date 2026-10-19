@@ -31,7 +31,6 @@ companies:
 photo: "/speakers/jaafar-steiblen-raji-optimized.webp"
 companyLogo: "/logos/explore-the-vault-square-optimized.svg"
 companyLogoAlt: "Logo Explore the Vault"
-companyLogoOnDark: "/logos/explore-the-vault-square-white.svg"
 linkedin: "https://www.linkedin.com/in/jaafar-raji/"
 website: "https://www.lesgrandesepopees.com/"
 ---

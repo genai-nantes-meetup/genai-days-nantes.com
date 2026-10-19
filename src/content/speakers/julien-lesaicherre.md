@@ -29,7 +29,6 @@ companies:
     logo: "/logos/elevenlabs-square-optimized.svg"
 photo: "/speakers/julien-lesaicherre-optimized.webp"
 companyLogo: "/logos/elevenlabs-square-optimized.svg"
-companyLogoOnDark: "/logos/elevenlabs-square-white.svg"
 companyLogoAlt: "Logo ElevenLabs"
 linkedin: "https://www.linkedin.com/in/julien11l/"
 website: "https://elevenlabs.io/"

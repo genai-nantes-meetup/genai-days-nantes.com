@@ -33,7 +33,6 @@ companies:
     logo: "/logos/motiv-optimized.webp"
 photo: "/speakers/pauline-corriou-optimized.webp"
 companyLogo: "/logos/motiv-optimized.webp"
-companyLogoBackdrop: "dark"
 companyLogoAlt: "Logo Motiv"
 linkedin: "https://www.linkedin.com/in/pauline-corriou-9765b49b/"
 website: "https://motiv.club/"

@@ -139,7 +139,7 @@ export const SPEAKER_PORTRAIT_SMALL: Partial<Record<string, string>> = {
 };
 
 export function getCompanyLogoBackdrop(speaker: CollectionEntry<'speakers'>['data']): 'light' | 'dark' {
-  return speaker.companyLogoBackdrop ?? (speaker.companyLogoOnDark ? 'dark' : 'light');
+  return speaker.companyLogoBackdrop ?? 'light';
 }
 
 export function getSpeakerPortraitSrcset(speakerId: string, fullPhoto: string): string | undefined {

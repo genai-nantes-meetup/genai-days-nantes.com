@@ -2,7 +2,7 @@
 # Sources : bio fournie par l’organisation (parcours, approche, repères, écosystème)
 # https://www.linkedin.com/in/tristan-fransen-24a8916a/ (profil)
 # Portrait : fourni par l’organisation (1238 x 1448 px, original conservé dans tristan-fransen.png)
-# Logo : fourni par l’organisation (500 x 574 px, PNG, original conservé dans pennylane.png). Variante blanche pennylane-white-optimized.webp pour la pastille sur la photo (t-shirt noir), dérivée de l’original
+# Logo : fourni par l’organisation (500 x 574 px, PNG, original conservé dans pennylane.png)
 name: "Tristan Fransen"
 role: "Senior Machine Learning Engineer"
 company: "Pennylane"
@@ -30,7 +30,6 @@ companies:
     logo: "/logos/pennylane-optimized.webp"
 photo: "/speakers/tristan-fransen-optimized.webp"
 companyLogo: "/logos/pennylane-optimized.webp"
-companyLogoOnDark: "/logos/pennylane-white-badge-optimized.webp"
 companyLogoAlt: "Logo Pennylane"
 linkedin: "https://www.linkedin.com/in/tristan-fransen-24a8916a/"
 ---

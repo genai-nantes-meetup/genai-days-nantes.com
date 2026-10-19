@@ -30,7 +30,6 @@ companies:
 photo: "/speakers/benoit-hediard-optimized.webp"
 companyLogo: "/logos/globetrotters-optimized.webp"
 companyLogoAlt: "Logo Globetrotters.ai"
-companyLogoOnDark: "/logos/globetrotters-white-optimized.webp"
 linkedin: "https://www.linkedin.com/in/benorama/"
 website: "https://globetrotters.ai/"
 ---

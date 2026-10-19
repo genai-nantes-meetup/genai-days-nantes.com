@@ -404,10 +404,7 @@ const initialVisibleSlides = Math.min(5, speakerSlides.length);
                       data-logo-tone={getCompanyLogoBackdrop(slide.speaker.data)}
                     >
                       <img
-                        src={
-                          slide.speaker.data.companyLogoOnDark ??
-                          slide.speaker.data.companyLogo
-                        }
+                        src={slide.speaker.data.companyLogo}
                         alt={
                           slide.speaker.data.companyLogoAlt ??
                           copy.companyLogoAlt(slide.speaker.data.company)

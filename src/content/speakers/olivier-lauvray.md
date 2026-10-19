@@ -40,7 +40,6 @@ companies:
     website: "https://www.biomemory.com/"
 photo: "/speakers/olivier-lauvray-optimized.webp"
 companyLogo: "/logos/vsora-optimized.webp"
-companyLogoBackdrop: "dark"
 companyLogoAlt: "Logo VSORA"
 linkedin: "https://www.linkedin.com/in/olivier-lauvray-ab077514/"
 website: "https://vsora.com/"

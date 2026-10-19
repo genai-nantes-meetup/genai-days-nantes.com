@@ -33,7 +33,6 @@ companies:
     logo: "/logos/la-cantine-optimized.svg"
 photo: "/speakers/thomas-mathieu-audencia-optimized.webp"
 companyLogo: "/logos/guest-suite-optimized.webp"
-companyLogoOnDark: "/logos/guest-suite-white.webp"
 companyLogoAlt: "Logo Guest Suite"
 linkedin: "https://fr.linkedin.com/in/thomasmathieu1"
 website: "https://www.guest-suite.com/"
