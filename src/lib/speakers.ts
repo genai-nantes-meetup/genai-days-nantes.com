@@ -92,6 +92,7 @@ export const SPEAKER_PORTRAIT_DIMENSIONS: Record<string, { width: number; height
   'david-leaurant': { width: 800, height: 800 },
   'delphine-ziegler': { width: 800, height: 800 },
   'emmanuel-marboeuf': { width: 800, height: 800 },
+  'florian-bruniaux': { width: 800, height: 800 },
   'florian-herveou': { width: 600, height: 600 },
   'frederic-didier': { width: 490, height: 490 },
   'gabriel-lancelot': { width: 800, height: 800 },
