@@ -138,6 +138,10 @@ export const SPEAKER_PORTRAIT_SMALL: Partial<Record<string, string>> = {
   'quentin-adam': '/speakers/quentin-adam-480-optimized.webp',
 };
 
+export function getCompanyLogoBackdrop(speaker: CollectionEntry<'speakers'>['data']): 'light' | 'dark' {
+  return speaker.companyLogoBackdrop ?? (speaker.companyLogoOnDark ? 'dark' : 'light');
+}
+
 export function getSpeakerPortraitSrcset(speakerId: string, fullPhoto: string): string | undefined {
   const small = SPEAKER_PORTRAIT_SMALL[speakerId];
   const full = SPEAKER_PORTRAIT_DIMENSIONS[speakerId];

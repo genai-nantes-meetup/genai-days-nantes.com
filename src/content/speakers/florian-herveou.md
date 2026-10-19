@@ -32,6 +32,7 @@ companies:
     logo: "/logos/icilundi-optimized.svg"
 photo: "/speakers/florian-herveou-optimized.webp"
 companyLogo: "/logos/startup-palace-sp-optimized.webp"
+companyLogoBackdrop: "dark"
 companyLogoAlt: "Logo Startup Palace"
 linkedin: "https://fr.linkedin.com/in/florianherveou"
 website: "https://www.startup-palace.com/"

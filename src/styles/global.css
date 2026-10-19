@@ -248,3 +248,37 @@ h4,
   line-height: 1.05;
   text-wrap: balance;
 }
+
+/* Logo d'entreprise posé sur un portrait : un dégradé part du coin de la photo
+ * et s'efface vers l'intérieur, sans contour, pour garder le logo lisible quelle
+ * que soit la zone de la photo derrière lui. Clair sous un logo coloré ou
+ * sombre, foncé sous une variante blanche (companyLogoOnDark).
+ * --photo-logo-corner-gap reprend l'écart entre le badge et le coin de la photo,
+ * pour que le dégradé parte exactement de ce coin. */
+.photo-logo-halo {
+  --photo-logo-halo: 255 255 255;
+  --photo-logo-halo-strength: 92%;
+  --photo-logo-corner-gap: 0.85rem;
+  isolation: isolate;
+}
+
+/* Plein sous le logo (jusqu'à 40 % du rayon), puis fondu jusqu'à 0 %. */
+.photo-logo-halo::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -6.5rem calc(-1 * var(--photo-logo-corner-gap)) calc(-1 * var(--photo-logo-corner-gap)) -6.5rem;
+  background: radial-gradient(
+    farthest-side at 100% 100%,
+    rgb(var(--photo-logo-halo) / var(--photo-logo-halo-strength)) 0%,
+    rgb(var(--photo-logo-halo) / var(--photo-logo-halo-strength)) 40%,
+    rgb(var(--photo-logo-halo) / calc(var(--photo-logo-halo-strength) * 0.45)) 68%,
+    rgb(var(--photo-logo-halo) / 0%) 100%
+  );
+  pointer-events: none;
+}
+
+.photo-logo-halo[data-logo-tone='dark'] {
+  --photo-logo-halo: 9 18 46;
+  --photo-logo-halo-strength: 72%;
+}

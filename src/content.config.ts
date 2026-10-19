@@ -51,6 +51,10 @@ const speakers = defineCollection({
     companyLogo: z.string().optional(),
     companyLogoAlt: z.string().optional(),
     companyLogoOnDark: z.string().optional(),
+    /* Ton du dégradé posé sous le logo sur la photo. Par défaut : foncé sous
+     * une variante blanche (companyLogoOnDark), clair sinon. À forcer pour un
+     * logo sur tuile pleine ou posé sur une zone claire de la photo. */
+    companyLogoBackdrop: z.enum(['light', 'dark']).optional(),
     linkedin: z.string().url().optional(),
     website: z.string().url().optional(),
     x: z.string().url().optional(),

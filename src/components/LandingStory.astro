@@ -15,6 +15,7 @@ import {
   SPEAKER_TARGET,
   sortSpeakersByProminence,
   getSpeakerPortraitSrcset,
+  getCompanyLogoBackdrop,
   trackForSpeaker,
 } from "../lib/speakers";
 import { getLocaleFromPath, localizePath } from "../lib/i18n";
@@ -400,7 +401,10 @@ const initialVisibleSlides = Math.min(5, speakerSlides.length);
                     </span>
                   )}
                   {slide.speaker.data.companyLogo && (
-                    <span class="speaker-card__company-logo">
+                    <span
+                      class="speaker-card__company-logo photo-logo-halo"
+                      data-logo-tone={getCompanyLogoBackdrop(slide.speaker.data)}
+                    >
                       <img
                         src={
                           slide.speaker.data.companyLogoOnDark ??
@@ -885,18 +889,19 @@ const initialVisibleSlides = Math.min(5, speakerSlides.length);
     right: 0.85rem;
     bottom: calc(var(--identity-height) + 0.85rem);
     display: grid;
-    overflow: hidden;
-    width: 3.25rem;
+    min-width: 3.25rem;
     height: 3.25rem;
     place-items: center;
     border-radius: 0.3rem;
   }
 
   .speaker-card > a .speaker-card__company-logo img {
-    width: 100%;
+    width: auto;
+    max-width: 7.5rem;
     height: 100%;
     filter: none;
     object-fit: contain;
+    object-position: 100% 100%;
     transform: none;
   }
 

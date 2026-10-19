@@ -6,7 +6,7 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import TrackMark from '../../components/TrackMark';
 import { EVENT, EVENT_YEAR } from '../../lib/event';
-import { SPEAKER_EVENT_ROLE_LABELS, SPEAKER_PORTRAIT_DIMENSIONS, getSpeakerPagePaths, getSpeakerPortraitSrcset, trackForSpeaker } from '../../lib/speakers';
+import { SPEAKER_EVENT_ROLE_LABELS, SPEAKER_PORTRAIT_DIMENSIONS, getSpeakerPagePaths, getSpeakerPortraitSrcset, getCompanyLogoBackdrop, trackForSpeaker } from '../../lib/speakers';
 import { getLocaleFromPath, localizePath } from '../../lib/i18n';
 import { getLocalizedCollection, localizeEntry } from '../../lib/localized-content';
 import { stripMarkdownToPlainText } from '../../lib/markdown';
@@ -187,7 +187,7 @@ const socialLinks = [
               <span class="speaker-page-photo__fallback" aria-hidden="true">{speaker.data.name.slice(0, 1)}</span>
             )}
             {speaker.data.companyLogo && (
-              <span class="speaker-page-company-logo">
+              <span class="speaker-page-company-logo photo-logo-halo" data-logo-tone={getCompanyLogoBackdrop(speaker.data)}>
                 <img
                   src={speaker.data.companyLogoOnDark ?? speaker.data.companyLogo}
                   alt={speaker.data.companyLogoAlt ?? copy.companyLogoAlt(speaker.data.company)}
@@ -403,17 +403,19 @@ const socialLinks = [
     right: 0.8rem;
     bottom: 0.8rem;
     display: grid;
-    overflow: hidden;
-    width: 3.5rem;
+    min-width: 3.5rem;
     height: 3.5rem;
     place-items: center;
     border-radius: 0.4rem;
+    --photo-logo-corner-gap: 0.8rem;
   }
 
   .speaker-page-company-logo img {
-    width: 100%;
+    width: auto;
+    max-width: 8rem;
     height: 100%;
     object-fit: contain;
+    object-position: 100% 100%;
   }
 
   .speaker-social-links {

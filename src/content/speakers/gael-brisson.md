@@ -28,7 +28,8 @@ companies:
     website: "https://swiftask.ai/"
     logo: "/logos/swiftask-square-optimized.svg"
 photo: "/speakers/gael-brisson-optimized.webp"
-companyLogo: "/logos/swiftask-square-optimized.svg"
+companyLogo: "/logos/swiftask-badge-optimized.svg"
+companyLogoBackdrop: "dark"
 linkedin: "https://www.linkedin.com/in/gaelbrisson/"
 website: "https://swiftask.ai/"
 ---

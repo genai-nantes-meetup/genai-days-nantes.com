@@ -30,7 +30,7 @@ companies:
     logo: "/logos/pennylane-optimized.webp"
 photo: "/speakers/tristan-fransen-optimized.webp"
 companyLogo: "/logos/pennylane-optimized.webp"
-companyLogoOnDark: "/logos/pennylane-white-optimized.webp"
+companyLogoOnDark: "/logos/pennylane-white-badge-optimized.webp"
 companyLogoAlt: "Logo Pennylane"
 linkedin: "https://www.linkedin.com/in/tristan-fransen-24a8916a/"
 ---
