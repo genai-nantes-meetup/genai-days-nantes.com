@@ -9,4 +9,4 @@ illustration:
 
 With coding agents, building has never cost so little. Teams ship every week, sometimes every day, and lose sight of what those releases change for their users.
 
-This session puts the product back first when everyone can build anything. Choosing what not to build, measuring usage rather than speed, and finding the question that matters before writing a single line.
+A field report from Mirakl, full of stories from the trenches: what worked, what went sideways, what had to be unlearned. This session is about rethinking how teams are organized when everyone can build anything. The role of dev, product and UX: who decides what, who builds what, and how to find the question that matters before writing a single line.
