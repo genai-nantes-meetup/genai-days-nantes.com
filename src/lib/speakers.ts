@@ -49,12 +49,15 @@ export const SPEAKER_PROMINENCE_ORDER = [
   'christelle-morancais',
   'jean-baptiste-kempf',
   'julien-lesaicherre',
+  'tiffany-souterre',
+  'frederic-didier',
   'regis-dubrulle',
   'olivier-lauvray',
   'quentin-adam',
-  'theo-hubert',
+  'laurent-duthoit',
   'nicolas-martignole',
-  'gael-brisson',
+  'theo-hubert',
+  'jean-yves-simon',
 ] as const;
 
 /* Pitcheurs du Startup Contest : après les autres speakers, avant les MC. */

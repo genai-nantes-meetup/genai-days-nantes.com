@@ -176,7 +176,7 @@ const speakerSlides = [
     ? [{ kind: "pending" as const, count: pendingSpeakerCount }]
     : []),
 ];
-const initialVisibleSlides = Math.min(4, speakerSlides.length);
+const initialVisibleSlides = Math.min(5, speakerSlides.length);
 ---
 
 <section
@@ -837,7 +837,7 @@ const initialVisibleSlides = Math.min(4, speakerSlides.length);
 
   .speaker-card {
     position: relative;
-    flex: 0 0 calc((100% - 3px) / 4);
+    flex: 0 0 calc((100% - 4px) / 5);
     min-width: 0;
     overflow: hidden;
     background: var(--color-brand-white);
