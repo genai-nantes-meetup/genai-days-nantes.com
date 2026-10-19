@@ -39,9 +39,12 @@ describe('content collections', () => {
     const speakers = await getCollection('speakers');
 
     for (const speaker of speakers) {
-      expect(speaker.data.profile.length).toBeGreaterThanOrEqual(2);
-      expect(speaker.data.genaiLegitimacy.length).toBeGreaterThan(180);
-      expect(speaker.data.careerHighlights.length).toBeGreaterThanOrEqual(2);
+      // Bio pas encore validée avec l'intervenant·e : la page affiche « biographie à venir ».
+      if (speaker.data.profile) {
+        expect(speaker.data.profile.length).toBeGreaterThanOrEqual(2);
+        expect(speaker.data.genaiLegitimacy?.length ?? 0).toBeGreaterThan(180);
+        expect(speaker.data.careerHighlights?.length ?? 0).toBeGreaterThanOrEqual(2);
+      }
 
       for (const company of speaker.data.companies ?? []) {
         expect(company.relationship.length).toBeGreaterThan(4);

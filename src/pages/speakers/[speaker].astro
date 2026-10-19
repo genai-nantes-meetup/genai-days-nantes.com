@@ -41,6 +41,7 @@ const copy = {
     websiteLabel: 'Site web',
     profileKicker: 'Portrait',
     profileTitle: 'Son parcours',
+    pendingBio: 'Sa biographie sera complétée prochainement.',
     legitimacyKicker: 'Son regard',
     legitimacyTitle: 'Sa légitimité numérique et GenAI',
     timelineKicker: 'Repères',
@@ -68,6 +69,7 @@ const copy = {
     websiteLabel: 'Website',
     profileKicker: 'Profile',
     profileTitle: 'Background',
+    pendingBio: 'Full bio coming soon.',
     legitimacyKicker: 'Perspective',
     legitimacyTitle: 'Digital and GenAI credentials',
     timelineKicker: 'Milestones',
@@ -101,6 +103,8 @@ function truncateAtWordBoundary(text: string, maxLength: number): string {
   const lastSpace = truncated.lastIndexOf(' ');
   return `${(lastSpace > 0 ? truncated.slice(0, lastSpace) : truncated).trimEnd()}…`;
 }
+
+const { profile, genaiLegitimacy, careerHighlights } = speaker.data;
 
 // Dérivée de la bio (unique par intervenant·e) plutôt que du gabarit nom/rôle/entreprise,
 // identique à quelques mots près d'une fiche à l'autre.
@@ -213,13 +217,14 @@ const socialLinks = [
       </div>
     </section>
 
+    {profile && genaiLegitimacy && careerHighlights ? (
     <section class="mx-auto max-w-5xl px-6 py-14 sm:py-20">
       <div class="speaker-story-grid">
         <article>
           <p class="type-section-kicker text-brand-blue">{copy.profileKicker}</p>
           <h2 class="type-section-title mt-3">{copy.profileTitle}</h2>
           <div class="speaker-prose mt-6">
-            {speaker.data.profile.map((paragraph) => (
+            {profile.map((paragraph) => (
               <p><BrandText text={paragraph} /></p>
             ))}
           </div>
@@ -228,7 +233,7 @@ const socialLinks = [
             <p class="type-section-kicker text-brand-blue">{copy.legitimacyKicker}</p>
             <h2 id="speaker-legitimacy-title" class="type-section-title mt-3">{copy.legitimacyTitle}</h2>
             <p class="mt-5 text-lg leading-relaxed text-black/72">
-              <BrandText text={speaker.data.genaiLegitimacy} />
+              <BrandText text={genaiLegitimacy} />
             </p>
           </section>
         </article>
@@ -237,7 +242,7 @@ const socialLinks = [
           <p class="type-section-kicker text-brand-blue">{copy.timelineKicker}</p>
           <h2 id="speaker-timeline-title" class="mt-2 text-2xl font-extrabold">{copy.timelineTitle}</h2>
           <ol class="mt-7 space-y-7">
-            {speaker.data.careerHighlights.map((highlight) => (
+            {careerHighlights.map((highlight) => (
               <li>
                 <p class="speaker-timeline__period">{highlight.period}</p>
                 <h3 class="mt-1 text-lg font-extrabold leading-tight">{highlight.title}</h3>
@@ -250,6 +255,13 @@ const socialLinks = [
         </aside>
       </div>
     </section>
+    ) : (
+    <section class="mx-auto max-w-5xl px-6 py-14 sm:py-20">
+      <p class="type-section-kicker text-brand-blue">{copy.profileKicker}</p>
+      <h2 class="type-section-title mt-3">{copy.profileTitle}</h2>
+      <p class="mt-6 text-lg leading-relaxed text-black/72">{copy.pendingBio}</p>
+    </section>
+    )}
 
     {speaker.data.companies && (
     <section class="speaker-companies px-6 py-14 sm:py-20" aria-labelledby="speaker-companies-title">
