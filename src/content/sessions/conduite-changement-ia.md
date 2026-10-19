@@ -3,7 +3,7 @@ title: "Une partie de mon équipe a peur que l'IA lui prenne son poste"
 subtitle: "Réussir la transformation la plus compliquée du 21e siècle"
 seoTitle: "Une partie de mon équipe a peur que l'IA lui prenne son poste"
 track: "decideurs"
-startTime: "14:25"
+startTime: "16:00"
 durationMinutes: 40
 room: ""
 speakerSlugs: ["celine-haentzler"]

@@ -3,7 +3,7 @@ title: "Mon concurrent utilise des humanoïdes dans sa chaine de production"
 subtitle: "L'IA appliquée à l'industrie"
 seoTitle: "Mon concurrent utilise des humanoïdes dans sa chaine de production"
 track: "decideurs"
-startTime: "16:00"
+startTime: "14:25"
 durationMinutes: 40
 room: ""
 speakerSlugs: ["laurent-duthoit", "camille-croze"]
