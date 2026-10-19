@@ -6,7 +6,7 @@ track: "tech"
 startTime: "09:40"
 durationMinutes: 40
 room: ""
-speakerSlugs: []
+speakerSlugs: ["jean-yves-simon"]
 format: "talk"
 themes: ["Produit", "Agentic coding", "Vélocité"]
 illustration:

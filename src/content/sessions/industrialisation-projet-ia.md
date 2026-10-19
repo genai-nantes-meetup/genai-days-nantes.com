@@ -6,7 +6,7 @@ track: "decideurs"
 startTime: "15:20"
 durationMinutes: 40
 room: ""
-speakerSlugs: []
+speakerSlugs: ["tiffany-souterre"]
 format: "talk"
 themes: ["Industrialisation IA", "Qualité des données", "MLOps"]
 illustration:
