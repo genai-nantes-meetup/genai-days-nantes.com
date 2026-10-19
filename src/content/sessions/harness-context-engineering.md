@@ -8,15 +8,21 @@ durationMinutes: 40
 room: ""
 speakerSlugs: ["florian-bruniaux"]
 format: "talk"
-themes: ["Factory IA", "Harnais d'agents", "Context engineering", "Code review par IA", "Spec-driven development"]
+themes: ["Factory IA", "Spec-driven development", "Orchestration d’agents", "Code review par IA", "Contrôle des coûts", "Context engineering"]
 illustration:
   alt: "Une pile de pages s'envole au-dessus d'une tête où un cerveau électronique surchargé s'illumine"
   src: "/talks/context-engineering-optimized.webp"
   variant: "agents"
 ---
 
-Comment concevoir le harness qui entoure un coding agent, entre sélection d'outils, mémoire et orchestration, la quantité de contexte injecté n'étant qu'un levier parmi d'autres et pouvant même dégrader les résultats.
+Livrer avec des agents de code ne se résume pas à choisir un bon modèle. Il faut construire une factory IA, la chaîne d’outils qui permet de shipper vite et proprement avec de l’IA.
 
-Il ne s'agit pas seulement d'être efficace dans la durée, mais d'assembler l'ensemble des tâches qui permettent à l'agent d'atteindre son objectif à moindre coût, rapidement et avec un faible taux d'erreur.
+Le talk passe en revue ses briques :
 
-Le talk couvre aussi la factory IA, c'est-à-dire l'ensemble des outils pour shipper avec de l'IA, la code review par IA et le spec-driven development, où la spécification pilote l'agent et sert de référence pour relire son code.
+- le spec-driven development, où la spécification pilote l’agent et sert de référence ;
+- l’orchestration de plusieurs agents en parallèle ;
+- le harness et le context engineering, avec le choix des outils, la mémoire, et la raison pour laquelle plus de contexte dégrade souvent les résultats ;
+- la code review par IA, pour relire aussi vite que les agents produisent ;
+- le contrôle des coûts, entre tokens, choix des modèles et cache.
+
+L’objectif : livrer plus vite, à moindre coût et avec un faible taux d’erreur.
