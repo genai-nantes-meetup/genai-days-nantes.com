@@ -38,6 +38,16 @@ When optimizing/compressing an image (new or existing), never overwrite the orig
 
 Event and pricing data (date, venue, ticket pricing) live in `src/content/event.json` and `src/content/pricing.json`, consumed via `src/lib/event.ts` and `src/lib/pricing.ts`. Never hardcode the event date, year, or venue as a literal string in a page or component: use `EVENT`, `EVENT_YEAR`, `formatEventDateLabel()`, `formatEventDateShort()`, or `formatEventDateUppercase()` from `src/lib/event.ts` instead, so a date/venue change only requires editing the JSON file.
 
+## Press kit
+
+The downloadable press kit (`public/press/`: PDF, ZIP and `scripts/press-kit-manifest.json`) is generated from the content collections, `src/lib/speakers.ts` and `src/styles/global.css`. Whenever a speaker is added to the site, rebuild it so the kit includes them:
+
+```
+uv run --with reportlab --with svglib --with pyyaml --with fonttools --with brotli --with pillow scripts/build-press-kit.py
+```
+
+Commit the regenerated files with the change. `tests/scripts/build-press-kit.test.ts` fails when the manifest is stale, so rebuild again after any later edit to a source it hashes.
+
 ## SEO
 
 Whenever you change a page's visible wording (title, headline, lede, key copy), also update that page's `<title>`, meta description, and any JSON-LD (`structuredData` prop) that restates the same information, so they stay consistent with what the page actually says.
