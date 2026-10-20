@@ -10,8 +10,8 @@ speakerSlugs: []
 format: "talk"
 themes: ["Agentic coding", "Revue de code", "Qualité logicielle"]
 illustration:
-  alt: "Une silhouette se tient la tête, dépassée, face à un écran de code et une page blanche marquée d'un point d'interrogation"
-  src: "/talks/agentic-coding-optimized.webp"
+  alt: "Une pile de pages s'envole au-dessus d'une tête où un cerveau électronique surchargé s'illumine"
+  src: "/talks/context-engineering-optimized.webp"
   variant: "agents"
 ---
 

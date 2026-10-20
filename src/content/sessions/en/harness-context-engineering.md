@@ -4,7 +4,7 @@ subtitle: "Harness engineering, pull requests and CI"
 seoTitle: "I don’t trust my AI-generated pull requests"
 themes: ["Harness engineering", "Pull requests", "CI", "Code review", "Local checks", "Context engineering"]
 illustration:
-  alt: "A stack of pages flies up above a head where an overloaded electronic brain lights up"
+  alt: "An overwhelmed silhouette holds its head in front of a screen of code and a blank page marked with a question mark"
 ---
 
 Agents write code faster, but pull requests pile up. The team struggles to review them, CI is constantly in demand and fixes trigger new cycles. How do you spot what is blocking your harness and choose where to step in?

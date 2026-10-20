@@ -10,8 +10,8 @@ speakerSlugs: ["florian-bruniaux"]
 format: "talk"
 themes: ["Harness engineering", "Pull requests", "CI", "Code review", "Contrôles locaux", "Context engineering"]
 illustration:
-  alt: "Une pile de pages s'envole au-dessus d'une tête où un cerveau électronique surchargé s'illumine"
-  src: "/talks/context-engineering-optimized.webp"
+  alt: "Une silhouette se tient la tête, dépassée, face à un écran de code et une page blanche marquée d'un point d'interrogation"
+  src: "/talks/agentic-coding-optimized.webp"
   variant: "agents"
 ---
 
