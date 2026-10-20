@@ -1,7 +1,7 @@
 ---
-title: "Code faster, ship faster: unblocking PRs and CI"
+title: "The more context I give it, the worse it gets"
 subtitle: "Harness engineering, pull requests and CI"
-seoTitle: "Code faster, ship faster: unblocking PRs and CI"
+seoTitle: "The more context I give it, the worse it gets"
 themes: ["Harness engineering", "Pull requests", "CI", "Code review", "Local checks", "Context engineering"]
 illustration:
   alt: "A stack of pages flies up above a head where an overloaded electronic brain lights up"

@@ -1,7 +1,7 @@
 ---
-title: "Coder plus vite, livrer plus vite : débloquer les PR et la CI"
+title: "Plus je lui donne de context, moins il est bon"
 subtitle: "Harness engineering, pull requests et CI"
-seoTitle: "Coder plus vite, livrer plus vite : débloquer les PR et la CI"
+seoTitle: "Plus je lui donne de context, moins il est bon"
 track: "tech"
 startTime: "16:00"
 durationMinutes: 40
