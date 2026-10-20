@@ -70,7 +70,8 @@ def frontmatter(path: Path) -> dict:
 
 
 def collection(name: str) -> list[dict]:
-    return [frontmatter(path) for path in sorted((CONTENT / name).glob("*.md"))]
+    # Underscore-prefixed entries are disabled on the site (src/content.config.ts).
+    return [frontmatter(path) for path in sorted((CONTENT / name).glob("*.md")) if not path.name.startswith("_")]
 
 
 def token(name: str) -> colors.Color:

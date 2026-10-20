@@ -1,6 +1,9 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
+// A leading underscore disables an entry without deleting it: rename the file back to publish it again.
+const PUBLISHED_ENTRY_PATTERNS = ['*.md', '!_*.md'];
+
 const tracks = defineCollection({
   loader: glob({ pattern: '*.md', base: './src/content/tracks' }),
   schema: z.object({
@@ -124,7 +127,7 @@ const team = defineCollection({
 });
 
 const partners = defineCollection({
-  loader: glob({ pattern: '*.md', base: './src/content/partners' }),
+  loader: glob({ pattern: PUBLISHED_ENTRY_PATTERNS, base: './src/content/partners' }),
   schema: z.object({
     name: z.string(),
     tier: z.enum(['silver', 'gold', 'platinum']),
@@ -148,7 +151,7 @@ const partners = defineCollection({
  * traduisibles (et le corps Markdown quand l'entrée française en a un) ;
  * lib/localized-content.ts les fusionne sur l'entrée française. */
 const translationLoader = (collection: string) =>
-  glob({ pattern: '*.md', base: `./src/content/${collection}/en` });
+  glob({ pattern: PUBLISHED_ENTRY_PATTERNS, base: `./src/content/${collection}/en` });
 
 const tracksEn = defineCollection({
   loader: translationLoader('tracks'),
