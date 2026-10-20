@@ -1,7 +1,7 @@
 ---
-title: "The more context I give it, the worse it gets"
+title: "I don’t trust my AI-generated pull requests"
 subtitle: "Harness engineering, pull requests and CI"
-seoTitle: "The more context I give it, the worse it gets"
+seoTitle: "I don’t trust my AI-generated pull requests"
 themes: ["Harness engineering", "Pull requests", "CI", "Code review", "Local checks", "Context engineering"]
 illustration:
   alt: "A stack of pages flies up above a head where an overloaded electronic brain lights up"

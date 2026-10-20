@@ -1,7 +1,7 @@
 ---
-title: "Je n'ai pas confiance dans mes pull-requests générées"
+title: "Plus je lui donne de context, moins il est bon"
 subtitle: "Agentic dev & dev tools"
-seoTitle: "Je n'ai pas confiance dans mes pull-requests générées"
+seoTitle: "Plus je lui donne de context, moins il est bon"
 track: "tech"
 startTime: "15:20"
 durationMinutes: 40

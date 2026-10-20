@@ -1,7 +1,7 @@
 ---
-title: "Plus je lui donne de context, moins il est bon"
+title: "Je n'ai pas confiance dans mes pull-requests générées"
 subtitle: "Harness engineering, pull requests et CI"
-seoTitle: "Plus je lui donne de context, moins il est bon"
+seoTitle: "Je n'ai pas confiance dans mes pull-requests générées"
 track: "tech"
 startTime: "16:00"
 durationMinutes: 40
