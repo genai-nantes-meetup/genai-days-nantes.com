@@ -1,5 +1,26 @@
 ---
 role: "Chief AI Officer"
 cardCompany: "Independent"
-bio: "Independent Chief AI Officer. Full bio coming soon."
+bio: "An independent Chief AI Officer, Florian Bruniaux helps companies decide how to adopt AI, implement it technically and train their teams. His specialty: harness and context engineering."
+profile:
+  - "Florian Bruniaux helps companies decide how to adopt AI, implement it technically and train their teams. As an independent Chief AI Officer, he works with executives on priorities and budgets, then with teams on the systems they will use and maintain."
+  - "A developer by training and a graduate of the Université de technologie de Troyes, he spent a little over ten years managing technical teams: CTO at eXplain, VP Engineering at Cheerz, then CTPO at Native Spaces. Since 2025, he has gotten his hands dirty again, building every day with agents, notably at Méthode Aristote, where the collaboration continues as a freelancer. His AI experience goes back to 2017, with NLP and machine learning."
+  - "He is the author and maintainer of the Claude Code Ultimate Guide and builds open source tools drawn from his own practice: ccboard to review agent sessions and costs, ctxharness to spot gaps between the instructions given to the AI and the repository. He was also an active contributor to RTK in the first quarter of 2026. He shares what he learns through his guides, his open source projects and his blog."
+genaiLegitimacy: "Florian Bruniaux’s specialty is harness and context engineering: building the environment agents work in, from the information they receive to the checks on their output. He works directly in repositories and helps teams make that environment their own and keep it evolving. His technical leadership background ties this practice to questions of organization and investment: who checks the agents’ work? How do colleagues share what they learn? What costs and responsibilities does it add? Active in several communities, including Dev With AI, he tests his methods against other uses, which feeds both his technical choices and his training."
+careerHighlights:
+  - period: "Since April 2026"
+    title: "Independent Chief AI Officer"
+    description: "Supporting AI adoption, from investment decisions to technical implementation and team training."
+  - period: "2025 to 2026"
+    title: "AI Founding Engineer at Méthode Aristote"
+    description: "Building an educational platform that integrates AI, with daily use of coding agents. The collaboration continues as a freelancer."
+  - period: "2023 to 2025"
+    title: "CTPO at Native Spaces"
+    description: "Leading technology and product, building the team and developing the second version of the platform."
+  - period: "2021 to 2023"
+    title: "Engineering Manager then VP Engineering at Cheerz"
+    description: "Organizing teams and developing skills, with responsibility for hiring and budget."
+  - period: "2018 to 2021"
+    title: "CTO at eXplain"
+    description: "Building the technical team and developing an opinion analysis platform that uses AI."
 ---

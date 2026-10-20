@@ -1,20 +1,19 @@
 ---
-title: "The more context I give it, the worse it gets"
-subtitle: "Factory, Harness & Context engineering"
-seoTitle: "The more context I give it, the worse it gets"
-themes: ["AI factory", "Spec-driven development", "Agent orchestration", "AI code review", "Cost control", "Context engineering"]
+title: "Code faster, ship faster: unblocking PRs and CI"
+subtitle: "Harness engineering, pull requests and CI"
+seoTitle: "Code faster, ship faster: unblocking PRs and CI"
+themes: ["Harness engineering", "Pull requests", "CI", "Code review", "Local checks", "Context engineering"]
 illustration:
   alt: "A stack of pages flies up above a head where an overloaded electronic brain lights up"
 ---
 
-Shipping with coding agents takes more than picking a good model. It takes an AI factory, the toolchain that lets a team ship fast and cleanly with AI.
+Agents write code faster, but pull requests pile up. The team struggles to review them, CI is constantly in demand and fixes trigger new cycles. How do you spot what is blocking your harness and choose where to step in?
 
-The talk walks through its building blocks:
+Drawing on his work at Méthode Aristote and with the companies he supports, from startups to scale-ups to small and midsize businesses, Florian Bruniaux explores two levers:
 
-- spec-driven development, where the spec drives the agent and serves as the reference;
-- orchestrating several agents in parallel;
-- the harness and context engineering: tool selection, memory, and why more context often makes results worse;
-- AI code review, to review as fast as agents produce;
-- cost control across tokens, model choice and caching.
+- moving the relevant checks to the local machine;
+- improving the human and automated review loops.
 
-The goal: ship faster, at lower cost and with a low error rate.
+A real PR, shown through prepared screenshots, serves as the common thread for examining the mistakes and the fixes made to the harness. The goal: leave with concrete questions for analyzing your own way of working and identifying changes to try. The closing opens onto sharing these improvements across the team.
+
+For developers and technical leads who already use agents. 30 minutes of content and 10 minutes of questions, with no live demo.

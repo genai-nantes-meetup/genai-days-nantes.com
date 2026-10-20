@@ -1,28 +1,27 @@
 ---
-title: "Plus je lui donne de context, moins il est bon"
-subtitle: "Factory, Harness & Context engineering"
-seoTitle: "Plus je lui donne de context, moins il est bon"
+title: "Coder plus vite, livrer plus vite : débloquer les PR et la CI"
+subtitle: "Harness engineering, pull requests et CI"
+seoTitle: "Coder plus vite, livrer plus vite : débloquer les PR et la CI"
 track: "tech"
 startTime: "16:00"
 durationMinutes: 40
 room: ""
 speakerSlugs: ["florian-bruniaux"]
 format: "talk"
-themes: ["Factory IA", "Spec-driven development", "Orchestration d’agents", "Code review par IA", "Contrôle des coûts", "Context engineering"]
+themes: ["Harness engineering", "Pull requests", "CI", "Code review", "Contrôles locaux", "Context engineering"]
 illustration:
   alt: "Une pile de pages s'envole au-dessus d'une tête où un cerveau électronique surchargé s'illumine"
   src: "/talks/context-engineering-optimized.webp"
   variant: "agents"
 ---
 
-Livrer avec des agents de code ne se résume pas à choisir un bon modèle. Il faut construire une factory IA, la chaîne d’outils qui permet de shipper vite et proprement avec de l’IA.
+Les agents produisent du code plus vite, mais les pull requests s’accumulent. L’équipe peine à les relire, la CI est sollicitée en permanence et les corrections déclenchent de nouveaux cycles. Comment repérer ce qui bloque dans son harnais et choisir où intervenir ?
 
-Le talk passe en revue ses briques :
+À partir de son expérience chez Méthode Aristote et auprès des entreprises qu’il accompagne, des start-up aux scale-up en passant par les PME, Florian Bruniaux explore deux leviers :
 
-- le spec-driven development, où la spécification pilote l’agent et sert de référence ;
-- l’orchestration de plusieurs agents en parallèle ;
-- le harness et le context engineering, avec le choix des outils, la mémoire, et la raison pour laquelle plus de contexte dégrade souvent les résultats ;
-- la code review par IA, pour relire aussi vite que les agents produisent ;
-- le contrôle des coûts, entre tokens, choix des modèles et cache.
+- déplacer les contrôles pertinents en local ;
+- améliorer les boucles de review humaines et automatisées.
 
-L’objectif : livrer plus vite, à moindre coût et avec un faible taux d’erreur.
+Une PR réelle, présentée à travers des captures préparées, sert de fil conducteur pour examiner les erreurs et les corrections apportées au harnais. L’objectif : repartir avec des questions concrètes pour analyser son propre fonctionnement et identifier les changements à essayer. La conclusion ouvre sur le partage de ces améliorations dans l’équipe.
+
+Pour les développeurs et responsables techniques qui utilisent déjà des agents. 30 minutes de contenu et 10 minutes de questions, sans démonstration en direct.
