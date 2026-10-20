@@ -4,8 +4,8 @@
 # Portrait : photo de profil LinkedIn fournie par l’organisateur (800 x 800 px, original conservé dans florian-bruniaux.png)
 name: "Florian Bruniaux"
 role: "Chief AI Officer"
-company: "Indépendant"
-cardCompany: "Indépendant"
+company: "Founding team @ RTK"
+cardCompany: "Founding team @ RTK"
 bio: "Chief AI Officer indépendant, Florian Bruniaux accompagne les entreprises dans leurs choix d’adoption de l’IA, leur mise en œuvre technique et la formation des équipes. Sa spécialité : le harness et le context engineering."
 profile:
   - "Florian Bruniaux accompagne les entreprises dans leurs choix d’adoption de l’IA, leur mise en œuvre technique et la formation des équipes. Chief AI Officer indépendant, il travaille avec les dirigeants sur les priorités et les budgets, puis avec les équipes sur les systèmes qu’elles utiliseront et maintiendront."

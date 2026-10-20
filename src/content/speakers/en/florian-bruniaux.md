@@ -1,6 +1,6 @@
 ---
 role: "Chief AI Officer"
-cardCompany: "Independent"
+cardCompany: "Founding team @ RTK"
 bio: "An independent Chief AI Officer, Florian Bruniaux helps companies decide how to adopt AI, implement it technically and train their teams. His specialty: harness and context engineering."
 profile:
   - "Florian Bruniaux helps companies decide how to adopt AI, implement it technically and train their teams. As an independent Chief AI Officer, he works with executives on priorities and budgets, then with teams on the systems they will use and maintain."
