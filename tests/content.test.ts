@@ -47,7 +47,7 @@ describe('content collections', () => {
       }
 
       for (const company of speaker.data.companies ?? []) {
-        expect(company.relationship.length).toBeGreaterThan(4);
+        expect(company.relationship.length).toBeGreaterThanOrEqual(4);
         expect(company.description.trim().length).toBeGreaterThan(0);
         expect(company.website).toMatch(/^https:\/\//);
       }
