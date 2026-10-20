@@ -1,7 +1,7 @@
 ---
-title: "My defenses can’t keep up with attacks by autonomous agents"
+title: "15-year-olds are using ChatGPT to exfiltrate my data"
 subtitle: "Applied cybersecurity in the age of AI"
-seoTitle: "My defenses can’t keep up with attacks by autonomous agents"
+seoTitle: "15-year-olds are using ChatGPT to exfiltrate my data"
 themes: ["Cybersecurity", "Autonomous agents", "Adaptive defense"]
 illustration:
   alt: "A robotic soldier faces a swarm of autonomous agents charging toward it in formation"

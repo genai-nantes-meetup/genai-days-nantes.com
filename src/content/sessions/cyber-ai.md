@@ -1,7 +1,7 @@
 ---
-title: "Ma défense ne s'adapte pas assez vite aux attaques des agents autonomes"
+title: "Des ados de 15 ans utilisent ChatGPT pour exfiltrer mes données"
 subtitle: "Cybersécurité appliquée à l'ère de l'IA"
-seoTitle: "Ma défense ne s'adapte pas assez vite aux attaques des agents autonomes"
+seoTitle: "Des ados de 15 ans utilisent ChatGPT pour exfiltrer mes données"
 track: "tech"
 startTime: "14:25"
 durationMinutes: 40
