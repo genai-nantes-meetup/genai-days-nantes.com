@@ -467,10 +467,12 @@ const socialLinks = [
     position: absolute;
     right: 0.8rem;
     bottom: 0.8rem;
-    display: grid;
+    /* Flex, not grid: in this grid portrait the logo's height: 100% stayed unresolved and the logo overflowed at its natural size. */
+    display: flex;
     min-width: 3.5rem;
     height: 3.5rem;
-    place-items: center;
+    align-items: center;
+    justify-content: center;
     border-radius: 0.4rem;
     --photo-logo-corner-gap: 0.8rem;
   }
