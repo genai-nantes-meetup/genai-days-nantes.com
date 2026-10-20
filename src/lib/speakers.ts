@@ -66,8 +66,8 @@ export const SPEAKER_STARTUP_CONTEST_PITCHERS_ORDER = ['emmanuel-marboeuf', 'pau
 /* Jury du Startup Contest : après les pitcheurs, avant les MC. */
 export const SPEAKER_STARTUP_CONTEST_JURY_ORDER = ['sebastien-le-corfec', 'thomas-mathieu', 'david-leaurant'] as const;
 
-/* Modérateur·rice de la table ronde : après le jury, juste avant les MC. */
-export const SPEAKER_ROUNDTABLE_MODERATORS_ORDER = ['celine-haentzler'] as const;
+/* Modératrices des tables rondes : après le jury, juste avant les MC. */
+export const SPEAKER_ROUNDTABLE_MODERATORS_ORDER = ['celine-haentzler', 'claire-augris'] as const;
 
 /* MC de la journée : toujours en fin de liste, après tous les autres speakers. */
 export const SPEAKER_MASTERS_OF_CEREMONIES_ORDER = [
@@ -85,6 +85,7 @@ export const SPEAKER_MASTERS_OF_CEREMONIES_ORDER = [
 export const SPEAKER_PORTRAIT_DIMENSIONS: Record<string, { width: number; height: number }> = {
   'annabelle-koster': { width: 800, height: 800 },
   'celine-haentzler': { width: 800, height: 800 },
+  'claire-augris': { width: 800, height: 800 },
   'benoit-hediard': { width: 800, height: 800 },
   'camille-croze': { width: 400, height: 400 },
   'christelle-morancais': { width: 952, height: 952 },
