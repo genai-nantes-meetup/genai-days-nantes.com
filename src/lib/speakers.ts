@@ -99,7 +99,7 @@ export const SPEAKER_PORTRAIT_DIMENSIONS: Record<string, { width: number; height
   'gabriel-lancelot': { width: 800, height: 800 },
   'gael-brisson': { width: 1024, height: 1024 },
   'jaafar-steiblen-raji': { width: 800, height: 920 },
-  'jean-yves-simon': { width: 512, height: 512 },
+  'jean-yves-simon': { width: 800, height: 800 },
   'julien-lesaicherre': { width: 800, height: 800 },
   'laurent-duthoit': { width: 1000, height: 1000 },
   'marie-fleur-sacreste': { width: 800, height: 800 },

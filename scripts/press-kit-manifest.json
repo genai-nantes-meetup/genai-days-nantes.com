@@ -61,7 +61,7 @@
   "src/content/speakers/gael-brisson.md": "ae15ae0e6a46a2b1c921a8c44108db9428dd7cbe3b6bc8c0d7d9fa3578655a8b",
   "src/content/speakers/jaafar-steiblen-raji.md": "fe4776aafd5091d96a387660166a1044c9d6be733fc0ea822787e2e82f6011fa",
   "src/content/speakers/jean-baptiste-kempf.md": "ef1293508a5068f4c142a2634e2e8f8ef9a2349c147d4b54122456fcfcd55ce3",
-  "src/content/speakers/jean-yves-simon.md": "c9ddf96ba14de903030eb06e1f36831896bae7e5f9362a1206b7f8e70d72f836",
+  "src/content/speakers/jean-yves-simon.md": "a6abe077cb91aef11de25f44052d3fd2e50ede5790e995323bcfea1531d5d6c3",
   "src/content/speakers/julien-lesaicherre.md": "6ca677b0c9f9c0cd3102391aa69865179db88f9b9eb2f1d28d25e253d4c1a549",
   "src/content/speakers/laurent-duthoit.md": "248c1d0ad3ab39ff2c1ac15a2a3779c5d924dd313a3443a3a743874c190f9dc6",
   "src/content/speakers/marie-fleur-sacreste.md": "3f7041fa8ac3d3d75e111bb63d3b6f26be0a7be38554be8ca8bfa5f4171d7747",
@@ -85,6 +85,6 @@
   "src/content/tracks/tech.md": "72ee8c4ace7779e59936b0bc0e1dd20e903f40bb848299d87fc3f1a75b99ada3",
   "src/lib/cta-links.ts": "f0714d00307ad451ef193cf8806257aa9850fe11b63d647365c7311cfd1e9b96",
   "src/lib/programme.ts": "cd07d3fb61887d5c0a2c5575f92d1bd4eb3e83372b7e20d0f092871ef14908ee",
-  "src/lib/speakers.ts": "1a1e31a15bd2f4584d3218a42eb7fbd125b4a71e3e16ff11c841bc7d4248558b",
+  "src/lib/speakers.ts": "580e0d44750d50b5ea029bdc8baacdbc511595ce02b981c18a0e85f9c7567826",
   "src/styles/global.css": "35d9390f028fc0645bded079614c0c01eb77c353cc1588da505ba614dafe0726"
 }
