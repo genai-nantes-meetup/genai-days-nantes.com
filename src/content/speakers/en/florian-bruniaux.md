@@ -23,4 +23,11 @@ careerHighlights:
   - period: "2018 to 2021"
     title: "CTO at eXplain"
     description: "Building the technical team and developing an opinion analysis platform that uses AI."
+companies:
+  - relationship: "AI Founding Engineer, then freelance collaboration"
+    description: "Méthode Aristote offers online tutoring for middle and high school students, combining tutors with an AI-powered platform."
+  - relationship: "CTPO"
+    description: "Native Spaces is an online platform for finding a venue for seminars, team meetings, afterworks or product launches."
+  - relationship: "Engineering Manager then VP Engineering"
+    description: "Cheerz is a French company that prints photos and personalized photo products, through a mobile app and an online store."
 ---

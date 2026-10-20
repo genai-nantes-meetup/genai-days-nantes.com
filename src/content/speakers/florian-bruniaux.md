@@ -1,5 +1,6 @@
 ---
 # Sources : fiche speaker fournie par l’intervenant (parcours, légitimité, repères de carrière), https://www.linkedin.com/in/florian-bruniaux-43408b83/ (profil) et https://www.florian.bruniaux.com/ (titre « Hands-on Chief AI Officer »)
+# Logos : sites officiels de Méthode Aristote (SVG), Native Spaces (SVG) et Cheerz (PNG du blog, converti en WebP sans perte)
 # Portrait : photo de profil LinkedIn fournie par l’organisateur (800 x 800 px, original conservé dans florian-bruniaux.png)
 name: "Florian Bruniaux"
 role: "Chief AI Officer"
@@ -27,6 +28,22 @@ careerHighlights:
   - period: "2018 à 2021"
     title: "CTO chez eXplain"
     description: "Constitution de l’équipe technique et développement d’une plateforme d’analyse de l’opinion utilisant l’IA."
+companies:
+  - name: "Méthode Aristote"
+    relationship: "AI Founding Engineer, puis collaboration freelance"
+    description: "Méthode Aristote propose un soutien scolaire en ligne, de la quatrième à la terminale, qui associe tuteurs et plateforme intégrant l’IA."
+    website: "https://www.methode-aristote.fr/"
+    logo: "/logos/methode-aristote-optimized.svg"
+  - name: "Native Spaces"
+    relationship: "CTPO"
+    description: "Native Spaces est une plateforme en ligne pour trouver un lieu où organiser séminaires, réunions d’équipe, afterworks ou lancements de produit."
+    website: "https://native-spaces.com/"
+    logo: "/logos/native-spaces-optimized.svg"
+  - name: "Cheerz"
+    relationship: "Engineering Manager puis VP Engineering"
+    description: "Cheerz est une entreprise française d’impression de photos et de produits photo personnalisés, qui s’appuie sur une application mobile et un site de commande en ligne."
+    website: "https://www.cheerz.com/"
+    logo: "/logos/cheerz-optimized.webp"
 photo: "/speakers/florian-bruniaux-optimized.webp"
 linkedin: "https://www.linkedin.com/in/florian-bruniaux-43408b83/"
 website: "https://www.florian.bruniaux.com/"
