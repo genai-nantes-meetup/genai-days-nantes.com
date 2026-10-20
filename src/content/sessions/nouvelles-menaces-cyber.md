@@ -1,7 +1,7 @@
 ---
-title: "Cyberattaque : l’IA ouvre-t-elle la boîte de Pandore ?"
+title: "Ma sécurité ne fait pas le poids face aux IA"
 subtitle: "Cyberattaque : l’IA ouvre-t-elle la boîte de Pandore ?"
-seoTitle: "Cyberattaque : l’IA ouvre-t-elle la boîte de Pandore ?"
+seoTitle: "Ma sécurité ne fait pas le poids face aux IA"
 track: "decideurs"
 startTime: "16:55"
 durationMinutes: 40
