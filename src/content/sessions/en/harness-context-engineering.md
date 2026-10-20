@@ -16,4 +16,4 @@ Drawing on his work at Méthode Aristote and with the companies he supports, fro
 
 A real PR, shown through prepared screenshots, serves as the common thread for examining the mistakes and the fixes made to the harness. The goal: leave with concrete questions for analyzing your own way of working and identifying changes to try. The closing opens onto sharing these improvements across the team.
 
-For developers and technical leads who already use agents. 30 minutes of content and 10 minutes of questions, with no live demo.
+For developers and technical leads who already use agents. 30 minutes of content and 10 minutes of questions.

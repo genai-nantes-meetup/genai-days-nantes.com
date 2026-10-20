@@ -24,4 +24,4 @@ Les agents produisent du code plus vite, mais les pull requests s’accumulent. 
 
 Une PR réelle, présentée à travers des captures préparées, sert de fil conducteur pour examiner les erreurs et les corrections apportées au harnais. L’objectif : repartir avec des questions concrètes pour analyser son propre fonctionnement et identifier les changements à essayer. La conclusion ouvre sur le partage de ces améliorations dans l’équipe.
 
-Pour les développeurs et responsables techniques qui utilisent déjà des agents. 30 minutes de contenu et 10 minutes de questions, sans démonstration en direct.
+Pour les développeurs et responsables techniques qui utilisent déjà des agents. 30 minutes de contenu et 10 minutes de questions.
