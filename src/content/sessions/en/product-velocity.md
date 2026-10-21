@@ -7,6 +7,8 @@ illustration:
   alt: "A tiny worker on a stepladder faces a giant statue head whose hair is being built from blue and orange blocks"
 ---
 
-With coding agents, building has never cost so little. Teams ship every week, sometimes every day, and lose sight of what those releases change for their users.
+How do you build the right features when code is no longer the main bottleneck?
 
-A field report from Mirakl, full of stories from the trenches: what worked, what went sideways, what had to be unlearned. This session is about rethinking how teams are organized when everyone can build anything. The role of dev, product and UX: who decides what, who builds what, and how to find the question that matters before writing a single line.
+With coding agents, we prototype in a few hours and ship features in a few days. But shipping faster does not mean creating more value. How do we know that what we build meets a real need? And how do we avoid piling up features nobody uses?
+
+For years, we optimized our teams and Engineering practices to build faster. With AI, the rules change. If developers can prototype their own ideas directly, and PMs and designers can produce code themselves, how should we work together? Drawing on his experience at AB Tasty and Mirakl, Jean-Yves Simon will share concrete examples of what is changing in Tech & Product teams, what works, and what is still to be invented.
