@@ -3,7 +3,7 @@ title: "Mon modèle ne tient pas sur une puce embarquée"
 subtitle: "Small language models, fine-tuning & compression"
 seoTitle: "Mon modèle ne tient pas sur une puce embarquée"
 track: "tech"
-startTime: "11:15"
+startTime: "14:25"
 durationMinutes: 40
 room: ""
 speakerSlugs: ["theo-hubert"]

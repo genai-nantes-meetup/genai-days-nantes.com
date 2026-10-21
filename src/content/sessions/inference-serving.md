@@ -3,7 +3,7 @@ title: "L’inférence de mon Mac mini est lente"
 subtitle: "Du GPU à la plateforme d’inférence"
 seoTitle: "L’inférence de mon Mac mini est lente"
 track: "tech"
-startTime: "10:20"
+startTime: "11:15"
 durationMinutes: 40
 room: ""
 speakerSlugs: []
