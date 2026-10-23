@@ -61,7 +61,7 @@ export const SPEAKER_PROMINENCE_ORDER = [
 ] as const;
 
 /* Pitcheurs du Startup Contest : après les autres speakers, avant les MC. */
-export const SPEAKER_STARTUP_CONTEST_PITCHERS_ORDER = ['emmanuel-marboeuf', 'pauline-corriou', 'gabriel-lancelot'] as const;
+export const SPEAKER_STARTUP_CONTEST_PITCHERS_ORDER = ['emmanuel-marboeuf', 'pauline-corriou', 'gabriel-lancelot', 'aurelie-pecaud'] as const;
 
 /* Jury du Startup Contest : après les pitcheurs, avant les MC. */
 export const SPEAKER_STARTUP_CONTEST_JURY_ORDER = ['sebastien-le-corfec', 'thomas-mathieu', 'david-leaurant'] as const;
@@ -84,6 +84,7 @@ export const SPEAKER_MASTERS_OF_CEREMONIES_ORDER = [
  * l'espace d'image avant chargement et éviter un décalage de mise en page. */
 export const SPEAKER_PORTRAIT_DIMENSIONS: Record<string, { width: number; height: number }> = {
   'annabelle-koster': { width: 800, height: 800 },
+  'aurelie-pecaud': { width: 800, height: 800 },
   'celine-haentzler': { width: 800, height: 800 },
   'claire-augris': { width: 800, height: 800 },
   'benoit-hediard': { width: 800, height: 800 },
@@ -123,6 +124,7 @@ export const SPEAKER_PORTRAIT_DIMENSIONS: Record<string, { width: number; height
 const SPEAKER_PORTRAIT_SMALL_WIDTH = 480;
 
 export const SPEAKER_PORTRAIT_SMALL: Partial<Record<string, string>> = {
+  'aurelie-pecaud': '/speakers/aurelie-pecaud-480-optimized.webp',
   'christelle-morancais': '/speakers/christelle-morancais-480-optimized.webp',
   'constance-nebbula': '/speakers/constance-nebbula-480-optimized.webp',
   'david-leaurant': '/speakers/david-leaurant-480-optimized.webp',

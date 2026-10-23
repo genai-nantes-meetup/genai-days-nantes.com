@@ -45,6 +45,7 @@
   "src/content/sessions/startup-contest.md": "f93c341ab28b5057ea72073128e486c91dc0f6f0e3fff13381e8f649751117c6",
   "src/content/sessions/voice-agents.md": "720b8598f257ca742b6ba6630762a3281a7aaf3124ee828a78fee207903666a4",
   "src/content/speakers/annabelle-koster.md": "5647626b8a757b6206b6d60e86b51f7a81610abaf969ba7b43b534ce8da92f47",
+  "src/content/speakers/aurelie-pecaud.md": "84266333926c8759fe29f46ca21d8bfdb751b494d0844e823e102b3addb06c83",
   "src/content/speakers/benoit-hediard.md": "2b8f32a985f5eb505e0489182e02b4c5093b7ec062d2301d541e3910c544d9a8",
   "src/content/speakers/camille-croze.md": "e302d10f0e8f89fffdc918bcaa836e0183b38e8d7f191e0076bb95eeccfa25e7",
   "src/content/speakers/celine-haentzler.md": "dde4b711b5f682dfb36332463f64ae2031d619ce8aa5bac65f0c125ede347a95",
@@ -85,6 +86,6 @@
   "src/content/tracks/tech.md": "72ee8c4ace7779e59936b0bc0e1dd20e903f40bb848299d87fc3f1a75b99ada3",
   "src/lib/cta-links.ts": "f0714d00307ad451ef193cf8806257aa9850fe11b63d647365c7311cfd1e9b96",
   "src/lib/programme.ts": "cd07d3fb61887d5c0a2c5575f92d1bd4eb3e83372b7e20d0f092871ef14908ee",
-  "src/lib/speakers.ts": "580e0d44750d50b5ea029bdc8baacdbc511595ce02b981c18a0e85f9c7567826",
+  "src/lib/speakers.ts": "18f08957aa0145809e183409b9f89e65fe81d397a315a50fddce80e27b901686",
   "src/styles/global.css": "35d9390f028fc0645bded079614c0c01eb77c353cc1588da505ba614dafe0726"
 }
