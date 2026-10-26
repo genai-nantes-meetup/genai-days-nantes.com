@@ -10,4 +10,5 @@ bio: "Directeur général adjoint de CA-GIP, la plateforme d’infrastructures i
 photo: "/speakers/frederic-didier-optimized.webp"
 companyLogo: "/logos/credit-agricole-optimized.svg"
 companyLogoAlt: "Logo Crédit Agricole"
+linkedin: "https://www.linkedin.com/in/frdidier/"
 ---
