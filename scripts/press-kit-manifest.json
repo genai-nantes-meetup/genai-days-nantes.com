@@ -87,6 +87,6 @@
   "src/content/tracks/tech.md": "72ee8c4ace7779e59936b0bc0e1dd20e903f40bb848299d87fc3f1a75b99ada3",
   "src/lib/cta-links.ts": "f0714d00307ad451ef193cf8806257aa9850fe11b63d647365c7311cfd1e9b96",
   "src/lib/programme.ts": "cd07d3fb61887d5c0a2c5575f92d1bd4eb3e83372b7e20d0f092871ef14908ee",
-  "src/lib/speakers.ts": "bd31e4f35aee39bc81b46b81476b899d70cd2cd6a4cbe5665e3457216af23596",
+  "src/lib/speakers.ts": "015d53cac0894da32e42d432125e8b1be156656012eb26c1eb2e7649692cbda4",
   "src/styles/global.css": "35d9390f028fc0645bded079614c0c01eb77c353cc1588da505ba614dafe0726"
 }

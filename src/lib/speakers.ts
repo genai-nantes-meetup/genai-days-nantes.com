@@ -54,11 +54,11 @@ export const SPEAKER_PROMINENCE_ORDER = [
   'regis-dubrulle',
   'olivier-lauvray',
   'quentin-adam',
+  'camille-marini',
   'laurent-duthoit',
   'nicolas-martignole',
   'theo-hubert',
   'jean-yves-simon',
-  'camille-marini',
 ] as const;
 
 /* Pitcheurs du Startup Contest : après les autres speakers, avant les MC. */
