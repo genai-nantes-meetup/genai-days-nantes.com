@@ -58,6 +58,7 @@ export const SPEAKER_PROMINENCE_ORDER = [
   'nicolas-martignole',
   'theo-hubert',
   'jean-yves-simon',
+  'camille-marini',
 ] as const;
 
 /* Pitcheurs du Startup Contest : après les autres speakers, avant les MC. */
@@ -89,6 +90,7 @@ export const SPEAKER_PORTRAIT_DIMENSIONS: Record<string, { width: number; height
   'claire-augris': { width: 800, height: 800 },
   'benoit-hediard': { width: 800, height: 800 },
   'camille-croze': { width: 400, height: 400 },
+  'camille-marini': { width: 800, height: 800 },
   'christelle-morancais': { width: 952, height: 952 },
   'constance-nebbula': { width: 832, height: 832 },
   'david-leaurant': { width: 800, height: 800 },
@@ -125,6 +127,7 @@ const SPEAKER_PORTRAIT_SMALL_WIDTH = 480;
 
 export const SPEAKER_PORTRAIT_SMALL: Partial<Record<string, string>> = {
   'aurelie-pecaud': '/speakers/aurelie-pecaud-480-optimized.webp',
+  'camille-marini': '/speakers/camille-marini-480-optimized.webp',
   'christelle-morancais': '/speakers/christelle-morancais-480-optimized.webp',
   'constance-nebbula': '/speakers/constance-nebbula-480-optimized.webp',
   'david-leaurant': '/speakers/david-leaurant-480-optimized.webp',
