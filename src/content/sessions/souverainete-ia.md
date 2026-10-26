@@ -6,7 +6,7 @@ track: "decideurs"
 startTime: "10:20"
 durationMinutes: 40
 room: ""
-speakerSlugs: ["claire-augris", "quentin-adam", "constance-nebbula", "jean-baptiste-kempf"]
+speakerSlugs: ["quentin-adam", "constance-nebbula", "jean-baptiste-kempf", "claire-augris"]
 format: "table-ronde"
 themes: ["Souveraineté", "Cloud", "RGPD", "infrastructure"]
 illustration:

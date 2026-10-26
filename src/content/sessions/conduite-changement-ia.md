@@ -6,7 +6,7 @@ track: "decideurs"
 startTime: "16:00"
 durationMinutes: 40
 room: ""
-speakerSlugs: ["celine-haentzler", "delphine-ziegler", "frederic-didier", "camille-marini"]
+speakerSlugs: ["camille-marini", "frederic-didier", "delphine-ziegler", "celine-haentzler"]
 format: "table-ronde"
 themes: ["Conduite du changement", "Acceptabilité de l'IA", "Formation des équipes"]
 illustration:
