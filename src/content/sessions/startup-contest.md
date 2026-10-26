@@ -7,7 +7,7 @@ track: "decideurs"
 startTime: "11:55"
 durationMinutes: 30
 room: ""
-speakerSlugs: ["constance-nebbula", "sebastien-le-corfec", "thomas-mathieu", "david-leaurant", "florian-herveou"]
+speakerSlugs: ["emmanuel-marboeuf", "pauline-corriou", "gabriel-lancelot", "aurelie-pecaud", "constance-nebbula", "sebastien-le-corfec", "thomas-mathieu", "david-leaurant", "florian-herveou"]
 format: "concours"
 themes: ["Startups IA", "Pitch", "Entrepreneuriat"]
 illustration:
@@ -18,4 +18,4 @@ illustration:
 
 Des startups présentent leur projet d’intelligence artificielle devant un jury d’entrepreneurs et de décideurs. Florian Hervéou anime les pitchs, les questions et la délibération.
 
-Les startups nomminées seront annoncées dans les prochaines semaines.
+Les quatre finalistes pitchent : Emmanuel Marboeuf (BWorlds), Pauline Corriou (Motiv), Gabriel Lancelot (Barkan) et Aurélie Pécaud (Laborhêto).
