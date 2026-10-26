@@ -1,6 +1,7 @@
 ---
 # Sources : https://www.linkedin.com/in/camille-m-b585b210/ (profil LinkedIn)
 # Parcours, regard et légitimité GenAI : texte de présentation fourni par l’organisation
+# Logo : fourni par l’organisation (original PNG 500 x 500 px, conservé dans alan.png)
 # Portrait : https://www.linkedin.com/in/camille-m-b585b210/ (original PNG 800 x 800 px, conservé dans camille-marini.png)
 name: "Camille Marini"
 role: "Director of Engineering"
@@ -29,7 +30,9 @@ companies:
     relationship: "Director of Engineering"
     description: "Alan est une assurance santé qui réinvente l’expérience de ses membres, avec un support client augmenté par l’IA."
     website: "https://alan.com/"
+    logo: "/logos/alan-optimized.webp"
 photo: "/speakers/camille-marini-optimized.webp"
+companyLogo: "/logos/alan-optimized.webp"
 companyLogoAlt: "Logo Alan"
 linkedin: "https://www.linkedin.com/in/camille-m-b585b210/"
 ---
