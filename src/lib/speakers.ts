@@ -128,6 +128,7 @@ const SPEAKER_PORTRAIT_SMALL_WIDTH = 480;
 export const SPEAKER_PORTRAIT_SMALL: Partial<Record<string, string>> = {
   'aurelie-pecaud': '/speakers/aurelie-pecaud-480-optimized.webp',
   'camille-marini': '/speakers/camille-marini-480-optimized.webp',
+  'claire-augris': '/speakers/claire-augris-480-optimized.webp',
   'christelle-morancais': '/speakers/christelle-morancais-480-optimized.webp',
   'constance-nebbula': '/speakers/constance-nebbula-480-optimized.webp',
   'david-leaurant': '/speakers/david-leaurant-480-optimized.webp',
