@@ -4,7 +4,7 @@ subtitle: "15-year-olds are using ChatGPT to exfiltrate my data"
 seoTitle: "My security is no match for AI"
 themes: ["Cybersecurity", "Generative AI", "Data exfiltration"]
 illustration:
-  alt: "A figure seen from behind watches a stream of data scroll past, overlaid on a city at night"
+  alt: "A robotic soldier faces a swarm of autonomous agents charging toward it in formation"
 ---
 
 **Skills, speed, autonomy: a change of scale**

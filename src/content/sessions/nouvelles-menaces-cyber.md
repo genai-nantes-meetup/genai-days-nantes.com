@@ -10,8 +10,8 @@ speakerSlugs: ["regis-dubrulle"]
 format: "talk"
 themes: ["Cybersécurité", "IA générative", "Exfiltration de données"]
 illustration:
-  alt: "Une silhouette de dos regarde un flot de données défiler en surimpression d'une ville nocturne"
-  src: "/talks/nouvelles-menaces-cyber-optimized.webp"
+  alt: "Un soldat robotique fait face à une nuée d'agents autonomes fonçant vers lui en formation"
+  src: "/talks/cyber-ai-optimized.webp"
   variant: "sovereignty"
 ---
 

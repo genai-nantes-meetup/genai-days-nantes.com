@@ -10,8 +10,8 @@ speakerSlugs: []
 format: "talk"
 themes: ["Cybersécurité", "Agents autonomes", "Défense adaptative"]
 illustration:
-  alt: "Un soldat robotique fait face à une nuée d'agents autonomes fonçant vers lui en formation"
-  src: "/talks/cyber-ai-optimized.webp"
+  alt: "Une silhouette de dos regarde un flot de données défiler en surimpression d'une ville nocturne"
+  src: "/talks/nouvelles-menaces-cyber-optimized.webp"
   variant: "transformation"
 ---
 
