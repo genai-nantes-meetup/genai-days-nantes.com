@@ -9,6 +9,6 @@ monochromeLogo: "/logos/la-cantine-french-tech-white-optimized.webp"
 monochromeLogoWidth: 900
 monochromeLogoHeight: 396
 logoOpticalScale: 1.35
-order: 20
+order: 21
 description: "La Cantine x La French Tech Nantes fédère l’écosystème numérique et entrepreneurial nantais, organise des programmes d’accompagnement et soutient les rencontres entre fondateurs, entreprises et experts."
 ---
