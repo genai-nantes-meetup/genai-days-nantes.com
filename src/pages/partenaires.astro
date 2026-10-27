@@ -49,6 +49,9 @@ const copy = {
   },
 }[locale];
 
+// Rows the wall gives each tier from 40rem up: columns per row follow the partner count, so a new partner never leaves an orphan row.
+const TIER_ROWS = { platinum: undefined, gold: 3, silver: 2 } as const;
+
 const partnerGroups = tierSequence.map((tier) => {
   const tierPartners = partners
     .filter((partner) => partner.data.tier === tier)
@@ -69,9 +72,11 @@ const partnerGroups = tierSequence.map((tier) => {
 
       return { partner, logo, opticalSize };
     });
+  const rows = TIER_ROWS[tier];
   return {
     tier,
     partners: tierPartners,
+    columns: rows ? Math.ceil(tierPartners.length / rows) : undefined,
   };
 }).filter((group) => group.partners.length > 0);
 
@@ -155,6 +160,7 @@ const structuredData = [
               'partner-wall__group',
               `partner-wall__group--${group.tier}`,
             ]}
+            style={group.columns ? `--partner-columns: ${group.columns};` : undefined}
           >
             {group.partners.map(({ partner, logo, opticalSize }) => (
               <li
@@ -418,12 +424,9 @@ const structuredData = [
       --partner-gap: 2rem;
     }
 
-    .partner-wall__group--gold .partner-wall__item {
-      flex-basis: calc((100% - 2 * var(--partner-gap)) / 3);
-    }
-
+    .partner-wall__group--gold .partner-wall__item,
     .partner-wall__group--silver .partner-wall__item {
-      flex-basis: calc((100% - 4 * var(--partner-gap)) / 5);
+      flex-basis: calc((100% - (var(--partner-columns) - 1) * var(--partner-gap)) / var(--partner-columns));
     }
   }
 
@@ -447,8 +450,7 @@ const structuredData = [
       width: 72%;
     }
 
-    .partner-wall__group--platinum .partner-wall__item,
-    .partner-wall__group--gold .partner-wall__item {
+    .partner-wall__group--platinum .partner-wall__item {
       flex-basis: calc((100% - 3 * var(--partner-gap)) / 4);
     }
 
@@ -458,10 +460,6 @@ const structuredData = [
       --partner-gap: 1.5rem;
       width: 90%;
       max-width: 66rem;
-    }
-
-    .partner-wall__group--silver .partner-wall__item {
-      flex-basis: calc((100% - 7 * var(--partner-gap)) / 8);
     }
   }
 
