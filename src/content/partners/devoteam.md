@@ -10,7 +10,7 @@ monochromeLogo: "/logos/devoteam-mono-optimized.svg"
 monochromeLogoWidth: 492
 monochromeLogoHeight: 147
 logoOpticalScale: 1.4
-order: 21
+order: 22
 # Présentation : https://www.devoteam.com/fr/a-propos/
 description: "Devoteam est un cabinet de conseil technologique spécialisé dans le cloud, la cybersécurité, la donnée et l’intelligence artificielle."
 ---
