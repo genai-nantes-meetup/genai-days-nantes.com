@@ -1,6 +1,6 @@
 ---
 title: "The more context I give it, the worse it gets"
-subtitle: "Agentic dev & dev tools"
+subtitle: "AI Factory, Agentic dev & dev tools"
 seoTitle: "The more context I give it, the worse it gets"
 themes: ["Agentic coding", "Code review", "Software quality"]
 illustration:

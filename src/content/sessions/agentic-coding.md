@@ -1,6 +1,6 @@
 ---
 title: "Plus je lui donne de context, moins il est bon"
-subtitle: "Agentic dev & dev tools"
+subtitle: "AI Factory, Agentic dev & dev tools"
 seoTitle: "Plus je lui donne de context, moins il est bon"
 track: "tech"
 startTime: "15:20"
