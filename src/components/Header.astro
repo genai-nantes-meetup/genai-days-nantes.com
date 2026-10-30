@@ -5,6 +5,7 @@ import EventName from './EventName.astro';
 import LanguageMenu from './LanguageMenu.astro';
 import { CTA_LINKS } from '../lib/cta-links';
 import { getLocaleFromPath, localizePath } from '../lib/i18n';
+import { getTicketCtaCopy } from '../lib/pricing';
 import EVENT from '../content/event.json';
 
 interface Props {
@@ -53,7 +54,6 @@ const copy = {
     directoryOpenLabel: 'Explorer le site',
     newTabHint: ', ouvre un nouvel onglet',
     ticketsLabel: 'Billetterie',
-    ticketsCta: 'Réserver ma place',
   },
   en: {
     primaryLinks: [
@@ -80,9 +80,9 @@ const copy = {
     directoryOpenLabel: 'Explore the site',
     newTabHint: ', opens in a new tab',
     ticketsLabel: 'Tickets',
-    ticketsCta: 'Book my seat',
   },
 }[locale];
+const ticketCta = getTicketCtaCopy(locale).compact;
 
 /* Le menu ne relie que des pages, jamais des ancres de la landing : chaque
  * destination n'y apparaît qu'une fois. Explorer range les pages annexes. */
@@ -138,7 +138,7 @@ const isCurrentPage = (href: string) =>
 
   <div class="site-header__actions col-start-3 items-center justify-self-end">
     <LanguageMenu id="language-menu" class="site-header__language" />
-    <Button class:list={['header-cta header-cta--tickets', { 'header-cta--poster': immersive }]} variant="accent" href={CTA_LINKS.tickets}>{copy.ticketsCta}</Button>
+    <Button class:list={['header-cta header-cta--tickets', { 'header-cta--poster': immersive }]} variant="accent" href={CTA_LINKS.tickets}>{ticketCta}</Button>
   </div>
 
   <div
@@ -211,7 +211,7 @@ const isCurrentPage = (href: string) =>
 {/* Le CTA est fixe, donc hors du flux : sans ce conteneur il vivrait en
     enfant direct de <body>, en dehors de tout point de repère. */}
 <aside class="mobile-ticket-bar" aria-label={copy.ticketsLabel}>
-  <Button class:list={['mobile-ticket-cta', { 'mobile-ticket-cta--poster': immersive }]} variant="accent" href={CTA_LINKS.tickets}>{copy.ticketsCta}</Button>
+  <Button class:list={['mobile-ticket-cta', { 'mobile-ticket-cta--poster': immersive }]} variant="accent" href={CTA_LINKS.tickets}>{ticketCta}</Button>
 </aside>
 
 <script>

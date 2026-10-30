@@ -2,6 +2,7 @@
   "name": "Pass Participant",
   "capacity": 400,
   "amount": 147,
+  "availability": "waitlist",
   "policy": "Place transférable à un·e collègue jusqu’au jour J depuis la billetterie. Remboursement sur demande.",
   "en": {
     "name": "Participant Pass",

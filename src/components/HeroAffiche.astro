@@ -16,6 +16,7 @@ import HeroSponsorsMarquee from './HeroSponsorsMarquee.astro';
 import Button from './Button.astro';
 import { CTA_LINKS } from '../lib/cta-links';
 import PRICING from '../content/pricing.json';
+import { getTicketCtaCopy, IS_WAITLIST_OPEN } from '../lib/pricing';
 import { EVENT, formatEventDateCompact, formatEventDateLabel } from '../lib/event';
 import { getLocaleFromPath, INTL_LOCALES } from '../lib/i18n';
 
@@ -36,14 +37,14 @@ const copy = {
   fr: {
     dateLong: `${eventWeekdayUppercase} ${eventDay} ${eventMonth} ${eventYear}`,
     capacity: `+ ${PRICING.capacity} PARTICIPANTS`,
-    bookSeat: 'Réserver ma place',
+    soldOut: 'COMPLET',
     coOrganizerAlt: (name: string) => `${name}, soutien de l’événement`,
     coOrganizedWith: (name: string) => `Avec le soutien de la ${name}`,
   },
   en: {
     dateLong: `${eventWeekdayUppercase}, ${eventMonth} ${eventDay}, ${eventYear}`,
     capacity: `${PRICING.capacity}+ ATTENDEES`,
-    bookSeat: 'Book my seat',
+    soldOut: 'SOLD OUT',
     coOrganizerAlt: (name: string) => `${name}, event supporter`,
     coOrganizedWith: (name: string) => `With support from the ${name}`,
   },
@@ -144,10 +145,10 @@ const copy = {
             <span class="hero-affiche__date-short">{formatEventDateCompact()}</span>
           </time>
           <span class="hero-affiche__venue">{EVENT.venue.shortName}<span class="hero-affiche__city">, {EVENT.venue.city}</span></span>
-          <span class="hero-affiche__capacity">{copy.capacity}</span>
+          <span class="hero-affiche__capacity">{copy.capacity}{IS_WAITLIST_OPEN && <> · <strong class="hero-affiche__sold-out">{copy.soldOut}</strong></>}</span>
         </p>
         <div class="hero-affiche__cta">
-          <Button variant="accent" href={CTA_LINKS.tickets}>{copy.bookSeat}</Button>
+          <Button variant="accent" href={CTA_LINKS.tickets}>{getTicketCtaCopy(locale).full}</Button>
         </div>
         <div class="hero-affiche__sponsors">
           <HeroSponsorsMarquee />
@@ -540,6 +541,11 @@ const copy = {
 
   .hero-affiche__date-short {
     display: none;
+  }
+
+  .hero-affiche__sold-out {
+    color: var(--color-brand-orange);
+    font-weight: inherit;
   }
 
   .hero-affiche__coorganizer--relay {

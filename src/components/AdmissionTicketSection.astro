@@ -7,7 +7,15 @@ import EventName from './EventName.astro';
 import { CTA_LINKS } from '../lib/cta-links';
 import { EVENT, formatEventDateLabel } from '../lib/event';
 import { getLocaleFromPath, INTL_LOCALES, localizePath } from '../lib/i18n';
-import { formatPriceAmount, formatPriceTaxNote, formatShortPricingLine, getPricingCopy, PRICING } from '../lib/pricing';
+import {
+  formatPriceAmount,
+  formatPriceTaxNote,
+  formatShortPricingLine,
+  getPricingCopy,
+  getTicketCtaCopy,
+  IS_WAITLIST_OPEN,
+  PRICING,
+} from '../lib/pricing';
 
 const locale = getLocaleFromPath(Astro.url.pathname);
 const intlLocale = INTL_LOCALES[locale];
@@ -35,8 +43,8 @@ const copy = {
       { label: 'Après', lines: ["Accès privilégié aux autres événements de l'association"] },
     ],
     practicalLink: 'Préparer ma venue',
-    stubAccess: `Accès journée · ${PRICING.capacity} places`,
-    bookSeat: 'Réserver ma place',
+    stubAccess: IS_WAITLIST_OPEN ? `${PRICING.capacity} places · complet` : `Accès journée · ${PRICING.capacity} places`,
+    soldOutStamp: 'Complet',
   },
   en: {
     title: 'One pass for the whole day.',
@@ -53,8 +61,8 @@ const copy = {
       { label: 'After', lines: ['Priority access to the association’s other events'] },
     ],
     practicalLink: 'Plan my visit',
-    stubAccess: `Full-day access · ${PRICING.capacity} seats`,
-    bookSeat: 'Book my seat',
+    stubAccess: IS_WAITLIST_OPEN ? `${PRICING.capacity} seats · sold out` : `Full-day access · ${PRICING.capacity} seats`,
+    soldOutStamp: 'Sold out',
   },
 }[locale];
 ---
@@ -113,6 +121,12 @@ const copy = {
               {copy.practicalLink} <ArrowIcon />
             </a>
           </footer>
+          {IS_WAITLIST_OPEN && (
+            <p class="admission-ticket__stamp">
+              {copy.soldOutStamp}
+              <span>{PRICING.capacity} / {PRICING.capacity}</span>
+            </p>
+          )}
         </div>
         <div class="admission-ticket__stub">
           <EventName class="admission-ticket__stub-wordmark" />
@@ -128,7 +142,7 @@ const copy = {
       </article>
       <div class="ticket-field__cta">
         <EditorialCta href={CTA_LINKS.tickets} variant="conversion" target="_blank" rel="noopener">
-          {copy.bookSeat}
+          {getTicketCtaCopy(locale).full}
         </EditorialCta>
       </div>
     </div>
@@ -230,6 +244,73 @@ const copy = {
     padding: clamp(1rem, 4vw, 1.5rem);
     background: var(--color-brand-cream);
     box-shadow: none;
+  }
+
+  /* Tampon encreur frappé sur le billet quand les places sont parties : un
+   * geste de guichet, dans la machine à écrire du billet. Le masque de bruit
+   * imite un encrage irrégulier et le multiply laisse le papier transparaître.
+   * Tant que le billet est empilé, le tampon se pose dans le flux, entre
+   * l'en-tête et le prix, qu'il ne doit pas masquer. */
+  .admission-ticket__stamp {
+    --stamp-placement: translate(0, 0);
+    position: relative;
+    z-index: 3;
+    display: grid;
+    grid-row: 2;
+    justify-items: center;
+    justify-self: end;
+    margin: 1rem 0.5rem 0.25rem;
+    padding: 0.4rem 1.1rem 0.3rem;
+    border: 3px solid currentColor;
+    background: rgb(249 244 236 / 55%);
+    color: var(--color-brand-orange);
+    font-family: 'Special Elite', var(--font-nav);
+    font-size: clamp(1.75rem, 6vw, 2.75rem);
+    letter-spacing: 0.14em;
+    line-height: 1;
+    mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='70'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='4'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -2.2 1.9'/></filter><rect width='140' height='70' filter='url(%23n)'/></svg>");
+    mask-size: 140px 70px;
+    mix-blend-mode: multiply;
+    outline: 1.5px solid currentColor;
+    outline-offset: 3px;
+    pointer-events: none;
+    text-transform: uppercase;
+    transform: var(--stamp-placement) rotate(-9deg);
+    white-space: nowrap;
+  }
+
+  .admission-ticket__stamp span {
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.2em;
+  }
+
+  /* Le tampon se pose pendant l'entrée du billet à l'écran, puis reste. */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .admission-ticket__stamp {
+        animation: admission-ticket-stamp linear both;
+        animation-range: entry 40% cover 40%;
+        animation-timeline: view();
+      }
+    }
+  }
+
+  @keyframes admission-ticket-stamp {
+    0% {
+      opacity: 0;
+      transform: var(--stamp-placement) rotate(-9deg) scale(1.6);
+    }
+
+    70% {
+      opacity: 1;
+      transform: var(--stamp-placement) rotate(-9deg) scale(0.97);
+    }
+
+    100% {
+      opacity: 1;
+      transform: var(--stamp-placement) rotate(-9deg) scale(1);
+    }
   }
 
   .admission-ticket__header {
@@ -539,6 +620,11 @@ const copy = {
       display: none;
     }
 
+    .admission-ticket__stamp {
+      justify-self: start;
+      margin: 0.25rem 0 1.25rem 0.5rem;
+    }
+
     .admission-ticket__price {
       padding: 0 0 1.5rem;
       border-bottom: 0;
@@ -614,6 +700,16 @@ const copy = {
   @media (min-width: 64rem) {
     .ticket-field__heading {
       padding-inline: clamp(1.5rem, 2.5vw, 2rem);
+    }
+
+    /* Billet à plat : le tampon frappe le code-barres, à droite du prix. */
+    .admission-ticket__stamp {
+      --stamp-placement: translate(-50%, -50%);
+      position: absolute;
+      top: 24%;
+      left: 70%;
+      grid-row: auto;
+      margin: 0;
     }
 
     .admission-ticket {

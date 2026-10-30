@@ -1,6 +1,7 @@
 import { getCollection } from 'astro:content';
 import eventData from '../content/event.json';
 import PRICING from '../content/pricing.json';
+import { IS_WAITLIST_OPEN } from './pricing';
 import { INTL_LOCALES, type Locale } from './i18n';
 
 export const EVENT = eventData;
@@ -103,7 +104,7 @@ export async function buildEventJsonLd(siteUrl: string, ticketUrl: string, local
               priceCurrency: 'EUR',
               valueAddedTaxIncluded: false,
             },
-            availability: 'https://schema.org/InStock',
+            availability: IS_WAITLIST_OPEN ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock',
           },
         }
       : {}),

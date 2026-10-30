@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { getCollection } from 'astro:content';
 import SpeakersIndexPage from '../../src/pages/speakers/index.astro';
 import { EVENT_YEAR } from '../../src/lib/event';
+import { getTicketCtaCopy } from '../../src/lib/pricing';
 import { SPEAKER_TARGET, sortSpeakersByProminence, trackForSpeaker } from '../../src/lib/speakers';
 import { createAstroContainer } from '../utils/create-astro-container';
 
@@ -64,7 +65,7 @@ describe('speakers index page', () => {
     expect(html).not.toContain('speaker-tile__number');
     expect(html).toContain('/images/speaker_background-optimized.webp');
     expect(html).toContain('id="pass-participant"');
-    expect(html).toContain('Réserver ma place');
+    expect(html).toContain(getTicketCtaCopy('fr').full);
     expect(html).toContain('"@type":"CollectionPage"');
   });
 

@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
+import { getTicketCtaCopy } from '../../src/lib/pricing';
 import HeroAffiche from '../../src/components/HeroAffiche.astro';
 
 describe('HeroAffiche.astro', () => {
@@ -11,7 +12,8 @@ describe('HeroAffiche.astro', () => {
     expect(html).toContain('LA Conf Gen AI dédiée aux décideurs et leurs équipes techs');
     expect(html).toContain('2 tracks pour décider où investir et comprendre comment déployer');
     expect(html).not.toContain('placeholder-billetterie');
-    expect(html).toMatch(/hero-affiche__cta[\s\S]*href="https:\/\/www\.billetweb\.fr\/genai-days-nantes-2026"[\s\S]*Réserver ma place[\s\S]*hero-affiche__sponsors/);
+    expect(html).toMatch(/hero-affiche__cta[\s\S]*href="https:\/\/www\.billetweb\.fr\/genai-days-nantes-2026"/);
+    expect(html.slice(html.lastIndexOf('hero-affiche__cta'), html.lastIndexOf('hero-affiche__sponsors'))).toContain(getTicketCtaCopy('fr').full);
     expect(html).not.toContain('Prendre mon ticket');
     expect(html).toContain('data-poster-trame');
     expect(html).not.toContain('places limitées');
@@ -57,8 +59,8 @@ describe('HeroAffiche.astro', () => {
     // « decision-makers » ne se coupe jamais sur son trait d'union.
     expect(html).toMatch(/THE GenAI conference for <span class="whitespace-nowrap"[^>]*>decision-makers<\/span> and their tech teams/);
     expect(html).toContain('2 tracks to decide where to invest and learn how to deploy');
-    expect(html).toMatch(/hero-affiche__cta[\s\S]*Book my seat[\s\S]*hero-affiche__sponsors/);
-    expect(html).not.toContain('Réserver ma place');
+    expect(html.slice(html.lastIndexOf('hero-affiche__cta'), html.lastIndexOf('hero-affiche__sponsors'))).toContain(getTicketCtaCopy('en').full);
+    expect(html).not.toContain(getTicketCtaCopy('fr').full);
     expect(html).toMatch(/<b[^>]*>November<\/b>/);
     expect(html).toContain('TUESDAY, November 17, 2026');
     expect(html).toContain('400+ ATTENDEES');

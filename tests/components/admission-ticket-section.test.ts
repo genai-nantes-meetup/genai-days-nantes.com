@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
+import { getTicketCtaCopy, IS_WAITLIST_OPEN } from '../../src/lib/pricing';
 import AdmissionTicketSection from '../../src/components/AdmissionTicketSection.astro';
 
 describe('AdmissionTicketSection.astro', () => {
@@ -12,7 +13,7 @@ describe('AdmissionTicketSection.astro', () => {
     expect(html).toContain('147 €');
     expect(html).toContain('TVA non applicable');
     expect(html).not.toContain('TTC');
-    expect(html).toContain('Réserver ma place');
+    expect(html).toContain(getTicketCtaCopy('fr').full);
     expect(html).toContain('href="https://www.billetweb.fr/genai-days-nantes-2026"');
     expect(html).toContain('target="_blank"');
     expect(html).toContain('rel="noopener"');
@@ -37,11 +38,19 @@ describe('AdmissionTicketSection.astro', () => {
     expect(html).toContain('aria-label="Participant Pass · €147 · VAT not applicable"');
     expect(html).toContain('November 17, 2026');
     expect(html).toContain('17·NOV·26');
-    expect(html).toContain('Book my seat');
+    expect(html).toContain(getTicketCtaCopy('en').full);
     expect(html).toContain('href="/en/practical-info"');
-    expect(html).not.toContain('Réserver ma place');
+    expect(html).not.toContain(getTicketCtaCopy('fr').full);
     expect(html).toContain('VAT not applicable');
     expect(html).not.toContain('TTC');
     expect(html).not.toContain('incl. VAT');
+  });
+
+  it('stamps the ticket only once the seats are gone', async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(AdmissionTicketSection);
+
+    expect(html.includes('class="admission-ticket__stamp')).toBe(IS_WAITLIST_OPEN);
+    expect(html.includes('places · complet')).toBe(IS_WAITLIST_OPEN);
   });
 });

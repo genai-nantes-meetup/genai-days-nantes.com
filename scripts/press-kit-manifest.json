@@ -1,6 +1,6 @@
 {
   "scripts/build-press-kit.py": "76bba3e260f00396480a09f301c441818ba4b5ba4a1b5d167c2763c5190f7afe",
-  "src/components/HeroAffiche.astro": "dcaaff44d2743a3f054ebc65fa0550f7ce2ec46a9888bb7039da58246100559e",
+  "src/components/HeroAffiche.astro": "355b7e6dee6177f59d5d949e2c76f6ebf9fc3445dd1af1568e7547d85a7afdf4",
   "src/content/event.json": "e376eb672e9f9d1ccf380c2f8e3bb6ecdb0ecc8a45e44a196bfa20022ffcf91f",
   "src/content/partners/adn-ouest.md": "a6612c9e52e50c59bb8491640dc004827b2538200cfc887a29b85de883628e1f",
   "src/content/partners/alphaedge.md": "928a1b8ce8d34c10985f6f7963b3c7a88649697d14f222fb5bccd0ca9a205f30",
@@ -26,7 +26,7 @@
   "src/content/partners/techtown.md": "ee7df86a1184df7aaa3849515b9e81361b8cd52d647e61bbe3a54db74dc1da55",
   "src/content/partners/wescale.md": "8dfe1548cebb52b3e1a4a9f9e222cc2675a078bee26bde043d3da5443d8ff02e",
   "src/content/press.json": "98a346f0aa76675b1ac96fd4dd29f9d7cc40716a1d91d16b476b9ed48ee99dd3",
-  "src/content/pricing.json": "1b8c991116ed117684306ae1085461fff5a595a4a41d9fcba9fb7e99b8bd4316",
+  "src/content/pricing.json": "8d0877cf5e63f4716dc50fad5e63c02eb840781621b703f1dd7a1796d28d0d71",
   "src/content/sessions/agent-evaluation.md": "823ca7bfbdc785c123f2cadf8c73ab64aecbcb5fce1fde9254a684e21bb297fc",
   "src/content/sessions/agentic-coding.md": "89122bb7d34a82c2818b76d0b8cf8d5d14126d6e6e9a215037a68568bf6884a6",
   "src/content/sessions/agents-entreprise-shadowai-knowledge.md": "acffc28779c73739d423f71836905c13e686bdf57ee21daadfafbd1c509d884e",

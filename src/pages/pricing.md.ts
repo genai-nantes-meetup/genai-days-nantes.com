@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { formatPriceAmount, formatPriceTaxNote, getPricingCopy } from '../lib/pricing';
+import { formatPriceAmount, formatPriceTaxNote, getPricingCopy, IS_WAITLIST_OPEN } from '../lib/pricing';
 import { CTA_LINKS } from '../lib/cta-links';
 import PRICING from '../content/pricing.json';
 
@@ -12,7 +12,8 @@ export const GET: APIRoute = async ({ site, url }) => {
 
 - Price: ${formatPriceAmount('en')} per person (${formatPriceTaxNote('en')})
 - Capacity: ${PRICING.capacity} seats
-- Tickets: ${CTA_LINKS.tickets}
+- Availability: ${IS_WAITLIST_OPEN ? 'sold out, waitlist open' : 'on sale'}
+- Tickets${IS_WAITLIST_OPEN ? ' (waitlist)' : ''}: ${CTA_LINKS.tickets}
 
 For partnership or group pricing, contact the team via ${siteUrl}contact.
 `;

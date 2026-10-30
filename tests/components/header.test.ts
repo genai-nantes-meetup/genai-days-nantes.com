@@ -1,12 +1,13 @@
 import { describe, it, expect } from 'vitest';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
+import { getTicketCtaCopy } from '../../src/lib/pricing';
 import Header from '../../src/components/Header.astro';
 
 describe('Header.astro', () => {
   it('keeps ticketing as the only commercial action', async () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(Header);
-    expect(html.match(/Réserver ma place/g)).toHaveLength(2);
+    expect(html.split(getTicketCtaCopy('fr').compact)).toHaveLength(3);
     expect(html).not.toContain('TVA non applicable');
     expect(html.match(/bg-\[var\(--color-action-ticket\)\]/g)).toHaveLength(2);
     expect(html).not.toContain('Devenir partenaire');
@@ -66,8 +67,8 @@ describe('Header.astro', () => {
       request: new Request('https://example.com/en/program/agentic-coding'),
     });
 
-    expect(html.match(/Book my seat/g)).toHaveLength(2);
-    expect(html).not.toContain('Réserver ma place');
+    expect(html.split(getTicketCtaCopy('en').compact)).toHaveLength(3);
+    expect(html).not.toContain(getTicketCtaCopy('fr').compact);
     expect(html).toMatch(/href="\/en"[^>]*class="site-header__brand/);
     expect(html).toMatch(/href="\/en\/program"[^>]*aria-current="page"[^>]*>Program/);
     expect(html).toContain('href="/en/practical-info"');
