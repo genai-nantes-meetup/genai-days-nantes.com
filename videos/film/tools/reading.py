@@ -34,7 +34,7 @@ BEATS = [
     ("S3 Souveraineté", "Souveraineté.", 8.06, 0.36, 8.28),
     ("S3 Production", "Production.", 8.56, 0.36, 8.72),
     ("S4 Deux parcours", "Deux parcours, une journée. décident implémentent", 10.6, 0.45, 11.5),
-    ("S6 400 places, billet", "400 places 147 € TTC", 16.0, 0.5, 17.5),
+    ("S6 400 places, billet", "400 places 147 €", 16.0, 0.5, 17.5),
     # S7: measured from the last clock stop (Apéro networking lands at 21.0) to the cut.
     ("S7 temps forts", "Une journée ponctuée de temps forts. Startup Contest Podcast Apéro networking", 21.0, 0.45, 21.5),
 ]

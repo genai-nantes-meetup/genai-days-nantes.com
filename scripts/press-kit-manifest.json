@@ -1,5 +1,5 @@
 {
-  "scripts/build-press-kit.py": "f4e09ef665559e6f256fbf4e833b0815701d4dbb6f2dddbfed0aefd0c5f0adfd",
+  "scripts/build-press-kit.py": "76bba3e260f00396480a09f301c441818ba4b5ba4a1b5d167c2763c5190f7afe",
   "src/components/HeroAffiche.astro": "dcaaff44d2743a3f054ebc65fa0550f7ce2ec46a9888bb7039da58246100559e",
   "src/content/event.json": "e376eb672e9f9d1ccf380c2f8e3bb6ecdb0ecc8a45e44a196bfa20022ffcf91f",
   "src/content/partners/adn-ouest.md": "a6612c9e52e50c59bb8491640dc004827b2538200cfc887a29b85de883628e1f",

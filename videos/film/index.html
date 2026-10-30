@@ -1367,7 +1367,7 @@
             <img data-hf-id="hf-ljez" src="assets/img/admission-ticket-blank-brick-v1-optimized.webp" alt="">
             <div data-hf-id="hf-6hzh" id="s6-tbody">
               <div data-hf-id="hf-zf02" class="thead"><span data-hf-id="hf-yaas">Billet participant · GENAI DAYS</span><span data-hf-id="hf-t0f1">17·11·26</span></div>
-              <div data-hf-id="hf-l36e" id="s6-price" data-layout-allow-overlap="">0 € <small data-hf-id="hf-3b0d">TTC</small></div>
+              <div data-hf-id="hf-l36e" id="s6-price" data-layout-allow-overlap="">0 €</div>
               <div data-hf-id="hf-ovts" id="s6-facts"><div data-hf-id="hf-y0bz"><em data-hf-id="hf-jq2b">Date</em>Mardi 17 novembre 2026</div><div data-hf-id="hf-s6js"><em data-hf-id="hf-7f4m">Lieu</em>Hôtel de Région</div><div data-hf-id="hf-nc99"><em data-hf-id="hf-tah7">Accueil</em>08:30</div></div>
             </div>
             <div data-hf-id="hf-k9ul" id="s6-tstub">
@@ -2367,7 +2367,7 @@
           var price = $("#s6-price");
           tl.fromTo(
             driver(function (v) {
-              price.innerHTML = Math.round(v) + " € <small>TTC</small>";
+              price.innerHTML = Math.round(v) + " €";
             }),
             { v: 0 },
             { v: 147, duration: 0.5, ease: "expo.out" },

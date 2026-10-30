@@ -7,7 +7,7 @@ import EventName from './EventName.astro';
 import { CTA_LINKS } from '../lib/cta-links';
 import { EVENT, formatEventDateLabel } from '../lib/event';
 import { getLocaleFromPath, INTL_LOCALES, localizePath } from '../lib/i18n';
-import { formatPriceAmount, formatShortPricingLine, getPricingCopy, PRICING } from '../lib/pricing';
+import { formatPriceAmount, formatPriceTaxNote, formatShortPricingLine, getPricingCopy, PRICING } from '../lib/pricing';
 
 const locale = getLocaleFromPath(Astro.url.pathname);
 const intlLocale = INTL_LOCALES[locale];
@@ -83,8 +83,8 @@ const copy = {
             <p>{copy.ticketLabel} · <EventName /></p>
             <span>{ticketDateDay}·{ticketDateMonth}·{ticketDateYear.slice(-2)}</span>
           </header>
-          <div class:list={['admission-ticket__price', { 'admission-ticket__price--en': locale === 'en' }]}>
-            <p>{formatPriceAmount(locale)}</p>
+          <div class="admission-ticket__price">
+            <p>{formatPriceAmount(locale)}<small class="admission-ticket__tax-note">{formatPriceTaxNote(locale)}</small></p>
             <span class="admission-ticket__barcode" aria-hidden="true"></span>
           </div>
           <dl class="admission-ticket__facts">
@@ -264,27 +264,25 @@ const copy = {
     gap: 0.75rem;
   }
 
-  /* « €147 incl. VAT » est 35 % plus long que « 147 € TTC ». Mesuré à
-   * chaque palier, il casse sur deux lignes entre 48 et 64rem et vers 80rem
-   * (il lui manque au plus 3 %), et sous 23.5rem (20 %) : l'anglais réduit
-   * légèrement le corps du prix, plus franchement sur les plus petits écrans. */
-  .admission-ticket__price--en {
-    --ticket-price-scale: 0.9;
-  }
-
-  @media (max-width: 23.4375rem) {
-    .admission-ticket__price--en {
-      --ticket-price-scale: 0.78;
-    }
-  }
-
   .admission-ticket__price > p {
     font-family: var(--font-serif);
-    font-size: calc(clamp(3.5rem, 16vw, 5rem) * var(--ticket-price-scale, 1));
+    font-size: calc(clamp(3.5rem, 16vw, 5rem));
     font-weight: 600;
     font-variant-numeric: lining-nums tabular-nums;
     letter-spacing: -0.035em;
     line-height: 0.8;
+  }
+
+  .admission-ticket__tax-note {
+    display: block;
+    margin-top: 0.6rem;
+    font-family: var(--font-sans, inherit);
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    line-height: 1.2;
+    text-transform: uppercase;
+    opacity: 0.76;
   }
 
   .admission-ticket__barcode {
@@ -547,7 +545,7 @@ const copy = {
     }
 
     .admission-ticket__price > p {
-      font-size: calc(clamp(3rem, 12vw, 4rem) * var(--ticket-price-scale, 1));
+      font-size: calc(clamp(3rem, 12vw, 4rem));
       font-weight: 700;
     }
 
@@ -660,7 +658,7 @@ const copy = {
     }
 
     .admission-ticket__price > p {
-      font-size: calc(clamp(4.5rem, 7vw, 5.75rem) * var(--ticket-price-scale, 1));
+      font-size: calc(clamp(4.5rem, 7vw, 5.75rem));
     }
 
     .admission-ticket__barcode {
@@ -815,7 +813,7 @@ const copy = {
     }
 
     .admission-ticket__price > p {
-      font-size: calc(clamp(3.5rem, 4.5vw, 4.5rem) * var(--ticket-price-scale, 1));
+      font-size: calc(clamp(3.5rem, 4.5vw, 4.5rem));
     }
 
     .admission-ticket__barcode {

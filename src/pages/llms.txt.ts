@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 import { formatEventDateLabel, PUBLISHED_SOCIAL_PROFILES } from '../lib/event';
-import { formatPriceAmount } from '../lib/pricing';
+import { formatPriceAmount, formatPriceTaxNote } from '../lib/pricing';
 import { CTA_LINKS } from '../lib/cta-links';
 import { SPEAKER_EVENT_ROLE_SHORT_LABELS } from '../lib/speakers';
 import { stripMarkdownToPlainText } from '../lib/markdown';
@@ -131,7 +131,7 @@ ${speakerLines}
 
 ## Tarif
 
-- ${PRICING.name} : ${formatPriceAmount()}. Capacité : ${PRICING.capacity} places. Détail structuré : ${siteUrl}pricing.md
+- ${PRICING.name} : ${formatPriceAmount()} (${formatPriceTaxNote()}). Capacité : ${PRICING.capacity} places. Détail structuré : ${siteUrl}pricing.md
 - Billetterie : ${CTA_LINKS.tickets}
 
 ## Équipe organisatrice

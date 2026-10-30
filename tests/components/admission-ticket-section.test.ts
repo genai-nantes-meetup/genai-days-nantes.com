@@ -9,7 +9,9 @@ describe('AdmissionTicketSection.astro', () => {
 
     expect(html).toContain('id="pass-participant"');
     expect(html).toContain('Un pass pour toute la journée.');
-    expect(html).toContain('147 € TTC');
+    expect(html).toContain('147 €');
+    expect(html).toContain('TVA non applicable');
+    expect(html).not.toContain('TTC');
     expect(html).toContain('Réserver ma place');
     expect(html).toContain('href="https://www.billetweb.fr/genai-days-nantes-2026"');
     expect(html).toContain('target="_blank"');
@@ -32,12 +34,14 @@ describe('AdmissionTicketSection.astro', () => {
     expect(html).toContain('id="pass-participant"');
     expect(html).toContain('One pass for the whole day.');
     expect(html).toContain('Talks are delivered in French.');
-    expect(html).toContain('aria-label="Participant Pass · €147 incl. VAT"');
+    expect(html).toContain('aria-label="Participant Pass · €147 · VAT not applicable"');
     expect(html).toContain('November 17, 2026');
     expect(html).toContain('17·NOV·26');
     expect(html).toContain('Book my seat');
     expect(html).toContain('href="/en/practical-info"');
     expect(html).not.toContain('Réserver ma place');
-    expect(html).not.toContain('€ TTC');
+    expect(html).toContain('VAT not applicable');
+    expect(html).not.toContain('TTC');
+    expect(html).not.toContain('incl. VAT');
   });
 });

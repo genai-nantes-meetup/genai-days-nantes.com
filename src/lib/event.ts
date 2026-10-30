@@ -101,7 +101,7 @@ export async function buildEventJsonLd(siteUrl: string, ticketUrl: string, local
               '@type': 'PriceSpecification',
               price: PRICING.amount,
               priceCurrency: 'EUR',
-              valueAddedTaxIncluded: true,
+              valueAddedTaxIncluded: false,
             },
             availability: 'https://schema.org/InStock',
           },

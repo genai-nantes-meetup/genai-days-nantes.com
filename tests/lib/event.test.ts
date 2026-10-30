@@ -38,7 +38,7 @@ describe('buildEventJsonLd', () => {
     expect(jsonLd.offers.url).toBe('https://billetterie.genaidays.fr/edition-2026');
     expect(jsonLd.offers.price).toBe(147);
     expect(jsonLd.offers.priceCurrency).toBe('EUR');
-    expect(jsonLd.offers.priceSpecification.valueAddedTaxIncluded).toBe(true);
+    expect(jsonLd.offers.priceSpecification.valueAddedTaxIncluded).toBe(false);
     expect(jsonLd).not.toHaveProperty('aggregateRating');
   });
 
