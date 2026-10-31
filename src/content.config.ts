@@ -140,7 +140,7 @@ const partners = defineCollection({
     monochromeLogoHeight: z.number().int().positive().optional(),
     // Optical correction for the partner wall: below 1 for dense marks, above 1 for light ones.
     logoOpticalScale: z.number().positive().optional(),
-    coOrganizer: z.boolean().optional(),
+    featuredPartner: z.boolean().optional(),
     order: z.number().int().positive(),
     description: z.string().optional(),
   }),

@@ -53,7 +53,7 @@ export function formatEventDateUppercase(locale: Locale = 'fr'): string {
 export async function buildEventJsonLd(siteUrl: string, ticketUrl: string, locale: Locale = 'fr') {
   const ticketHostname = new URL(ticketUrl).hostname;
   const hasPublicTicketUrl = ticketHostname !== 'example.com' && !ticketHostname.endsWith('.example.com');
-  const supporter = (await getCollection('partners')).find((partner) => partner.data.coOrganizer);
+  const supporter = (await getCollection('partners')).find((partner) => partner.data.featuredPartner);
   const organizer = { '@type': 'Organization', '@id': `${siteUrl}#organizer`, name: eventData.organizer.name, url: siteUrl };
 
   return {

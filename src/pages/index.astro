@@ -14,16 +14,16 @@ import { sortSpeakersByProminence } from '../lib/speakers';
 const locale = getLocaleFromPath(Astro.url.pathname);
 const siteUrl = (Astro.site ?? new URL(Astro.url.origin)).href;
 const pageUrl = new URL(localizePath('/', locale), siteUrl).href;
-const coOrganizer = (await getCollection('partners')).find((partner) => partner.data.coOrganizer);
-const coOrganizerName = coOrganizer?.data.name;
+const featuredPartner = (await getCollection('partners')).find((partner) => partner.data.featuredPartner);
+const featuredPartnerName = featuredPartner?.data.name;
 const copy = {
   fr: {
-    pageTitle: `GENAI DAYS ${EVENT.year} · Conférence IA générative à ${EVENT.venue.city}${coOrganizerName ? ` avec le soutien de la ${coOrganizerName}` : ''}`,
-    pageDescription: `Une journée-conférence sur l’IA générative à ${EVENT.venue.city} pour décideurs et équipes techniques : retours terrain, deux parcours et Startup Contest.${coOrganizerName ? ` Avec le soutien de la ${coOrganizerName}, qui accueille la journée à l’${EVENT.venue.shortName}.` : ''}`,
+    pageTitle: `GENAI DAYS ${EVENT.year} · Conférence IA générative à ${EVENT.venue.city}${featuredPartnerName ? ` avec le soutien de la ${featuredPartnerName}` : ''}`,
+    pageDescription: `Une journée-conférence sur l’IA générative à ${EVENT.venue.city} pour décideurs et équipes techniques : retours terrain, deux parcours et Startup Contest.${featuredPartnerName ? ` Avec le soutien de la ${featuredPartnerName}, qui accueille la journée à l’${EVENT.venue.shortName}.` : ''}`,
   },
   en: {
-    pageTitle: `GENAI DAYS ${EVENT.year} · Generative AI conference in ${EVENT.venue.city}${coOrganizerName ? ` with support from the ${coOrganizerName}` : ''}`,
-    pageDescription: `A one-day generative AI conference in ${EVENT.venue.city} for decision-makers and tech teams: real-world case studies, two tracks and a Startup Contest.${coOrganizerName ? ` With support from the ${coOrganizerName}, which hosts the day at the ${EVENT.venue.shortName}.` : ''} Talks are delivered in French.`,
+    pageTitle: `GENAI DAYS ${EVENT.year} · Generative AI conference in ${EVENT.venue.city}${featuredPartnerName ? ` with support from the ${featuredPartnerName}` : ''}`,
+    pageDescription: `A one-day generative AI conference in ${EVENT.venue.city} for decision-makers and tech teams: real-world case studies, two tracks and a Startup Contest.${featuredPartnerName ? ` With support from the ${featuredPartnerName}, which hosts the day at the ${EVENT.venue.shortName}.` : ''} Talks are delivered in French.`,
   },
 }[locale];
 const speakers = sortSpeakersByProminence(await getCollection('speakers'));

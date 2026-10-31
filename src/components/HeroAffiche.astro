@@ -28,25 +28,25 @@ const eventDay = new Intl.DateTimeFormat(intlLocale, { day: 'numeric' }).format(
 const eventMonth = new Intl.DateTimeFormat(intlLocale, { month: 'long' }).format(eventDate);
 const eventYear = new Intl.DateTimeFormat(intlLocale, { year: 'numeric' }).format(eventDate);
 const eventWeekdayUppercase = eventWeekday.toLocaleUpperCase(intlLocale);
-const coOrganizer = (await getCollection('partners')).find((partner) => partner.data.coOrganizer);
-const coOrganizerLogo = coOrganizer?.data.monochromeLogo ?? coOrganizer?.data.logo;
-const coOrganizerLogoWidth = coOrganizer?.data.monochromeLogoWidth ?? coOrganizer?.data.logoWidth;
-const coOrganizerLogoHeight = coOrganizer?.data.monochromeLogoHeight ?? coOrganizer?.data.logoHeight;
+const featuredPartner = (await getCollection('partners')).find((partner) => partner.data.featuredPartner);
+const featuredPartnerLogo = featuredPartner?.data.monochromeLogo ?? featuredPartner?.data.logo;
+const featuredPartnerLogoWidth = featuredPartner?.data.monochromeLogoWidth ?? featuredPartner?.data.logoWidth;
+const featuredPartnerLogoHeight = featuredPartner?.data.monochromeLogoHeight ?? featuredPartner?.data.logoHeight;
 
 const copy = {
   fr: {
     dateLong: `${eventWeekdayUppercase} ${eventDay} ${eventMonth} ${eventYear}`,
     capacity: `+ ${PRICING.capacity} PARTICIPANTS`,
     soldOut: 'COMPLET',
-    coOrganizerAlt: (name: string) => `${name}, soutien de l’événement`,
-    coOrganizedWith: (name: string) => `Avec le soutien de la ${name}`,
+    featuredPartnerAlt: (name: string) => `${name}, soutien de l’événement`,
+    supportedBy: (name: string) => `Avec le soutien de la ${name}`,
   },
   en: {
     dateLong: `${eventWeekdayUppercase}, ${eventMonth} ${eventDay}, ${eventYear}`,
     capacity: `${PRICING.capacity}+ ATTENDEES`,
     soldOut: 'SOLD OUT',
-    coOrganizerAlt: (name: string) => `${name}, event supporter`,
-    coOrganizedWith: (name: string) => `With support from the ${name}`,
+    featuredPartnerAlt: (name: string) => `${name}, event supporter`,
+    supportedBy: (name: string) => `With support from the ${name}`,
   },
 }[locale];
 ---
@@ -94,13 +94,13 @@ const copy = {
                 <strong>{EVENT.venue.shortName}</strong>
                 <span>{EVENT.venue.city}</span>
               </p>
-              {coOrganizer && coOrganizerLogo && (
+              {featuredPartner && featuredPartnerLogo && (
                 <img
                   class="hero-affiche__label-partner"
-                  src={coOrganizerLogo}
-                  alt={copy.coOrganizerAlt(coOrganizer.data.name)}
-                  width={coOrganizerLogoWidth}
-                  height={coOrganizerLogoHeight}
+                  src={featuredPartnerLogo}
+                  alt={copy.featuredPartnerAlt(featuredPartner.data.name)}
+                  width={featuredPartnerLogoWidth}
+                  height={featuredPartnerLogoHeight}
                   loading="eager"
                   decoding="async"
                 />
@@ -154,13 +154,13 @@ const copy = {
           <HeroSponsorsMarquee />
         </div>
       </div>
-      {coOrganizer && coOrganizerLogo && (
-        <div class="hero-affiche__coorganizer hero-affiche__coorganizer--relay" data-hero-counterweight role="group" aria-label={copy.coOrganizedWith(coOrganizer.data.name)}>
+      {featuredPartner && featuredPartnerLogo && (
+        <div class="hero-affiche__featured-partner hero-affiche__featured-partner--relay" data-hero-counterweight role="group" aria-label={copy.supportedBy(featuredPartner.data.name)}>
           <img
-            src={coOrganizerLogo}
-            alt={coOrganizer.data.name}
-            width={coOrganizerLogoWidth}
-            height={coOrganizerLogoHeight}
+            src={featuredPartnerLogo}
+            alt={featuredPartner.data.name}
+            width={featuredPartnerLogoWidth}
+            height={featuredPartnerLogoHeight}
             loading="eager"
             decoding="async"
           />
@@ -505,11 +505,11 @@ const copy = {
     pointer-events: none;
   }
 
-  .hero-affiche__coorganizer {
+  .hero-affiche__featured-partner {
     pointer-events: none;
   }
 
-  .hero-affiche__coorganizer img {
+  .hero-affiche__featured-partner img {
     display: block;
     width: 11rem;
     height: auto;
@@ -548,7 +548,7 @@ const copy = {
     font-weight: inherit;
   }
 
-  .hero-affiche__coorganizer--relay {
+  .hero-affiche__featured-partner--relay {
     display: none;
     -webkit-mask-image: linear-gradient(
       to bottom,
@@ -590,7 +590,7 @@ const copy = {
       content: "·";
     }
 
-    .hero-affiche:has(.hero-affiche__label [data-label-origin].is-collected) .hero-affiche__coorganizer--relay {
+    .hero-affiche:has(.hero-affiche__label [data-label-origin].is-collected) .hero-affiche__featured-partner--relay {
       display: flex;
       grid-row: 1;
       grid-column: 2;
@@ -599,7 +599,7 @@ const copy = {
   }
 
   @media (min-width: 48rem) and (prefers-reduced-motion: no-preference) {
-    .hero-affiche:has(.hero-affiche__label [data-label-origin].is-collected) .hero-affiche__coorganizer--relay {
+    .hero-affiche:has(.hero-affiche__label [data-label-origin].is-collected) .hero-affiche__featured-partner--relay {
       animation: hero-relay-in 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
     }
   }
@@ -646,7 +646,7 @@ const copy = {
     }
 
     /* Sur mobile, la Région rejoint les autres logos dans le bandeau. */
-    .hero-affiche__coorganizer {
+    .hero-affiche__featured-partner {
       display: none;
     }
 
@@ -659,7 +659,7 @@ const copy = {
       margin-top: 0.75rem;
     }
 
-    .hero-affiche__coorganizer img {
+    .hero-affiche__featured-partner img {
       width: 7rem;
       max-height: 3.5rem;
     }
@@ -687,13 +687,13 @@ const copy = {
     }
 
     .hero-affiche__sponsors,
-    .hero-affiche__coorganizer {
+    .hero-affiche__featured-partner {
       margin-top: 0.5rem;
     }
   }
 
   @media (max-width: 47.999rem) and (max-height: 46rem) {
-    .hero-affiche__coorganizer {
+    .hero-affiche__featured-partner {
       margin-top: 0.25rem;
     }
   }
@@ -714,7 +714,7 @@ const copy = {
      * l'affiche ; la date et le lieu restent donnés juste en dessous. */
     .hero-affiche__practical,
     .hero-affiche__sponsors,
-    .hero-affiche__coorganizer {
+    .hero-affiche__featured-partner {
       display: none;
     }
   }
@@ -763,7 +763,7 @@ const copy = {
    * navbar. */
   @supports not (mask-image: linear-gradient(to bottom, transparent, black)) {
     .hero-affiche__message,
-    .hero-affiche__coorganizer {
+    .hero-affiche__featured-partner {
       opacity: var(--hero-title-presence, 1);
       will-change: opacity;
     }

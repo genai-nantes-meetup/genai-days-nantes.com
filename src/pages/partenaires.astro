@@ -13,13 +13,13 @@ const locale = getLocaleFromPath(Astro.url.pathname);
 const tierSequence = ['platinum', 'gold', 'silver'] as const;
 
 const partners = (await getLocalizedCollection('partners', locale)).sort((a, b) => a.data.order - b.data.order);
-const coOrganizer = partners.find((partner) => partner.data.coOrganizer);
+const featuredPartner = partners.find((partner) => partner.data.featuredPartner);
 const copy = {
   fr: {
-    lede: coOrganizer
-      ? `La ${coOrganizer.data.name} soutient cette édition et l’accueille à l’${EVENT.venue.shortName}, aux côtés des entreprises et réseaux engagés.`
+    lede: featuredPartner
+      ? `La ${featuredPartner.data.name} soutient cette édition et l’accueille à l’${EVENT.venue.shortName}, aux côtés des entreprises et réseaux engagés.`
       : 'Des organisations engagées pour relier les communautés techniques, les entreprises et le territoire.',
-    pageTitle: `Partenaires · GENAI DAYS${coOrganizer ? ` · avec le soutien de la ${coOrganizer.data.name}` : ''}`,
+    pageTitle: `Partenaires · GENAI DAYS${featuredPartner ? ` · avec le soutien de la ${featuredPartner.data.name}` : ''}`,
     descriptionIntro: `Partenaires de ${EVENT.name} à ${EVENT.venue.city}.`,
     listName: `Partenaires de ${EVENT.name}`,
     homeLabel: 'Accueil',
@@ -32,10 +32,10 @@ const copy = {
     becomePartner: 'Devenir partenaire',
   },
   en: {
-    lede: coOrganizer
-      ? `The ${coOrganizer.data.name} supports this edition and hosts it at the ${EVENT.venue.shortName}, alongside committed companies and networks.`
+    lede: featuredPartner
+      ? `The ${featuredPartner.data.name} supports this edition and hosts it at the ${EVENT.venue.shortName}, alongside committed companies and networks.`
       : 'Organizations committed to connecting tech communities, businesses and the region.',
-    pageTitle: `Partners · GENAI DAYS${coOrganizer ? ` · with support from the ${coOrganizer.data.name}` : ''}`,
+    pageTitle: `Partners · GENAI DAYS${featuredPartner ? ` · with support from the ${featuredPartner.data.name}` : ''}`,
     descriptionIntro: `${EVENT.name} partners in ${EVENT.venue.city}.`,
     listName: `${EVENT.name} partners`,
     homeLabel: 'Home',
@@ -166,7 +166,7 @@ const structuredData = [
               <li
                 class:list={[
                   'partner-wall__item',
-                  partner.data.coOrganizer && 'partner-wall__item--coorganizer',
+                  partner.data.featuredPartner && 'partner-wall__item--featured-partner',
                 ]}
               >
                 <a

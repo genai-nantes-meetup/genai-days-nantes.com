@@ -9,7 +9,7 @@ const locale = getLocaleFromPath(Astro.url.pathname);
 const copy = {
   fr: {
     title: 'Ils rendent la journée possible.',
-    coOrganizerDescription: (name: string) =>
+    featuredPartnerDescription: (name: string) =>
       `La ${name} soutient cette édition et nous accueille à l’${EVENT.venue.shortName}.`,
     description: 'Entreprises, réseaux et acteurs du territoire réunis autour de cette première édition.',
     visitLabel: (name: string) => `Visiter le site de ${name}`,
@@ -21,7 +21,7 @@ const copy = {
   },
   en: {
     title: 'They make the day possible.',
-    coOrganizerDescription: (name: string) =>
+    featuredPartnerDescription: (name: string) =>
       `The ${name} supports this edition and welcomes us to the ${EVENT.venue.shortName}.`,
     description: 'Companies, networks and local organizations coming together for this first edition.',
     visitLabel: (name: string) => `Visit the ${name} website`,
@@ -50,18 +50,18 @@ const showcasePartners = (await getLocalizedCollection('partners', locale))
       height,
       format,
       tier: partner.data.tier,
-      coOrganizer: partner.data.coOrganizer,
+      featuredPartner: partner.data.featuredPartner,
     } as const;
   });
 
-const coOrganizer = showcasePartners.find((partner) => partner.coOrganizer);
-const platinumPartners = showcasePartners.filter((partner) => partner.tier === 'platinum' && !partner.coOrganizer);
-const remainingPartners = showcasePartners.filter((partner) => partner.tier !== 'platinum' && !partner.coOrganizer);
+const featuredPartner = showcasePartners.find((partner) => partner.featuredPartner);
+const platinumPartners = showcasePartners.filter((partner) => partner.tier === 'platinum' && !partner.featuredPartner);
+const remainingPartners = showcasePartners.filter((partner) => partner.tier !== 'platinum' && !partner.featuredPartner);
 const partnerRows = [
   { partners: platinumPartners, emphasis: 'platinum' },
   ...(remainingPartners.length > 0 ? [{ partners: remainingPartners, emphasis: 'remaining' }] : []),
 ] as const;
-const headingDescription = coOrganizer ? copy.coOrganizerDescription(coOrganizer.name) : copy.description;
+const headingDescription = featuredPartner ? copy.featuredPartnerDescription(featuredPartner.name) : copy.description;
 ---
 
 <section
@@ -73,25 +73,25 @@ const headingDescription = coOrganizer ? copy.coOrganizerDescription(coOrganizer
   <EditorialGrid />
 
   <div class="partner-showcase__inner">
-    <header class:list={['partner-showcase__heading', coOrganizer && 'partner-showcase__heading--with-coorganizer']}>
+    <header class:list={['partner-showcase__heading', featuredPartner && 'partner-showcase__heading--with-featured-partner']}>
       <div class="partner-showcase__heading-copy">
         <h2 id="partner-showcase-title" class="type-section-title">{copy.title}</h2>
         <p>{headingDescription}</p>
       </div>
-      {coOrganizer && (
+      {featuredPartner && (
         <a
-          class="partner-showcase__coorganizer"
-          href={coOrganizer.website}
+          class="partner-showcase__featured-partner"
+          href={featuredPartner.website}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label={copy.visitLabel(coOrganizer.name)}
-          style={`--partner-logo: url("${coOrganizer.logo}");`}
+          aria-label={copy.visitLabel(featuredPartner.name)}
+          style={`--partner-logo: url("${featuredPartner.logo}");`}
         >
           <img
-            src={coOrganizer.logo}
-            alt={copy.logoAlt(coOrganizer.name)}
-            width={coOrganizer.width}
-            height={coOrganizer.height}
+            src={featuredPartner.logo}
+            alt={copy.logoAlt(featuredPartner.name)}
+            width={featuredPartner.width}
+            height={featuredPartner.height}
             loading="lazy"
             decoding="async"
           />
@@ -208,7 +208,7 @@ const headingDescription = coOrganizer ? copy.coOrganizerDescription(coOrganizer
     gap: 0.75rem;
   }
 
-  .partner-showcase__heading--with-coorganizer {
+  .partner-showcase__heading--with-featured-partner {
     gap: clamp(1.5rem, 4vw, 3rem);
   }
 
@@ -225,7 +225,7 @@ const headingDescription = coOrganizer ? copy.coOrganizerDescription(coOrganizer
     text-wrap: balance;
   }
 
-  .partner-showcase__coorganizer {
+  .partner-showcase__featured-partner {
     --partner-row-ink: color-mix(in srgb, var(--color-brand-orange) 52%, var(--color-brand-black));
     position: relative;
     display: grid;
@@ -235,12 +235,12 @@ const headingDescription = coOrganizer ? copy.coOrganizerDescription(coOrganizer
     justify-self: center;
   }
 
-  .partner-showcase__coorganizer:focus-visible {
+  .partner-showcase__featured-partner:focus-visible {
     outline: 2px solid var(--color-brand-blue);
     outline-offset: 4px;
   }
 
-  .partner-showcase__coorganizer img {
+  .partner-showcase__featured-partner img {
     width: auto;
     max-width: 82%;
     height: auto;
@@ -249,7 +249,7 @@ const headingDescription = coOrganizer ? copy.coOrganizerDescription(coOrganizer
     opacity: 0;
   }
 
-  .partner-showcase__coorganizer::before {
+  .partner-showcase__featured-partner::before {
     position: absolute;
     width: 82%;
     height: 7rem;
@@ -261,8 +261,8 @@ const headingDescription = coOrganizer ? copy.coOrganizerDescription(coOrganizer
     transition: background-color 180ms ease, transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  .partner-showcase__coorganizer:hover::before,
-  .partner-showcase__coorganizer:focus-visible::before {
+  .partner-showcase__featured-partner:hover::before,
+  .partner-showcase__featured-partner:focus-visible::before {
     background: var(--color-brand-blue);
     transform: scale(1.04);
   }
@@ -586,35 +586,35 @@ const headingDescription = coOrganizer ? copy.coOrganizerDescription(coOrganizer
       height: 3.4rem;
     }
 
-    .partner-showcase__heading:not(.partner-showcase__heading--with-coorganizer) h2,
-    .partner-showcase__heading:not(.partner-showcase__heading--with-coorganizer) p {
+    .partner-showcase__heading:not(.partner-showcase__heading--with-featured-partner) h2,
+    .partner-showcase__heading:not(.partner-showcase__heading--with-featured-partner) p {
       max-width: none;
       text-wrap: nowrap;
     }
   }
 
   @media (min-width: 64rem) {
-    .partner-showcase__heading--with-coorganizer {
+    .partner-showcase__heading--with-featured-partner {
       grid-template-columns: minmax(0, 1.45fr) minmax(0, 0.75fr);
       align-items: center;
       text-align: left;
     }
 
-    .partner-showcase__heading--with-coorganizer .partner-showcase__heading-copy {
+    .partner-showcase__heading--with-featured-partner .partner-showcase__heading-copy {
       justify-items: start;
     }
 
-    .partner-showcase__heading--with-coorganizer h2 {
+    .partner-showcase__heading--with-featured-partner h2 {
       max-width: none;
     }
 
-    .partner-showcase__coorganizer {
+    .partner-showcase__featured-partner {
       justify-self: end;
     }
   }
 
   @media (min-width: 75rem) {
-    .partner-showcase__heading--with-coorganizer p {
+    .partner-showcase__heading--with-featured-partner p {
       max-width: none;
       text-wrap: nowrap;
     }
@@ -640,7 +640,7 @@ const headingDescription = coOrganizer ? copy.coOrganizerDescription(coOrganizer
     }
 
     .partner-showcase__logo::before,
-    .partner-showcase__coorganizer::before {
+    .partner-showcase__featured-partner::before {
       transition: none;
     }
   }

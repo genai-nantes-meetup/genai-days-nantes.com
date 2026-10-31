@@ -783,7 +783,7 @@ def partners_page(pdf: canvas.Canvas, ctx: dict) -> None:
     )
     partners = ctx["partners"]
     for tier, columns, height in rows:
-        members = [partner for partner in partners if partner["tier"] == tier and not partner.get("coOrganizer")]
+        members = [partner for partner in partners if partner["tier"] == tier and not partner.get("featuredPartner")]
         if not members:
             continue
         chunks = [members[i:i + columns] for i in range(0, len(members), columns)]
@@ -973,9 +973,9 @@ def build_context(tmp: Path) -> dict:
     order = prominence_order()
     speakers.sort(key=lambda s: (order.index(s["id"]) if s["id"] in order else len(order), s["name"]))
     partners = sorted(collection("partners"), key=lambda p: p.get("order", 99))
-    # `coOrganizer` is the site's flag for the featured public partner: the
+    # `featuredPartner` is the site's flag for the featured public partner: the
     # Région supports the event and hosts it, it does not co-organise it.
-    supporter = next(p for p in partners if p.get("coOrganizer"))
+    supporter = next(p for p in partners if p.get("featuredPartner"))
     team = sorted(collection("team"), key=lambda m: m["order"])
     team_by_id = {member["id"]: member for member in team}
 

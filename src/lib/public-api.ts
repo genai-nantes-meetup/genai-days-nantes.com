@@ -73,7 +73,7 @@ async function buildSponsors(locale: Locale, toAbsoluteUrl: UrlBuilder) {
       id: partner.id,
       name: partner.data.name,
       tier: partner.data.tier,
-      coOrganizer: partner.data.coOrganizer ?? false,
+      featuredPartner: partner.data.featuredPartner ?? false,
       description: partner.data.description ?? null,
       website: partner.data.website,
       logo: toAbsoluteUrl(partner.data.logo),

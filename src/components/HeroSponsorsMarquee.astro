@@ -41,7 +41,7 @@ const sponsors = (await getCollection('partners'))
 
     return {
       name: partner.data.name,
-      coOrganizer: partner.data.coOrganizer,
+      featuredPartner: partner.data.featuredPartner,
       website: partner.data.website,
       logo,
       width,
@@ -67,7 +67,7 @@ const sponsors = (await getCollection('partners'))
         >
           {sponsors.map((sponsor) => (
             <li
-              class:list={['hero-sponsors__logo', `hero-sponsors__logo--${sponsor.format}`, sponsor.coOrganizer && 'hero-sponsors__logo--coorganizer']}
+              class:list={['hero-sponsors__logo', `hero-sponsors__logo--${sponsor.format}`, sponsor.featuredPartner && 'hero-sponsors__logo--featured-partner']}
               style={`--sponsor-logo: url("${sponsor.logo}");`}
             >
               <a
@@ -208,7 +208,7 @@ const sponsors = (await getCollection('partners'))
     width: 4.5rem;
   }
 
-  .hero-sponsors__logo--coorganizer {
+  .hero-sponsors__logo--featured-partner {
     display: none;
   }
 
@@ -247,7 +247,7 @@ const sponsors = (await getCollection('partners'))
       width: 3.75rem;
     }
 
-    .hero-sponsors__logo--coorganizer {
+    .hero-sponsors__logo--featured-partner {
       display: grid;
     }
   }

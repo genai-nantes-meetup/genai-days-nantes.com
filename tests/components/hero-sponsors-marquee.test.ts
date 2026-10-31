@@ -4,7 +4,7 @@ import HeroAffiche from '../../src/components/HeroAffiche.astro';
 import HeroSponsorsMarquee from '../../src/components/HeroSponsorsMarquee.astro';
 
 describe('HeroSponsorsMarquee.astro', () => {
-  it('includes every sponsor tier and adds the co-organizer to the mobile rail', async () => {
+  it('includes every sponsor tier and adds the featured partner to the mobile rail', async () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(HeroSponsorsMarquee);
     const primary = html.slice(html.indexOf('data-marquee-copy="primary"'), html.indexOf('data-marquee-copy="duplicate"'));
@@ -14,7 +14,7 @@ describe('HeroSponsorsMarquee.astro', () => {
     expect(primary).toContain('alt="Logo Ippon"');
     expect(primary).toContain('alt="Logo Jems"');
     expect(primary).toContain('alt="Logo Région Pays de la Loire"');
-    expect(primary).toContain('hero-sponsors__logo--coorganizer');
+    expect(primary).toContain('hero-sponsors__logo--featured-partner');
     expect(primary).toContain('alt="Logo Externatic"');
   });
 

@@ -51,7 +51,7 @@ export const GET: APIRoute = async ({ site, url }) => {
     getCollection('team'),
     getCollection('partners'),
   ]);
-  const supporter = partners.find((partner) => partner.data.coOrganizer);
+  const supporter = partners.find((partner) => partner.data.featuredPartner);
   const supporterLine = supporter
     ? ` Avec le soutien de la ${supporter.data.name} (${supporter.data.website}).`
     : '';

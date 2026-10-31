@@ -18,7 +18,7 @@ describe('PartnersShowcase.astro', () => {
     expect(html.match(/data-marquee-copy="primary"/g)).toHaveLength(2);
     expect(html.match(/data-marquee-copy="duplicate"/g)).toHaveLength(2);
     expect(html.match(/data-partner-logo=/g)).toHaveLength(18);
-    expect(html).toContain('class="partner-showcase__coorganizer"');
+    expect(html).toContain('class="partner-showcase__featured-partner"');
     expect(html).toContain(
       'La Région Pays de la Loire soutient cette édition et nous accueille à l’Hôtel de Région',
     );

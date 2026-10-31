@@ -1,6 +1,6 @@
 {
-  "scripts/build-press-kit.py": "76bba3e260f00396480a09f301c441818ba4b5ba4a1b5d167c2763c5190f7afe",
-  "src/components/HeroAffiche.astro": "355b7e6dee6177f59d5d949e2c76f6ebf9fc3445dd1af1568e7547d85a7afdf4",
+  "scripts/build-press-kit.py": "b03f188fec30feacd2b51c6cbadfd959df57839b6f185a02d5c3b84229f0a2fb",
+  "src/components/HeroAffiche.astro": "e0dc1800e43e16ad6226cefaf92581516d8c6792259d4f3be19e9105947f459f",
   "src/content/event.json": "e376eb672e9f9d1ccf380c2f8e3bb6ecdb0ecc8a45e44a196bfa20022ffcf91f",
   "src/content/partners/adn-ouest.md": "a6612c9e52e50c59bb8491640dc004827b2538200cfc887a29b85de883628e1f",
   "src/content/partners/alphaedge.md": "928a1b8ce8d34c10985f6f7963b3c7a88649697d14f222fb5bccd0ca9a205f30",
@@ -20,7 +20,7 @@
   "src/content/partners/jems.md": "64ee3912e12ae309747e8694533a1098e612b2b4d52a22317fe04770c1562859",
   "src/content/partners/la-cantine-french-tech-nantes.md": "74750a0121f3861291b22d85ec28d79360c74e0125e2054c7b77ddf1e78eec96",
   "src/content/partners/leboncoin.md": "b8b93256bac28a508ef6dc6c7ca6c1cc2fb589642ee9e23a492b660f08b2f560",
-  "src/content/partners/region-pays-de-la-loire.md": "67819b93f981bb5ddb72fd8d34a977f2da39452d8ae37450d298168095ee4523",
+  "src/content/partners/region-pays-de-la-loire.md": "0f21aa8e8a0478c3a094f07dc050d41e6e69d46243e46477238864c1d476dbb7",
   "src/content/partners/sfeir.md": "2cfdbf7fa2e4c0fc0f2e82adf04e179d48101c51c34e3d4147d06f44549767cf",
   "src/content/partners/swiftask.md": "9a775a73a2b02a0c0e70b6cf6c5309f0dddf7b35aa33c144a455a8cc24e41c75",
   "src/content/partners/techtown.md": "ee7df86a1184df7aaa3849515b9e81361b8cd52d647e61bbe3a54db74dc1da55",

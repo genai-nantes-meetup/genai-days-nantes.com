@@ -22,9 +22,9 @@ import PRESS from "../content/press.json";
 const locale = getLocaleFromPath(Astro.url.pathname);
 
 const partners = await getCollection("partners");
-// Le drapeau `coOrganizer` met en avant la Région, qui soutient l’événement
+// Le drapeau `featuredPartner` met en avant la Région, qui soutient l’événement
 // et l’accueille à l’Hôtel de Région : elle ne le co-organise pas.
-const supporter = partners.find((partner) => partner.data.coOrganizer)?.data;
+const supporter = partners.find((partner) => partner.data.featuredPartner)?.data;
 // Les sessions restent en français : la page n’en lit que des données
 // communes aux deux langues, et le nom propre du podcast, que le titre
 // anglais pourrait reformuler.

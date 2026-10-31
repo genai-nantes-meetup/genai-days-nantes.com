@@ -11,7 +11,7 @@ describe('partner directory', () => {
     const main = html.slice(html.indexOf('<main'), html.indexOf('</main>'));
 
     expect(confirmedPartners.length).toBeGreaterThan(0);
-    expect(main).toContain('partner-wall__item--coorganizer');
+    expect(main).toContain('partner-wall__item--featured-partner');
     expect(main.match(/class="partner-wall__link"/g)).toHaveLength(confirmedPartners.length);
     expect(main).not.toContain('partner-tile');
     expect(main).not.toContain('À venir');

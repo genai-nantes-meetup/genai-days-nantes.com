@@ -49,7 +49,7 @@ describe('HeroAffiche.astro', () => {
     const html = await container.renderToString(HeroAffiche);
 
     expect(html).toMatch(/hero-affiche__practical[\s\S]*MARDI 17 novembre 2026[\s\S]*17\/11\/26[\s\S]*Hôtel de Région[\s\S]*\+\u00a0400 PARTICIPANTS/);
-    expect(html).toContain('hero-affiche__coorganizer--relay');
+    expect(html).toContain('hero-affiche__featured-partner--relay');
   });
 
   it('renders the English poster on the English home page', async () => {
