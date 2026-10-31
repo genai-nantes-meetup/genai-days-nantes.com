@@ -4,7 +4,7 @@ import { localizePath, type Locale } from './i18n';
 import { COMMON_TRACK_ID, getSessionlessSlots, getSlotId, type ProgrammeSlot } from './programme';
 import { getLocalizedCollection } from './localized-content';
 import { stripMarkdownToPlainText } from './markdown';
-import { SPEAKER_EVENT_ROLE_SHORT_LABELS } from './speakers';
+import { SPEAKER_EVENT_ROLE_SHORT_LABELS, sortSpeakersByProminence } from './speakers';
 
 /* Read-only JSON API over the content collections, prerendered at build time.
  * One path per language (/api/fr/sponsors.json, /api/en/sponsors.json). Every
@@ -99,7 +99,7 @@ async function buildSpeakers(locale: Locale, toAbsoluteUrl: UrlBuilder) {
       sessionsBySpeaker.set(slug, list);
     }
   }
-  const sorted = [...speakers].sort((left, right) => left.data.name.localeCompare(right.data.name, locale));
+  const sorted = sortSpeakersByProminence(speakers);
 
   return withEnvelope(
     'speakers',

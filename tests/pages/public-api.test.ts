@@ -7,6 +7,7 @@ import { GET as getSpeakersEn } from '../../src/pages/api/en/speakers.json';
 import { GET as getSessionsFr } from '../../src/pages/api/fr/sessions.json';
 import { GET as getSessionsEn } from '../../src/pages/api/en/sessions.json';
 import { getPublicApiPath } from '../../src/lib/public-api';
+import { sortSpeakersByProminence } from '../../src/lib/speakers';
 
 const SITE = 'https://example.com/';
 
@@ -57,6 +58,15 @@ describe('public JSON API', () => {
       expect(frEntry.pageUrl).toBe(`https://example.com/speakers/${speaker.id}`);
       expect(enEntry.pageUrl).toBe(`https://example.com/en/speakers/${speaker.id}`);
     }
+  });
+
+  it('orders speakers like the website, in both languages', async () => {
+    const expected = sortSpeakersByProminence(await getCollection('speakers')).map((speaker) => speaker.id);
+    const fr = await call(getSpeakersFr, '/api/fr/speakers.json');
+    const en = await call(getSpeakersEn, '/api/en/speakers.json');
+
+    expect(fr.json.speakers.map((item: { id: string }) => item.id)).toEqual(expected);
+    expect(en.json.speakers.map((item: { id: string }) => item.id)).toEqual(expected);
   });
 
   it('serves every session with its speakers, translated per language', async () => {
