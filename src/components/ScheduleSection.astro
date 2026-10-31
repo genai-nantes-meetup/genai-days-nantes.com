@@ -1,6 +1,6 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
-import { PROGRAMME_SLOTS, type ProgrammeSlot, type ProgrammeSlotKind } from '../lib/programme';
+import { findCommonSessionAt, PROGRAMME_SLOTS, type ProgrammeSlot, type ProgrammeSlotKind } from '../lib/programme';
 import EditorialGrid from './EditorialGrid.astro';
 import ScheduleSession from './ScheduleSession.astro';
 import TrackMark from './TrackMark';
@@ -23,7 +23,7 @@ function sessionAt(time: string, track: (typeof trackIds)[number]) {
 }
 
 function commonSessionAt(time: string) {
-  return sessions.find((session) => session.data.startTime === time && session.data.track === 'commun');
+  return findCommonSessionAt(sessions, time);
 }
 
 function parallelSessionAt(time: string) {

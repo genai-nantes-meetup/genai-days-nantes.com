@@ -66,7 +66,8 @@ describe('public JSON API', () => {
 
     expect(fr.json.talksLanguage).toBe('fr');
     expect(en.json.talksLanguage).toBe('fr');
-    expect(fr.json.sessions).toHaveLength(sessions.length);
+    const isSession = (item: { kind: string }) => item.kind === 'session';
+    expect(fr.json.sessions.filter(isSession).length).toBeGreaterThanOrEqual(sessions.length);
 
     const frEntry = fr.json.sessions.find((item: { id: string }) => item.id === 'agentic-coding');
     const enEntry = en.json.sessions.find((item: { id: string }) => item.id === 'agentic-coding');
@@ -78,5 +79,23 @@ describe('public JSON API', () => {
 
     const starts = fr.json.sessions.map((item: { startTime: string }) => item.startTime);
     expect([...starts].sort()).toEqual(starts);
+  });
+
+  it('lists breaks, lunch and the closing keynote from the programme slots', async () => {
+    const fr = await call(getSessionsFr, '/api/fr/sessions.json');
+    const en = await call(getSessionsEn, '/api/en/sessions.json');
+    type Entry = { id: string; kind: string; title: string; startTime: string; durationMinutes: number | null; pageUrl: string | null };
+    const byId = (json: { sessions: Entry[] }, id: string) => json.sessions.find((item) => item.id === id);
+
+    const closing = byId(fr.json, 'keynote-1735')!;
+    expect(closing).toMatchObject({ kind: 'session', startTime: '17:35', durationMinutes: 15, pageUrl: null });
+    expect(byId(en.json, 'keynote-1735')!.title).toBe('Closing keynote');
+
+    expect(byId(fr.json, 'meal-1225')).toMatchObject({ kind: 'lunch', title: 'Déjeuner', durationMinutes: 80 });
+    const breaks = fr.json.sessions.filter((item: Entry) => item.kind === 'break');
+    expect(breaks.map((item: Entry) => item.startTime)).toEqual(['09:30', '11:00', '15:05', '16:40']);
+
+    // The opening keynote is a collection session: no duplicate slot entry.
+    expect(byId(fr.json, 'keynote-0915')).toBeUndefined();
   });
 });

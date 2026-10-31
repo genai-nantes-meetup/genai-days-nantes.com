@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import EVENT from '../content/event.json';
 import { localizePath, type Locale } from './i18n';
+import { COMMON_TRACK_ID, getSessionlessSlots, getSlotId, type ProgrammeSlot } from './programme';
 import { getLocalizedCollection } from './localized-content';
 import { stripMarkdownToPlainText } from './markdown';
 import { SPEAKER_EVENT_ROLE_SHORT_LABELS } from './speakers';
@@ -132,6 +133,14 @@ async function buildSpeakers(locale: Locale, toAbsoluteUrl: UrlBuilder) {
   );
 }
 
+type SessionEntryKind = 'session' | 'break' | 'lunch';
+
+function getSlotEntryKind(slot: ProgrammeSlot): SessionEntryKind {
+  if (slot.kind === 'transition') return 'break';
+  if (slot.kind === 'meal') return 'lunch';
+  return 'session';
+}
+
 async function buildSessions(locale: Locale, toAbsoluteUrl: UrlBuilder) {
   const [sessions, speakers, tracks] = await Promise.all([
     getLocalizedCollection('sessions', locale),
@@ -140,20 +149,11 @@ async function buildSessions(locale: Locale, toAbsoluteUrl: UrlBuilder) {
   ]);
   const speakerById = new Map(speakers.map((speaker) => [speaker.id, speaker.data]));
   const trackById = new Map(tracks.map((track) => [track.id, track.data]));
-  const sorted = [...sessions].sort(
-    (left, right) =>
-      left.data.startTime.localeCompare(right.data.startTime) ||
-      left.data.title.localeCompare(right.data.title, locale),
-  );
-
-  return withEnvelope(
-    'sessions',
-    locale,
-    toAbsoluteUrl,
-    sorted.map((session) => {
+  const sessionEntries = sessions.map((session) => {
       const track = trackById.get(session.data.track);
       return {
         id: session.id,
+        kind: 'session' as SessionEntryKind,
         title: session.data.title,
         subtitle: session.data.subtitle ?? null,
         description: session.body?.trim() ? stripMarkdownToPlainText(session.body) : null,
@@ -173,10 +173,36 @@ async function buildSessions(locale: Locale, toAbsoluteUrl: UrlBuilder) {
           ? { name: session.data.presentedBy.name, website: session.data.presentedBy.website }
           : null,
         image: session.data.illustration?.src ? toAbsoluteUrl(session.data.illustration.src) : null,
-        pageUrl: toAbsoluteUrl(localizePath(`/programme/${session.id}`, locale)),
+        pageUrl: toAbsoluteUrl(localizePath(`/programme/${session.id}`, locale)) as string | null,
       };
-    }),
+  });
+  const slotEntries = getSessionlessSlots(sessions).map((slot) => {
+    const kind = getSlotEntryKind(slot);
+    return {
+      id: getSlotId(slot),
+      kind,
+      title: slot.title[locale],
+      subtitle: null,
+      description: null,
+      format: kind === 'session' ? 'keynote' : null,
+      track: COMMON_TRACK_ID,
+      trackName: null,
+      startTime: slot.time,
+      durationMinutes: slot.durationMinutes ?? null,
+      room: null,
+      themes: [],
+      speakers: [],
+      presentedBy: null,
+      image: null,
+      pageUrl: null,
+    };
+  });
+  const entries = [...sessionEntries, ...slotEntries].sort(
+    (left, right) =>
+      left.startTime.localeCompare(right.startTime) || left.title.localeCompare(right.title, locale),
   );
+
+  return withEnvelope('sessions', locale, toAbsoluteUrl, entries);
 }
 
 const BUILDERS = {

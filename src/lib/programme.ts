@@ -118,7 +118,7 @@ export const PROGRAMME_SLOTS: ProgrammeSlot[] = [
     time: '17:35',
     title: { fr: 'Keynote de clôture', en: 'Closing keynote' },
     kind: 'keynote',
-    durationMinutes: 25,
+    durationMinutes: 15,
   },
   {
     time: '18:00',
@@ -131,6 +131,33 @@ export const PROGRAMME_SLOTS: ProgrammeSlot[] = [
     kind: 'closing',
   },
 ];
+
+/* Single source of truth for the day's timeline: the /programme page and the
+ * public sessions API both read PROGRAMME_SLOTS. A common keynote slot is
+ * replaced by its collection session when one starts at the same time. */
+export const COMMON_TRACK_ID = 'commun';
+
+export function getSlotId(slot: ProgrammeSlot): string {
+  return `${slot.kind}-${slot.time.replace(':', '')}`;
+}
+
+export function findCommonSessionAt<T extends { data: { startTime: string; track: string } }>(
+  sessions: T[],
+  time: string,
+): T | undefined {
+  return sessions.find((session) => session.data.startTime === time && session.data.track === COMMON_TRACK_ID);
+}
+
+/* Slots with no collection session of their own: breaks, lunch and any keynote
+ * that has no session file yet. */
+export function getSessionlessSlots<T extends { data: { startTime: string; track: string } }>(
+  sessions: T[],
+): ProgrammeSlot[] {
+  return PROGRAMME_SLOTS.filter((slot) => {
+    if (slot.kind === 'transition' || slot.kind === 'meal') return true;
+    return slot.kind === 'keynote' && !findCommonSessionAt(sessions, slot.time);
+  });
+}
 
 /* Partagé par /programme/[session] et son wrapper anglais. */
 export async function getSessionPagePaths() {
