@@ -13,9 +13,10 @@ interface Props {
    * propre (état immergé rendu côté serveur : aucun flash de barre blanche
    * au chargement). header-scroll.ts pilote ensuite les états au scroll. */
   immersive?: boolean;
+  showMobileTicketCta?: boolean;
 }
 
-const { immersive = false } = Astro.props;
+const { immersive = false, showMobileTicketCta = true } = Astro.props;
 const locale = getLocaleFromPath(Astro.url.pathname);
 
 interface NavLink {
@@ -210,9 +211,11 @@ const isCurrentPage = (href: string) =>
 
 {/* Le CTA est fixe, donc hors du flux : sans ce conteneur il vivrait en
     enfant direct de <body>, en dehors de tout point de repère. */}
-<aside class="mobile-ticket-bar" aria-label={copy.ticketsLabel}>
-  <Button class:list={['mobile-ticket-cta', { 'mobile-ticket-cta--poster': immersive }]} variant="accent" href={CTA_LINKS.tickets}>{ticketCta}</Button>
-</aside>
+{showMobileTicketCta && (
+  <aside class="mobile-ticket-bar" aria-label={copy.ticketsLabel}>
+    <Button class:list={['mobile-ticket-cta', { 'mobile-ticket-cta--poster': immersive }]} variant="accent" href={CTA_LINKS.tickets}>{ticketCta}</Button>
+  </aside>
+)}
 
 <script>
   import { initHeaderMenu } from '../scripts/header-menu';
@@ -637,7 +640,7 @@ const isCurrentPage = (href: string) =>
   }
 
   @media (max-width: 47.999rem) {
-    :global(:root) {
+    :global(:root:has(.mobile-ticket-bar)) {
       --mobile-cta-reserve: calc(3.25rem + max(1rem, env(safe-area-inset-bottom)) + 1rem);
     }
   }
