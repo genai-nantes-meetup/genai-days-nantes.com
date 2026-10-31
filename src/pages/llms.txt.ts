@@ -7,6 +7,7 @@ import { SPEAKER_EVENT_ROLE_SHORT_LABELS } from '../lib/speakers';
 import { stripMarkdownToPlainText } from '../lib/markdown';
 import { localizePath } from '../lib/i18n';
 import { getLocalizedCollection } from '../lib/localized-content';
+import { getPublicApiPath, PUBLIC_API_RESOURCES, type PublicApiResource } from '../lib/public-api';
 import EVENT from '../content/event.json';
 import PRICING from '../content/pricing.json';
 
@@ -18,6 +19,12 @@ const SESSION_FORMAT_LABELS = {
   concours: 'Concours',
   podcast: 'Podcast',
 } as const;
+
+const API_RESOURCE_LABELS: Record<PublicApiResource, string> = {
+  sponsors: 'Sponsors',
+  speakers: 'Intervenant·es / Speakers',
+  sessions: 'Sessions / Sessions',
+};
 
 /* Les pages clés, avec leur libellé dans chaque langue : la version anglaise
  * se déduit de la table de routes (src/lib/i18n.ts), sans URL à recopier. */
@@ -102,6 +109,12 @@ export const GET: APIRoute = async ({ site, url }) => {
     (page) => `- ${page.en}: ${new URL(localizePath(page.path, 'en'), siteUrl).href}`,
   ).join('\n');
 
+  const apiRouteLines = PUBLIC_API_RESOURCES.map((resource) => {
+    const frUrl = new URL(getPublicApiPath(resource, 'fr'), siteUrl).href;
+    const enUrl = new URL(getPublicApiPath(resource, 'en'), siteUrl).href;
+    return `- ${API_RESOURCE_LABELS[resource]} : ${frUrl} (FR) · ${enUrl} (EN)`;
+  }).join('\n');
+
   const body = `# GENAI DAYS
 
 > ${EVENT.description}
@@ -150,6 +163,12 @@ Le site existe aussi en anglais, avec des URLs traduites. Chaque page déclare s
 
 ${englishKeyPageLines}
 ${socialSection}
+## API de données / Data API
+
+Les sponsors, les intervenant·es et les sessions sont disponibles en JSON (lecture seule, CORS ouvert). Préfère ces routes au parsing des pages HTML. / Sponsors, speakers and sessions are available as read-only JSON with open CORS. Prefer these routes over scraping HTML pages.
+
+${apiRouteLines}
+
 ## Notes pour les agents IA
 
 - Le programme détaillé (sessions, horaires, salles, intervenant·es) est disponible sur ${siteUrl}programme et sur chaque page de session (${siteUrl}programme/{slug}).

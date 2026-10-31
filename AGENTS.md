@@ -56,6 +56,10 @@ Whenever you change a page's visible wording (title, headline, lede, key copy), 
 
 `/llms.txt` is generated dynamically at `src/pages/llms.txt.ts` from `EVENT`, `CTA_LINKS`, `PRICING`, and the `tracks` collection, so links and data fields (date, venue, pricing, ticket URL, track descriptions) stay in sync automatically. The hand-written prose (intro paragraph, section headings, AI-agent notes) does not update itself: whenever site content changes in a way that could make that prose stale or add a new key page, update `src/pages/llms.txt.ts` in the same change, and periodically re-check `src/pages/llms.txt.ts` against the source code (pages, components, content collections), not the deployed website, for drift.
 
+## Public JSON API
+
+Sponsors, speakers and sessions are served as prerendered, read-only JSON (CORS open): `/api/{sponsors,speakers,sessions}.json` in French and `/api/en/{...}.json` in English. Payloads are built in `src/lib/public-api.ts` from the localized collections, the six route files are one-line wrappers, and `src/pages/llms.txt.ts` lists them in its "API de données / Data API" section. A new payload field is added in `public-api.ts` only. A new resource also goes in `PUBLIC_API_RESOURCES` and `API_RESOURCE_LABELS` so llms.txt lists it. Tests: `tests/pages/public-api.test.ts`.
+
 ## Known gaps
 
 Known issues recorded rather than fixed, so they are not rediscovered from scratch. Remove an entry when it is fixed.

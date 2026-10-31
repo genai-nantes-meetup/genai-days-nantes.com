@@ -36,6 +36,20 @@ describe('llms.txt', () => {
     expect(text).toContain('- X : https://x.com/GenAINantes');
   });
 
+  it('lists the six JSON API routes', async () => {
+    const response = await GET({
+      site: new URL('https://example.com/'),
+      url: new URL('https://example.com/llms.txt'),
+    } as never);
+    const text = await response.text();
+
+    expect(text).toContain('## API de données / Data API');
+    for (const resource of ['sponsors', 'speakers', 'sessions']) {
+      expect(text).toContain(`https://example.com/api/${resource}.json`);
+      expect(text).toContain(`https://example.com/api/en/${resource}.json`);
+    }
+  });
+
   it('points non-French readers to the English pages derived from the route table', async () => {
     const response = await GET({
       site: new URL('https://example.com/'),
