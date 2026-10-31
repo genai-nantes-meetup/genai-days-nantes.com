@@ -6,7 +6,7 @@ import { stripMarkdownToPlainText } from './markdown';
 import { SPEAKER_EVENT_ROLE_SHORT_LABELS } from './speakers';
 
 /* Read-only JSON API over the content collections, prerendered at build time.
- * French lives at the root (/api/sponsors.json), English under /api/en/. Every
+ * One path per language (/api/fr/sponsors.json, /api/en/sponsors.json). Every
  * URL in a payload is absolute so a consumer can follow it without knowing the
  * site origin. */
 export const PUBLIC_API_RESOURCES = ['sponsors', 'speakers', 'sessions'] as const;
@@ -18,7 +18,7 @@ const API_PREFIX = '/api';
 const PARTNER_TIER_ORDER = ['platinum', 'gold', 'silver'] as const;
 
 export function getPublicApiPath(resource: PublicApiResource, locale: Locale): string {
-  return `${API_PREFIX}${locale === 'en' ? '/en' : ''}/${resource}.json`;
+  return `${API_PREFIX}/${locale}/${resource}.json`;
 }
 
 type UrlBuilder = (path: string) => string;

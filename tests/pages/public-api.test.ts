@@ -1,10 +1,10 @@
 import { getCollection } from 'astro:content';
 import { describe, expect, it } from 'vitest';
-import { GET as getSponsorsFr } from '../../src/pages/api/sponsors.json';
+import { GET as getSponsorsFr } from '../../src/pages/api/fr/sponsors.json';
 import { GET as getSponsorsEn } from '../../src/pages/api/en/sponsors.json';
-import { GET as getSpeakersFr } from '../../src/pages/api/speakers.json';
+import { GET as getSpeakersFr } from '../../src/pages/api/fr/speakers.json';
 import { GET as getSpeakersEn } from '../../src/pages/api/en/speakers.json';
-import { GET as getSessionsFr } from '../../src/pages/api/sessions.json';
+import { GET as getSessionsFr } from '../../src/pages/api/fr/sessions.json';
 import { GET as getSessionsEn } from '../../src/pages/api/en/sessions.json';
 import { getPublicApiPath } from '../../src/lib/public-api';
 
@@ -17,13 +17,13 @@ async function call(route: typeof getSponsorsFr, path: string) {
 
 describe('public JSON API', () => {
   it('maps resources to French root paths and English /en paths', () => {
-    expect(getPublicApiPath('sponsors', 'fr')).toBe('/api/sponsors.json');
+    expect(getPublicApiPath('sponsors', 'fr')).toBe('/api/fr/sponsors.json');
     expect(getPublicApiPath('speakers', 'en')).toBe('/api/en/speakers.json');
   });
 
   it('serves every sponsor, platinum first, in both languages', async () => {
     const partners = await getCollection('partners');
-    const fr = await call(getSponsorsFr, '/api/sponsors.json');
+    const fr = await call(getSponsorsFr, '/api/fr/sponsors.json');
     const en = await call(getSponsorsEn, '/api/en/sponsors.json');
 
     expect(fr.response.headers.get('content-type')).toContain('application/json');
@@ -44,7 +44,7 @@ describe('public JSON API', () => {
 
   it('serves every speaker with absolute localized URLs and their sessions', async () => {
     const speakers = await getCollection('speakers');
-    const fr = await call(getSpeakersFr, '/api/speakers.json');
+    const fr = await call(getSpeakersFr, '/api/fr/speakers.json');
     const en = await call(getSpeakersEn, '/api/en/speakers.json');
 
     expect(fr.json.speakers).toHaveLength(speakers.length);
@@ -61,7 +61,7 @@ describe('public JSON API', () => {
 
   it('serves every session with its speakers, translated per language', async () => {
     const sessions = await getCollection('sessions');
-    const fr = await call(getSessionsFr, '/api/sessions.json');
+    const fr = await call(getSessionsFr, '/api/fr/sessions.json');
     const en = await call(getSessionsEn, '/api/en/sessions.json');
 
     expect(fr.json.talksLanguage).toBe('fr');

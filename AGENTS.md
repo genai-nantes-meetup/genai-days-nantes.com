@@ -58,7 +58,7 @@ Whenever you change a page's visible wording (title, headline, lede, key copy), 
 
 ## Public JSON API
 
-Sponsors, speakers and sessions are served as prerendered, read-only JSON (CORS open): `/api/{sponsors,speakers,sessions}.json` in French and `/api/en/{...}.json` in English. Payloads are built in `src/lib/public-api.ts` from the localized collections, the six route files are one-line wrappers, and `src/pages/llms.txt.ts` lists them in its "API de données / Data API" section. A new payload field is added in `public-api.ts` only. A new resource also goes in `PUBLIC_API_RESOURCES` and `API_RESOURCE_LABELS` so llms.txt lists it. Tests: `tests/pages/public-api.test.ts`.
+Sponsors, speakers and sessions are served as prerendered, read-only JSON (CORS open): `/api/fr/{sponsors,speakers,sessions}.json` in French and `/api/en/{...}.json` in English. Payloads are built in `src/lib/public-api.ts` from the localized collections, the six route files are one-line wrappers, and `src/pages/llms.txt.ts` lists them in its "API de données / Data API" section. A new payload field is added in `public-api.ts` only. A new resource also goes in `PUBLIC_API_RESOURCES` and `API_RESOURCE_LABELS` so llms.txt lists it. Tests: `tests/pages/public-api.test.ts`.
 
 ## Known gaps
 

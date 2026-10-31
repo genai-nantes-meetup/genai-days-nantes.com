@@ -45,7 +45,7 @@ describe('llms.txt', () => {
 
     expect(text).toContain('## API de données / Data API');
     for (const resource of ['sponsors', 'speakers', 'sessions']) {
-      expect(text).toContain(`https://example.com/api/${resource}.json`);
+      expect(text).toContain(`https://example.com/api/fr/${resource}.json`);
       expect(text).toContain(`https://example.com/api/en/${resource}.json`);
     }
   });
