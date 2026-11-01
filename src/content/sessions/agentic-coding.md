@@ -3,7 +3,7 @@ title: "Plus je lui donne de context, moins il est bon"
 subtitle: "AI Factory, Agentic dev & dev tools"
 seoTitle: "Plus je lui donne de context, moins il est bon"
 track: "tech"
-startTime: "15:20"
+startTime: "10:20"
 durationMinutes: 40
 room: ""
 speakerSlugs: []
