@@ -108,11 +108,12 @@ const copy = {
 
 const tracks = await getLocalizedCollection('tracks', locale);
 const trackById = new Map(tracks.map((track) => [track.id, track.data]));
-/* Le `room` de la plupart des sessions ne fait que répéter le nom de son
- * parcours : quand il est vide, on retombe sur ce nom plutôt que d'afficher
- * une salle vide. */
+/* Le `room` de la plupart des sessions est vide : on retombe sur la salle de
+ * leur parcours, puis sur le nom du parcours, plutôt que d'afficher une salle
+ * vide. */
 const roomFor = (session: CollectionEntry<'sessions'>) =>
   session.data.room ||
+  trackById.get(session.data.track)?.room ||
   (trackById.get(session.data.track)?.name ?? (session.data.track === 'commun' ? copy.sharedSessionRoom : session.data.track));
 
 /* Dimensions réelles de chaque illustration, lues au build, pour réserver la

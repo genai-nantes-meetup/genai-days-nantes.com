@@ -58,10 +58,11 @@ export const GET: APIRoute = async ({ site, url }) => {
   const trackLines = tracks
     .map(
       (track) =>
-        `- ${track.data.shortName} (${track.data.name}) : ${track.data.description} Formats : ${track.data.formats.join(' · ')}. Thèmes : ${track.data.themes.join(' · ')}.`,
+        `- ${track.data.shortName} (${track.data.name}) : ${track.data.description} Salle : ${track.data.room}. Formats : ${track.data.formats.join(' · ')}. Thèmes : ${track.data.themes.join(' · ')}.`,
     )
     .join('\n');
   const trackById = new Map(tracks.map((track) => [track.id, track.data.shortName]));
+  const roomByTrack = new Map(tracks.map((track) => [track.id, track.data.room]));
   const speakerById = new Map(speakers.map((speaker) => [speaker.id, speaker.data]));
   const sessionLines = [...sessions]
     .sort(
@@ -80,8 +81,9 @@ export const GET: APIRoute = async ({ site, url }) => {
       const contributorLine = contributors.length > 0 ? ` Avec : ${contributors.join(' · ')}.` : '';
       const description = session.body?.trim() ? ` ${stripMarkdownToPlainText(session.body)}` : '';
       const track = session.data.track === 'commun' ? 'Temps commun' : (trackById.get(session.data.track) ?? session.data.track);
+      const roomLabel = session.data.room || roomByTrack.get(session.data.track);
 
-      return `- ${session.data.title} : ${session.data.startTime}, ${session.data.durationMinutes} min, ${SESSION_FORMAT_LABELS[session.data.format]}, parcours ${track}${session.data.room ? `, salle ${session.data.room}` : ''}.${contributorLine}${description} Détail : ${siteUrl}programme/${session.id}`;
+      return `- ${session.data.title} : ${session.data.startTime}, ${session.data.durationMinutes} min, ${SESSION_FORMAT_LABELS[session.data.format]}, parcours ${track}${roomLabel ? `, salle ${roomLabel}` : ''}.${contributorLine}${description} Détail : ${siteUrl}programme/${session.id}`;
     })
     .join('\n');
 

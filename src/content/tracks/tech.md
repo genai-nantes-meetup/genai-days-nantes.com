@@ -2,6 +2,7 @@
 name: "Pour ceux qui implémentent"
 shortName: "Ceux qui implémentent"
 accentColor: "orange"
+room: "Salle Loire"
 description: "Architectures, outils et retours d'expérience pour les équipes techniques qui construisent avec l'IA."
 formats: ["Conférences", "Podcast en public"]
 themes:

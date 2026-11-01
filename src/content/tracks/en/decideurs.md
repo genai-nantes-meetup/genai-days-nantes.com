@@ -1,6 +1,7 @@
 ---
 name: "For those who decide"
 shortName: "Those who decide"
+room: "Hémicycle"
 description: "AI strategy, governance and ROI for IT decision-makers and executive leadership."
 formats: ["Talks", "Panel", "Startup Contest"]
 themes:

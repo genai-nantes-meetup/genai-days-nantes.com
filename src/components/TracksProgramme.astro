@@ -87,7 +87,7 @@ const copy = {
     <div class="tracks-programme__tracks">
       <article class="tracks-programme__track tracks-programme__track--decision">
         <h3><TrackMark track="decideurs" locale={locale} /></h3>
-        <p class="tracks-programme__meta">{decisionTrack.data.formats.join(' · ')}</p>
+        <p class="tracks-programme__meta">{decisionTrack.data.room} · {decisionTrack.data.formats.join(' · ')}</p>
         <ul>
           {decisionTrack.data.themes.map((theme) => <li>{theme}</li>)}
         </ul>
@@ -95,7 +95,7 @@ const copy = {
 
       <article class="tracks-programme__track tracks-programme__track--delivery">
         <h3><TrackMark track="tech" locale={locale} /></h3>
-        <p class="tracks-programme__meta">{deliveryTrack.data.formats.join(' · ')}</p>
+        <p class="tracks-programme__meta">{deliveryTrack.data.room} · {deliveryTrack.data.formats.join(' · ')}</p>
         <ul>
           {deliveryTrack.data.themes.map((theme) => <li>{theme}</li>)}
         </ul>

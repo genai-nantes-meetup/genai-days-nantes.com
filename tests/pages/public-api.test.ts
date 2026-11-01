@@ -85,7 +85,11 @@ describe('public JSON API', () => {
     expect(enEntry.title).toBe('The more context I give it, the worse it gets');
     expect(frEntry.pageUrl).toBe('https://example.com/programme/agentic-coding');
     expect(enEntry.pageUrl).toBe('https://example.com/en/program/agentic-coding');
-    expect(frEntry.room).toBeNull();
+    expect(frEntry.quoteTitle).toBe(true);
+    expect(fr.json.sessions.find((item: { id: string }) => item.id === 'podcast-maci').quoteTitle).toBe(false);
+    expect(fr.json.sessions.every((item: { quoteTitle: unknown }) => typeof item.quoteTitle === 'boolean')).toBe(true);
+    expect(frEntry.room).toBe('Salle Loire');
+    expect(fr.json.sessions.find((item: { id: string }) => item.id === 'podcast-maci').room).toBe('Salle Loire');
 
     const starts = fr.json.sessions.map((item: { startTime: string }) => item.startTime);
     expect([...starts].sort()).toEqual(starts);

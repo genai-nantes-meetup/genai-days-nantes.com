@@ -199,8 +199,10 @@ const [startHour, startMinute] = session.data.startTime.split(":").map(Number);
 const endMinutesOfDay =
   startHour * 60 + startMinute + session.data.durationMinutes;
 const endTime = `${String(Math.floor(endMinutesOfDay / 60) % 24).padStart(2, "0")}:${String(endMinutesOfDay % 60).padStart(2, "0")}`;
-const displayRoom = session.data.room || trackName;
-const showRoom = Boolean(session.data.room) && session.data.room !== trackName;
+const displayTrackRoom = track?.data.room || trackName;
+const sessionRoom = session.data.room || track?.data.room || "";
+const displayRoom = sessionRoom || trackName;
+const showRoom = Boolean(sessionRoom);
 const programmeTrack =
   session.data.track === "decideurs" || session.data.track === "tech"
     ? session.data.track
@@ -397,7 +399,7 @@ const breadcrumbJsonLd = {
             showRoom && (
               <div>
                 <dt>{copy.roomFact}</dt>
-                <dd>{session.data.room}</dd>
+                <dd>{sessionRoom}</dd>
               </div>
             )
           }
@@ -598,7 +600,7 @@ const breadcrumbJsonLd = {
                   </span>
                   <span class="session-nav-card__meta">
                     {previousSession.data.startTime} ·{" "}
-                    {previousSession.data.room || trackName}
+                    {previousSession.data.room || displayTrackRoom}
                   </span>
                   <strong>
                     {previousSession.data.quoteTitle
@@ -621,7 +623,7 @@ const breadcrumbJsonLd = {
                     <span aria-hidden="true">→</span>
                   </span>
                   <span class="session-nav-card__meta">
-                    {nextSession.data.startTime} · {nextSession.data.room || trackName}
+                    {nextSession.data.startTime} · {nextSession.data.room || displayTrackRoom}
                   </span>
                   <strong>
                     {nextSession.data.quoteTitle

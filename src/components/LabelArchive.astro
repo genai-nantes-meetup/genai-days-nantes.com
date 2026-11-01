@@ -88,11 +88,12 @@ const tracks = await getLocalizedCollection('tracks', locale);
 const speakerById = new Map(speakers.map((speaker) => [speaker.id, speaker]));
 const companyLogoByName = new Map(partners.map((partner) => [partner.data.name, partner.data.logo]));
 const trackById = new Map(tracks.map((track) => [track.id, track.data]));
-/* Le `room` de la plupart des sessions ne fait que répéter le nom de son
- * parcours : quand il est vide, on retombe sur ce nom plutôt que d'afficher
- * une salle vide. */
+/* Le `room` de la plupart des sessions est vide : on retombe sur la salle de
+ * leur parcours, puis sur le nom du parcours, plutôt que d'afficher une salle
+ * vide. */
 const roomFor = (session: (typeof sessions)[number]) =>
   session.data.room ||
+  trackById.get(session.data.track)?.room ||
   (trackById.get(session.data.track)?.name ?? (session.data.track === 'commun' ? copy.sharedSession : session.data.track));
 const presentersFor = (session: (typeof sessions)[number]) => [
   ...session.data.speakerSlugs

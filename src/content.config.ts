@@ -10,6 +10,7 @@ const tracks = defineCollection({
     name: z.string(),
     shortName: z.string(),
     accentColor: z.enum(['blue', 'orange']),
+    room: z.string(),
     description: z.string(),
     formats: z.array(z.string()).min(1),
     themes: z.array(z.string()).min(1),
@@ -158,6 +159,7 @@ const tracksEn = defineCollection({
   schema: z.object({
     name: z.string(),
     shortName: z.string(),
+    room: z.string(),
     description: z.string(),
     formats: z.array(z.string()).min(1),
     themes: z.array(z.string()).min(1),

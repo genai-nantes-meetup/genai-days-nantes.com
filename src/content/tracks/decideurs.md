@@ -2,6 +2,7 @@
 name: "Pour ceux qui décident"
 shortName: "Ceux qui décident"
 accentColor: "blue"
+room: "Hémicycle"
 description: "Stratégie, gouvernance et ROI de l'IA pour les décideurs SI et direction générale."
 formats: ["Conférences", "Table ronde", "Startup Contest"]
 themes:

@@ -1,6 +1,7 @@
 ---
 name: "For those who implement"
 shortName: "Those who implement"
+room: "Loire Room"
 description: "Architectures, tools and lessons from the field for technical teams building with AI."
 formats: ["Talks", "Live podcast"]
 themes:
