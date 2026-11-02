@@ -9,4 +9,4 @@ illustration:
 
 Startups present their artificial intelligence projects to a jury of entrepreneurs and decision-makers. Florian Hervéou hosts the pitches, the Q&A and the deliberation.
 
-The four finalists pitch: Emmanuel Marboeuf (BWorlds), Pauline Corriou (Motiv), Gabriel Lancelot (Barkan) and Aurélie Pécaud (Laborhêto).
+The three finalists pitch: Emmanuel Marboeuf (BWorlds), Pauline Corriou (Motiv) and Aurélie Pécaud (Laborhêto).

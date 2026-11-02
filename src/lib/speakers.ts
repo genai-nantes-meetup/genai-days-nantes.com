@@ -62,7 +62,7 @@ export const SPEAKER_PROMINENCE_ORDER = [
 ] as const;
 
 /* Pitcheurs du Startup Contest : après les autres speakers, avant les MC. */
-export const SPEAKER_STARTUP_CONTEST_PITCHERS_ORDER = ['emmanuel-marboeuf', 'pauline-corriou', 'gabriel-lancelot', 'aurelie-pecaud'] as const;
+export const SPEAKER_STARTUP_CONTEST_PITCHERS_ORDER = ['emmanuel-marboeuf', 'pauline-corriou', 'aurelie-pecaud'] as const;
 
 /* Jury du Startup Contest : après les pitcheurs, avant les MC. */
 export const SPEAKER_STARTUP_CONTEST_JURY_ORDER = ['sebastien-le-corfec', 'thomas-mathieu', 'david-leaurant'] as const;
@@ -99,7 +99,6 @@ export const SPEAKER_PORTRAIT_DIMENSIONS: Record<string, { width: number; height
   'florian-bruniaux': { width: 800, height: 800 },
   'florian-herveou': { width: 600, height: 600 },
   'frederic-didier': { width: 490, height: 490 },
-  'gabriel-lancelot': { width: 800, height: 800 },
   'gael-brisson': { width: 1024, height: 1024 },
   'jaafar-steiblen-raji': { width: 800, height: 920 },
   'jean-yves-simon': { width: 800, height: 800 },
@@ -134,7 +133,6 @@ export const SPEAKER_PORTRAIT_SMALL: Partial<Record<string, string>> = {
   'david-leaurant': '/speakers/david-leaurant-480-optimized.webp',
   'delphine-ziegler': '/speakers/delphine-ziegler-480-optimized.webp',
   'emmanuel-marboeuf': '/speakers/emmanuel-marboeuf-480-optimized.webp',
-  'gabriel-lancelot': '/speakers/gabriel-lancelot-480-optimized.webp',
   'gael-brisson': '/speakers/gael-brisson-480-optimized.webp',
   'jaafar-steiblen-raji': '/speakers/jaafar-steiblen-raji-480-optimized.webp',
   'julien-lesaicherre': '/speakers/julien-lesaicherre-480-optimized.webp',

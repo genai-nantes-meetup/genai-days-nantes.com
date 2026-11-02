@@ -45,7 +45,7 @@
   "src/content/sessions/product-velocity.md": "6d49d62679d8e2fe98f9989a1902c4354447a356d72839298c1c8ce23e59c8ab",
   "src/content/sessions/slm-compression-modeles.md": "e4c247d3615a1082530be735f1b3cebb9e61f25f1a68db286d141a623d2b9d23",
   "src/content/sessions/souverainete-ia.md": "fb3f4bdd1e9e31392cfdf2ac1154ed7a96e959fc244bf4334eb58d596e30bb5c",
-  "src/content/sessions/startup-contest.md": "600a446c04d387aa323ec7159fe782afb8a6e98df1aa15f538192e05781eff4d",
+  "src/content/sessions/startup-contest.md": "4ed8593d514e79a80e0dcff42f0691c1a3e3d990dae63c7a3fc2015329ad92cb",
   "src/content/sessions/voice-agents.md": "720b8598f257ca742b6ba6630762a3281a7aaf3124ee828a78fee207903666a4",
   "src/content/speakers/annabelle-koster.md": "5647626b8a757b6206b6d60e86b51f7a81610abaf969ba7b43b534ce8da92f47",
   "src/content/speakers/aurelie-pecaud.md": "84266333926c8759fe29f46ca21d8bfdb751b494d0844e823e102b3addb06c83",
@@ -62,7 +62,6 @@
   "src/content/speakers/florian-bruniaux.md": "1b708c3feb016db05b7f149aa47fdb64424b9dc64aeaaf655d76221e74550855",
   "src/content/speakers/florian-herveou.md": "5ccdbfea6d89cafae806aa47f79ddb1abe40193d8758d35390e426400b87bd27",
   "src/content/speakers/frederic-didier.md": "df966c7d7d26194f2b7843a54f3cba146758028bd064584ea2fdc77b1c634b75",
-  "src/content/speakers/gabriel-lancelot.md": "9e2c19b4b909350f2787f9c3a6d999ccebd6b4bc091969f3de912d16bdd132a5",
   "src/content/speakers/gael-brisson.md": "ae15ae0e6a46a2b1c921a8c44108db9428dd7cbe3b6bc8c0d7d9fa3578655a8b",
   "src/content/speakers/jaafar-steiblen-raji.md": "fe4776aafd5091d96a387660166a1044c9d6be733fc0ea822787e2e82f6011fa",
   "src/content/speakers/jean-baptiste-kempf.md": "ef1293508a5068f4c142a2634e2e8f8ef9a2349c147d4b54122456fcfcd55ce3",
@@ -90,6 +89,6 @@
   "src/content/tracks/tech.md": "4195566b4477e3cafec8ec6cef73511337c032f3a49702293079e27d9ebbf38e",
   "src/lib/cta-links.ts": "f0714d00307ad451ef193cf8806257aa9850fe11b63d647365c7311cfd1e9b96",
   "src/lib/programme.ts": "7ba24b403f4c1eb13423294d7a8d1d56e4070f14fd6b9c6128fa2cea47b1268b",
-  "src/lib/speakers.ts": "7bee13049d50e59704046231acd9659665e13173335bcc82d7dc5317d8d6d0d1",
+  "src/lib/speakers.ts": "cbf88f3ff2364891e74c4fa885f94a87177ae504af0f2c063211f1b3dc94e055",
   "src/styles/global.css": "35d9390f028fc0645bded079614c0c01eb77c353cc1588da505ba614dafe0726"
 }

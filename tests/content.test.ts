@@ -120,7 +120,6 @@ describe('content collections', () => {
     expect(startupContest?.data.speakerSlugs).toEqual([
       'emmanuel-marboeuf',
       'pauline-corriou',
-      'gabriel-lancelot',
       'aurelie-pecaud',
       'constance-nebbula',
       'sebastien-le-corfec',
