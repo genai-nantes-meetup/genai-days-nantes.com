@@ -28,7 +28,7 @@
   "src/content/press.json": "98a346f0aa76675b1ac96fd4dd29f9d7cc40716a1d91d16b476b9ed48ee99dd3",
   "src/content/pricing.json": "51982e3c3631270422d054bde0204785d26d5ba6dce6b71c41d2236671edd56e",
   "src/content/sessions/agent-evaluation.md": "823ca7bfbdc785c123f2cadf8c73ab64aecbcb5fce1fde9254a684e21bb297fc",
-  "src/content/sessions/agentic-coding.md": "4bd4f4be43664ab537af7e62cfd8a109e307614767853a036465cf2391fd7184",
+  "src/content/sessions/agentic-coding.md": "601650a133f6474bdddd576a17b3b37eed46d9f67d2bd3d320bac20b06e11d75",
   "src/content/sessions/agents-entreprise-shadowai-knowledge.md": "acffc28779c73739d423f71836905c13e686bdf57ee21daadfafbd1c509d884e",
   "src/content/sessions/conduite-changement-ia.md": "6add86207be572e4d723b9fc4bf3c0bbe75525a3c0efa9848ecf6c480cfab8d3",
   "src/content/sessions/cyber-ai.md": "66ee1fc666f84848c680b3d6e826693bba84792ac946e207a07d627a25ea46fc",
@@ -53,6 +53,7 @@
   "src/content/speakers/camille-croze.md": "e302d10f0e8f89fffdc918bcaa836e0183b38e8d7f191e0076bb95eeccfa25e7",
   "src/content/speakers/camille-marini.md": "cf637f2b31b17985ab4edb456c8a14fabbcead2e7433205a6fe22273dfe17a13",
   "src/content/speakers/celine-haentzler.md": "dde4b711b5f682dfb36332463f64ae2031d619ce8aa5bac65f0c125ede347a95",
+  "src/content/speakers/charli-idrac.md": "7e7cf498b05b8825215f5103717f9c5897329f6b9efddf04891e696401d82482",
   "src/content/speakers/christelle-morancais.md": "a3478ffc8d768a5c825a553a27535f9158f524d5c685dbc944138241c9bf418f",
   "src/content/speakers/claire-augris.md": "9adefe453c8911dac2225bcbf2e248d8ecea5840c4003b78b21792bb8a12ac15",
   "src/content/speakers/constance-nebbula.md": "f84a2292b17eabee9dabba88c602c57621e556b328fb4349e51659357bdc13af",
@@ -89,6 +90,6 @@
   "src/content/tracks/tech.md": "4195566b4477e3cafec8ec6cef73511337c032f3a49702293079e27d9ebbf38e",
   "src/lib/cta-links.ts": "f0714d00307ad451ef193cf8806257aa9850fe11b63d647365c7311cfd1e9b96",
   "src/lib/programme.ts": "7ba24b403f4c1eb13423294d7a8d1d56e4070f14fd6b9c6128fa2cea47b1268b",
-  "src/lib/speakers.ts": "cbf88f3ff2364891e74c4fa885f94a87177ae504af0f2c063211f1b3dc94e055",
+  "src/lib/speakers.ts": "21314f58b00a49f591e23c2622a032d09bb03effb6450c452004692372304aa2",
   "src/styles/global.css": "35d9390f028fc0645bded079614c0c01eb77c353cc1588da505ba614dafe0726"
 }

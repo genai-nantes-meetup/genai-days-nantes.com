@@ -1,0 +1,31 @@
+---
+role: "Chief Data & AI Officer"
+bio: "Chief Data & AI Officer at Brevo since March 2026, Charli Idrac launched the platform’s first fully agentic feature and scaled AI across the whole company."
+profile:
+  - "Charli Idrac has been Chief Data & AI Officer at Brevo since March 2026. In nine months, he launched the platform’s first fully agentic feature: from a simple prompt, it generates an email that fits the brand, the tone and the intent of the message. Internally, he coordinated the rollout of AI for individual productivity, then scaled it to the whole organization. A shared repo of skills, plugins and agents lets every use case benefit everyone, and a network of AI champions carries the effort into every team. A data analysis agent then changed how the company relates to data, with very strong adoption among decision-makers, starting with the executive committee. Finally, he turned the AI Lab into AI Ops, a team of forward-deployed engineers that is moving customer service toward a hybrid human-AI model."
+  - "A graduate of École polytechnique and Mines Paris, he started at Come&Stay, the European leader in email and SMS marketing, where he became CTO and then deputy CEO. He then co-founded Friendbet, which obtained one of the first French online sports betting licenses. Next, he created 2-30 Media, a publisher of more than 50 content sites, which he grew without outside funding to €4M in revenue, in France and six other countries. For years, the company was Brevo’s largest customer. In 2021, he founded ADE Online, an online professional training startup that reached €1.7M in sales in 18 months."
+  - "At AD Education, he was successively Head of Digital Learning, Chief Data & Information Officer and then Group CIO. There he designed the AI Hub, a shared infrastructure that gives access to LLMs and specialized agents, and led more than 35 AI initiatives."
+genaiLegitimacy: "Charli Idrac has always built things himself. He has shipped prototypes in a week, data infrastructure and internal tools, and was applying machine learning to email targeting long before generative AI. His conviction: AI only creates value when it holds up in production, and it only holds up under control. At Brevo, this led him to move beyond the lab mindset, to favor determinism over agent autonomy and to measure quality through human reviews. At AD Education, his AI Hub brought together more than 300 users and more than 50 deployed AI agents. His path as a founder and then an executive lets him connect these technical choices to questions of priorities, budgets and adoption."
+careerHighlights:
+  - period: "Since March 2026"
+    title: "Chief Data & AI Officer, Brevo"
+    description: "First agentic feature, AI for individual and collective productivity, data analysis agent adopted by the executive committee, creation of AI Ops and hybrid human-AI customer service."
+  - period: "2023 to 2026"
+    title: "AD Education"
+    description: "Head of Digital Learning, then CDIO, then Group CIO. Designed the AI Hub, deployed across six entities, and more than 35 AI initiatives. Secured nearly €1M in public funding, coordinated 14 technical teams across Europe."
+  - period: "2021 to 2023"
+    title: "Founder and CEO, ADE Online"
+    description: "Online professional training, with €1.7M in sales in 18 months."
+  - period: "2012 to 2020"
+    title: "Founder and CEO, 2-30 Media"
+    description: "More than 50 content sites and €4M in revenue from self-funded growth. For years, the company was Brevo’s largest customer."
+  - period: "2006 to 2012"
+    title: "Come&Stay and Friendbet"
+    description: "CTO, then deputy CEO of Come&Stay. Co-founder and CTO of Friendbet."
+companies:
+  - relationship: "Chief Data & AI Officer since March 2026"
+    description: "Brevo is a French CRM and relationship marketing platform (email, SMS, automation) used by companies around the world."
+  - relationship: "Head of Digital Learning, CDIO, then Group CIO"
+    description: "AD Education is a European higher education group."
+companyLogoAlt: "Brevo logo"
+---

@@ -6,7 +6,7 @@ track: "tech"
 startTime: "10:20"
 durationMinutes: 40
 room: ""
-speakerSlugs: []
+speakerSlugs: ["charli-idrac"]
 format: "talk"
 themes: ["Agentic coding", "Revue de code", "Qualité logicielle"]
 illustration:

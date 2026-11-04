@@ -87,6 +87,7 @@ export const SPEAKER_PORTRAIT_DIMENSIONS: Record<string, { width: number; height
   'annabelle-koster': { width: 800, height: 800 },
   'aurelie-pecaud': { width: 800, height: 800 },
   'celine-haentzler': { width: 800, height: 800 },
+  'charli-idrac': { width: 800, height: 800 },
   'claire-augris': { width: 800, height: 800 },
   'benoit-hediard': { width: 800, height: 800 },
   'camille-croze': { width: 400, height: 400 },
@@ -127,6 +128,7 @@ const SPEAKER_PORTRAIT_SMALL_WIDTH = 480;
 export const SPEAKER_PORTRAIT_SMALL: Partial<Record<string, string>> = {
   'aurelie-pecaud': '/speakers/aurelie-pecaud-480-optimized.webp',
   'camille-marini': '/speakers/camille-marini-480-optimized.webp',
+  'charli-idrac': '/speakers/charli-idrac-480-optimized.webp',
   'claire-augris': '/speakers/claire-augris-480-optimized.webp',
   'christelle-morancais': '/speakers/christelle-morancais-480-optimized.webp',
   'constance-nebbula': '/speakers/constance-nebbula-480-optimized.webp',
