@@ -1,0 +1,170 @@
+---
+import EventName from './EventName.astro';
+import { CTA_LINKS } from '../lib/cta-links';
+import { getLocaleFromPath } from '../lib/i18n';
+
+/**
+ * Le jour de l'événement, une carte en bas d'écran envoie les visiteurs
+ * mobiles (écran étroit ou tactile) vers Agora, l'application compagnon :
+ * programme et networking. Rendue masquée, affichée par le script seulement
+ * le bon jour et tant que le visiteur ne l'a pas fermée. Le lien n'enregistre
+ * pas de fermeture : seule la croix fait disparaître la carte pour de bon.
+ */
+const locale = getLocaleFromPath(Astro.url.pathname);
+const copy = {
+  fr: {
+    kicker: 'C’est aujourd’hui',
+    title: 'Votre journée sur l’app « Agora »',
+    body: 'Programme en direct et networking avec les participants.',
+    cta: 'Ouvrir Agora',
+    ctaLabel: 'Ouvrir Agora, ouvre un nouvel onglet',
+    close: 'Fermer',
+  },
+  en: {
+    kicker: 'It’s today',
+    title: 'Your day on the “Agora” app',
+    body: 'Live programme and networking with attendees.',
+    cta: 'Open Agora',
+    ctaLabel: 'Open Agora, opens a new tab',
+    close: 'Close',
+  },
+}[locale];
+---
+
+<aside class="agora-popup" data-agora-popup role="dialog" aria-labelledby="agora-popup-title" hidden>
+  <button type="button" class="agora-popup__close" data-agora-popup-close aria-label={copy.close}>×</button>
+  <p class="agora-popup__kicker"><EventName /> · {copy.kicker}</p>
+  <p id="agora-popup-title" class="agora-popup__title">{copy.title}</p>
+  <p class="agora-popup__body">{copy.body}</p>
+  <a
+    class="agora-popup__cta"
+    href={CTA_LINKS.agora}
+    target="_blank"
+    rel="noopener"
+    aria-label={copy.ctaLabel}
+    data-agora-popup-link
+  >
+    {copy.cta}
+  </a>
+</aside>
+
+<script>
+  import { capture } from '../lib/analytics';
+  import { dismissAgoraPopup, isAgoraPopupDay, isAgoraPopupDismissed } from '../lib/agora-popup';
+
+  /* Écran étroit (même seuil que le reste du site) OU écran tactile : la
+   * virgule d'une media query vaut un OU. */
+  const MOBILE_QUERY = '(max-width: 47.999rem), (pointer: coarse)';
+
+  const popup = document.querySelector<HTMLElement>('[data-agora-popup]');
+
+  if (popup && window.matchMedia(MOBILE_QUERY).matches && isAgoraPopupDay() && !isAgoraPopupDismissed()) {
+    popup.hidden = false;
+    capture('agora_popup_shown');
+
+    popup.querySelector('[data-agora-popup-link]')?.addEventListener('click', () => {
+      capture('agora_popup_clicked');
+    });
+
+    popup.querySelector('[data-agora-popup-close]')?.addEventListener('click', () => {
+      dismissAgoraPopup();
+      popup.hidden = true;
+      capture('agora_popup_dismissed');
+    });
+  }
+</script>
+
+<style>
+  .agora-popup {
+    position: fixed;
+    right: 0.75rem;
+    /* Posée au-dessus de la barre de billetterie fixe (Header.astro), dont
+     * --mobile-cta-reserve réserve la hauteur, encoche comprise. */
+    bottom: max(calc(0.75rem + env(safe-area-inset-bottom, 0px)), var(--mobile-cta-reserve, 0px));
+    left: 0.75rem;
+    /* Au-dessus du classeur d'étiquettes (z-index 60), qui occupe le bord
+     * d'écran sur mobile. */
+    z-index: 70;
+    max-width: 32rem;
+    margin-inline: auto;
+    padding: 1.5rem 1.4rem 1.6rem;
+    border: 2px solid var(--color-brand-blue);
+    background: var(--color-brand-white);
+    color: var(--color-brand-blue);
+    box-shadow: 0.35rem 0.35rem 0 0 var(--color-brand-orange);
+    animation: agora-popup-in 260ms ease-out both;
+  }
+
+  .agora-popup[hidden] {
+    display: none;
+  }
+
+  .agora-popup__close {
+    position: absolute;
+    top: 0.35rem;
+    right: 0.35rem;
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 0;
+    background: transparent;
+    color: var(--color-brand-blue);
+    font-size: 1.9rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .agora-popup__kicker {
+    margin: 0 2.75rem 0.5rem 0;
+    font-size: 0.85rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .agora-popup__title {
+    margin: 0 0 0.6rem;
+    font-family: var(--font-serif);
+    /* Indexée sur la largeur d'écran pour tenir sur une ligne de 360 px
+     * à 430 px, les largeurs de téléphone courantes. */
+    font-size: clamp(1.15rem, 5.2vw, 1.6rem);
+    font-weight: 700;
+    line-height: 1.15;
+  }
+
+  .agora-popup__body {
+    margin: 0 0 1.2rem;
+    font-size: 1.1rem;
+    line-height: 1.45;
+  }
+
+  .agora-popup__cta {
+    display: block;
+    padding: 1rem 1.25rem;
+    border: 2px solid var(--color-brand-blue);
+    background: var(--color-brand-blue);
+    color: var(--color-brand-white);
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-align: center;
+    text-decoration: none;
+    box-shadow: 0.25rem 0.25rem 0 0 var(--color-brand-orange);
+  }
+
+  .agora-popup__cta:active {
+    box-shadow: 0.1rem 0.1rem 0 0 var(--color-brand-orange);
+  }
+
+  @keyframes agora-popup-in {
+    from {
+      opacity: 0;
+      translate: 0 1rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .agora-popup {
+      animation: none;
+    }
+  }
+</style>

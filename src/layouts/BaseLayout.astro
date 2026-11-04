@@ -6,6 +6,7 @@ import ebGaramondLatinNormalUrl from '@fontsource-variable/eb-garamond/files/eb-
 import ebGaramondLatinItalicUrl from '@fontsource-variable/eb-garamond/files/eb-garamond-latin-wght-italic.woff2?url';
 import ContactModal from '../components/ContactModal.astro';
 import BackToTop from '../components/BackToTop.astro';
+import AgoraPopup from '../components/AgoraPopup.astro';
 import { EVENT, EVENT_YEAR, formatEventDateLabel } from '../lib/event';
 import { POSTHOG_API_HOST, POSTHOG_UI_HOST } from '../lib/analytics';
 import { getSocialImageUrl } from '../lib/social-image';
@@ -290,6 +291,7 @@ const analyticsEnabled = import.meta.env.PROD && Boolean(posthogKey);
     </script>
     <ContactModal />
     <BackToTop />
+    <AgoraPopup />
     <script>
       import { initLabelShine } from '../scripts/label-shine';
       import { initAnalytics } from '../scripts/analytics';
