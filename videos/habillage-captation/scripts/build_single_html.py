@@ -1,4 +1,4 @@
-"""Pack board.html + bumpers.html and their assets into one offline HTML file. Usage: uv run --with pillow python scripts/build_single_html.py <habillage-captation dir>"""
+"""Pack board.html + bumpers.html (bumpers and in-talk frames) and their assets into one offline HTML file. Usage: uv run --with pillow python scripts/build_single_html.py <habillage-captation dir>"""
 import base64, glob, io, json, os, re, sys
 from PIL import Image
 
@@ -18,7 +18,7 @@ def must_replace(text, old, new, count=1):
 POSTER_MAX_W = 1920
 SQUARE_POSTER_SIDE = 1080
 EXPORT_MAX_W = 1280      # export examples only show at card width
-LOGO_MAX_H = 160         # tallest logo is 76 canvas px (podcast host)
+LOGO_MAX_H = 160         # tallest logo is 150 canvas px (Startup Contest pitch tiles)
 
 
 def webp_uri(path, max_w=None, max_h=None):
@@ -44,7 +44,7 @@ for p in sorted(glob.glob("assets/plates/*.webp", root_dir=ROOT)) + ["assets/img
     assets[p] = webp_uri(p, POSTER_MAX_W)
 for p in sorted(glob.glob("assets/speakers/norm/*.webp", root_dir=ROOT)):
     assets[p] = webp_uri(p)
-for p in sorted(glob.glob("assets/partners/*.png", root_dir=ROOT)):
+for p in sorted(glob.glob("assets/partners/*.png", root_dir=ROOT)) + sorted(glob.glob("assets/startups/*.png", root_dir=ROOT)):
     assets[p] = webp_uri(p, max_h=LOGO_MAX_H)
 for p in sorted(glob.glob("exports/*.webp", root_dir=ROOT)):
     assets[p] = webp_uri(p, EXPORT_MAX_W)
@@ -130,10 +130,16 @@ symbol = re.search(r'<svg width="0".*?</svg>', board, re.S).group(0)
 board_body = body_of(board).replace(symbol, "")
 board_body = re.sub(r'src="((?:assets|exports)/[^"]+)"', r'data-asset="\1"', board_body)
 board_body = must_replace(board_body, 'href="bumpers.html"', 'href="#bumpers"')
-board_body = must_replace(board_body, '<li><a href="#annexe">Annexe · chapitre</a></li>',
-                          '<li><a href="#annexe">Annexe · chapitre</a></li>\n    <li><a href="#bumpers">Tous les bumpers d\'intro</a></li>')
+board_body = must_replace(board_body, 'href="bumpers.html?view=talks"', 'href="#talks"')
+board_body = must_replace(board_body, 'href="bumpers.html?view=talks#tables-rondes"', 'href="#talks-tables-rondes"')
+board_body = must_replace(board_body, 'href="bumpers.html?view=talks#startup-contest"', 'href="#talks-startup-contest"')
+board_body = must_replace(board_body, '<li><a href="#e6">07 Miniature YouTube</a></li>',
+                          '<li><a href="#e6">07 Miniature YouTube</a></li>\n    <li><a href="#bumpers">Tous les bumpers d\'intro</a></li>'
+                          '\n    <li><a href="#talks">Slides et intervenant, toutes les sessions</a></li>')
 
 bumpers_body = body_of(bumpers).replace(re.search(r'<svg width="0".*?</svg>', bumpers, re.S).group(0), "")
+# The same masthead and slots, twice: bumpers listing, then in-talk frames listing (filled by renderListing)
+talks_body = must_replace(bumpers_body, '<div id="board">', '<div class="pg-bumpers" id="talks">')
 bumpers_body = must_replace(bumpers_body, '<div id="board">', '<div class="pg-bumpers" id="bumpers">')
 
 
@@ -149,32 +155,35 @@ board_js = must_replace(board_js, "// Clones after bugs", "hydrateAssets(BOARD);
 board_js = "(() => {\nconst BOARD = document.querySelector(\".pg-board\");\n" + board_js + "})();\n"
 
 bumpers_js = script_of(bumpers)
-bumpers_js = must_replace(bumpers_js, 'src="${src}"', 'data-asset="${src}"', count=6)
+bumpers_js = must_replace(bumpers_js, 'src="${src}"', 'data-asset="${src}"', count=11)
 bumpers_js = must_replace(bumpers_js, '<img src="assets/partners/${s.host}.png"', '<img data-asset="assets/partners/${s.host}.png"')
-bumpers_js = must_replace(bumpers_js, 'document.querySelectorAll(".fr")', 'LISTING.querySelectorAll(".fr")')
+# Talks listing anchors get a prefix, so they cannot clash with bumper card ids (startup-contest)
+bumpers_js = must_replace(bumpers_js, 'const anchorPrefix = "";', 'const anchorPrefix = "talks-";')
+bumpers_js = must_replace(bumpers_js, 'document.querySelectorAll(".fr")', 'PAGES.querySelectorAll(".pg-bumpers .fr")')
+bumpers_js = must_replace(bumpers_js, 'const listingHref = view => view === "talks" ? "?view=talks" : "bumpers.html";',
+                          'const listingHref = view => view === "talks" ? "#talks" : "#bumpers";')
+bumpers_js = must_replace(bumpers_js, 'const soloHref = (view, s, part) => view === "talks" ? `?view=talks&session=${s.slug}${part > 1 ? `&part=${part}` : ""}` : `?session=${s.slug}`;',
+                          'const soloHref = (view, s, part) => view === "talks" ? `#talk=${s.slug}${part > 1 ? `&part=${part}` : ""}` : `#session=${s.slug}`;')
 routing_start = bumpers_js.index("const params = new URLSearchParams(location.search);")
 bumpers_js = bumpers_js[:routing_start] + r"""
-// Solo view for OBS: #session=<slug> (and &layout=c for the fallback layout).
-// ?session= still works, as in the standalone bumpers.html.
-const PAGES = document.getElementById("pages"), LISTING = document.getElementById("bumpers"), SOLO = document.getElementById("solo");
-const FALLBACK_EXAMPLE = "souverainete-ia";
-const card = (s, layout) => `<article class="card" id="${layout === "c" ? "secours-" : ""}${s.slug}">
-  <a class="fr" href="#session=${s.slug}${layout === "c" ? "&layout=c" : ""}">${frameMarkup(s, layout)}</a>
-  <h3>${s.title}</h3><p class="lb">${s.time} · ${TRACK_LABEL[s.track]}</p></article>`;
-
-const slotTimes = [...new Set(SESSIONS.map(s => s.time))];
-document.getElementById("slots").innerHTML = slotTimes.map(time => {
-  const sessions = SESSIONS.filter(s => s.time === time);
-  return `<section class="slot"><h2>${time}</h2><div class="cards">${sessions.map(s => card(s, "a")).join("")}</div></section>`;
-}).join("") + `<section class="slot fallback"><h2>Variante de secours</h2><div class="cards">${card(SESSIONS.find(s => s.slug === FALLBACK_EXAMPLE), "c")}</div></section>`;
+// Solo views for OBS: #session=<slug> (bumper), #talk=<slug>[&part=n] (in-talk frame).
+// ?session= and ?view=talks&session= still work, as in the standalone bumpers.html.
+const PAGES = document.getElementById("pages"), LISTING = document.getElementById("bumpers"), TALKS = document.getElementById("talks"), SOLO = document.getElementById("solo");
+renderListing(LISTING, "bumpers");
+renderListing(TALKS, "talks");
 hydrateAssets(LISTING);
+hydrateAssets(TALKS);
 new ResizeObserver(fitFrames).observe(document.body);
 
 function soloRequest() {
   const hash = new URLSearchParams(location.hash.slice(1)), query = new URLSearchParams(location.search);
-  const params = hash.get("session") ? hash : query;
-  const session = SESSIONS.find(s => s.slug === params.get("session"));
-  return session && {session, layout: params.get("layout") === "c" ? "c" : "a"};
+  const [view, slug, part] = hash.get("talk") ? ["talks", hash.get("talk"), hash.get("part")]
+    : hash.get("session") ? ["bumpers", hash.get("session"), null]
+    : [query.get("view") === "talks" ? "talks" : "bumpers", query.get("session"), query.get("part")];
+  const session = SESSIONS.find(s => s.slug === slug);
+  if (!session) return null;
+  const frames = VIEWS[view].frames(session), frame = frames.find(f => f.part === +part) || frames[0];
+  return {view, session, frame};
 }
 
 let lastSoloCardId = null;
@@ -184,21 +193,23 @@ function showRequestedView() {
   PAGES.hidden = !!solo;
   SOLO.hidden = !solo;
   if (solo) {
-    SOLO.innerHTML = frameMarkup(solo.session, solo.layout);
+    SOLO.innerHTML = solo.frame.markup;
     hydrateAssets(SOLO);
     fitTitles(SOLO);
-    lastSoloCardId = (solo.layout === "c" ? "secours-" : "") + solo.session.slug;
+    lastSoloCardId = cardId(solo.view, solo.session, solo.frame.part);
     return;
   }
   SOLO.innerHTML = "";
   fitFrames();
   fitTitles(LISTING);
+  fitTitles(TALKS);
   if (lastSoloCardId) document.getElementById(lastSoloCardId)?.scrollIntoView({block: "center"});
+  else if (location.hash.length > 1) document.getElementById(location.hash.slice(1))?.scrollIntoView();
   lastSoloCardId = null;
 }
 showRequestedView();
 addEventListener("hashchange", showRequestedView);
-document.fonts.ready.then(() => fitTitles(soloRequest() ? SOLO : LISTING));
+document.fonts.ready.then(() => soloRequest() ? fitTitles(SOLO) : (fitTitles(LISTING), fitTitles(TALKS)));
 """
 bumpers_js = "(() => {\n" + bumpers_js + "})();\n"
 
@@ -231,6 +242,7 @@ page = f"""<!doctype html>
 {board_body.strip()}
 </div>
 {bumpers_body.strip()}
+{talks_body.strip()}
 </div>
 <div class="pg-bumpers" id="solo" hidden></div>
 <script>

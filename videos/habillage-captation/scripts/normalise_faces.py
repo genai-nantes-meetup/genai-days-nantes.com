@@ -1,4 +1,8 @@
-"""Crop every speaker portrait so the face has the same size and eye line."""
+"""Crop every speaker portrait so the face has the same size and eye line.
+
+Usage: uv run --with "opencv-python-headless<5" --with numpy python scripts/normalise_faces.py <src dir> <out dir>
+OpenCV 5 dropped cv2.CascadeClassifier, hence the pin.
+"""
 import sys, glob, os, json
 import cv2
 import numpy as np

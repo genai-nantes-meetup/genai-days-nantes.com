@@ -7,6 +7,7 @@
 <style>
 @font-face{font-family:"EB Garamond";src:url(assets/fonts/eb-garamond-latin-wght-normal.woff2) format("woff2");font-weight:400 800;font-style:normal;font-display:block}
 @font-face{font-family:"EB Garamond";src:url(assets/fonts/eb-garamond-latin-wght-italic.woff2) format("woff2");font-weight:400 800;font-style:italic;font-display:block}
+@font-face{font-family:"Azeret Mono";src:url(assets/fonts/azeret-mono-latin-500-normal.woff2) format("woff2");font-weight:500;font-display:block}
 
 :root{
   --blue:#3D43CE;--orange:#FE4D1B;--cream:#F9F4EC;--ink:#393636;--night:#09122E;
@@ -29,6 +30,8 @@ body{margin:0;background:var(--page);color:var(--text);font:16px/1.55 Arial,Helv
 .masthead h1 em{font-style:italic;color:var(--orange)}
 .masthead p{max-width:860px;margin:0 0 10px}
 .masthead .facts{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:20px;font-size:11px;color:var(--muted)}
+.masthead .switch{display:inline-block;margin-top:22px;padding:10px 18px;border-radius:999px;background:var(--blue);color:#F9F4EC;text-decoration:none;font-size:12px;box-shadow:4px 4px 0 var(--orange)}
+.masthead .switch:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--orange)}
 .slot{padding:44px 0 4px}
 .slot h2{display:flex;align-items:baseline;gap:16px;margin:0 0 18px;font-family:"EB Garamond",serif;font-weight:600;font-size:34px}
 .slot h2 .lb{font-size:11px;color:var(--muted)}
@@ -37,8 +40,6 @@ body{margin:0;background:var(--page);color:var(--text);font:16px/1.55 Arial,Helv
 .card h3{margin:12px 0 2px;font-family:"EB Garamond",serif;font-size:21px;font-weight:600;line-height:1.2}
 .card p{margin:0;font-size:11px;color:var(--muted)}
 .fr{display:block}
-.fallback .cards{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
-.fallback h2{font-size:22px;color:var(--muted)}
 footer{margin:64px 0 0;padding:24px 0 48px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
 
 /* Frame: a fixed 1920x1080 canvas scaled to the card width */
@@ -56,6 +57,9 @@ footer{margin:64px 0 0;padding:24px 0 48px;border-top:1px solid var(--line);font
 /* Solo mode (?session=slug): the frame alone, native size, for OBS */
 body.solo{background:#09122E;overflow:hidden}
 body.solo .cv{position:relative;transform:none}
+/* Key mode (&key=1): vMix overlay PNG, camera and slides become alpha holes, stand-in footage goes */
+html.key,body.solo.key{background:transparent}
+.key .talk .footage,.key .talk .camtag,.key .talk .slide>*{display:none}
 
 /* Poster in two passes: the session art, then an orange copy of its darks printed off register */
 .poster{position:absolute;overflow:hidden;background:var(--cream);isolation:isolate}
@@ -78,7 +82,6 @@ body.solo .cv{position:relative;transform:none}
 .t-decide .chip{background:var(--blue);color:var(--cream)}
 .t-impl .chip{background:var(--orange);color:var(--cream)}
 .t-common .chip{background:var(--cream);color:var(--night)}
-.lay-C.t-decide{--relief:#5a60f0}
 
 /* Text column */
 .col{position:absolute;top:170px;bottom:150px;display:flex;flex-direction:column;justify-content:center}
@@ -103,7 +106,7 @@ body.solo .cv{position:relative;transform:none}
 .list-spk .name{font-family:"EB Garamond",serif;font-size:38px;font-weight:600;line-height:1}
 .list-spk .role{font-size:14px;line-height:1.45;margin-top:8px;opacity:.88}
 .grid-spk{display:grid;gap:18px}
-.grid-spk .cell{display:flex;flex-direction:column;align-items:center;text-align:center}
+.grid-spk .cell{display:flex;flex-direction:column;align-items:center;text-align:center;min-width:0}
 .grid-spk .name{font-family:"EB Garamond",serif;font-size:27px;font-weight:600;line-height:1.02;margin-top:20px}
 .grid-spk .role{font-size:12px;line-height:1.45;margin-top:8px;opacity:.85}
 .grid-spk .tag{display:inline-block;margin-top:10px;padding:4px 9px 3px;border-radius:999px;font-size:11px;background:rgba(249,244,236,.14)}
@@ -117,6 +120,62 @@ body.solo .cv{position:relative;transform:none}
 .host{display:flex;align-items:center;gap:30px}
 .host img{height:76px}
 .host .role{font-size:18px;opacity:.88;line-height:1.5}
+
+/* In-talk frames (?view=talks), same look as the board's "Slides et intervenant" and "Tables rondes et jury" */
+.talk .relief{text-shadow:.04em .04em 0 var(--orange)}
+.talk .poster{background:var(--night)}
+.talk .chip{font-size:15px;padding:8px 14px 7px}
+.talk .footage{position:absolute;inset:0;overflow:hidden;background:radial-gradient(ellipse 60% 70% at 50% 30%,#55565c 0%,#2b2c31 55%,#17171a 100%)}
+.talk .footage::before{content:"";position:absolute;left:0;right:0;bottom:0;height:22%;background:linear-gradient(#1d1d21,#121214)}
+.talk .footage .who{position:absolute;bottom:0;height:96%;aspect-ratio:1/1;left:50%;transform:translateX(-50%);object-fit:cover;filter:grayscale(1) brightness(.55) contrast(.95);-webkit-mask-image:linear-gradient(90deg,transparent,#000 24%,#000 76%,transparent),linear-gradient(transparent,#000 17%,#000 82%,transparent);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent,#000 24%,#000 76%,transparent),linear-gradient(transparent,#000 17%,#000 82%,transparent);mask-composite:intersect}
+.talk .cam{position:absolute;overflow:hidden;background:#17171a}
+.talk .camtag{position:absolute;right:14px;top:12px;font:500 15px "Azeret Mono",monospace;letter-spacing:.1em;color:rgba(255,255,255,.45)}
+.talk .camtag::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;background:#e33;margin-right:8px;vertical-align:0}
+.talk .slide{position:absolute;aspect-ratio:16/9;background:#fff;color:#2c2c30;overflow:hidden}
+.talk .slide .sl-t{position:absolute;left:7%;top:10%;width:58%;height:7%;background:#3b3b42;border-radius:4px}
+.talk .slide .sl-l{position:absolute;left:7%;height:3.2%;background:#c9c9cf;border-radius:3px}
+.talk .slide .sl-c{position:absolute;right:7%;top:30%;width:34%;height:52%;border:3px solid #d5d5da;border-radius:6px;background:repeating-linear-gradient(90deg,transparent 0 18%,#e6e6ea 18% 20%)}
+.talk .slide .sl-c i{position:absolute;bottom:0;width:12%;background:#9a9aa3}
+.talk .slide .sl-n{position:absolute;right:3%;bottom:4%;font:500 15px "Azeret Mono",monospace;color:#9a9aa3;letter-spacing:.1em}
+.talk .filet .rule{width:110px;height:6px;background:var(--orange);margin-bottom:22px}
+.talk .filet .name{font-family:"EB Garamond",serif;font-weight:600;line-height:1;text-shadow:.04em .04em 0 var(--orange)}
+.talk .filet .name.tbd{font-weight:500;font-style:italic}
+.talk .filet .role{font:700 17px/1.45 Arial,Helvetica,sans-serif;text-transform:uppercase;letter-spacing:.12em;margin-top:14px;opacity:.9}
+.talk .filet .host-strap{display:flex;align-items:center;gap:28px}
+.talk .filet .host-strap img{height:64px}
+.talk .filet .host-strap .role{margin-top:0}
+.talk .bug{position:absolute;left:64px;top:56px;display:flex;align-items:center;gap:16px;opacity:.72;color:var(--cream);z-index:50}
+.talk .bug svg{width:38px;height:38px;fill:currentColor}
+.talk .bug .wm{font-size:34px}
+.talk .bug .lb{font-size:13px;opacity:.85;margin-left:4px}
+
+/* Startup Contest: poster pushed right, its black wing extended under the text */
+.contest .col{left:110px;width:900px}
+.contest .glabel{display:flex;align-items:center;gap:16px;font-size:18px;margin:0 0 20px}
+.contest .glabel::before{content:"";width:56px;height:5px;background:var(--orange)}
+.contest .people{display:grid;gap:16px;width:1000px;margin-left:-20px}
+.contest .people .cell{display:flex;flex-direction:column;align-items:center;text-align:center;min-width:0}
+.contest .people .name{font-family:"EB Garamond",serif;font-weight:600;line-height:1.02;margin-top:16px;white-space:nowrap}
+.contest .people .co{font-size:14px;line-height:1.4;margin-top:8px;opacity:.9;text-wrap:balance}
+.contest .host-line{font-size:17px;opacity:.9}
+.contest .host-line b{font-family:"EB Garamond",serif;font-size:30px;font-weight:600;letter-spacing:0;text-transform:none;margin:0 10px}
+.contest .company{display:flex;align-items:center;gap:40px;margin-top:40px}
+.contest .company .logo{flex:none;width:150px;height:150px;border-radius:30px;overflow:hidden;display:grid;place-items:center}
+.contest .company .logo.tile{background:var(--cream)}
+.contest .company .logo.tile img{width:76%;height:76%;object-fit:contain}
+.contest .company .logo img{width:100%;height:100%;object-fit:contain}
+.contest .company .cname{font-family:"EB Garamond",serif;font-weight:700;font-size:168px;line-height:.9;letter-spacing:-.01em;text-shadow:.04em .04em 0 var(--orange)}
+.contest .pitcher{display:flex;align-items:center;gap:30px;margin-top:64px}
+.contest .pitcher .name{font-family:"EB Garamond",serif;font-size:58px;font-weight:600;line-height:1}
+.contest .pitcher .role{font-size:19px;line-height:1.5;margin-top:12px;opacity:.9}
+.contest .steps{position:absolute;left:110px;bottom:72px;display:flex;gap:30px;font-size:17px}
+.contest .steps span{opacity:.45}
+.contest .steps span.on{opacity:1;color:var(--cream)}
+.contest .steps span.on::before{content:"";display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--orange);margin-right:10px;vertical-align:1px}
+.contest .jury{display:grid;grid-template-columns:repeat(2,1fr);gap:40px 36px;margin-top:52px;width:990px}
+.contest .jury .row{display:flex;align-items:center;gap:22px;min-width:0}
+.contest .jury .name{font-family:"EB Garamond",serif;font-size:38px;font-weight:600;line-height:1;white-space:nowrap}
+.contest .jury .role{font-size:14px;line-height:1.5;margin-top:10px;opacity:.9;text-wrap:balance}
 </style>
 </head>
 <body>
@@ -128,51 +187,61 @@ body.solo .cv{position:relative;transform:none}
 <header class="wrap masthead">
   <div class="kicker lb">GENAI DAYS 2026 · Captations des conférences</div>
   <h1>Bumpers <em>d'intro</em></h1>
+  <p class="intro"></p>
   <div class="facts lb"><span>Mardi 17 novembre 2026</span><span>Hôtel de Région · Nantes</span></div>
+  <a class="switch lb" href="?view=talks"></a>
 </header>
-<main class="wrap" id="slots"></main>
+<main class="wrap slots"></main>
 </div>
 
 <script>
 // Content from genai-days-nantes.com/llms.txt and session pages (og:image).
-// side: where the text sits on the poster (its calm zone). fx: horizontal focus, used by the fallback layout.
+// side: where the text sits on the poster (its calm zone). fx: horizontal focus of the art.
 // paper: square poster shown whole on its own paper tone instead of filling the frame.
+// bandFx: optional focus used only for the 520 px poster band of the in-talk frame, when fx crops it badly.
+// contest: the Startup Contest gets its own bumper, one frame per pitch (logo: assets/startups/<logo>.png) and a jury frame.
 const DECIDE = "decide", IMPL = "impl", COMMON = "common";
-const P = (name, slug, role, company, tag) => ({name, slug, role, company, tag});
+const P = (name, slug, role, company, tag, logo) => ({name, slug, role, company, tag, logo});
 const SESSIONS = [
   {slug:"keynote-ouverture", time:"09:15", dur:15, track:COMMON, format:"Keynote", title:"Keynote d’ouverture", art:"stage-0-keynote", side:"left", fx:.5,
-   speakers:[P("Christelle Morançais","christelle-morancais","Présidente du Conseil régional","Région Pays de la Loire")]},
+   speakers:[P("Christelle Morançais","christelle-morancais","Présidente du Conseil Régional","Région Pays de la Loire")]},
   {slug:"agents-entreprise-shadowai-knowledge", time:"09:40", dur:40, track:DECIDE, format:"Conférence", title:"Je ne sais pas ce que mes équipes mettent dans ChatGPT", art:"agents-enterprise", side:"left", fx:.82,
    speakers:[P("Gaël Brisson","gael-brisson","Cofondateur & CFO","Swiftask")]},
-  {slug:"gpu-architecture", time:"09:40", dur:40, track:IMPL, format:"Conférence", title:"Mes GPUs chauffent et ma facture grimpe", art:"datacenter", side:"left", fx:.6,
-   speakers:[P("Olivier Lauvray","olivier-lauvray","VP International Business Development","VSORA")]},
+  {slug:"product-velocity", time:"09:40", dur:40, track:IMPL, format:"Conférence", title:"Je shippe plus vite que jamais, et je ne sais plus pourquoi", art:"product-velocity", side:"left", fx:.5, paper:true,
+   speakers:[P("Jean-Yves Simon","jean-yves-simon","Chief Product Officer","Mirakl")]},
   {slug:"souverainete-ia", time:"10:20", dur:40, track:DECIDE, format:"Table ronde", title:"Les Américains ont pris en otage mon SI", art:"souverainete", side:"left", fx:.5,
-   speakers:[P("Quentin Adam","quentin-adam","CEO & Cofondateur","Clever Cloud"),P("Constance Nebbula","constance-nebbula","Vice-présidente Numérique et IA","Région Pays de la Loire"),P("Jean-Baptiste Kempf","jean-baptiste-kempf","Entrepreneur tech","VLC · Scaleway · Kyber")]},
-  {slug:"inference-serving", time:"10:20", dur:40, track:IMPL, format:"Conférence", title:"L’inférence de mon Mac mini est lente", art:"inference", side:"left", fx:.66, speakers:[]},
-  {slug:"voice-agents", time:"11:15", dur:40, track:DECIDE, format:"Conférence", title:"Toute ma stratégie IA est pensée pour un écran, pas pour une voix", art:"voice-agents", side:"left", fx:.5,
+   speakers:[P("Quentin Adam","quentin-adam","CEO & Cofondateur","Clever Cloud"),P("Constance Nebbula","constance-nebbula","Vice-présidente Numérique et IA","Région Pays de la Loire"),P("Jean-Baptiste Kempf","jean-baptiste-kempf","Entrepreneur tech","VLC · Scaleway · Kyber"),P("Claire Augris","claire-augris","Directrice Développement & Conseil IA","Images & Réseaux")]},
+  {slug:"agentic-coding", time:"10:20", dur:40, track:IMPL, format:"Conférence", title:"Plus je lui donne de context, moins il est bon", art:"context-engineering", side:"left", fx:.5,
+   speakers:[P("Charli Idrac","charli-idrac","Chief Data & AI Officer","Brevo")]},
+  {slug:"voice-agents", time:"11:15", dur:40, track:DECIDE, format:"Conférence", title:"En démo, mon agent IA vocal ne se trompe jamais", art:"voice-agents", side:"left", fx:.5,
    speakers:[P("Julien Lesaicherre","julien-lesaicherre","General Manager France","ElevenLabs")]},
-  {slug:"slm-compression-modeles", time:"11:15", dur:40, track:IMPL, format:"Conférence", title:"Mon modèle ne tient pas sur une puce embarquée", art:"stage-2-talk-3-slm", side:"right", fx:.22,
-   speakers:[P("Théo Hubert","theo-hubert","Cofondateur, Président & CTO","AlphaEdge")]},
-  {slug:"startup-contest", time:"11:55", dur:30, track:DECIDE, format:"Concours", title:"Startup Contest", art:"stage-1-talk-5-startup-contest", side:"left", fx:.5,
-   speakers:[P("Florian Hervéou","florian-herveou","Cofondateur","Startup Palace · _icilundi","Animateur"),P("Constance Nebbula","constance-nebbula","Vice-présidente Numérique et IA","Région Pays de la Loire","Jury"),P("Sébastien Le&nbsp;Corfec","sebastien-le-corfec","Associé et cofondateur","Épopée Gestion · West Web Festival","Jury"),P("Thomas Mathieu","thomas-mathieu","CEO et cofondateur","Guest Suite","Jury"),P("David Léaurant","david-leaurant","Président","ADN Ouest","Jury")]},
-  {slug:"product-velocity", time:"11:55", dur:30, track:IMPL, format:"Conférence", title:"Je shippe plus vite que jamais, et je ne sais plus pourquoi", art:"product-velocity", side:"left", fx:.5, paper:true, speakers:[]},
+  {slug:"inference-serving", time:"11:15", dur:40, track:IMPL, format:"Conférence", title:"L’inférence de mon Mac mini est lente", art:"inference", side:"left", fx:.66, bandFx:.45, speakers:[]},
+  {slug:"startup-contest", time:"11:55", dur:30, track:DECIDE, format:"Concours", title:"Startup Contest", art:"stage-1-talk-5-startup-contest", side:"left", fx:.5, contest:true,
+   speakers:[P("Florian Hervéou","florian-herveou","Cofondateur","Startup Palace · _icilundi","Animateur"),P("Constance Nebbula","constance-nebbula","Vice-présidente Numérique et IA","Région Pays de la Loire","Jury"),P("Sébastien Le&nbsp;Corfec","sebastien-le-corfec","Associé et cofondateur","Épopée Gestion · West Web Festival","Jury"),P("Thomas Mathieu","thomas-mathieu","CEO et cofondateur","Guest Suite","Jury"),P("David Léaurant","david-leaurant","Président","ADN Ouest","Jury"),P("Emmanuel Marboeuf","emmanuel-marboeuf","Cofondateur","BWorlds","Finaliste","bworlds"),P("Pauline Corriou","pauline-corriou","Cofondatrice et CPO","Motiv","Finaliste","motiv"),P("Aurélie Pécaud","aurelie-pecaud","Cofondatrice & CEO","Laborhêto","Finaliste","laborheto")]},
+  {slug:"gpu-architecture", time:"11:55", dur:30, track:IMPL, format:"Conférence", title:"Mes GPUs chauffent et ma facture grimpe", art:"datacenter", side:"left", fx:.6,
+   speakers:[P("Olivier Lauvray","olivier-lauvray","VP International Business Development","VSORA")]},
   {slug:"finops-agents", time:"13:45", dur:40, track:DECIDE, format:"Conférence", title:"J'ai consommé mon budget IA en mai. Comment finir l'année&nbsp;?", art:"stage-1-talk-8-finops", side:"left", fx:.66,
    speakers:[P("Nicolas Martignole","nicolas-martignole","Principal Engineer","Back Market")]},
   {slug:"physical-ai-robotique", time:"13:45", dur:40, track:IMPL, format:"Conférence", title:"Mon modèle a le droit de se tromper. Mon robot, non", art:"physical-ai", side:"left", fx:.74, speakers:[]},
-  {slug:"conduite-changement-ia", time:"14:25", dur:40, track:DECIDE, format:"Conférence", title:"Une partie de mon équipe a peur que l'IA lui prenne son poste", art:"conduite-changement", side:"left", fx:.5, speakers:[]},
-  {slug:"cyber-ai", time:"14:25", dur:40, track:IMPL, format:"Conférence", title:"Ma défense ne s'adapte pas assez vite aux attaques des agents autonomes", art:"cyber-ai", side:"right", fx:.24, speakers:[]},
-  {slug:"industrialisation-projet-ia", time:"15:20", dur:40, track:DECIDE, format:"Conférence", title:"Nos POCs ne passent jamais en production", art:"industrialisation", side:"left", fx:.5, speakers:[]},
-  {slug:"agentic-coding", time:"15:20", dur:40, track:IMPL, format:"Conférence", title:"Je n'ai pas confiance dans mes pull&#8209;requests générées", art:"agentic-coding", side:"left", fx:.72, speakers:[]},
-  {slug:"ia-pour-industrie", time:"16:00", dur:40, track:DECIDE, format:"Conférence", title:"Mon concurrent utilise des humanoïdes dans sa chaine de production", art:"ia-industrie", side:"left", fx:.7,
+  {slug:"ia-pour-industrie", time:"14:25", dur:40, track:DECIDE, format:"Conférence", title:"Mon concurrent utilise des humanoïdes dans sa chaine de production", art:"ia-industrie", side:"left", fx:.7,
    speakers:[P("Laurent Duthoit","laurent-duthoit","Expert robotique Next Gen et IA physique","Renault Group"),P("Camille Croze","camille-croze","Business Development Manager, robots humanoïdes","Wandercraft")]},
-  {slug:"harness-context-engineering", time:"16:00", dur:40, track:IMPL, format:"Conférence", title:"Plus je lui donne de context, moins il est bon", art:"context-engineering", side:"left", fx:.5, speakers:[P("Florian Bruniaux","florian-bruniaux","Chief AI Officer","Indépendant")]},
-  {slug:"nouvelles-menaces-cyber", time:"16:55", dur:40, track:DECIDE, format:"Conférence", title:"Des ados de 15 ans utilisent ChatGPT pour exfiltrer mes données", art:"nouvelles-menaces-cyber", side:"left", fx:.7,
+  {slug:"slm-compression-modeles", time:"14:25", dur:40, track:IMPL, format:"Conférence", title:"Mon modèle ne tient pas sur une puce embarquée", art:"stage-2-talk-3-slm", side:"right", fx:.22,
+   speakers:[P("Théo Hubert","theo-hubert","Cofondateur, Président & CTO","AlphaEdge")]},
+  {slug:"industrialisation-projet-ia", time:"15:20", dur:40, track:DECIDE, format:"Conférence", title:"Nos POCs ne passent jamais en production", art:"industrialisation", side:"left", fx:.5,
+   speakers:[P("Tiffany Souterre","tiffany-souterre","Senior Developer Advocate","AWS")]},
+  {slug:"cyber-ai", time:"15:20", dur:40, track:IMPL, format:"Conférence", title:"Des ados de 15 ans utilisent ChatGPT pour exfiltrer mes données", art:"nouvelles-menaces-cyber", side:"left", fx:.7, speakers:[]},
+  {slug:"conduite-changement-ia", time:"16:00", dur:40, track:DECIDE, format:"Table ronde", title:"Une partie de mon équipe a peur que l'IA lui prenne son poste", art:"conduite-changement", side:"left", fx:.5,
+   speakers:[P("Camille Marini","camille-marini","Director of Engineering","Alan"),P("Frédéric Didier","frederic-didier","Directeur général adjoint de CA-GIP","Groupe Crédit Agricole"),P("Delphine Ziegler","delphine-ziegler","Engineering Manager","Doctolib"),P("Céline Haentzler","celine-haentzler","GenAI Product Expert","Betclic Group")]},
+  {slug:"harness-context-engineering", time:"16:00", dur:40, track:IMPL, format:"Conférence", title:"Je n'ai pas confiance dans mes pull&#8209;requests générées", art:"agentic-coding", side:"left", fx:.72, bandFx:.45,
+   speakers:[P("Florian Bruniaux","florian-bruniaux","Chief AI Officer","Founding team @ RTK")]},
+  {slug:"nouvelles-menaces-cyber", time:"16:55", dur:40, track:DECIDE, format:"Conférence", title:"Ma sécurité ne fait pas le poids face aux IA", art:"cyber-ai", side:"right", fx:.24,
    speakers:[P("Régis Dubrulle","regis-dubrulle","Délégué régional à la sécurité numérique, Pays de la Loire","ANSSI")]},
-  {slug:"agent-evaluation", time:"16:55", dur:40, track:IMPL, format:"Conférence", title:"Je n'arrive pas à savoir si mes agents sont performants ou non", art:"agent-evaluation", side:"left", fx:.5, speakers:[]},
+  {slug:"agent-evaluation", time:"16:55", dur:40, track:IMPL, format:"Conférence", title:"Je n'arrive pas à savoir si mes agents sont performants ou non", art:"agent-evaluation", side:"left", fx:.5,
+   speakers:[P("Tristan Fransen","tristan-fransen","Senior Machine Learning Engineer","Pennylane")]},
   {slug:"podcast-maci", time:"18:00", dur:120, track:COMMON, format:"Podcast en public", title:"Podcast Message à caractère informatique", art:"podcast-maci-clever-cloud", side:"left", fx:.5, speakers:[], host:"clever-cloud"},
 ];
 const TRACK_LABEL = {decide:"Ceux qui décident", impl:"Ceux qui implémentent", common:"Temps commun"};
-const W = 1920, H = 1080, C_PANEL_LEFT = 800;
+const W = 1920, H = 1080;
 
 const markSvg = `<svg class="mark" viewBox="0 0 199 199"><use href="#genai-mark"/></svg>`;
 const inkPortrait = (slug, size) => {
@@ -180,8 +249,10 @@ const inkPortrait = (slug, size) => {
   return `<div class="inkp" style="width:${size}px;height:${size}px"><div class="pl b"><img src="${src}" alt=""></div><div class="pl o"><img src="${src}" alt=""></div></div>`;
 };
 
+const hostLogo = s => `<img src="assets/partners/${s.host}.png" alt="Clever Cloud">`;
+
 function speakersMarkup(s, colWidth) {
-  if (s.host) return `<div class="spk host"><img src="assets/partners/${s.host}.png" alt="Clever Cloud"><div class="role lb">Enregistré en public<br>pendant l'apéro</div></div>`;
+  if (s.host) return `<div class="spk host">${hostLogo(s)}<div class="role lb">Enregistré en public<br>pendant l'apéro</div></div>`;
   const people = s.speakers;
   if (!people.length) return `<div class="spk tba"><div class="seat">${markSvg}</div><div><div class="name">Speaker To Be Announced</div><div class="role lb">Programme sur genai-days-nantes.com</div></div></div>`;
   if (people.length === 1) {
@@ -192,17 +263,19 @@ function speakersMarkup(s, colWidth) {
     const size = people.length === 2 ? 128 : 112;
     return `<div class="spk list-spk">${people.map(p => `<div class="row">${inkPortrait(p.slug, size)}<div><div class="name">${p.name}</div><div class="role lb">${p.role}<br>${p.company}</div></div></div>`).join("")}</div>`;
   }
-  const cols = people.length, size = Math.min(140, Math.floor((colWidth - 18 * (cols - 1)) / cols) - 24);
+  // Past five people the grid wraps onto two rows, so every cell keeps a readable width
+  const cols = people.length > 5 ? Math.ceil(people.length / 2) : people.length;
+  const size = Math.min(people.length > cols ? 104 : 140, Math.floor((colWidth - 18 * (cols - 1)) / cols) - 24);
   return `<div class="spk grid-spk" style="grid-template-columns:repeat(${cols},1fr)">${people.map(p => `<div class="cell">${inkPortrait(p.slug, size)}<div class="name">${p.name}</div><div class="role lb">${p.company}</div>${p.tag ? `<span class="tag lb">${p.tag}</span>` : ""}</div>`).join("")}</div>`;
 }
 
 // Place the art so its focus point lands at targetX, without ever uncovering the frame
 // Trim cuts the printed paper margin some posters carry.
-function artPlacement(s, boxW, boxH, targetX) {
+function artPlacement(s, boxW, boxH, targetX, fx = s.fx) {
   const [iw, ih] = ART_SIZES[s.art], trim = ART_TRIMS[s.art] || 0;
   const cw = iw * (1 - 2 * trim), ch = ih * (1 - 2 * trim);
   const scale = Math.max(boxW / cw, boxH / ch);
-  const visibleLeft = Math.min(0, Math.max(boxW - cw * scale, targetX - s.fx * cw * scale));
+  const visibleLeft = Math.min(0, Math.max(boxW - cw * scale, targetX - fx * cw * scale));
   const left = visibleLeft - iw * trim * scale, top = (boxH - ch * scale) / 2 - ih * trim * scale;
   return `left:${left.toFixed(0)}px;top:${top.toFixed(0)}px;width:${(iw * scale).toFixed(0)}px;height:${(ih * scale).toFixed(0)}px`;
 }
@@ -224,18 +297,9 @@ function poster(s, box, targetX) {
   return `<div class="poster grain" style="left:${box.x}px;top:0;width:${box.w}px;height:${box.h}px"><img src="${src}" alt="" style="${pos}"><img class="pass2" src="${src}" alt="" style="${pos}"></div>`;
 }
 
-function frameMarkup(s, layout = "a") {
+function frameMarkup(s) {
   const meta = `<div class="meta"><span class="chip">${TRACK_LABEL[s.track]}</span><span class="lb">${s.format} · ${s.time} · ${s.dur} min</span></div>`;
   const foot = `Mardi 17 novembre 2026 · Hôtel de Région · Nantes`;
-  if (layout === "c") {
-    const colW = 700;
-    return `<div class="cv lay-C t-${s.track}" data-slug="${s.slug}">
-      ${poster(s, {x:C_PANEL_LEFT, w:W - C_PANEL_LEFT, h:H}, (W - C_PANEL_LEFT) / 2)}
-      <div class="abs" style="left:${C_PANEL_LEFT}px;top:0;bottom:0;width:340px;background:linear-gradient(90deg,#09122E,rgba(9,18,46,.6) 40%,rgba(9,18,46,0))"></div>
-      <div class="col" style="left:110px;width:${colW}px">${meta}<div class="title" style="font-size:92px">${s.title}</div>${speakersMarkup(s, colW)}</div>
-      <div class="foot lb" style="left:110px">${foot}</div>
-    </div>`;
-  }
   const isRight = s.side === "right";
   if (s.paper) {
     // Square poster kept whole on the right, its paper tone extends under the text
@@ -249,24 +313,217 @@ function frameMarkup(s, layout = "a") {
   const colW = 900, colX = isRight ? W - 110 - colW : 110;
   // Light scrim only: the poster stays fully visible
   const scrim = `linear-gradient(${isRight ? 270 : 90}deg,rgba(9,18,46,.6) 0%,rgba(9,18,46,.42) 34%,rgba(9,18,46,0) 60%)`;
+  // Black shade behind the title column, so the title reads on any poster
+  const titleShade = `linear-gradient(${isRight ? 270 : 90}deg,rgba(0,0,0,.62) 0%,rgba(0,0,0,.5) 30%,rgba(0,0,0,.22) 50%,rgba(0,0,0,0) 66%)`;
   return `<div class="cv lay-A t-${s.track}" data-slug="${s.slug}">
     ${poster(s, {x:0, w:W, h:H}, W / 2)}
     <div class="full" style="background:${scrim}"></div>
+    <div class="full" style="background:${titleShade}"></div>
     <div class="col" style="left:${colX}px;width:${colW}px">${meta}<div class="title" style="font-size:112px">${s.title}</div>${speakersMarkup(s, colW)}</div>
     <div class="foot lb" style="left:${colX}px">${foot}</div>
   </div>`;
 }
 
 // Shrink the title until the column fits between the corner signature and the footer
+// In-talk frames: the title box must end above the live camera
 function fitTitles(root) {
   root.querySelectorAll(".cv").forEach(cv => {
     const col = cv.querySelector(".col"), title = cv.querySelector(".title");
-    let size = parseFloat(title.style.fontSize);
-    while (col.scrollHeight > col.clientHeight + 1 && size > 56) {
-      size -= 2;
+    if (col && title) {
+      // Restart from the authored size: the first pass runs before the web fonts load and may have shrunk it.
+      let size = +(title.dataset.size ||= parseFloat(title.style.fontSize));
       title.style.fontSize = size + "px";
+      while (col.scrollHeight > col.clientHeight + 1 && size > 56) {
+        size -= 2;
+        title.style.fontSize = size + "px";
+      }
+    }
+    const box = cv.querySelector(".tk-box");
+    if (box) {
+      const boxTitle = box.querySelector(".tk-title");
+      let size = +(boxTitle.dataset.size ||= parseFloat(boxTitle.style.fontSize));
+      boxTitle.style.fontSize = size + "px";
+      while (box.offsetTop + box.offsetHeight > TALK_CAM_TOP - 24 && size > 30) {
+        size -= 2;
+        boxTitle.style.fontSize = size + "px";
+      }
     }
   });
+}
+
+// ---------- In-talk frames ----------
+const CHIP_LABEL = {decide:"Décider", impl:"Implémenter", common:"Temps commun"};
+const BAND_W = 520, TALK_CAM_TOP = 536;
+const BUG = `<div class="bug"><svg viewBox="0 0 199 199"><use href="#genai-mark"/></svg><span class="wm"><b>GEN<i>AI</i></b> DAYS</span><span class="lb">Nantes 2026</span></div>`;
+const SLIDE_MOCK = `<div class="sl-t"></div><div class="sl-l" style="top:30%;width:40%"></div><div class="sl-l" style="top:38%;width:44%"></div><div class="sl-l" style="top:46%;width:36%"></div><div class="sl-l" style="top:54%;width:42%"></div><div class="sl-c"><i style="left:12%;height:30%"></i><i style="left:34%;height:52%"></i><i style="left:56%;height:70%"></i><i style="left:78%;height:88%"></i></div><div class="sl-n">SLIDES 16:9</div>`;
+
+// Live camera stand-in: norm portraits darkened on a grey stage, one per strap column
+function footage(people, centers, heightPct) {
+  return `<div class="footage">${people.map((p, i) => {
+    const src = `assets/speakers/norm/${p.slug}.webp`;
+    return `<img class="who" src="${src}" alt="" style="left:${(centers[i] / W * 100).toFixed(1)}%;height:${heightPct}%">`;
+  }).join("")}</div>`;
+}
+
+function slidesStrap(s) {
+  const people = s.speakers;
+  if (s.host) return `<div class="abs filet" style="left:560px;top:846px"><div class="rule"></div><div class="host-strap">${hostLogo(s)}<div class="role">Enregistré en public<br>pendant l'apéro</div></div></div>`;
+  if (!people.length) return `<div class="abs filet" style="left:560px;top:846px"><div class="rule"></div><div class="name tbd" style="font-size:58px">Speaker To Be Announced</div></div>`;
+  if (people.length === 1) {
+    const p = people[0];
+    return `<div class="abs filet" style="left:560px;top:846px"><div class="rule"></div><div class="name" style="font-size:58px">${p.name}</div><div class="role">${p.role} · ${p.company}</div></div>`;
+  }
+  return people.map((p, i) => `<div class="abs filet" style="left:${560 + i * 680}px;top:846px;width:640px"><div class="rule"></div><div class="name" style="font-size:50px">${p.name}</div><div class="role" style="font-size:15px">${p.role} · ${p.company}</div></div>`).join("");
+}
+
+// Session poster in the left band, slides on the right, name strap under the slides
+function slidesFrame(s) {
+  const src = `assets/sessions/${s.art}.webp`, pos = artPlacement(s, BAND_W, H, BAND_W / 2, s.bandFx ?? s.fx);
+  const lead = s.speakers[0];
+  const cam = lead ? footage([lead], [W / 2], 96) : `<div class="footage"></div>`;
+  return `<div class="cv talk t-${s.track}" data-slug="${s.slug}">
+    <div class="poster" style="left:0;top:0;width:${BAND_W}px;height:${H}px"><img src="${src}" alt="" style="${pos}"></div>
+    <div class="abs" style="left:0;top:0;width:${BAND_W}px;height:200px;background:linear-gradient(rgba(9,18,46,.5),rgba(9,18,46,0))"></div>
+    <div class="abs tk-box" style="left:24px;top:190px;width:472px;padding:22px 24px 24px;background:rgba(9,18,46,.42);border-radius:4px">
+      <div style="display:flex;gap:14px;align-items:center"><span class="chip">${CHIP_LABEL[s.track]}</span><span class="lb" style="font-size:16px">${s.time}</span></div>
+      <div class="serif relief tk-title" style="font-size:44px;line-height:1.02;font-weight:600;margin-top:16px">${s.title}</div>
+    </div>
+    <div class="cam" style="left:24px;top:${TALK_CAM_TOP}px;width:472px;height:266px;box-shadow:0 0 0 6px var(--cream)">${cam}<span class="camtag">CAMÉRA LIVE</span></div>
+    <div class="slide" style="left:560px;top:60px;width:1320px">${SLIDE_MOCK}</div>
+    ${slidesStrap(s)}
+    <div class="abs lb" style="right:40px;top:1000px;font-size:15px;opacity:.7">genai-days-nantes.com</div>
+    ${BUG}
+  </div>`;
+}
+
+// Round tables: a slide in place of the deck, poster and people laid out like the contest jury frame
+function panelFrame(s) {
+  const meta = `<div class="meta"><span class="chip">${TRACK_LABEL[s.track]}</span><span class="lb">${s.format} · ${s.time}</span></div>`;
+  return `<div class="cv talk contest roundtable t-${s.track}" data-slug="${s.slug}" style="background:${CONTEST_BLACK}">
+    ${contestBackdrop(s)}
+    <div class="col">${meta}<div class="title" style="font-size:88px;margin-top:28px">${s.title}</div>
+      <div class="jury">${s.speakers.map(p => `<div class="row">${inkPortrait(p.slug, 112)}<div><div class="name">${p.name}</div><div class="role lb"><span>${p.role}</span><br><span>${p.company}</span></div></div></div>`).join("")}</div>
+    </div>
+    ${BUG}
+  </div>`;
+}
+
+// ---------- Startup Contest ----------
+// The rocket poster sits on the right; its left black wing fades into a matching black under the text column.
+const CONTEST_BLACK = "#14181a", CONTEST_POSTER_X = 560;
+const byTag = (s, tag) => s.speakers.filter(p => p.tag === tag);
+
+function contestBackdrop(s) {
+  const box = {w: W - CONTEST_POSTER_X, h: H}, src = `assets/sessions/${s.art}.webp`, pos = artPlacement(s, box.w, box.h, box.w / 2);
+  const shade = "linear-gradient(90deg,rgba(0,0,0,.62) 0%,rgba(0,0,0,.5) 34%,rgba(0,0,0,.22) 50%,rgba(0,0,0,0) 62%)";
+  return `<div class="poster grain" style="left:${CONTEST_POSTER_X}px;top:0;width:${box.w}px;height:${H}px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 260px);mask-image:linear-gradient(90deg,transparent,#000 260px)"><img src="${src}" alt="" style="${pos}"><img class="pass2" src="${src}" alt="" style="${pos}"></div>
+    <div class="full" style="background:${shade}"></div>`;
+}
+
+function peopleRow(people, size, nameSize) {
+  return `<div class="people" style="grid-template-columns:repeat(${people.length},1fr)">${people.map(p => `<div class="cell">${inkPortrait(p.slug, size)}<div class="name" style="font-size:${nameSize}px">${p.name}</div><div class="co lb">${p.company}</div></div>`).join("")}</div>`;
+}
+
+function hostLine(s) {
+  const host = byTag(s, "Animateur")[0];
+  return host ? `<div class="host-line lb">Animation<b>${host.name}</b>${host.company}</div>` : "";
+}
+
+// Intro bumper: two labelled groups, the finalists first since they are what the session is about
+function contestBumper(s) {
+  const meta = `<div class="meta"><span class="chip">${TRACK_LABEL[s.track]}</span><span class="lb">${s.format} · ${s.time} · ${s.dur} min</span></div>`;
+  return `<div class="cv lay-A contest t-${s.track}" data-slug="${s.slug}" style="background:${CONTEST_BLACK}">
+    ${contestBackdrop(s)}
+    <div class="col" style="top:110px;bottom:120px">${meta}<div class="title" style="font-size:104px;margin-top:26px">${s.title}</div>
+      <div style="margin-top:40px"><div class="glabel lb">Finalistes</div>${peopleRow(byTag(s, "Finaliste"), 116, 32)}</div>
+      <div style="margin-top:34px"><div class="glabel lb">Jury</div>${peopleRow(byTag(s, "Jury"), 92, 28)}</div>
+    </div>
+    <div class="foot" style="left:110px;bottom:56px;opacity:1">${hostLine(s)}</div>
+  </div>`;
+}
+
+function contestSteps(s, current) {
+  const steps = byTag(s, "Finaliste").map((p, i) => `${i + 1} · ${p.company}`).concat("Jury");
+  return `<div class="steps lb">${steps.map((label, i) => `<span${i === current ? ` class="on"` : ""}>${label}</span>`).join("")}</div>`;
+}
+
+function contestHead(s, label) {
+  return `<div class="meta"><span class="chip">${s.title}</span><span class="lb">${label}</span></div>`;
+}
+
+// Shown full screen while one finalist pitches, in place of a slide deck
+function pitchFrame(s, p, i, n) {
+  const src = `assets/startups/${p.logo}.png`;
+  const logo = p.logo ? `<div class="logo${p.logo === "laborheto" ? " tile" : ""}"><img src="${src}" alt=""></div>` : "";
+  return `<div class="cv talk contest t-${s.track}" data-slug="${s.slug}" style="background:${CONTEST_BLACK}">
+    ${contestBackdrop(s)}
+    <div class="col">${contestHead(s, `Pitch ${i + 1}/${n}`)}
+      <div class="company">${logo}<div class="cname">${p.company}</div></div>
+      <div class="pitcher">${inkPortrait(p.slug, 150)}<div><div class="name">${p.name}</div><div class="role lb">${p.role}</div></div></div>
+    </div>
+    ${contestSteps(s, i)}
+    ${BUG}
+  </div>`;
+}
+
+function juryFrame(s) {
+  const jurors = byTag(s, "Jury");
+  return `<div class="cv talk contest t-${s.track}" data-slug="${s.slug}" style="background:${CONTEST_BLACK}">
+    ${contestBackdrop(s)}
+    <div class="col">${contestHead(s, "Délibération")}<div class="title" style="font-size:120px;margin-top:26px">Le jury</div>
+      <div class="jury">${jurors.map(p => `<div class="row">${inkPortrait(p.slug, 104)}<div><div class="name">${p.name}</div><div class="role lb"><span>${p.role}</span><br><span>${p.company}</span></div></div></div>`).join("")}</div>
+      <div style="margin-top:54px">${hostLine(s)}</div>
+    </div>
+    ${contestSteps(s, byTag(s, "Finaliste").length)}
+    ${BUG}
+  </div>`;
+}
+
+// One frame per session; 3+ people get the round-table slide; the contest has one frame per pitch then the jury. part is 1-based.
+function talkFrames(s) {
+  if (s.contest) {
+    const finalists = byTag(s, "Finaliste");
+    return finalists.map((p, i) => ({part: i + 1, caption: `Pitch ${i + 1}/${finalists.length} · ${p.company}`, markup: pitchFrame(s, p, i, finalists.length)}))
+      .concat({part: finalists.length + 1, caption: "Jury", markup: juryFrame(s)});
+  }
+  if (s.speakers.length < 3) return [{part: 1, caption: "Slides et intervenant", markup: slidesFrame(s)}];
+  return [{part: 1, caption: "Table ronde", markup: panelFrame(s)}];
+}
+
+const VIEWS = {
+  bumpers: {
+    title: "Bumpers d'intro", heading: "Bumpers <em>d'intro</em>", other: "talks", switchLabel: "Habillage pendant les talks &rarr;",
+    intro: "Le carton de 3 à 5 s avant chaque session du programme. Cliquer un cadre l'ouvre seul, en 1920 × 1080, pour OBS.",
+    frames: s => [{part: 1, caption: TRACK_LABEL[s.track], markup: s.contest ? contestBumper(s) : frameMarkup(s)}],
+  },
+  talks: {
+    title: "Slides et intervenant", heading: "Slides et <em>intervenant</em>", other: "bumpers", switchLabel: "&larr; Bumpers d'intro",
+    intro: "Le cadre pendant chaque session&nbsp;: l'affiche recadrée dans la bande de gauche, la caméra live et les slides figurées, le nom sous les slides. Les tables rondes ont leur vue à la place des slides&nbsp;: l'affiche, le titre et les intervenant·es. Le Startup Contest a un cadre par pitch, puis le jury. Cliquer un cadre l'ouvre seul, en 1920 × 1080, pour OBS.",
+    frames: talkFrames,
+  },
+};
+const cardId = (view, s, part) => view === "talks" ? `talk-${s.slug}${part > 1 ? `-${part}` : ""}` : s.slug;
+// Anchors the board links to (bumpers.html?view=talks#tables-rondes): the first slot holding that kind of session
+const SLOT_ANCHORS = [["tables-rondes", s => s.format === "Table ronde"], ["startup-contest", s => s.contest]];
+const anchorPrefix = "";
+const listingHref = view => view === "talks" ? "?view=talks" : "bumpers.html";
+const soloHref = (view, s, part) => view === "talks" ? `?view=talks&session=${s.slug}${part > 1 ? `&part=${part}` : ""}` : `?session=${s.slug}`;
+
+function renderListing(root, view) {
+  const v = VIEWS[view];
+  root.querySelector(".masthead h1").innerHTML = v.heading;
+  root.querySelector(".masthead .intro").innerHTML = v.intro;
+  const link = root.querySelector(".masthead .switch");
+  link.href = listingHref(v.other);
+  link.innerHTML = v.switchLabel;
+  const slotTimes = [...new Set(SESSIONS.map(s => s.time))];
+  const anchors = view === "talks" ? Object.fromEntries(SLOT_ANCHORS.map(([id, test]) => [SESSIONS.find(test).time, anchorPrefix + id])) : {};
+  root.querySelector(".slots").innerHTML = slotTimes.map(time => {
+    const cards = SESSIONS.filter(s => s.time === time).flatMap(s => v.frames(s).map(f => `<article class="card" id="${cardId(view, s, f.part)}">
+  <a class="fr" href="${soloHref(view, s, f.part)}">${f.markup}</a>
+  <h3>${s.title}</h3><p class="lb">${s.time} · ${f.caption}</p></article>`));
+    return `<section class="slot"${anchors[time] ? ` id="${anchors[time]}"` : ""}><h2>${time}</h2><div class="cards">${cards.join("")}</div></section>`;
+  }).join("");
 }
 
 function fitFrames() {
@@ -276,23 +533,37 @@ function fitFrames() {
   });
 }
 
+// Key mode: the camera and slides boxes become fully transparent holes, snapped to whole pixels
+// so vMix inputs can sit under them; the cream camera border is a box-shadow outside the hole, so it stays.
+// The holes are written to data-holes ("name x y w h;...") for the exporter.
+function punchKeyHoles(canvas) {
+  document.documentElement.classList.add("key");
+  document.body.classList.add("key");
+  if (!canvas.classList.contains("talk")) return;
+  const holes = [["camera", ".cam"], ["slides", ".slide"]].map(([name, sel]) => {
+    const el = canvas.querySelector(sel);
+    if (!el) return null;
+    const r = el.getBoundingClientRect(), x = Math.round(r.left), y = Math.round(r.top);
+    return {name, x, y, w: Math.round(r.right) - x, h: Math.round(r.bottom) - y};
+  }).filter(Boolean);
+  canvas.dataset.holes = holes.map(h => `${h.name} ${h.x} ${h.y} ${h.w} ${h.h}`).join(";");
+  if (holes.length) canvas.style.clipPath = `path(evenodd,"M0 0H${W}V${H}H0Z${holes.map(h => `M${h.x} ${h.y}h${h.w}v${h.h}h${-h.w}Z`).join("")}")`;
+}
+
 const params = new URLSearchParams(location.search);
+const view = params.get("view") === "talks" ? "talks" : "bumpers";
 const soloSession = SESSIONS.find(s => s.slug === params.get("session"));
-const FALLBACK_EXAMPLE = "souverainete-ia";
-const card = (s, layout) => `<article class="card" id="${layout === "c" ? "secours-" : ""}${s.slug}">
-  <a class="fr" href="?session=${s.slug}${layout === "c" ? "&layout=c" : ""}">${frameMarkup(s, layout)}</a>
-  <h3>${s.title}</h3><p class="lb">${s.time} · ${TRACK_LABEL[s.track]}</p></article>`;
+document.title = VIEWS[view].title;
 if (soloSession) {
+  const frames = VIEWS[view].frames(soloSession);
   document.body.classList.add("solo");
-  document.getElementById("board").outerHTML = frameMarkup(soloSession, params.get("layout") === "c" ? "c" : "a");
+  document.getElementById("board").outerHTML = (frames.find(f => f.part === +params.get("part")) || frames[0]).markup;
+  if (params.get("key") === "1") punchKeyHoles(document.querySelector(".cv"));
 } else {
-  const slotTimes = [...new Set(SESSIONS.map(s => s.time))];
-  document.getElementById("slots").innerHTML = slotTimes.map(time => {
-    const sessions = SESSIONS.filter(s => s.time === time);
-    return `<section class="slot"><h2>${time}</h2><div class="cards">${sessions.map(s => card(s, "a")).join("")}</div></section>`;
-  }).join("") + `<section class="slot fallback"><h2>Variante de secours</h2><div class="cards">${card(SESSIONS.find(s => s.slug === FALLBACK_EXAMPLE), "c")}</div></section>`;
+  renderListing(document.getElementById("board"), view);
   fitFrames();
   new ResizeObserver(fitFrames).observe(document.body);
+  if (location.hash) document.getElementById(location.hash.slice(1))?.scrollIntoView();
 }
 fitTitles(document);
 document.fonts.ready.then(() => fitTitles(document));
