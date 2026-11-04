@@ -82,8 +82,8 @@ footer{margin-top:72px;padding-top:20px;border-top:1px solid var(--line);font:12
   <ul>
     <li><b>Des scènes en HTML animé.</b> Chaque scène est du HTML et du CSS, animé sur une timeline. HyperFrames lit la page image par image dans un navigateur sans fenêtre, puis assemble les images et le son en MP4. Pas de logiciel de montage&nbsp;: tout se modifie dans le code, donc tout se modifie en parlant à l'agent.</li>
     <li><b>Des variantes à volonté.</b> Une alternative coûte un rendu de quelques secondes. On compare côte à côte et on choisit à l'œil.</li>
-    <li><b>Une musique calée à l'image.</b> La musique est synthétisée en Python et lit la même table de temps que le film, donc chaque impact tombe sur une coupe (voir <a href="#son">le son</a>).</li>
-    <li><b>Le look du site.</b> Les illustrations du site sont séparées en deux plaques d'encre, bleue et orange, comme en sérigraphie. Le film les décale puis les recale à l'écran.</li>
+    <li><b>Un montage calé sur la musique.</b> On choisit d'abord le morceau, puis chaque coupe se cale sur son tempo (voir <a href="#son">le son</a>).</li>
+    <li><b>La direction artistique de la charte.</b> Print et digital&nbsp;: les illustrations et l'étiquette argentée gardent leur aspect fait main, tout le reste est digital (fragmentation en barres orange et bleues, zoom caméra vers un point de l'image, grilles nettes). Transitions par décalage ou glissement interdites. Les règles sont dans <code>.claude/rules/videos.md</code>.</li>
     <li><b>Des données à jour.</b> Speakers, partenaires, chiffres et horaires viennent du site (<code>src/content/</code>). Quand le site change, on demande à l'agent de régénérer les listes du film.</li>
     <li><b>Plusieurs formats.</b> Le même film peut être recomposé en vertical (voir <a href="#formats">formats</a>).</li>
   </ul>
@@ -96,7 +96,7 @@ footer{margin-top:72px;padding-top:20px;border-top:1px solid var(--line);font:12
   <table>
     <tr><th>Moteur</th><th>Pour quoi faire</th></tr>
     <tr><td>GSAP</td><td>Le moteur par défaut, pour l'essentiel du travail&nbsp;: textes, cartes, masques, caméra 2D, enchaînements précis sur une timeline. C'est le seul moteur du film actuel.</td></tr>
-    <tr><td>CSS et SVG</td><td>Mélanges d'encres, textures, motifs répétés, formes vectorielles. Le film s'en sert pour la sérigraphie (plaques multipliées) et le grain.</td></tr>
+    <tr><td>CSS et SVG</td><td>Dégradés, masques, motifs répétés, formes vectorielles. Le film s'en sert pour les logos monochromes, les reflets de la boule à facettes et les voiles de lisibilité.</td></tr>
     <tr><td>Three.js (WebGL)</td><td>La vraie 3D&nbsp;: objets, lumières, mouvements de caméra dans l'espace, shaders. Possible, pas utilisé dans le film.</td></tr>
     <tr><td>TypeGPU (WebGPU)</td><td>Effets calculés par la carte graphique&nbsp;: particules, liquides, verre, shaders sur mesure.</td></tr>
     <tr><td>Lottie</td><td>Animations exportées d'After Effects, y compris des personnages animés. Utile si un motion designer fournit des fichiers.</td></tr>
@@ -110,12 +110,13 @@ footer{margin-top:72px;padding-top:20px;border-top:1px solid var(--line);font:12
     <li><b>Transitions</b> entre scènes, et une direction artistique (palettes, typographie, storyboard) quand on part de zéro.</li>
   </ul>
   <h3>La contrainte</h3>
-  <p>Le rendu doit être identique à chaque fois&nbsp;: HyperFrames peut demander n'importe quelle image dans n'importe quel ordre. Pas de hasard réel ni d'horloge&nbsp;: les effets «&nbsp;aléatoires&nbsp;» (grain, chute des portraits) utilisent une graine fixe. C'est aussi ce qui permet de rendre une variante sans que le reste bouge.</p>
-  <p>À retenir pour piloter&nbsp;: les recettes et scènes types des skills sont partagées par tous les utilisateurs de HyperFrames. Sans direction, l'agent produit un film «&nbsp;promo SaaS&nbsp;» qui ressemble à tous les autres. Ce qui rend le film GENAI DAYS reconnaissable, c'est la direction donnée&nbsp;: sérigraphie, objets de la marque, papier, trois encres. Donne toujours une direction visuelle précise, et cite <code>DESIGN.md</code>.</p>
+  <p>Le rendu doit être identique à chaque fois&nbsp;: HyperFrames peut demander n'importe quelle image dans n'importe quel ordre. Pas de hasard réel ni d'horloge&nbsp;: les effets «&nbsp;aléatoires&nbsp;» (fragmentation en blocs) utilisent une graine fixe. C'est aussi ce qui permet de rendre une variante sans que le reste bouge.</p>
+  <p>À retenir pour piloter&nbsp;: les recettes et scènes types des skills sont partagées par tous les utilisateurs de HyperFrames. Sans direction, l'agent produit un film «&nbsp;promo SaaS&nbsp;» qui ressemble à tous les autres. Ce qui rend le film GENAI DAYS reconnaissable, c'est la direction donnée&nbsp;: illustrations du site, étiquette argentée, pixels et glitch dans les couleurs de la charte. Donne toujours une direction visuelle précise, et cite la section «&nbsp;Direction artistique vidéo&nbsp;» de <code>.claude/rules/videos.md</code>.</p>
 </section>
 
 <section id="son">
   <h2><span class="n">03</span>Le son&nbsp;: d'où il vient, comment varier</h2>
+  <div class="note"><b>Musique du film final.</b> W1, une symphonie en sol mineur dans l'esprit de Mozart, générée avec Lyria 3.5 à 120&nbsp;BPM&nbsp;; toutes les coupes tombent sur ses temps. Ses sources sont dans <code>videos/renders/music-lab-classique-v4/</code>, les anciennes pistes (F3, M2) dans <code>videos/renders/archive/2026-11-04/</code>. La suite de cette section décrit l'ancienne partition M2, retirée du repo le 04/11.</div>
   <p>La musique du film est une partition écrite en code Python. Ce n'est pas une IA&nbsp;: le même script donne toujours exactement le même fichier. Elle lit la table de temps du film, donc chaque impact tombe sur une coupe à la milliseconde. Les bruitages (raclette de sérigraphie, pression du pass, horloge, boule à facettes) sont synthétisés de la même façon. Seul le son de l'autocollant décollé est un enregistrement de la marque.</p>
   <h3>Pourquoi un son peut sembler déjà entendu</h3>
   <ul>
@@ -138,10 +139,10 @@ footer{margin-top:72px;padding-top:20px;border-top:1px solid var(--line);font:12
   <h2><span class="n">04</span>Piloter l'agent</h2>
   <p>Ouvre Claude Code dans <code>videos/film</code>. Il charge seul les skills HyperFrames et les règles de <code>.claude/rules/videos.md</code>, où vivent toutes les commandes détaillées. Décris l'effet voulu. L'agent choisit la technique.</p>
   <h3>Quoi demander</h3>
-  <div class="prompt">«&nbsp;Le texte de la scène S6 passe trop vite. Relance l'audit de lecture et corrige seulement les valeurs aberrantes.&nbsp;»</div>
-  <div class="prompt">«&nbsp;Fais-moi trois variantes de l'entrée du billet en S6, en micro-vidéos de 5 s, pour que je choisisse.&nbsp;»</div>
-  <div class="prompt">«&nbsp;Le site a deux nouveaux speakers. Mets le film à jour, régénère la musique et fais un rendu brouillon.&nbsp;»</div>
-  <div class="prompt">«&nbsp;Fais le rendu du film avec la musique M3 pour que je le partage.&nbsp;»</div>
+  <div class="prompt">«&nbsp;Le texte du carton C07 passe trop vite. Relance l'audit de lecture et allonge seulement ce carton.&nbsp;»</div>
+  <div class="prompt">«&nbsp;Fais-moi trois variantes de l'arrivée de l'étiquette sur le cartouche final, en micro-vidéos de 5 s, pour que je choisisse.&nbsp;»</div>
+  <div class="prompt">«&nbsp;Le site a deux nouveaux speakers. Mets le film à jour et fais un rendu brouillon.&nbsp;»</div>
+  <div class="prompt">«&nbsp;J’ai la puce avec la lumière orange. Remplace le visuel dans l’écran et dans l’intro, en gardant le raccord du zoom.&nbsp;»</div>
   <p>Quand tu hésites entre deux options, fais rendre de courtes variantes et choisis à l'œil. C'est plus rapide que d'en débattre.</p>
   <h3>Relire et valider</h3>
   <ol class="steps">
@@ -153,9 +154,9 @@ pnpm run dev</pre></div></li>
     <li><b>Rendu à partager.</b> Un seul fichier d'environ 38&nbsp;Mo, son normalisé, prêt à faire valider. Une variante musicale se rend avec la même image.</li>
   </ol>
   <p><b>Ce que tu vérifies à l'œil</b>&nbsp;: chaque texte se lit sans effort, les impacts sonores tombent sur les coupes, le wordmark GENAI DAYS respecte la marque (GENAI gras, DAYS régulier, seul AI en italique), aucun chiffre ni nom ne sort de nulle part.</p>
-  <div class="note"><b>Où arrivent les rendus.</b> Dans <code>videos/renders/</code>, ignoré par git. Les MP4 se partagent par Drive, jamais dans le repo.</div>
+  <div class="note"><b>Où arrivent les rendus.</b> Dans <code>videos/renders/</code>, ignoré par git. Un seul rendu final, <code>film.mp4</code>, et sa vignette LinkedIn <code>vignette-linkedin.jpg</code>&nbsp;; les essais et anciens rendus sont archivés dans <code>videos/renders/archive/</code>. Les MP4 se partagent par Drive, jamais dans le repo.</div>
   <h3 id="formats">Formats</h3>
-  <p>Le film est en 16:9. Les formats verticaux (4:5 et 9:16) recomposent les scènes&nbsp;: chaque scène est remise en page pour le nouveau cadre. Ils sont encore au stade de lab&nbsp;: 5 scènes sur 8 (S1, S2, S3, S5, S9), 27,75 s. Le lab reprend le style du film à chaque génération, il suit donc ses modifications.</p>
+  <p>Le film est en 16:9. Les formats verticaux (4:5 et 9:16) recomposent les scènes&nbsp;: chaque scène est remise en page pour le nouveau cadre. Ils sont à refaire depuis le film final&nbsp;: l'ancien lab vertical, écrit pour le premier film, a été retiré.</p>
   <p>Ce qui change d'un format à l'autre&nbsp;:</p>
   <ul>
     <li><b>Zones sûres.</b> Sur les réseaux, l'interface couvre le haut et le bas du 9:16. Rien d'important dans ces bandes.</li>
@@ -167,15 +168,14 @@ pnpm run dev</pre></div></li>
 
 <section id="film">
   <h2><span class="n">05</span>Comment on a fait le film</h2>
-  <p>Film d'annonce sans voix off de 45 s, en 16:9. Il dit l'essentiel (date, lieu, enjeux, parcours, speakers, billet, temps forts, partenaires) et chaque scène montre une technique différente. Le détail scène par scène et les décisions validées sont dans <a href="film/BRIEF.md"><code>film/BRIEF.md</code></a>.</p>
+  <p>Film d'annonce sans voix off d'environ 53 s, en 16:9. Il raconte une seule histoire, «&nbsp;ici et maintenant&nbsp;», en quatre blocs&nbsp;: un hook sans information, l'intro qui nomme l'événement, les features (problèmes, réponse de la journée, intervenants, soirée, partenaires), puis l'appel à l'action et le cartouche avec la date. Le détail carton par carton et les décisions validées sont dans <a href="film/BRIEF.md"><code>film/BRIEF.md</code></a>.</p>
   <ul>
-    <li><b>Un seul fichier.</b> Tout le film tient dans <code>film/index.html</code>&nbsp;: style, scènes S1 à S9 (pas de S8) et timeline.</li>
-    <li><b>Temps de lecture.</b> La chorégraphie est écrite rapide, puis des pauses sont insérées là où un texte doit être lu. Règle des sous-titres&nbsp;: 17 caractères par seconde, jamais moins de 0,83 s. On garde le tempo vif et on ne corrige que les textes vraiment trop courts.</li>
-    <li><b>Musique dérivée du timing.</b> Les pauses tombent sur la grille de 120 BPM et la musique est générée depuis la même table. Tout changement de timing impose de régénérer la musique.</li>
-    <li><b>Plaques de sérigraphie.</b> Chaque illustration est calculée en plaque bleue et plaque orange. Le décalage puis le recalage des plaques est le geste qui met le film en mouvement.</li>
+    <li><b>Un ordre de travail.</b> Récit d'abord, puis visuels séquence par séquence, transitions, musique, et enfin calage du montage sur le tempo du morceau.</li>
+    <li><b>Un seul fichier.</b> Tout le film tient dans <code>film/index.html</code>&nbsp;: style, cartons C01 à C13 regroupés en sections, timeline en secondes de sortie.</li>
+    <li><b>Temps de lecture.</b> Règle des sous-titres&nbsp;: 17 caractères par seconde, jamais moins de 0,83 s, au tempo rapide validé (facteur 0,8). <code>tools/reading.py</code> contrôle chaque carton.</li>
     <li><b>Assets figés.</b> Images, logos et polices sont une copie figée dans <code>film/assets/</code>, toujours en version optimisée. Les portraits sont l’exception&nbsp;: <code>film/assets/speakers</code> est un lien vers <code>public/speakers/</code> du site, donc une photo changée sur le site change aussi dans le film au prochain rendu.</li>
     <li><b>Rien d'inventé.</b> Les données viennent du site. Les listes de speakers et de partenaires du film sont un instantané, à régénérer quand le site bouge.</li>
-    <li><b>Choix à l'œil.</b> Les scènes, la musique (cinq variantes, M2 retenue) et l'export ont été tranchés sur des variantes rendues côte à côte.</li>
+    <li><b>Images provisoires.</b> L’hémicycle éteint et allumé, la puce au cœur orange, les rails et la boule à facettes sont intégrés. Seule l’image de soirée reste provisoire.</li>
   </ul>
 </section>
 
@@ -187,7 +187,7 @@ pnpm run dev</pre></div></li>
     <tr><th>Brique</th><th>Rôle</th></tr>
     <tr><td>HyperFrames 0.8.140</td><td>Aperçu, contrôle et rendu. Lancé via <code>pnpm dlx</code>, rien à installer dans le projet. Version figée dans <code>film/package.json</code>. Le premier lancement télécharge son navigateur de rendu.</td></tr>
     <tr><td><code>node</code> + <code>pnpm</code></td><td>Lancer HyperFrames</td></tr>
-    <tr><td>Python via <code>uv</code></td><td>Musique, plaques, logos, lab vertical. Chaque script déclare ses dépendances, <code>uv</code> les installe seul.</td></tr>
+    <tr><td>Python via <code>uv</code></td><td>Logos partenaires, audit de lecture, coupes de musique. Chaque script déclare ses dépendances, <code>uv</code> les installe seul.</td></tr>
     <tr><td><code>ffmpeg</code></td><td>Encodage du fichier à partager et mesure du volume sonore</td></tr>
     <tr><td>Skills HyperFrames</td><td>Déjà versionnés dans <code>.claude/skills/</code> à la racine du repo, verrouillés par <code>skills-lock.json</code>. Rien à installer.</td></tr>
     <tr><td><code>.claude/rules/videos.md</code></td><td>Règles et commandes de l'agent pour ce dossier</td></tr>
@@ -200,16 +200,15 @@ pnpm run dev</pre></div></li>
 └─ film/
    ├─ index.html     <span class="c">le film</span>
    ├─ BRIEF.md       <span class="c">intention, contraintes, décisions</span>
-   ├─ assets/        <span class="c">copie figée&nbsp;: images, plaques, audio</span>
+   ├─ assets/        <span class="c">copie figée&nbsp;: images, logos, polices</span>
    ├─ music/         <span class="c">générateurs de musique</span>
-   └─ tools/         <span class="c">lecture, plaques, logos, rendu, vertical</span></div>
+   └─ tools/         <span class="c">lecture, logos, rendu</span></div>
 </section>
 
 <section id="pieges">
   <h2><span class="n">07</span>Pièges connus</h2>
   <table>
     <tr><th>Symptôme</th><th>Explication</th></tr>
-    <tr><td>Le contrôle signale des textes masqués sur le wordmark final</td><td>Faux positif connu&nbsp;: une couche d'encre double le wordmark pour l'effet d'impression.</td></tr>
     <tr><td>Les impacts sonores tombent à côté des coupes</td><td>Le timing a changé sans régénérer la musique. Demande-le à l'agent.</td></tr>
     <tr><td>HyperFrames propose une version plus récente</td><td>La version est figée exprès pour un rendu identique. Ne la change qu'avec un rendu de comparaison juste après.</td></tr>
     <tr><td>Un speaker ou un logo manque</td><td>Les listes du film sont un instantané du site. Demande à l'agent de les régénérer.</td></tr>

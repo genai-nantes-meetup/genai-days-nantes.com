@@ -39,147 +39,142 @@
         src: local("Arial Bold"), local("Arial-BoldMT");
         font-weight: 700;
       }
-      @font-face {
-        font-family: "Special Elite";
-        src: url("assets/fonts/special-elite-latin-400-normal.woff2") format("woff2");
-        font-weight: 400;
-      }
 
+      /* One margin on all four sides; nothing to read in the bottom 15 % (player bar). */
       :root {
         --blue: #3d43ce;
         --orange: #fe4d1b;
         --cream: #f9f4ec;
-        --cream-deep: #f2eadf;
-        --white: #ffffff;
         --ink: #393636;
         --night: #09122e;
+        --tile: #f7f5f0;
+        --m: 96px;
+        --safe: 162px;
         --serif: "EB Garamond", Georgia, serif;
         --label: "Arial Label", Arial, Helvetica, sans-serif;
-        --type: "Special Elite", "Courier New", monospace;
+
       }
       * {
+        box-sizing: border-box;
         margin: 0;
         padding: 0;
-        box-sizing: border-box;
       }
       html,
       body {
-        width: 1920px;
-        height: 1080px;
+        width: 100%;
+        height: 100%;
         overflow: hidden;
-        background: var(--cream);
+        background: var(--night);
       }
       #root {
         position: relative;
         width: 100%;
         height: 100%;
         overflow: hidden;
-        background: var(--cream);
+        background: var(--night);
         font-family: var(--serif);
-        color: var(--ink);
+        color: var(--cream);
       }
       .scene {
         position: absolute;
         inset: 0;
         overflow: hidden;
       }
-      .layer {
+      .scene > * {
         position: absolute;
-        inset: 0;
-        overflow: hidden;
       }
-      /* Functional labels: Arial bold, uppercase, 0.12em (DESIGN.md label role). */
-      .lab {
+      .bg {
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+      }
+      .veil-center {
+        inset: 0;
+        background: radial-gradient(ellipse 64% 50% at 50% 42%, rgba(9, 18, 46, 0.86), rgba(9, 18, 46, 0) 72%);
+      }
+      .veil-all {
+        inset: 0;
+        background: rgba(9, 18, 46, 0.6);
+      }
+      .veil-left {
+        inset: 0;
+        background: linear-gradient(90deg, rgba(9, 18, 46, 0.9) 0%, rgba(9, 18, 46, 0.6) 46%, rgba(9, 18, 46, 0) 76%);
+      }
+      /* Placeholder images, until the art is produced. */
+      .todo {
+        left: var(--m);
+        top: var(--m);
+        z-index: 5;
+        padding: 6px 12px;
+        background: var(--orange);
+        color: var(--night);
         font-family: var(--label);
         font-weight: 700;
+        font-size: 18px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      /* ---------- type */
+      .blk {
+        left: var(--m);
+        right: var(--m);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 22px;
+        text-align: center;
+      }
+      .t1 {
+        font-size: 80px;
+        line-height: 1.04;
+        font-weight: 500;
+        max-width: 1380px;
+      }
+      .t1.md {
+        font-size: 64px;
+      }
+      .t1.xl {
+        font-size: 108px;
+      }
+      .t2 {
+        font-size: 52px;
+        line-height: 1.1;
+        font-style: italic;
+        color: rgba(249, 244, 236, 0.86);
+        max-width: 1260px;
+      }
+      .t3 {
+        font-size: 38px;
+        line-height: 1.15;
+        font-style: italic;
+      }
+      .k {
+        font-family: var(--label);
+        font-weight: 700;
+        font-size: 20px;
         letter-spacing: 0.12em;
         text-transform: uppercase;
-        line-height: 1.2;
       }
-      .m {
-        display: inline-block;
-        overflow: hidden;
-        vertical-align: top;
-        padding: 0.04em 0.03em 0.16em;
-        margin: -0.04em -0.03em -0.16em;
+      /* Two offset layers that snap back into register: the validated type gesture. */
+      .lay {
+        position: relative;
       }
-      .m.it {
-        padding-right: 0.12em;
-        margin-right: -0.12em;
-      }
-      .ch,
-      .wd {
-        display: inline-block;
-      }
-
-      /* ---------- screen-print: paper + two ink plates multiplied, then the original art */
-      .print {
+      .lay .ghost {
         position: absolute;
         inset: 0;
-        overflow: hidden;
-      }
-      .print .sheet {
-        position: absolute;
-        inset: 0;
-        background: var(--cream);
-        overflow: hidden;
-      }
-      .print img {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-      }
-      .print .signal {
-        mix-blend-mode: multiply;
-      }
-      .print .key {
-        mix-blend-mode: multiply;
-      }
-      .print .orig {
+        color: var(--orange);
         opacity: 0;
       }
-      .print .trame {
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        background: repeating-linear-gradient(0deg, rgba(57, 54, 54, 0.13) 0 2px, transparent 2px 5px);
-        mix-blend-mode: multiply;
+      .lay .face {
+        position: relative;
+        display: block;
       }
-      .scrim-top {
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 0;
-        height: 60%;
-        background: linear-gradient(180deg, rgba(9, 18, 46, 0.78), rgba(9, 18, 46, 0));
-      }
-      .scrim-bottom {
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        height: 62%;
-        background: linear-gradient(0deg, rgba(9, 18, 46, 0.9), rgba(9, 18, 46, 0.55) 55%, rgba(9, 18, 46, 0));
-      }
-      .scrim-left {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        width: 70%;
-        background: linear-gradient(90deg, rgba(9, 18, 46, 0.82), rgba(9, 18, 46, 0.45) 60%, rgba(9, 18, 46, 0));
-      }
-
-      /* ---------- wordmark (GENAI bold, DAYS regular, only AI italic) */
       .wordmark {
-        font-family: var(--serif);
-        line-height: 1;
-        letter-spacing: 0.015em;
-        white-space: nowrap;
         text-transform: uppercase;
+        letter-spacing: 0.015em;
+        line-height: 1;
+        white-space: nowrap;
       }
       .wordmark .g {
         font-weight: 700;
@@ -190,43 +185,72 @@
       .wordmark .i {
         font-style: italic;
       }
-      .wordmark .sp {
-        margin-left: 0.08em;
-      }
-      .mark {
+
+      /* ---------- transitions: block fragmentation (type A) and camera layers (type B) */
+      /* One canvas paints the flat orange and blue blocks of every fragmentation cut, above all scenes. */
+      #frag-ink {
         position: absolute;
         inset: 0;
-        width: 100%;
-        height: 100%;
-        overflow: visible;
+        width: 1920px;
+        height: 1080px;
+        z-index: 50;
+        pointer-events: none;
+      }
+      /* Camera wrappers and layers move as one plane; the scene clip itself never moves. */
+      .cam,
+      .layer {
+        position: absolute;
+        inset: 0;
+      }
+      .cam > *,
+      .layer > * {
+        position: absolute;
+      }
+      /* Stacking: an incoming fragmented scene sits above the outgoing one; scenes that part to reveal sit above. */
+      #q1 {
+        z-index: 1;
+      }
+      #q4 {
+        z-index: 4;
+      }
+      #q3 {
+        z-index: 3;
+      }
+      #q5 {
+        z-index: 6;
+      }
+      #q7 {
+        z-index: 8;
       }
 
-      /* ---------- metal label (site Label.astro, scaled for 1080p) */
-      .obj {
-        position: absolute;
-        --lift: 0;
+      /* ---------- silver label: the site's sticker (src/components/Label.astro, hero version). Brushed metal,
+         a dark outer edge and a light inner edge, no outline; its top right corner peels back onto the face.
+         --fold is the size of the lifted corner, --sx the position of the light. */
+      .pass {
+        width: 460px;
+        height: 316px;
+        z-index: 7;
+        --fold: 0px;
+        --sx: 30%;
+        filter: drop-shadow(0 3px 4px rgba(9, 18, 46, 0.4));
       }
-      .obj .shadow {
+      .pass-face {
         position: absolute;
         inset: 0;
-        border-radius: var(--r, 12px);
-        box-shadow: 0 2px 3px rgba(57, 54, 54, 0.3),
-          0 calc(6px + var(--lift) * 34px) calc(10px + var(--lift) * 56px) -4px rgba(20, 25, 60, 0.45);
-      }
-      .obj .front {
-        position: absolute;
-        inset: 0;
-        border-radius: var(--r, 12px);
-        overflow: hidden;
-      }
-      .metal .front {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 16px;
+        padding: 26px 30px;
+        color: #2a2c35;
         border: 1px solid rgba(57, 54, 54, 0.72);
+        border-radius: 17px;
         background: linear-gradient(105deg, rgba(255, 255, 255, 0.42), transparent 37%, rgba(30, 32, 33, 0.12) 100%),
-          linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(89, 92, 93, 0.1)),
-          url("assets/img/brushed-metal.jpg") center / cover;
+          linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(89, 92, 93, 0.1)), url("assets/img/brushed-metal.jpg") center / cover;
         background-blend-mode: screen, multiply, normal;
+        clip-path: polygon(0 0, calc(100% - var(--fold)) 0, 100% var(--fold), 100% 100%, 0 100%);
       }
-      .metal .front::before {
+      .pass-face::before {
         content: "";
         position: absolute;
         inset: 0;
@@ -237,1224 +261,599 @@
         mix-blend-mode: multiply;
         opacity: 0.72;
       }
-      .metal .front::after {
+      .pass-face::after {
         content: "";
         position: absolute;
-        inset: 6px;
+        inset: 0;
         border: 1.5px solid rgba(255, 255, 255, 0.86);
-        box-shadow: 0 0 0 1px rgba(57, 54, 54, 0.35);
-        border-radius: calc(var(--r, 12px) - 5px);
-      }
-      .metal .shine {
-        position: absolute;
-        inset: -18%;
-        background: radial-gradient(ellipse 48% 84% at var(--sx, 30%) 42%, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0.25) 26%, transparent 66%),
-          linear-gradient(112deg, transparent 28%, rgba(170, 208, 225, 0.12) 39%, rgba(255, 252, 230, 0.38) 49%, rgba(255, 193, 166, 0.11) 57%, transparent 69%);
+        border-radius: 16px;
+        background: radial-gradient(ellipse 48% 84% at var(--sx) 42%, rgba(255, 255, 255, 0.26), transparent 66%);
         mix-blend-mode: screen;
-        opacity: 0.3;
       }
-      .obj .content {
-        position: absolute;
-        inset: 0;
-        z-index: 2;
-        display: flex;
-        flex-direction: column;
-        padding: 24px 30px 22px;
-        color: var(--ink);
-      }
-      .obj .head {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-      }
-      .obj .head .wordmark {
-        font-size: 30px;
-      }
-      .obj .markicon {
-        width: 46px;
-        height: 46px;
-        background: var(--ink);
-        -webkit-mask: url("assets/logos/genai-mark.svg") center / contain no-repeat;
-        mask: url("assets/logos/genai-mark.svg") center / contain no-repeat;
-      }
-      .obj .body {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-      }
-
-      /* ---------- S1 */
-      .regmark {
-        position: absolute;
-        width: 70px;
-        height: 70px;
-        overflow: visible;
-        z-index: 3;
-      }
-      .regmark * {
-        fill: none;
-        stroke: var(--ink);
-        stroke-width: 2.5;
-      }
-      .s1-meta {
-        position: absolute;
-        font-size: 20px;
-        color: var(--ink);
-        z-index: 3;
-      }
-      #s1-sheetframe {
-        position: absolute;
-        inset: 0;
-      }
-      #s1-squeegee {
-        position: absolute;
-        top: -80px;
-        bottom: -80px;
-        left: 0;
-        width: 54px;
-        border-radius: 10px;
-        background: linear-gradient(90deg, #1f1f1f, #5a5a5a 35%, #2a2a2a 70%, var(--orange) 70% 100%);
-        box-shadow: 18px 0 30px rgba(0, 0, 0, 0.35);
-        transform: translateX(-200px) rotate(3deg);
-        z-index: 5;
-      }
-      #s1-row {
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 150px;
-        height: 230px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 52px;
-      }
-      #s1-mark {
+      .pass-date {
         position: relative;
-        width: 200px;
-        height: 200px;
-        flex: 0 0 auto;
-      }
-      #s1-wm {
-        color: var(--cream);
-        font-size: 190px;
-        margin-top: 20px;
-      }
-      #s1-pass {
-        left: 1250px;
-        top: 590px;
-        width: 580px;
-        height: 414px;
-        --r: 18px;
-      }
-      .pass .pdate {
         display: flex;
-        align-items: flex-end;
-        gap: 22px;
+        align-items: stretch;
+        gap: 18px;
         text-transform: uppercase;
       }
-      .pass .pdate strong {
-        font-size: 170px;
-        font-weight: 800;
-        letter-spacing: -0.04em;
-        line-height: 0.8;
+      .pass-date strong {
+        font-size: 122px;
+        font-weight: 600;
+        letter-spacing: -0.055em;
+        line-height: 0.74;
       }
-      .pass .pdate span {
+      .pass-date span {
         display: flex;
         flex-direction: column;
-        font-size: 46px;
-        font-weight: 700;
-        line-height: 0.95;
-        padding-bottom: 6px;
-      }
-      .pass .pbottom {
-        display: flex;
         justify-content: space-between;
-        align-items: flex-end;
-      }
-      .pass .pvenue strong {
-        display: block;
-        font-size: 36px;
-        font-weight: 800;
-        line-height: 1;
-      }
-      .pass .pvenue span {
-        display: block;
-        font-size: 30px;
-        font-style: italic;
+        padding: 2px 0 4px;
+        font-size: 44px;
         font-weight: 600;
+        letter-spacing: -0.025em;
+        line-height: 0.8;
       }
-      .region-logo {
-        background: var(--ink);
-        -webkit-mask: url("assets/logos/logo-pays_de_la_loire.svg") center / contain no-repeat;
-        mask: url("assets/logos/logo-pays_de_la_loire.svg") center / contain no-repeat;
+      .pass-date b {
+        font-weight: inherit;
       }
-
-      /* ---------- S2 */
-      #s2-ko {
-        position: absolute;
-        inset: 0;
-        width: 1920px;
-        height: 1080px;
-      }
-      .s2-big {
-        position: absolute;
-        font-weight: 800;
-        line-height: 0.86;
-        letter-spacing: -0.035em;
-        color: var(--cream);
-        white-space: nowrap;
-      }
-      .s2-big.it {
-        font-style: italic;
-        font-weight: 600;
-        letter-spacing: -0.02em;
-      }
-      #s2-gen {
-        left: 130px;
-        bottom: 120px;
-        font-size: 300px;
-      }
-      #s2-l1 {
-        left: 130px;
-        top: 300px;
-        font-size: 230px;
-      }
-      #s2-l2 {
-        left: 130px;
-        top: 520px;
-        font-size: 230px;
-      }
-      #s2-bar {
-        position: absolute;
-        left: 130px;
-        top: 790px;
-        width: 1060px;
-        height: 20px;
-        background: var(--orange);
-        transform-origin: 0 50%;
-      }
-      #s2-cream-block {
-        position: absolute;
-        left: 150px;
-        top: 300px;
-      }
-      #s2-now {
-        font-size: 250px;
-        font-weight: 800;
-        line-height: 0.86;
-        letter-spacing: -0.035em;
-        color: var(--blue);
-        white-space: nowrap;
-        perspective: 900px;
-      }
-      #s2-now .ch {
-        transform-origin: 50% 80%;
-      }
-      #s2-complex {
+      .pass-bottom {
         position: relative;
-        margin-top: 60px;
-        font-size: 158px;
-        font-style: italic;
-        font-weight: 600;
-        line-height: 1;
-        white-space: nowrap;
-        height: 180px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding-top: 14px;
+        border-top: 1px solid rgba(57, 54, 54, 0.34);
       }
-      #s2-complex .copy {
-        position: absolute;
-        left: 0;
-        top: 0;
-      }
-      #s2-complex .ghost-b {
-        color: var(--blue);
-        mix-blend-mode: multiply;
-      }
-      #s2-complex .ghost-o {
-        color: var(--orange);
-        mix-blend-mode: multiply;
-      }
-      #s2-complex .main {
-        color: var(--ink);
-      }
-      .hud {
-        position: absolute;
-        top: 60px;
+      .pass-venue {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin: 0;
+        font-family: var(--label);
         font-size: 20px;
-        z-index: 4;
+        font-weight: 700;
+        letter-spacing: 0.025em;
+        line-height: 1.08;
+        text-transform: uppercase;
       }
-
-      /* ---------- S3 */
-      #s3 {
-        background: var(--cream);
+      .pass-partner {
+        width: 128px;
+        height: 61px;
+        background: #3b3a40;
+        -webkit-mask: url("assets/partners/mono/logo-pays_de_la_loire.png") center / contain no-repeat;
+        mask: url("assets/partners/mono/logo-pays_de_la_loire.png") center / contain no-repeat;
       }
-      #s3-art {
+      /* The lifted corner: the label's paper back, folded along the diagonal onto the face. */
+      .pass-flap {
         position: absolute;
-        left: 1060px;
-        top: 290px;
-        width: 730px;
-        height: 500px;
-        overflow: hidden;
-      }
-      .s3-crop {
-        position: absolute;
-        width: 16px;
-        height: 16px;
-        background: var(--orange);
-      }
-      #s3-band {
-        position: absolute;
-        left: 130px;
-        top: 270px;
-        width: 860px;
-      }
-      #s3-kicker {
-        display: flex;
-        justify-content: space-between;
-        font-size: 24px;
-        letter-spacing: 0.2em;
-        padding-bottom: 18px;
-        border-bottom: 4px solid var(--ink);
-      }
-      #s3-count {
-        color: var(--blue);
-      }
-      #s3-names {
-        position: relative;
-        margin-top: 36px;
-        height: 170px;
-        overflow: hidden;
-      }
-      .s3-name {
-        position: absolute;
-        left: 0;
         top: 0;
-        font-size: 150px;
-        font-weight: 800;
-        line-height: 1;
-        letter-spacing: -0.035em;
-        color: var(--blue);
-        white-space: nowrap;
+        left: calc(100% - var(--fold));
+        width: var(--fold);
+        height: var(--fold);
+        filter: drop-shadow(-2px 3px 2px rgba(9, 18, 46, 0.3));
       }
-      #s3-words {
-        position: relative;
-        margin-top: 8px;
-        height: 110px;
-        overflow: hidden;
-      }
-      .s3-word {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 860px;
-        font-size: 40px;
-        font-style: italic;
-        font-weight: 500;
-        line-height: 1.15;
-        color: var(--ink);
-      }
-      #s3-progress {
-        margin-top: 34px;
-        display: flex;
-        gap: 14px;
-      }
-      #s3-progress i {
-        flex: 1;
-        height: 10px;
-        background: rgba(57, 54, 54, 0.14);
-        position: relative;
-      }
-      #s3-progress i::after {
+      .pass-flap::before {
         content: "";
         position: absolute;
         inset: 0;
-        background: var(--orange);
-        transform: scaleX(var(--fill, 0));
-        transform-origin: 0 50%;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.84), rgba(221, 216, 204, 0.94)),
+          repeating-linear-gradient(45deg, rgba(94, 84, 64, 0.08) 0 1px, transparent 1px 4px), #ebe7dd;
+        clip-path: polygon(0 0, 100% 100%, 0 100%);
       }
 
-      /* ---------- S4 */
-      #s4-title {
-        position: absolute;
+      /* ---------- Hook · C01-C02 */
+      #q1-c01,
+      #q1-c02 {
+        top: 625px;
+        gap: 2px;
+      }
+      #q1-c01 .t1,
+      #q1-c02 .t1 {
+        font-size: 108px;
+        max-width: 1500px;
+      }
+      #q1-c01 .t2,
+      #q1-c02 .t2 {
+        font-size: 100px;
+        max-width: 1500px;
+      }
+      #q1-caption-veil {
+        inset: 0;
+        background: linear-gradient(180deg, transparent 50%, rgba(9, 18, 46, 0.75) 72%, rgba(9, 18, 46, 0.35));
+      }
+      #q1-screen {
+        left: 660px;
+        top: 89px;
+        width: 607px;
+        height: 453px;
+        opacity: 0;
+      }
+
+      /* ---------- Features · C04-C06, sixteen programme sentences (essai, after film-alt-2) */
+      #q3 {
+        color: var(--cream);
+      }
+      /* The charcoal ground sits in the clipped camera, so the outgoing intro shows between the bars of the cut. */
+      #q3-cam {
+        background: var(--ink);
+      }
+      /* #q3-cam takes the bar clip of the cut; #q3-lens carries the camera, so the clip never scales. */
+      #q3-lens {
         left: 0;
-        right: 0;
-        top: 90px;
-        text-align: center;
-        font-size: 124px;
-        font-weight: 800;
-        line-height: 0.86;
-        letter-spacing: -0.03em;
-        color: var(--cream);
-        white-space: nowrap;
+        top: 0;
+        width: 1920px;
+        height: 1080px;
+        transform-origin: 0 0;
       }
-      #s4-title .it {
-        font-style: italic;
-        font-weight: 600;
-      }
-      .s4-cap {
+      .q3-cell {
         position: absolute;
-        bottom: 96px;
-        color: var(--cream);
-      }
-      #s4-cap-l {
-        left: 120px;
-      }
-      #s4-cap-r {
-        right: 120px;
-        text-align: right;
-      }
-      .s4-cap .lab {
-        font-size: 20px;
-        opacity: 0.85;
-      }
-      .s4-cap .who {
-        margin-top: 8px;
-        font-size: 120px;
-        font-weight: 800;
-        letter-spacing: -0.03em;
-        line-height: 0.95;
-      }
-      .s4-cap .who .m {
-        display: inline-block;
         overflow: hidden;
-        padding-bottom: 0.12em;
-        vertical-align: top;
+        opacity: 0;
       }
-      .s4-cap .who .m > span {
-        display: inline-block;
-      }
-      .s4-cap .what {
-        font-size: 34px;
-        font-style: italic;
-        font-weight: 500;
-      }
-
-      /* ---------- S5 */
-      .poster {
-        position: absolute;
-        --lift: 0;
-      }
-      .poster .card {
+      .q3-cell > .art {
         position: absolute;
         inset: 0;
-        background: var(--cream);
-        box-shadow: 0 2px 3px rgba(57, 54, 54, 0.3), 0 calc(6px + var(--lift) * 30px) calc(10px + var(--lift) * 50px) -4px rgba(9, 18, 46, 0.55);
-        display: flex;
-        flex-direction: column;
-      }
-      .poster .ph {
-        flex: 1;
-        overflow: hidden;
-        position: relative;
-      }
-      .poster .ph img {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        display: block;
-        filter: url(#duotone);
+        transform: scale(1.08);
       }
-      .poster .band {
-        background: var(--cream);
-        border-top: 4px solid var(--ink);
-        padding: 12px 16px 14px;
-      }
-      .poster .band b {
-        display: block;
-        font-weight: 800;
-        line-height: 1;
-        letter-spacing: -0.01em;
-        white-space: nowrap;
-      }
-      .poster .band span {
-        display: block;
-        margin-top: 8px;
-        color: var(--blue);
-        white-space: nowrap;
-      }
-      .poster.small .band {
-        padding: 8px 10px 10px;
-        border-top-width: 3px;
-      }
-      .poster.small .band b {
-        font-size: 21px;
-      }
-      .poster.small .band span {
-        font-size: 12px;
-        letter-spacing: 0.08em;
-        margin-top: 5px;
-        white-space: normal;
-        line-height: 1.25;
-      }
-      /* The speaker art and its plates carry a ~7 px white scan margin; cover fits the width, so it showed as cream bands
-         at the frame sides. A 1.5 % overscan crops it on every side. */
-      #p-speakers {
-        transform: scale(1.015);
-      }
-      /* The wall is laid out in frame coordinates; the camera is a transform on it (scale 1 is the final frame). */
-      #s5-world {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 1920px;
-        height: 1080px;
-        transform-origin: 0 0;
-      }
-      /* A slot is the 172 x 241 place of a poster on the table; it carries the paste gesture. */
-      .s5-slot {
-        position: absolute;
-        width: 172px;
-        height: 241px;
-        transform-origin: 50% 50%;
-        opacity: 0;
-        --lift: 0;
-      }
-      .s5-slot > .poster {
-        left: 0;
-        top: 0;
-        width: 300px;
-        height: 420px;
-        transform: scale(0.5733);
-        transform-origin: 0 0;
-        --lift: inherit;
-      }
-      .s5-slot > .poster.small .band b {
-        font-size: 29px;
-      }
-      .s5-slot > .poster.small .band span {
-        font-size: 15px;
-      }
-      #s5-title {
-        position: absolute;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        color: var(--cream);
-        opacity: 0;
-      }
-      #s5-title b {
-        font-size: 190px;
-        font-weight: 800;
-        line-height: 0.8;
-        letter-spacing: -0.03em;
-      }
-      #s5-title i {
-        font-size: 42px;
-        font-weight: 600;
-        margin-top: 16px;
-        white-space: nowrap;
-      }
-
-      /* ---------- S6 */
-      #s6-num {
-        position: absolute;
-        left: 90px;
-        top: 180px;
-        font-size: 520px;
-        font-weight: 800;
-        line-height: 0.86;
-        letter-spacing: -0.04em;
-        white-space: nowrap;
-        color: var(--cream);
-      }
-      #s6-num-ghost {
-        position: absolute;
-        left: 90px;
-        top: 180px;
-        font-size: 520px;
-        font-weight: 800;
-        line-height: 0.86;
-        letter-spacing: -0.04em;
-        white-space: nowrap;
-        color: var(--orange);
-        mix-blend-mode: multiply;
-      }
-      #s6-places {
-        position: absolute;
-        left: 110px;
-        top: 660px;
-        color: var(--cream);
-      }
-      #s6-places i {
-        display: block;
-        font-size: 120px;
-        font-weight: 600;
-        line-height: 0.9;
-      }
-      #s6-places .lab {
-        font-size: 22px;
-        margin-bottom: 14px;
-      }
-      #s6-tstage {
-        position: absolute;
-        left: 930px;
-        top: 590px;
-        width: 900px;
-        height: 357px;
-        perspective: 1500px;
-      }
-      #s6-ticket {
+      .q3-cell .shade {
         position: absolute;
         inset: 0;
-        filter: drop-shadow(0 26px 34px rgba(9, 18, 46, 0.5));
+        background:
+          linear-gradient(0deg, rgba(24, 21, 21, 0.82) 0%, rgba(24, 21, 21, 0.35) 42%, rgba(24, 21, 21, 0) 70%),
+          linear-gradient(90deg, rgba(24, 21, 21, 0.45) 0%, rgba(24, 21, 21, 0) 60%);
       }
-      #s6-ticket img {
+      /* Cell numbers hidden (user, 04/11); the element stays because the Q3 render code drives its opacity. */
+      .q3-cell .q3-idx {
+        display: none;
         position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-      }
-      #s6-tbody {
-        position: absolute;
-        left: 46px;
-        top: 34px;
-        width: 520px;
-        color: var(--ink);
-      }
-      #s6-tbody .thead {
-        display: flex;
-        justify-content: space-between;
-        font-family: var(--type);
-        font-size: 17px;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        padding-bottom: 10px;
-        border-bottom: 1.5px dashed rgba(57, 54, 54, 0.55);
-      }
-      #s6-price {
-        margin-top: 10px;
-        font-size: 104px;
+        left: 41px;
+        top: 19px;
+        font-size: 4.2px;
+        letter-spacing: 0.12em;
         font-weight: 600;
-        letter-spacing: -0.035em;
-        line-height: 1;
-        white-space: nowrap;
+        opacity: 0.8;
       }
-      #s6-price small {
-        font-size: 44px;
-      }
-      #s6-facts {
-        margin-top: 12px;
-        font-family: var(--type);
-        font-size: 18px;
-        line-height: 1.45;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-      }
-      #s6-facts em {
-        font-style: normal;
-        opacity: 0.7;
-        display: inline-block;
-        width: 110px;
-      }
-      #s6-tstub {
+      .q3-cell .q3-txt {
         position: absolute;
-        left: 623px;
-        top: 26px;
-        width: 243px;
-        height: 305px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        padding: 18px 14px 16px 24px;
-        color: var(--night);
-      }
-      #s6-tstub .wordmark {
-        font-size: 24px;
-      }
-      #s6-tstub .sd {
-        display: flex;
-        align-items: flex-end;
-        gap: 10px;
-      }
-      #s6-tstub .sd strong {
-        font-size: 100px;
-        font-weight: 600;
-        letter-spacing: -0.04em;
-        line-height: 0.8;
-      }
-      #s6-tstub .sd span,
-      #s6-tstub .sm {
-        font-family: var(--type);
-        font-size: 16px;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        line-height: 1.3;
-      }
-
-      /* ---------- poster peel (S6 to S7) */
-      #s6 {
-        z-index: 3;
-      }
-      #frag-ink {
-        z-index: 20;
-      }
-      #grain {
-        z-index: 21;
-      }
-      .peel-flap {
-        position: absolute;
-        inset: 0;
-        z-index: 30;
-        pointer-events: none;
-        filter: drop-shadow(-18px -12px 22px rgba(9, 18, 46, 0.5));
-      }
-      .peel-back {
-        position: absolute;
-        inset: 0;
-        background: repeating-linear-gradient(45deg, rgba(94, 84, 64, 0.06) 0 1px, transparent 1px 5px), #efe6d6;
-      }
-      .peel-shade {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 4800px;
-        height: 420px;
-        transform-origin: 0 0;
-        background: linear-gradient(to bottom, rgba(57, 54, 54, 0.32) 0, rgba(255, 255, 255, 0.45) 14%, rgba(57, 54, 54, 0.08) 55%, rgba(57, 54, 54, 0) 100%);
-      }
-
-      /* ---------- S7: a real 12-hour clock runs through the day; a mirror ball drops in for the DJ set */
-      #s7-title {
-        position: absolute;
-        left: 160px;
-        top: 96px;
-        font-size: 96px;
-        font-weight: 800;
-        letter-spacing: -0.03em;
-        line-height: 0.95;
-        color: var(--cream);
-        white-space: nowrap;
-      }
-      #s7-title .it {
-        font-style: italic;
-        font-weight: 600;
-      }
-      #s7-dim {
-        position: absolute;
-        inset: 0;
-        background: rgba(9, 18, 46, 0.5);
-      }
-      #s7-clock {
-        position: absolute;
-        left: 260px;
-        top: 290px;
-        width: 680px;
-        height: 680px;
-        overflow: visible;
-      }
-      /* Read-out under the face, clear of the hands and numerals. */
-      #s7-read {
-        position: absolute;
-        left: 260px;
-        top: 944px;
-        width: 680px;
-        text-align: center;
-        color: var(--cream);
-        font-size: 56px;
-        font-weight: 800;
-        letter-spacing: -0.02em;
-        line-height: 1;
-        font-variant-numeric: tabular-nums;
-      }
-      .s7-item {
-        position: absolute;
-        left: 1080px;
-        width: 600px;
-        color: var(--cream);
-      }
-      #s7-m1 {
-        top: 318px;
-      }
-      #s7-m2 {
-        top: 548px;
-      }
-      #s7-m3 {
-        top: 778px;
-      }
-      .s7-item .lab {
-        font-size: 20px;
-        color: var(--orange);
-      }
-      .s7-item b {
-        display: block;
-        margin-top: 8px;
-        font-size: 68px;
-        font-weight: 800;
-        letter-spacing: -0.02em;
-        line-height: 1;
-      }
-      /* Podcast partner, mono mark in cream: discreet, about the title's cap height. */
-      .s7-cc {
-        display: inline-block;
-        width: 206px;
-        height: 54px;
-        margin-left: 28px;
-        vertical-align: -2px;
-        background: var(--cream);
-        -webkit-mask: url("assets/partners/mono/clever-cloud.png") left center / contain no-repeat;
-        mask: url("assets/partners/mono/clever-cloud.png") left center / contain no-repeat;
-      }
-      .s7-item em {
-        display: block;
-        margin-top: 8px;
-        max-width: 560px;
-        font-size: 30px;
+        left: 41px;
+        bottom: 34px;
+        width: 250px;
+        font-size: 10px;
+        line-height: 1.08;
         font-weight: 500;
-        line-height: 1.15;
+        letter-spacing: -0.005em;
         text-wrap: balance;
       }
-      .s7-item em.dj {
-        margin-top: 10px;
-        font-size: 42px;
-        font-weight: 800;
-      }
-      #s7-ball {
-        position: absolute;
-        left: 1700px;
-        top: 768px;
-        width: 120px;
-        height: 120px;
-        transform-origin: 50% -1300px;
-      }
-      #s7-ball svg {
+      .q3-cell .q3-flash,
+      .q3-cell .q3-liser {
         position: absolute;
         inset: 0;
-        overflow: visible;
-        filter: drop-shadow(0 10px 14px rgba(9, 18, 46, 0.55));
+        opacity: 0;
       }
-      #s7-ball .string {
-        position: absolute;
-        left: 59px;
-        bottom: 112px;
-        width: 2px;
-        height: 1400px;
-        background: var(--ink);
+      .q3-cell .q3-liser {
+        border: 1.2px solid var(--orange);
       }
-      #s7-specks {
+      #q3-scrim {
         position: absolute;
         inset: 0;
-        pointer-events: none;
+        background: rgba(30, 27, 27, 0.84);
+        opacity: 0;
       }
-      #s7-specks i {
+      #q3-say {
+        position: absolute;
+        left: var(--m);
+        right: var(--m);
+        top: 505px;
+        text-align: center;
+        font-size: 50px;
+        line-height: 1.08;
+        font-weight: 500;
+        opacity: 0;
+      }
+
+      /* ---------- Features · C07-C08, the answer */
+      #q4-bg {
+        transform-origin: 50% 18%;
+      }
+      #q4-c08 {
+        top: 0;
+        bottom: 0;
+        justify-content: center;
+      }
+      /* The two tracks are the main information of C07: the title only introduces them. */
+      #q4-t1 {
+        font-size: 50px;
+      }
+      /* Two 760 px columns centred on the two halves inside the margins (x = 528 and 1392), one per rail. */
+      #q4-labels {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 104px;
+        width: 1624px;
+        margin-top: 40px;
+      }
+      .q4-l {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+      }
+      .q4-l .k {
+        color: var(--orange);
+        font-size: 24px;
+      }
+      .q4-l .t3 {
+        font-size: 72px;
+        line-height: 1.05;
+      }
+      /* C08's title (#q4-c09) and tiles are placed by the timeline script: one block, centred in the safe area. */
+      .q4-tile {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      /* Each tile's own ink canvas for its bar fragmentation, laid over its picture. */
+      .q4-ink {
         position: absolute;
         left: 0;
         top: 0;
-        display: block;
+        pointer-events: none;
       }
-
-      /* ---------- S9 */
-      #s9-partners {
-        position: absolute;
-        inset: 0;
+      /* 16:11 of the 408 px tile width, on whole, even pixels: edges stay sharp and a contained square centres
+         exactly. */
+      .q4-tile .img {
+        width: 100%;
+        height: 280px;
+        background-size: cover;
+        background-position: center;
       }
-      /* A soft night pool behind the board: logos keep their contrast over the orange fragments, the château stays readable around it. */
-      #s9-pscrim {
-        position: absolute;
-        left: 110px;
-        right: 110px;
-        top: 150px;
-        height: 760px;
-        background: radial-gradient(closest-side, rgba(9, 18, 46, 0.5), rgba(9, 18, 46, 0.32) 60%, rgba(9, 18, 46, 0));
-      }
-      #s9-ptitle {
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 124px;
+      .q4-tile .k {
         text-align: center;
         font-family: var(--serif);
-        font-size: 100px;
-        font-weight: 800;
-        letter-spacing: -0.02em;
-        color: var(--cream);
-        /* A second ink out of register: sets the title apart from the cream logo layer. */
-        text-shadow: 5px 4px 0 var(--orange), 0 0 28px rgba(9, 18, 46, 0.6);
+        font-size: 48px;
+        line-height: 1.1;
+        letter-spacing: 0;
+        text-transform: none;
+        font-weight: 500;
       }
-      #s9-ptitle i {
-        font-style: italic;
+      /* The square disco ball is shown whole, contained in the tile. The two side bands take, top to bottom, the
+         navy the image has just inside its left and right edges, and the square's side edges fade into them over
+         16 px, so its borders disappear. Only flat background lies in that fade: the ball stays clear of it. */
+      #q4-f4 .img {
+        position: relative;
+        background-image: linear-gradient(rgb(48, 46, 69) 4%, rgb(47, 44, 67) 25%, rgb(47, 44, 63) 55%, rgb(48, 44, 60) 96%),
+          linear-gradient(rgb(50, 49, 71) 4%, rgb(48, 46, 65) 16%, rgb(46, 45, 62) 34%, rgb(43, 43, 59) 50%, rgb(45, 44, 59) 80%, rgb(47, 46, 61) 96%);
+        background-size: 50% 100%;
+        background-position: left, right;
+        background-repeat: no-repeat;
+      }
+      #q4-f4 .img::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: url("assets/img/mirror-ball-v1-square-optimized.webp") center / contain no-repeat;
+        -webkit-mask-image: linear-gradient(90deg, transparent calc(50% - 140px), #000 calc(50% - 124px), #000 calc(50% + 124px), transparent calc(50% + 140px));
+        mask-image: linear-gradient(90deg, transparent calc(50% - 140px), #000 calc(50% - 124px), #000 calc(50% + 124px), transparent calc(50% + 140px));
+      }
+
+      /* ---------- Features · C09: speaker carousel, one row paged by blocks like the site's */
+      #q5-cam { background: var(--cream); color: var(--ink); }
+      /* Headline and row form one block, centred vertically in the safe frame, like C08. */
+      #q5-count { left: var(--m); top: 170px; }
+      #q5-txt { font-size: 56px; line-height: 1.05; font-weight: 500; white-space: nowrap; }
+      /* Five cards per page on the film margins, like the site's carousel. */
+      #q5-window { left: var(--m); top: 293px; width: 1728px; height: 560px; overflow: hidden; }
+      #q5-track { position: absolute; inset: 0 auto auto 0; display: flex; gap: 24px; }
+      .speaker-page { flex: 0 0 1728px; display: grid; gap: 24px; justify-content: center; align-content: start; }
+      .speaker-card { min-width: 0; color: var(--ink); }
+      .speaker-photo { position: relative; aspect-ratio: 3 / 4; overflow: hidden; background: var(--tile); }
+      .speaker-photo > img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 28%; }
+      /* The logo sits in the photo's corner on a light halo that fades inwards, as on the site (.photo-logo-halo). */
+      .speaker-logo { position: absolute; right: 10px; bottom: 10px; z-index: 1; width: 72px; height: 54px; }
+      .speaker-logo::before { content: ""; position: absolute; inset: -96px -10px -10px -96px; background: radial-gradient(farthest-side at 100% 100%, rgba(255, 255, 255, 0.8) 40%, rgba(255, 255, 255, 0.36) 68%, rgba(255, 255, 255, 0)); }
+      .speaker-logo img { position: relative; display: block; width: 100%; height: 100%; object-fit: contain; object-position: 100% 100%; }
+      .speaker-name { display: block; min-height: 2.04em; margin-top: 14px; font-size: 30px; line-height: 1.02; font-weight: 600; }
+      .speaker-company { display: block; margin-top: 6px; font-family: var(--label); font-size: 16px; line-height: 1.2; font-weight: 400; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink); }
+
+      /* ---------- Features and CTA · C11-C13, partners, call to action, end card */
+      #q7-bg {
+        background-position: 70% center;
+      }
+      #q7-title {
+        top: 116px;
+      }
+      /* The space between tiers is four times the space between rows: three blocks, not one mass. */
+      #q7-partners {
+        left: 100px;
+        top: 242px;
+        width: 1720px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 64px;
+        transform-origin: 50% 0;
+      }
+      .ptier {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 18px;
       }
       .prow {
-        position: absolute;
-        left: 0;
-        right: 0;
         display: flex;
-        justify-content: center;
         align-items: center;
+        justify-content: center;
       }
-      /* The halo sits on the wrapper: a filter on the masked element itself would be masked away. */
       .ptile {
         flex: none;
-        filter: drop-shadow(0 0 10px rgba(9, 18, 46, 0.7)) drop-shadow(0 2px 2px rgba(9, 18, 46, 0.55));
-      }
-      .plogo {
-        width: 100%;
-        height: 100%;
         background: var(--cream);
         -webkit-mask: var(--logo) center / contain no-repeat;
         mask: var(--logo) center / contain no-repeat;
       }
-      .prow.t1 {
-        top: 320px;
-        height: 150px;
-      }
-      .prow.t2 {
-        top: 535px;
-        height: 110px;
-      }
-      .prow.t3 {
-        top: 715px;
-        height: 90px;
-      }
-      #s9-frame {
-        position: absolute;
+      /* Final poster, composed like the site's hero: a night scrim from the bottom left, the block anchored
+         bottom left above the player bar, the silver label top right as its diagonal counterweight. */
+      #q7-scrim {
         inset: 0;
+        background: linear-gradient(to top, rgba(9, 18, 46, 0.94) 0%, rgba(9, 18, 46, 0.74) 30%, rgba(9, 18, 46, 0.38) 56%, rgba(9, 18, 46, 0) 80%),
+          linear-gradient(90deg, rgba(9, 18, 46, 0.72) 0%, rgba(9, 18, 46, 0.3) 42%, rgba(9, 18, 46, 0) 66%);
       }
-      #s9-row,
-      #s9-ghost {
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 470px;
-        height: 200px;
+      #q7-end {
+        left: var(--m);
+        bottom: 196px;
+        width: 1200px;
         display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 46px;
+        flex-direction: column;
+        align-items: flex-start;
       }
-      #s9-ghost {
-        opacity: 0;
+      #q7-end .wordmark {
+        font-size: 132px;
+        line-height: 0.92;
       }
-      .s9-mark {
-        position: relative;
-        width: 170px;
-        height: 170px;
-        flex: 0 0 auto;
+      /* The site's hero tagline, same two lines: roman headline, then the orange italic accent. */
+      #q7-tag {
+        margin-top: 26px;
+        font-size: 44px;
+        line-height: 1.08;
       }
-      .s9-wm {
-        font-size: 170px;
-        margin-top: 18px;
-      }
-      #s9-row .s9-wm {
-        color: var(--cream);
-      }
-      #s9-ghost .s9-wm {
+      #q7-sig {
+        margin-top: 8px;
+        font-size: 36px;
+        font-style: italic;
+        line-height: 1.1;
         color: var(--orange);
       }
-      #s9-sig {
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 700px;
-        text-align: center;
-        font-size: 58px;
-        font-style: italic;
-        font-weight: 500;
-        color: var(--cream);
-        white-space: nowrap;
+      #q7-info {
+        margin-top: 34px;
+        padding-top: 22px;
+        border-top: 1px solid rgba(249, 244, 236, 0.34);
+        font-size: 21px;
+        color: rgba(249, 244, 236, 0.92);
       }
-      #s9-rule {
-        position: absolute;
-        left: 200px;
-        width: 1520px;
-        top: 812px;
-        height: 3px;
-        background: var(--cream);
-      }
-      #s9-info {
-        position: absolute;
-        left: 200px;
-        right: 200px;
-        top: 842px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 24px;
-        color: var(--cream);
-      }
-      #s9-url {
+      #q7-book {
+        margin-top: 30px;
         display: flex;
         align-items: center;
-        gap: 16px;
-        font-size: 30px;
-        letter-spacing: 0.04em;
-        text-transform: none;
+        gap: 30px;
       }
-      #s9-url i {
-        display: block;
-        width: 18px;
-        height: 18px;
+      #q7-btn {
+        padding: 20px 30px;
         background: var(--orange);
-      }
-      #s9-foot {
-        position: absolute;
-        left: 200px;
-        right: 200px;
-        top: 950px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 20px;
         color: var(--cream);
+        font-size: 21px;
+        letter-spacing: 0.08em;
       }
-      #s9-coorg {
-        display: flex;
-        align-items: center;
-        gap: 24px;
+      #q7-url {
+        font-size: 46px;
+        line-height: 1;
       }
-      #s9-region {
-        width: 170px;
-        height: 82px;
-        background: var(--cream);
-      }
-
-      #frag-ink {
-        position: absolute;
-        inset: 0;
-        width: 1920px;
-        height: 1080px;
-        z-index: 50;
-        pointer-events: none;
-      }
-      #grain {
-        position: absolute;
-        inset: -64px;
-        z-index: 60;
-        pointer-events: none;
-        background: url("assets/img/grain.png") 0 0 / 512px 512px repeat;
-        opacity: 0.24;
-        mix-blend-mode: overlay;
+      #q7-pass {
+        left: 1364px;
+        top: 108px;
       }
     </style>
   </head>
   <body>
-    <div data-hf-id="hf-zfnl" id="root" data-composition-id="main" data-start="0" data-duration="45" data-width="1920" data-height="1080" data-composition-variables="[{&quot;id&quot;:&quot;origFade&quot;,&quot;type&quot;:&quot;boolean&quot;,&quot;label&quot;:&quot;S1: original art over the two plates&quot;,&quot;default&quot;:true}]">
-      <svg data-hf-id="hf-p3r6" width="0" height="0" style="position: absolute" aria-hidden="true">
-        <filter data-hf-id="hf-gdul" id="duotone" color-interpolation-filters="sRGB">
-          <fecolormatrix data-hf-id="hf-r3no" type="matrix" values="0.30 0.59 0.11 0 0  0.30 0.59 0.11 0 0  0.30 0.59 0.11 0 0  0 0 0 1 0" />
-          <fecomponenttransfer data-hf-id="hf-u8mo">
-            <fefuncr data-hf-id="hf-nfcf" type="linear" slope="1.35" intercept="-0.12" />
-            <fefuncg data-hf-id="hf-8kak" type="linear" slope="1.35" intercept="-0.12" />
-            <fefuncb data-hf-id="hf-24qn" type="linear" slope="1.35" intercept="-0.12" />
-          </fecomponenttransfer>
-          <fecomponenttransfer data-hf-id="hf-l5oo">
-            <fefuncr data-hf-id="hf-2vq3" type="table" tableValues="0.239 0.976" />
-            <fefuncg data-hf-id="hf-omay" type="table" tableValues="0.263 0.957" />
-            <fefuncb data-hf-id="hf-jdv5" type="table" tableValues="0.808 0.925" />
-          </fecomponenttransfer>
-        </filter>
-      </svg>
+    <div data-hf-id="hf-2i5v" id="root" data-composition-id="main" data-start="0" data-duration="61.75" data-width="1920" data-height="1080">
+      <!-- Music W1 (symphonie sol mineur, regenerated with Lyria 3.5, 120 BPM, first beat on t=0). Earlier tracks are archived in videos/renders/archive/2026-11-04/film-assets-unused/audio/. -->
+      <audio id="music" src="assets/audio/music-W1-lyria35-61.75s.wav" data-start="0" data-duration="61.75" data-track-index="9"></audio>
+      <!-- Type A transitions: flat orange and blue blocks, painted on one canvas above every scene. -->
+      <canvas data-hf-id="hf-frg1" id="frag-ink" class="clip" data-start="2.5" data-duration="23" data-track-index="8" width="1920" height="1080" data-layout-allow-overflow="" data-layout-allow-occlusion=""></canvas>
 
-      <!-- S1 · 0 to 3 · the cover poster is screen-printed in two flat coats, the wordmark lands, the hero pass is stuck on -->
-      <section data-hf-id="hf-dss8" id="s1" class="clip scene" data-start="0" data-duration="3.8" data-track-index="1">
-        <svg data-hf-id="hf-nrhe" class="regmark" style="left: 64px; top: 64px" viewBox="0 0 70 70"><circle data-hf-id="hf-8bm0" cx="35" cy="35" r="15" /><path data-hf-id="hf-0fhc" d="M35 0V70M0 35H70" /></svg>
-        <svg data-hf-id="hf-yjed" class="regmark" style="right: 64px; top: 64px" viewBox="0 0 70 70"><circle data-hf-id="hf-tlxc" cx="35" cy="35" r="15" /><path data-hf-id="hf-q2qg" d="M35 0V70M0 35H70" /></svg>
-        <svg data-hf-id="hf-u3ay" class="regmark" style="left: 64px; bottom: 64px" viewBox="0 0 70 70"><circle data-hf-id="hf-sf09" cx="35" cy="35" r="15" /><path data-hf-id="hf-ovtd" d="M35 0V70M0 35H70" /></svg>
-        <svg data-hf-id="hf-78g3" class="regmark" style="right: 64px; bottom: 64px" viewBox="0 0 70 70"><circle data-hf-id="hf-stba" cx="35" cy="35" r="15" /><path data-hf-id="hf-pa4e" d="M35 0V70M0 35H70" /></svg>
-        <div data-hf-id="hf-p1h4" class="s1-meta lab" id="s1-meta-a" style="left: 160px; top: 88px">Naomakers · Nantes</div>
-        <div data-hf-id="hf-wv5o" class="s1-meta lab" id="s1-meta-b" style="right: 160px; top: 88px">Première édition · 2026</div>
-        <div data-hf-id="hf-juji" id="s1-sheetframe">
-          <div data-hf-id="hf-1vtz" class="print" id="p-cover"></div>
-          <div data-hf-id="hf-09qf" class="scrim-top" id="s1-scrim"></div>
-          <div data-hf-id="hf-5jym" id="s1-row">
-            <div data-hf-id="hf-axnh" id="s1-mark"></div>
-            <div data-hf-id="hf-abpa" id="s1-wm" class="wordmark"></div>
+      <!-- Textures of the screen morph; kept as DOM media so capture waits for decoding. -->
+      <img id="q1-source-on" src="assets/img/0_1-optimized.webp" alt="" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none">
+      <img id="q1-source-programme" src="assets/talks/industrialisation-optimized.webp" alt="" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none">
+      <!-- Hook: orange power-on first, projected processor only at the start of the screen push. -->
+      <section data-hf-id="hf-ze5d" id="q1" class="clip scene" data-start="0" data-duration="5.5" data-track-index="1">
+        <div data-hf-id="hf-q1cm" id="q1-cam" class="cam">
+          <div data-hf-id="hf-5751" class="bg" id="q1-bg" data-layout-allow-overflow="" style="background-image: url('assets/img/swna25_central_screen_should_be_169_resolution_--ar_184103_--_953babb0-f26c-4d73-b17a-a69dc278054b_0-optimized.webp')"></div>
+          <div data-hf-id="hf-q1l2" id="q1-l2" class="layer" data-layout-allow-overlap="">
+            <div data-hf-id="hf-q1b2" class="bg" id="q1-bg2" data-layout-allow-overflow="" style="background-image: url('assets/img/0_1-optimized.webp')"></div>
+            <canvas data-hf-id="hf-q1sc" id="q1-screen" width="1214" height="906"></canvas>
           </div>
         </div>
-        <div data-hf-id="hf-wvkq" id="s1-squeegee"></div>
-        <div data-hf-id="hf-algn" class="obj metal pass" id="s1-pass"></div>
-      </section>
-
-      <!-- S2 · 2.55 to 7 · tagline: letters as windows onto the art, Nantes, then ink misregistration -->
-      <section data-hf-id="hf-ba08" id="s2" class="clip scene" data-start="3.3" data-duration="7" data-track-index="2">
-        <div data-hf-id="hf-hdnc" class="layer" id="s2-a">
-          <div data-hf-id="hf-0qmw" class="print" id="p-manifesto"></div>
-          <div data-hf-id="hf-8deu" class="scrim-bottom" id="s2-scrim"></div>
-          <div data-hf-id="hf-0oqt" class="s2-big it" id="s2-gen"><span data-hf-id="hf-p04l" class="m it"><span data-hf-id="hf-8cgq" class="ch">générative</span></span></div>
-          <svg data-hf-id="hf-va9p" id="s2-ko" viewBox="0 0 1920 1080" aria-hidden="true">
-            <defs data-hf-id="hf-mh0t">
-              <mask data-hf-id="hf-19yw" id="s2-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="1920" height="1080">
-                <rect data-hf-id="hf-ha5x" width="1920" height="1080" fill="#fff" />
-                <text data-hf-id="hf-8d48" id="s2-ko-text" x="120" y="840" font-family="EB Garamond" font-weight="800" font-size="760" letter-spacing="-26" fill="#000">L’IA</text>
-              </mask>
-            </defs>
-            <rect data-hf-id="hf-2tik" id="s2-paper" width="1920" height="1080" fill="#F9F4EC" mask="url(#s2-mask)" />
-            <g data-hf-id="hf-ga0b" mask="url(#s2-mask)"><text data-hf-id="hf-u0ca" id="s2-ko-ghost" x="120" y="840" font-family="EB Garamond" font-weight="800" font-size="760" letter-spacing="-26" fill="#FE4D1B" style="mix-blend-mode: multiply">L’IA</text></g>
-          </svg>
+        <div data-hf-id="hf-q1cv" id="q1-caption-veil"></div>
+        <div data-hf-id="hf-i391" class="blk" id="q1-c01">
+          <div data-hf-id="hf-b49v" class="t1 lay" id="q1-t1">Sur l’IA,</div>
+          <div data-hf-id="hf-67pu" class="t2 lay" id="q1-t2">tout le monde a un avis.</div>
         </div>
-        <div data-hf-id="hf-q1j7" class="layer" id="s2-b">
-          <div data-hf-id="hf-8yes" class="print" id="p-miroir"></div>
-          <div data-hf-id="hf-5das" class="scrim-left"></div>
-          <div data-hf-id="hf-aihp" class="s2-big" id="s2-l1"></div>
-          <div data-hf-id="hf-vdzb" class="s2-big it" id="s2-l2"></div>
-          <div data-hf-id="hf-kc1y" id="s2-bar"></div>
-        </div>
-        <div data-hf-id="hf-w1e4" class="layer" id="s2-c" style="background: var(--cream)">
-          <div data-hf-id="hf-o1wb" id="s2-cream-block">
-            <div data-hf-id="hf-7bd9" id="s2-now"></div>
-            <div data-hf-id="hf-iy0l" id="s2-complex">
-              <div data-hf-id="hf-u0es" class="copy ghost-o" aria-hidden="true" data-layout-ignore="">que ça se complique.</div>
-              <div data-hf-id="hf-b2pd" class="copy ghost-b" aria-hidden="true" data-layout-ignore="">que ça se complique.</div>
-              <div data-hf-id="hf-6rk2" class="copy main" id="s2-complex-main"></div>
-            </div>
-          </div>
-        </div>
-        <div data-hf-id="hf-3xa4" class="hud lab" id="s2-hud-l" style="left: 130px">#GenAIDaysNantes</div>
-        <div data-hf-id="hf-fhh8" class="hud lab" id="s2-hud-r" style="right: 130px">L’IA générative · 2026</div>
-      </section>
-
-      <!-- S3 · 6.55 to 9 · the four issues, one poster pulled per beat -->
-      <section data-hf-id="hf-oe1u" id="s3" class="clip scene" data-start="9.8" data-duration="5.5" data-track-index="3">
-        <div data-hf-id="hf-yz7r" id="s3-art">
-          <div data-hf-id="hf-gxuc" class="print" id="p-costs"></div>
-          <div data-hf-id="hf-m2w2" class="print" id="p-shadow"></div>
-          <div data-hf-id="hf-6glj" class="print" id="p-sovereignty"></div>
-          <div data-hf-id="hf-y0l3" class="print" id="p-production"></div>
-        </div>
-        <i data-hf-id="hf-kn6o" class="s3-crop" style="left: 1052px; top: 282px"></i>
-        <i data-hf-id="hf-q3z8" class="s3-crop" style="left: 1782px; top: 282px"></i>
-        <i data-hf-id="hf-ixhp" class="s3-crop" style="left: 1052px; top: 782px"></i>
-        <i data-hf-id="hf-hixl" class="s3-crop" style="left: 1782px; top: 782px"></i>
-        <div data-hf-id="hf-chz9" id="s3-band">
-          <div data-hf-id="hf-fvg1" id="s3-kicker" class="lab"><span data-hf-id="hf-4fb6">Quatre enjeux</span><span data-hf-id="hf-wb0k" id="s3-count">01 / 04</span></div>
-          <div data-hf-id="hf-9mi8" id="s3-names">
-            <div data-hf-id="hf-mz9o" class="s3-name" data-layout-allow-overlap="">Coûts.</div>
-            <div data-hf-id="hf-gojg" class="s3-name" data-layout-allow-overlap="">Shadow AI.</div>
-            <div data-hf-id="hf-vcmg" class="s3-name" data-layout-allow-overlap="">Souveraineté.</div>
-            <div data-hf-id="hf-m79b" class="s3-name" data-layout-allow-overlap="">Production.</div>
-          </div>
-          <!-- Session titles from the live programme, one per issue. -->
-          <div data-hf-id="hf-fukb" id="s3-words">
-            <div data-hf-id="hf-9z0m" class="s3-word" data-layout-allow-overlap="">« J’ai consommé mon budget IA en mai. Comment finir l’année ? »</div>
-            <div data-hf-id="hf-5pc7" class="s3-word" data-layout-allow-overlap="">« Je ne sais pas ce que mes équipes mettent dans ChatGPT »</div>
-            <div data-hf-id="hf-5zzj" class="s3-word" data-layout-allow-overlap="">« Les Américains ont pris en otage mon SI »</div>
-            <div data-hf-id="hf-obru" class="s3-word" data-layout-allow-overlap="">« Nos POCs ne passent jamais en production »</div>
-          </div>
-          <div data-hf-id="hf-fqk1" id="s3-progress"><i data-hf-id="hf-wt6k"></i><i data-hf-id="hf-zeb8"></i><i data-hf-id="hf-y7e5"></i><i data-hf-id="hf-ylp6"></i></div>
+        <div data-hf-id="hf-0uyq" class="blk" id="q1-c02">
+          <div data-hf-id="hf-clhf" class="t1 lay" id="q1-t3">Venez vous faire</div>
+          <div data-hf-id="hf-q1t4" class="t2 lay" id="q1-t4">le vôtre.</div>
         </div>
       </section>
 
-      <!-- S4 · 8.55 to 12 · two tracks: labels laid on the rails, then the vanishing point -->
-      <section data-hf-id="hf-rrrr" id="s4" class="clip scene" data-start="14.05" data-duration="5.7" data-track-index="4">
-        <div data-hf-id="hf-tjh5" class="layer" id="s4-b">
-          <div data-hf-id="hf-bvym" class="layer" id="s4-b-inner">
-            <div data-hf-id="hf-3otl" class="print" id="p-rails"></div>
-            <div data-hf-id="hf-0bcg" class="scrim-top"></div>
-            <div data-hf-id="hf-wqqi" id="s4-title">Deux parcours, <span data-hf-id="hf-sp6e" class="it">une journée.</span></div>
-            <div data-hf-id="hf-7mtu" class="scrim-bottom" style="height: 48%"></div>
-            <div data-hf-id="hf-e1vp" class="s4-cap" id="s4-cap-l"><div data-hf-id="hf-ao6i" class="lab">Parcours 01 · Pour ceux qui</div><div data-hf-id="hf-xhzk" class="who"><span data-hf-id="hf-7yfe" class="m"><span data-hf-id="hf-5qcr">décident</span></span></div><div data-hf-id="hf-q2ec" class="what">DSI, DG, innovation</div></div>
-            <div data-hf-id="hf-qgwr" class="s4-cap" id="s4-cap-r"><div data-hf-id="hf-3v3v" class="lab">Parcours 02 · Pour ceux qui</div><div data-hf-id="hf-e2p4" class="who"><span data-hf-id="hf-48ge" class="m"><span data-hf-id="hf-769n">implémentent</span></span></div><div data-hf-id="hf-a8y4" class="what">Ingénieurs, data, archi</div></div>
+      <!-- Features (essai, after film-alt-2): sixteen programme sentences, four full frame, then the mosaic. -->
+      <section data-hf-id="hf-79mv" id="q3" class="clip scene" data-start="5.5" data-duration="20" data-track-index="1">
+        <div data-hf-id="hf-q3cm" id="q3-cam" class="cam">
+          <div data-hf-id="hf-q3ln" id="q3-lens" data-layout-allow-overflow=""></div>
+        </div>
+        <div data-hf-id="hf-q3sc" id="q3-scrim"></div>
+        <div data-hf-id="hf-q3sy" id="q3-say">Ces phrases, vous les avez déjà entendues.</div>
+      </section>
+
+      <!-- Features · la réponse · C07 17.5 to 24, C08 to 29 -->
+      <section data-hf-id="hf-p2ry" id="q4" class="clip scene" data-start="25" data-duration="12.5" data-track-index="1">
+        <div data-hf-id="hf-q4cm" id="q4-cam" class="cam">
+        <div data-hf-id="hf-jjnm" class="bg" id="q4-bg" data-layout-allow-overflow="" style="background-image: url('assets/img/tracks-rails-v4-optimized.webp')"></div>
+        <div data-hf-id="hf-yped" class="veil-center" id="q4-vc"></div>
+        <div data-hf-id="hf-rcdj" class="veil-all" id="q4-va"></div>
+        <div data-hf-id="hf-5m5g" class="blk" id="q4-c08">
+          <div data-hf-id="hf-0wdu" class="t1 md lay" id="q4-t1">Deux parcours, une journée pour y répondre&#160;:</div>
+          <div data-hf-id="hf-pism" id="q4-labels">
+            <div data-hf-id="hf-1udf" class="q4-l" id="q4-l1"><span data-hf-id="hf-d646" class="k">Parcours 01</span><span data-hf-id="hf-cj3v" class="t3">Pour celles et ceux<br>qui décident</span></div>
+            <div data-hf-id="hf-qyvs" class="q4-l" id="q4-l2"><span data-hf-id="hf-dkf7" class="k">Parcours 02</span><span data-hf-id="hf-pw3v" class="t3">Pour celles et ceux<br>qui implémentent</span></div>
+          </div>
+        </div>
+        <div data-hf-id="hf-8lf1" class="blk" id="q4-c09">
+          <div data-hf-id="hf-hlhe" class="t1 md lay" id="q4-t2">Des temps forts à partager.</div>
+        </div>
+        <figure data-hf-id="hf-tqtk" class="q4-tile" id="q4-f1"><div data-hf-id="hf-bx76" class="img" style="background-image: url('assets/img/stage-0-keynote-video-optimized.webp')"></div><figcaption data-hf-id="hf-e6u4" class="k">Keynotes</figcaption></figure>
+        <figure data-hf-id="hf-2epf" class="q4-tile" id="q4-f2"><div data-hf-id="hf-vlwr" class="img" style="background-image: url('assets/img/stage-1-talk-5-startup-contest-video-optimized.webp')"></div><figcaption data-hf-id="hf-d9m1" class="k">Startup Contest</figcaption></figure>
+        <figure data-hf-id="hf-ygle" class="q4-tile" id="q4-f3"><div data-hf-id="hf-xfrc" class="img" style="background-image: url('assets/img/podcast-maci-clever-cloud-video-optimized.webp')"></div><figcaption data-hf-id="hf-h8g0" class="k">Podcast en public</figcaption></figure>
+        <figure data-hf-id="hf-dj4f" class="q4-tile" id="q4-f4"><div data-hf-id="hf-dj4i" class="img"></div><figcaption data-hf-id="hf-dj4k" class="k">DJ set</figcaption></figure>
+        </div>
+      </section>
+
+      <!-- Features: portrait carousel matching the site. -->
+      <section data-hf-id="hf-kggx" id="q5" class="clip scene" data-start="36.25" data-duration="16" data-track-index="1">
+        <div data-hf-id="hf-q5cm" id="q5-cam" class="cam" data-layout-allow-overflow="">
+          <div data-hf-id="hf-k2el" id="q5-count">
+            <div data-hf-id="hf-y6js" id="q5-txt" class="lay">Intervenants de premier plan.</div>
+          </div>
+          <div data-hf-id="hf-q5vp" id="q5-window">
+            <div data-hf-id="hf-q5tr" id="q5-track" data-layout-allow-overflow=""></div>
           </div>
         </div>
       </section>
 
-      <!-- S5 · 12 to 15.05 · speakers pasted as snapshots, then the avalanche onto a loose table of photos -->
-      <section data-hf-id="hf-971m" id="s5" class="clip scene" data-start="19.75" data-duration="7.05" data-track-index="5">
-        <div data-hf-id="hf-mh37" class="layer" id="s5-bg"><div data-hf-id="hf-jgto" class="print" id="p-speakers"></div></div>
-        <div data-hf-id="hf-u4pe" id="s5-world"><div data-hf-id="hf-cdao" id="s5-title" data-layout-allow-overlap=""><b data-hf-id="hf-d4oi" id="s5-count">20</b><i data-hf-id="hf-38t1">intervenant·es</i></div></div>
-      </section>
-
-      <!-- S6 · 14.6 to 18 · the numbers on the château poster, the ticket -->
-      <section data-hf-id="hf-6mn0" id="s6" class="clip scene" data-start="26.35" data-duration="3.45" data-track-index="6">
-        <div data-hf-id="hf-7nq6" class="print" id="p-castle"></div>
-        <div data-hf-id="hf-9ytp" class="scrim-left" style="width: 60%"></div>
-        <div data-hf-id="hf-zqyf" id="s6-num-ghost" aria-hidden="true" data-layout-ignore="">400</div>
-        <div data-hf-id="hf-6h8r" id="s6-num" data-layout-allow-overlap="">0</div>
-        <div data-hf-id="hf-cux7" id="s6-places"><div data-hf-id="hf-6id7" class="lab" data-layout-allow-overlap="">Jauge</div><i data-hf-id="hf-0acb" data-layout-allow-overlap="">places</i></div>
-        <div data-hf-id="hf-dfip" id="s6-tstage">
-          <div data-hf-id="hf-yqqr" id="s6-ticket">
-            <img data-hf-id="hf-ljez" src="assets/img/admission-ticket-blank-brick-v1-optimized.webp" alt="">
-            <div data-hf-id="hf-6hzh" id="s6-tbody">
-              <div data-hf-id="hf-zf02" class="thead"><span data-hf-id="hf-yaas">Billet participant · GENAI DAYS</span><span data-hf-id="hf-t0f1">17·11·26</span></div>
-              <div data-hf-id="hf-l36e" id="s6-price" data-layout-allow-overlap="">0 €</div>
-              <div data-hf-id="hf-ovts" id="s6-facts"><div data-hf-id="hf-y0bz"><em data-hf-id="hf-jq2b">Date</em>Mardi 17 novembre 2026</div><div data-hf-id="hf-s6js"><em data-hf-id="hf-7f4m">Lieu</em>Hôtel de Région</div><div data-hf-id="hf-nc99"><em data-hf-id="hf-tah7">Accueil</em>08:30</div></div>
-            </div>
-            <div data-hf-id="hf-k9ul" id="s6-tstub">
-              <div data-hf-id="hf-iho4" class="wordmark" id="s6-stub-wm"></div>
-              <div data-hf-id="hf-upf9" class="sd"><strong data-hf-id="hf-o3c2">17</strong><span data-hf-id="hf-dq7f">Novembre<br data-hf-id="hf-x5px">2026</span></div>
-              <div data-hf-id="hf-5y38" class="sm">Nantes<br data-hf-id="hf-rsrt">Accès journée · 400 places</div>
-            </div>
+      <!-- Partners then final poster: 46.5 to 56 on screen (38.5 to 48 in the former times of the timeline). -->
+      <section data-hf-id="hf-1sp5" id="q7" class="clip scene" data-start="52.25" data-duration="9.5" data-track-index="1">
+        <div data-hf-id="hf-3o87" class="bg" id="q7-bg" data-layout-allow-overflow="" style="background-image: url('assets/img/affiche-chateau-nantes-1920-optimized.webp')"></div>
+        <div data-hf-id="hf-lapu" class="veil-all" id="q7-va"></div>
+        <div data-hf-id="hf-ez4u" class="blk" id="q7-title">
+          <div data-hf-id="hf-v9g6" class="t1 md lay" id="q7-t1">Nos partenaires rendent cette journée possible.</div>
+        </div>
+        <!-- Final poster, composed like the site's hero poster: the block bottom left, the silver label top right. -->
+        <div data-hf-id="hf-q7el" id="q7-endl" class="layer" data-layout-allow-overlap="">
+          <div data-hf-id="hf-q7sc" id="q7-scrim"></div>
+          <div data-hf-id="hf-nwe9" id="q7-end">
+            <div data-hf-id="hf-x14c" class="wordmark lay" id="q7-wm"><span data-hf-id="hf-nqya" class="g">GEN<span data-hf-id="hf-rzq4" class="i">AI</span></span> <span data-hf-id="hf-ooas" class="d">DAYS</span></div>
+            <div data-hf-id="hf-5nbv" class="lay" id="q7-tag">LA Conf Gen AI dédiée aux décideurs et leurs équipes techs</div>
+            <div data-hf-id="hf-q7ac" class="lay" id="q7-sig">2 tracks pour décider où investir et comprendre comment déployer</div>
+            <div data-hf-id="hf-vbci" class="k" id="q7-info">Mardi 17 novembre 2026 · Hôtel de Région, Nantes · 08&#160;h&#160;30 à 22&#160;h</div>
+            <div data-hf-id="hf-q7bk" id="q7-book"><span data-hf-id="hf-q7bt" class="k" id="q7-btn">Prenez votre place</span><span data-hf-id="hf-q7ur" id="q7-url">genai-days-nantes.com</span></div>
           </div>
+          <div data-hf-id="hf-ivph" class="pass" id="q7-pass"></div>
         </div>
+        <div data-hf-id="hf-5z7v" id="q7-partners"></div>
       </section>
-
-      <!-- S7 · 17.55 to 22.05 · the day on a real clock over the Hôtel de Région; a mirror ball drops in for the DJ set -->
-      <section data-hf-id="hf-r5s4" id="s7" class="clip scene" data-start="29.3" data-duration="7.25" data-track-index="7">
-        <div data-hf-id="hf-df9k" class="print" id="p-hotel"></div>
-        <div data-hf-id="hf-sjih" class="scrim-bottom" style="height: 78%"></div>
-        <div data-hf-id="hf-4352" id="s7-dim"></div>
-        <div data-hf-id="hf-q6o4" id="s7-title">Une journée <span data-hf-id="hf-u9ll" class="it">ponctuée de temps forts.</span></div>
-        <svg data-hf-id="hf-vp25" id="s7-clock" viewBox="-340 -340 680 680" aria-hidden="true" />
-        <div data-hf-id="hf-8cix" id="s7-read" data-layout-allow-overlap="">08:30</div>
-        <div data-hf-id="hf-kvnd" class="s7-item" id="s7-m1"><div data-hf-id="hf-grxf" class="lab">Midi · Ceux qui décident</div><b data-hf-id="hf-srgi">Startup Contest</b><em data-hf-id="hf-55jj">Pitchs des plus belles startups IA des Pays de la Loire</em></div>
-        <div data-hf-id="hf-r1d6" class="s7-item" id="s7-m2"><div data-hf-id="hf-hli3" class="lab">18:00 · En public</div><b data-hf-id="hf-wbdv">Podcast<i data-hf-id="hf-zwtx" class="s7-cc" data-layout-allow-overlap=""></i></b><em data-hf-id="hf-ye5r">Message à caractère informatique</em></div>
-        <div data-hf-id="hf-uzh7" class="s7-item" id="s7-m3"><div data-hf-id="hf-daga" class="lab">18:00 à 22:00 · Afterwork</div><b data-hf-id="hf-oeay">Apéro networking</b><em data-hf-id="hf-it0w" class="dj">DJ set jusqu’à 22:00</em></div>
-        <div data-hf-id="hf-zdqt" id="s7-ball" aria-hidden="true" data-layout-ignore=""><div data-hf-id="hf-149v" class="string"></div><svg data-hf-id="hf-rso1" viewBox="-60 -60 120 120" /></div>
-        <div data-hf-id="hf-wk8d" id="s7-specks" aria-hidden="true" data-layout-ignore=""></div>
-      </section>
-
-      <!-- S9 · 21.5 to 25 · Footer Echo: the château, revealed through its own fragmentation, carries the lockup -->
-      <section data-hf-id="hf-1sw5" id="s9" class="clip scene" data-start="36" data-duration="9" data-track-index="8">
-        <div data-hf-id="hf-qtm5" id="s9-frame"><div data-hf-id="hf-xdsn" class="print" id="p-chateau"></div></div>
-        <div data-hf-id="hf-oqg0" class="scrim-bottom" style="height: 60%"></div>
-        <div data-hf-id="hf-fpqr" id="s9-partners">
-          <div data-hf-id="hf-x7tk" id="s9-pscrim"></div>
-          <div data-hf-id="hf-wjlc" id="s9-ptitle">Nos <i data-hf-id="hf-o0ve">partenaires</i></div>
-          <div data-hf-id="hf-wwo1" class="prow t1"></div>
-          <div data-hf-id="hf-0us2" class="prow t2"></div>
-          <div data-hf-id="hf-4sw3" class="prow t3"></div>
-        </div>
-        <div data-hf-id="hf-cv21" id="s9-ghost" aria-hidden="true" data-layout-ignore=""></div>
-        <div data-hf-id="hf-c1qe" id="s9-row"></div>
-        <div data-hf-id="hf-ilh1" id="s9-sig"></div>
-        <div data-hf-id="hf-8fh4" id="s9-rule"></div>
-        <div data-hf-id="hf-365s" id="s9-info" class="lab">
-          <span data-hf-id="hf-ga0h" id="s9-date">17.11.2026 · Hôtel de Région, Nantes</span>
-          <span data-hf-id="hf-rdw9" id="s9-url"><i data-hf-id="hf-0l8b"></i>genai-days-nantes.com</span>
-        </div>
-        <div data-hf-id="hf-tyig" id="s9-foot" class="lab">
-          <span data-hf-id="hf-68my" id="s9-tag">#GenAIDaysNantes</span>
-          <span data-hf-id="hf-fzd1" id="s9-coorg"><span data-hf-id="hf-6303">Avec le soutien de</span><span data-hf-id="hf-en5a" id="s9-region" class="region-logo"></span></span>
-        </div>
-      </section>
-
-      <canvas data-hf-id="hf-bx1a" id="frag-ink" class="clip" data-start="0" data-duration="45" data-track-index="9" width="1920" height="1080" data-layout-allow-overflow="" data-layout-allow-occlusion=""></canvas>
-      <div data-hf-id="hf-u6f0" id="grain" class="clip" data-start="0" data-duration="45" data-track-index="10"></div>
-
-      <audio data-hf-id="hf-4pdn" id="bgm" src="assets/audio/music-M2.wav" data-start="0" data-duration="45" data-track-index="12" data-volume="0.72"></audio>
     </div>
 
     <script>
-      (function () {
+      (async function () {
         "use strict";
 
-        var DROP = 1.0;
-        var SVG_NS = "http://www.w3.org/2000/svg";
-        var MARK_PATHS = {
-          bottom: "M91 136.117C91 112.734 122 108 135 121L163 149L149 164L120 135C116.5 131.5 111 134.5 111 138V199H91V136.117Z",
-          left: "M62.8828 90C86.2656 90 90.9999 121 78 134L50 162L35 148L64 119C67.5 115.5 64.5 110 61 110H0V90H62.8828Z",
-          right: "M163.999 51L134.999 80C131.5 83.4999 134.499 88.9995 137.999 89H199V109H136.116C112.734 109 107.999 78 120.999 65L148.999 37L163.999 51Z",
-          top: "M110 62.8828C110 86.2656 79 90.9999 66 78L38 50L52 35L81 64C84.5 67.5 90 64.5 90 61V0H110V62.8828Z",
-          dot: "M99.5 91C104.194 91 108 94.8056 108 99.5C108 104.194 104.194 108 99.5 108C94.8056 108 91 104.194 91 99.5C91 94.8056 94.8056 91 99.5 91Z",
-        };
-        var ARM_KEYS = ["top", "right", "bottom", "left"];
-        var ARM_VECTORS = { top: [0, -1], right: [1, 0], bottom: [0, 1], left: [-1, 0] };
+        var ORANGE = "#fe4d1b";
+        var BLUE = "#3d43ce";
 
-        function $(s) {
-          return document.querySelector(s);
+        function $(sel) {
+          return document.querySelector(sel);
         }
-        function $$(s) {
-          return Array.prototype.slice.call(document.querySelectorAll(s));
+        function el(tag, cls, html) {
+          var n = document.createElement(tag);
+          if (cls) n.className = cls;
+          if (html !== undefined) n.innerHTML = html;
+          return n;
         }
-        function seededRandom(seed) {
-          var state = seed >>> 0;
+        // Seeded PRNG: every render draws the same fragmentation bars.
+        function rng(seed) {
           return function () {
-            state = (Math.imul(1664525, state) + 1013904223) >>> 0;
-            return state / 4294967296;
+            seed |= 0;
+            seed = (seed + 0x6d2b79f5) | 0;
+            var t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+            t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+            return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
           };
         }
-        // GSAP writes through this setter even on silent seeks: procedural painters stay a pure function of time.
+
+        // Speakers and partners: frozen copy of src/content/ on 2026-10-31.
+        // SPEAKERS regenerated on 2026-11-04: every speaker, in the site's carousel order (sortSpeakersByProminence).
+        // [name, cardCompany or company, logo in assets/logos/companies or null, file of the speaker's photo field].
+        // Speakers only (user, 04/11): people with no eventRole on the site. Hosts, jury, finalists and moderators are left out.
+        var SPEAKERS = [
+          ["Christelle Morançais", "Région Pays de la Loire", "logo-pays_de_la_loire-square-optimized.svg", "christelle-morancais-optimized.webp"],
+          ["Jean-Baptiste Kempf", "VLC · Scaleway · Kyber", "kyber-optimized.svg", "jean-baptiste-kempf-optimized.webp"],
+          ["Julien Lesaicherre", "ElevenLabs", "elevenlabs-square-optimized.svg", "julien-lesaicherre-optimized.webp"],
+          ["Tiffany Souterre", "AWS", "aws-optimized.svg", "tiffany-souterre-optimized.webp"],
+          ["Frédéric Didier", "Groupe Crédit Agricole", "credit-agricole-optimized.svg", "frederic-didier-optimized.webp"],
+          ["Régis Dubrulle", "ANSSI", "anssi-optimized.webp", "regis-dubrulle-anssi-optimized.webp"],
+          ["Olivier Lauvray", "VSORA", "vsora-optimized.webp", "olivier-lauvray-optimized.webp"],
+          ["Quentin Adam", "Clever Cloud", "clever-cloud-optimized.png", "quentin-adam-optimized.webp"],
+          ["Camille Marini", "Alan", "alan-optimized.webp", "camille-marini-optimized.webp"],
+          ["Laurent Duthoit", "Renault Group", "renault-square-optimized.svg", "laurent-duthoit-meudon-optimized.webp"],
+          ["Nicolas Martignole", "Back Market", "back-market-optimized.webp", "nicolas-martignole-wide-optimized.webp"],
+          ["Théo Hubert", "AlphaEdge", "alphaedge-square-optimized.svg", "theo-hubert-optimized.webp"],
+          ["Jean-Yves Simon", "Mirakl", "mirakl-symbol-optimized.svg", "jean-yves-simon-optimized.webp"],
+          ["Camille Croze", "Wandercraft", "wandercraft-square-optimized.svg", "camille-croze-linkedin-optimized.webp"],
+          ["Constance Nebbula", "Région Pays de la Loire", "logo-pays_de_la_loire-square-optimized.svg", "constance-nebbula-optimized.webp"],
+          ["Delphine Ziegler", "Doctolib", "doctolib-optimized.svg", "delphine-ziegler-optimized.webp"],
+          ["Florian Bruniaux", "Founding team @ RTK", null, "florian-bruniaux-optimized.webp"],
+          ["Gaël Brisson", "Swiftask", "swiftask-badge-optimized.svg", "gael-brisson-optimized.webp"],
+          ["Tristan Fransen", "Pennylane", "pennylane-optimized.webp", "tristan-fransen-optimized.webp"],
+        ];
+        // [mono mask in assets/partners/mono, aspect from tools/partners_mono.py, logoOpticalScale of the partner on the site (1 when unset)], in site order per tier.
+        var PARTNER_ROWS = [
+          [["logo-pays_de_la_loire", 2.09, 1], ["clever-cloud", 3.857, 1.08], ["swiftask-optimized", 4.298, 0.95], ["adn-ouest-optimized", 2.36, 0.9]],
+          [["club-eti-pdll-optimized", 1.12, 1.1], ["ippon-optimized", 3.456, 0.82], ["alphaedge", 5.981, 1.1], ["Logo Elastic-optimized", 3.119, 1], ["Logo techtown-optimized", 5.836, 0.85], ["Logo_Cross_Data-optimized", 6.207, 1.08], ["sfeir-optimized", 2.98, 0.88], ["wescale-optimized", 3.533, 1], ["cloudflare-mono-optimized", 3.02, 1]],
+          [["Jems-logo-optimized", 1.69, 1], ["icilundi-optimized", 4.855, 1], ["bworlds-lockup-mono-black-optimized", 3.678, 1.05], ["externatic_horizontal-optimized", 5.926, 0.92], ["explore-the-vault-logo-optimized", 6.647, 0.75], ["leboncoin-tech-optimized", 2.754, 1.1], ["la-cantine-french-tech-optimized", 2.273, 1.35], ["devoteam-mono-optimized", 3.381, 1.4], ["brijyt-mono-optimized", 2.29, 1], ["etix-optimized", 2.84, 1]],
+        ];
+        // Optical size, as on the site's partners page: the same area for every logo (wide wordmarks get longer,
+        // compact marks taller), times the logo's hand-tuned scale. Three blocks, one per tier, cut like the
+        // site's partners wall: platinum on one row, gold three rows of three, silver two rows of five. Gold and
+        // silver sit in equal cells so their columns line up and each tier reads as one block.
+        var PARTNER_TIERS = [
+          { unit: 165, maxHeight: 124, gap: 64, rows: 1, cells: false },
+          { unit: 100, maxHeight: 86, gap: 28, rows: 3, cells: true },
+          { unit: 78, maxHeight: 64, gap: 24, rows: 2, cells: true },
+        ];
+        var PARTNER_ROW_MAX_WIDTH = 1720;
+
+        // ---------------------------------------------------------------- builders
+        function layer(node) {
+          var html = node.innerHTML;
+          node.innerHTML = "";
+          var ghost = el("span", "ghost", html);
+          ghost.setAttribute("data-layout-allow-overlap", "");
+          node.appendChild(ghost);
+          node.appendChild(el("span", "face", html));
+        }
+        document.querySelectorAll(".lay").forEach(layer);
+
+        // Same content as the site's hero label: the date, the venue and the host region's logo.
+        function fillPass(node) {
+          node.innerHTML =
+            '<div class="pass-face">' +
+            '<div class="pass-date"><strong>17</strong><span><b>Novembre</b><b>2026</b></span></div>' +
+            '<div class="pass-bottom"><p class="pass-venue"><strong>Hôtel de Région</strong><span>Nantes</span></p><i class="pass-partner"></i></div>' +
+            "</div>" +
+            '<div class="pass-flap"></div>';
+        }
+        fillPass($("#q7-pass"));
+
+        var tl = gsap.timeline({ paused: true });
+
+        var Q3_CW = 423, Q3_CH = 213, Q3_GAP = 12, Q3_MARGIN = 96;
+        await Promise.all([$("#q1-source-on").decode(), $("#q1-source-programme").decode()]);
+        var drawScreenOn = createScreenPowerOn();
+
+        // ---------------------------------------------------------------- type A: block fragmentation
+        // Long flat bars in brand orange and blue on a row grid: each bar flashes as a flat ink, then opens
+        // onto the incoming shot, so both shots show between the bars. One canvas paints every active cut.
+        // GSAP writes through this setter even on silent seeks: the painter stays a pure function of time.
         function driver(apply) {
           var value = 0;
           var target = {};
@@ -1469,197 +868,54 @@
           });
           return target;
         }
-        function el(tag, cls, html) {
-          var node = document.createElement(tag);
-          if (cls) node.className = cls;
-          if (html != null) node.innerHTML = html;
-          return node;
-        }
-        function markSvg(key, color, cls) {
-          var svg = document.createElementNS(SVG_NS, "svg");
-          svg.setAttribute("viewBox", "0 0 199 199");
-          svg.setAttribute("class", cls);
-          var path = document.createElementNS(SVG_NS, "path");
-          path.setAttribute("d", MARK_PATHS[key]);
-          path.setAttribute("fill", color);
-          svg.appendChild(path);
-          return svg;
-        }
-        function buildWordmark(node, masked) {
-          var parts = [["G", "g"], ["E", "g"], ["N", "g"], ["A", "g i"], ["I", "g i"], [" ", "sp"], ["D", "d"], ["A", "d"], ["Y", "d"], ["S", "d"]];
-          var letters = [];
-          parts.forEach(function (part) {
-            var ch = el("span", "ch " + part[1]);
-            ch.textContent = part[0] === " " ? " " : part[0];
-            if (masked) {
-              var mask = el("span", "m" + (part[1].indexOf("i") >= 0 ? " it" : ""));
-              mask.appendChild(ch);
-              node.appendChild(mask);
-            } else {
-              node.appendChild(ch);
-            }
-            if (part[0] !== " ") letters.push(ch);
-          });
-          return letters;
-        }
-        function wordmarkHtml() {
-          return '<span class="g">GEN</span><span class="g i">AI</span><span class="d sp">DAYS</span>';
-        }
-        function splitWords(node, text, masked) {
-          var words = [];
-          text.split(" ").forEach(function (word, i) {
-            if (i > 0) node.appendChild(document.createTextNode(" "));
-            var wd = el("span", "wd");
-            wd.textContent = word;
-            if (masked) {
-              var mask = el("span", "m" + (masked === "it" ? " it" : ""));
-              mask.appendChild(wd);
-              node.appendChild(mask);
-            } else {
-              node.appendChild(wd);
-            }
-            words.push(wd);
-          });
-          return words;
-        }
-        function splitChars(node, text) {
-          var chars = [];
-          Array.prototype.forEach.call(text, function (c) {
-            var ch = el("span", "ch");
-            ch.textContent = c === " " ? " " : c;
-            node.appendChild(ch);
-            chars.push(ch);
-          });
-          return chars;
-        }
-
-        // ---------------------------------------------------------------- print plates
-        var PRINT_SRC = {
-          cover: "assets/img/cover_v2-1920-optimized.webp",
-          manifesto: "assets/img/manifesto-civic-optimized.webp",
-          miroir: "assets/img/chateau-nantes-miroir-eau-banner-genai-days-optimized.webp",
-          costs: "assets/img/issue-costs-optimized.webp",
-          shadow: "assets/img/issue-shadow-ai-optimized.webp",
-          sovereignty: "assets/img/issue-sovereignty-optimized.webp",
-          production: "assets/img/issue-production-optimized.webp",
-          rails: "assets/img/tracks-rails-v2-optimized.webp",
-          speakers: "assets/img/speaker_background-optimized.webp",
-          castle: "assets/img/nantes_castle-optimized.webp",
-          hotel: "assets/img/hotel-region-banner-genai-days-optimized.webp",
-          chateau: "assets/img/affiche-chateau-nantes-2306.webp",
-        };
-        var prints = {};
-        function buildPrint(name, position) {
-          var host = $("#p-" + name);
-          var sheet = el("div", "sheet");
-          var key = el("img", "key");
-          key.src = "assets/plates/" + name + "-key.webp";
-          var signal = el("img", "signal");
-          signal.src = "assets/plates/" + name + "-signal.webp";
-          sheet.appendChild(key);
-          host.appendChild(sheet);
-          host.appendChild(signal);
-          var orig = null;
-          if (PRINT_SRC[name]) {
-            orig = el("img", "orig");
-            orig.src = PRINT_SRC[name];
-            host.appendChild(orig);
-          }
-          host.appendChild(el("div", "trame"));
-          [key, signal, orig].forEach(function (img) {
-            if (img) {
-              img.alt = "";
-              if (position) img.style.objectPosition = position;
-            }
-          });
-          prints[name] = { host: host, sheet: sheet, key: key, signal: signal, orig: orig };
-          return prints[name];
-        }
-        buildPrint("cover", "50% 60%");
-        buildPrint("manifesto", "50% 12%");
-        buildPrint("miroir", "50% 50%");
-        buildPrint("costs");
-        buildPrint("shadow");
-        buildPrint("sovereignty");
-        buildPrint("production");
-        buildPrint("rails");
-        buildPrint("speakers", "50% 30%");
-        buildPrint("castle", "58% 50%");
-        buildPrint("hotel");
-        buildPrint("chateau", "50% 40%");
-
-        var WIPES = {
-          down: ["inset(0% 0% 100% 0%)", "inset(0% 0% 0% 0%)"],
-          right: ["inset(0% 100% 0% 0%)", "inset(0% 0% 0% 0%)"],
-          left: ["inset(0% 0% 0% 100%)", "inset(0% 0% 0% 0%)"],
-        };
-        // Pull a poster: the sheet and key plate are squeegeed across, the orange plate follows out of
-        // register, snaps into register on `register`, then the original art settles in.
-        function pull(tl, name, at, opts) {
-          var p = prints[name];
-          var wipe = WIPES[opts.dir || "down"];
-          var dur = opts.dur || 0.3;
-          var off = opts.offset || [34, 24];
-          var register = opts.register != null ? opts.register : at + dur + 0.2;
-          tl.fromTo(p.sheet, { clipPath: wipe[0] }, { clipPath: wipe[1], duration: dur, ease: "power2.inOut" }, at);
-          tl.fromTo(p.signal, { clipPath: wipe[0], x: off[0], y: off[1] }, { clipPath: wipe[1], duration: dur, ease: "power2.inOut" }, at + dur * 0.55);
-          tl.to(p.signal, { x: 0, y: 0, duration: 0.24, ease: "expo.out" }, register);
-          if (p.orig) {
-            tl.fromTo(p.orig, { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.inOut", immediateRender: false }, register + 0.12);
-            tl.set(p.orig, { opacity: 0 }, 0);
-          }
-        }
-
-        // Re-register a print already on screen: the orange plate snaps, then the original art settles in.
-        function register(tl, name, at, offset) {
-          var p = prints[name];
-          var off = offset || [34, 24];
-          tl.fromTo(p.signal, { x: off[0], y: off[1] }, { x: 0, y: 0, duration: 0.26, ease: "expo.out" }, at);
-          if (p.orig) tl.fromTo(p.orig, { opacity: 0 }, { opacity: 1, duration: 0.45, ease: "power1.inOut" }, at + 0.14);
-        }
-
-        // ---------------------------------------------------------------- rectangular fragmentation
-        // The key art's own language: stepped rectangular blocks. Each block flashes as a flat ink
-        // (blue or orange) and then opens onto the incoming shot. One canvas paints every active cut.
-        var fragCanvas = $("#frag-ink");
-        var fragCtx = fragCanvas.getContext("2d");
+        var FRAG_ROWS = 30;
+        var FRAG_ROW_H = 1080 / FRAG_ROWS;
+        var FRAG_MIN_W = 190;
+        var FRAG_MAX_W = 700;
+        var FRAG_FLASH = 0.11;
+        // Share of bars that flash as ink; the others open silently, so the frame never fills with colour.
+        var FRAG_INK_SHARE = 0.35;
+        var fragCtx = $("#frag-ink").getContext("2d");
         var fragCuts = [];
+        // Modes give the propagation: rise (from the bottom), ltr (sweep from the left), center (outward), scatter.
         function makeBlocks(seed, mode) {
-          var rand = seededRandom(seed);
-          var rows = 22;
-          var rowH = 1080 / rows;
+          var rand = rng(seed);
           var list = [];
-          for (var r = 0; r < rows; r += 1) {
-            var x = 0;
+          for (var r = 0; r < FRAG_ROWS; r += 1) {
+            var x = -Math.round(rand() * FRAG_MIN_W);
+            var n = 0;
             while (x < 1920) {
-              var w = Math.round(60 + rand() * 300);
-              if (x + w > 1920) w = 1920 - x;
+              var w = Math.round(FRAG_MIN_W + rand() * (FRAG_MAX_W - FRAG_MIN_W));
+              if (1920 - (x + w) < FRAG_MIN_W) w = 1920 - x;
               var cx = (x + w / 2) / 1920;
-              var cy = (r + 0.5) / rows;
-              var base = mode === "rise" ? 1 - cy : mode === "center" ? Math.hypot(cx - 0.5, cy - 0.5) * 1.3 : cx;
-              var th = Math.max(0, Math.min(1, base * 0.72 + rand() * 0.28));
-              list.push({ x: x, y: Math.round(r * rowH), w: w, h: Math.ceil(rowH), th: th * 0.86, ink: rand() < 0.5 ? "#FE4D1B" : "#3D43CE" });
+              var cy = (r + 0.5) / FRAG_ROWS;
+              var base = mode === "rise" ? 1 - cy : mode === "center" ? Math.hypot(cx - 0.5, (cy - 0.5) * 0.56) * 1.6 : mode === "scatter" ? rand() : cx;
+              // Neighbouring rows share their timing in steps of three: the bars group into staircases.
+              var step = (Math.floor(r / 3) % 2) * 0.05;
+              var th = Math.max(0, Math.min(1, base * 0.7 + rand() * 0.22 + step));
+              list.push({ x: Math.max(0, x), y: Math.round(r * FRAG_ROW_H), w: w + Math.min(0, x), h: Math.ceil(FRAG_ROW_H), th: th * (1 - FRAG_FLASH), ink: (r + n + (rand() < 0.2 ? 1 : 0)) % 2 ? ORANGE : BLUE, isInked: rand() < FRAG_INK_SHARE });
               x += w;
+              n += 1;
             }
           }
           return list;
         }
         function repaintFragments() {
           fragCtx.clearRect(0, 0, 1920, 1080);
+          fragCtx.globalAlpha = 1;
           fragCuts.forEach(function (cut) {
-            var p = cut.p;
-            if (p <= 0 || p >= 1) return;
-            for (var i = 0; i < cut.blocks.length; i += 1) {
-              var b = cut.blocks[i];
-              if (p > b.th && p < b.th + 0.14) {
+            if (cut.p <= 0 || cut.p >= 1) return;
+            cut.blocks.forEach(function (b) {
+              if (b.isInked && cut.p > b.th && cut.p < b.th + FRAG_FLASH) {
                 fragCtx.fillStyle = b.ink;
                 fragCtx.fillRect(b.x, b.y, b.w, b.h);
               }
-            }
+            });
           });
         }
-        function fragment(tl, target, at, dur, seed, mode) {
-          var node = typeof target === "string" ? $(target) : target;
+        // The incoming node is clipped to the bars already opened; it shows in full once the cut ends.
+        function fragment(target, at, dur, seed, mode) {
+          var node = $(target);
           var cut = { p: 0, blocks: makeBlocks(seed, mode) };
           fragCuts.push(cut);
           function apply(p) {
@@ -1670,10 +926,9 @@
               node.style.clipPath = 'path("M 0 0 Z")';
             } else {
               var parts = [];
-              for (var i = 0; i < cut.blocks.length; i += 1) {
-                var b = cut.blocks[i];
-                if (p >= b.th + 0.14) parts.push("M" + b.x + " " + b.y + "h" + b.w + "v" + b.h + "h" + -b.w + "Z");
-              }
+              cut.blocks.forEach(function (b) {
+                if (p >= b.th + FRAG_FLASH) parts.push("M" + b.x + " " + b.y + "h" + b.w + "v" + b.h + "h" + -b.w + "Z");
+              });
               node.style.clipPath = parts.length ? 'path("' + parts.join("") + '")' : 'path("M 0 0 Z")';
             }
             repaintFragments();
@@ -1682,762 +937,508 @@
           tl.fromTo(driver(apply), { v: 0 }, { v: 1, duration: dur, ease: "none" }, at);
         }
 
-        // ---------------------------------------------------------------- physical objects
-        function objShell(node) {
-          node.appendChild(el("div", "shadow"));
-          var front = el("div", "front");
-          if (node.classList.contains("metal")) front.appendChild(el("div", "shine"));
-          var content = el("div", "content");
-          front.appendChild(content);
-          node.appendChild(front);
-          return content;
-        }
+        // C09: one row of five cards per page in site order, like the site's carousel, on one seekable track, with the
+        // site's portrait and logo assets. A short last page stays centred.
+        var SPEAKERS_PER_PAGE = 5;
+        var SPEAKER_CARD_W = (1728 - (SPEAKERS_PER_PAGE - 1) * 24) / SPEAKERS_PER_PAGE;
+        var speakerTrack = $("#q5-track");
+        var speakerPages = [];
+        SPEAKERS.forEach(function (sp, i) {
+          if (i % SPEAKERS_PER_PAGE === 0) {
+            var page = el("div", "speaker-page");
+            var onPage = Math.min(SPEAKERS_PER_PAGE, SPEAKERS.length - i);
+            page.style.gridTemplateColumns = "repeat(" + onPage + ", " + SPEAKER_CARD_W + "px)";
+            speakerPages.push(speakerTrack.appendChild(page));
+          }
+          var card = el("article", "speaker-card");
+          card.id = "speaker-card-" + i;
+          var photo = card.appendChild(el("div", "speaker-photo"));
+          var portrait = photo.appendChild(el("img"));
+          portrait.src = "assets/speakers/" + sp[3];
+          portrait.alt = sp[0];
+          if (sp[2]) {
+            var logo = photo.appendChild(el("span", "speaker-logo")).appendChild(el("img"));
+            logo.src = "assets/logos/companies/" + sp[2];
+            logo.alt = sp[1];
+          }
+          card.appendChild(el("strong", "speaker-name")).textContent = sp[0];
+          card.appendChild(el("span", "speaker-company")).textContent = sp[1];
+          speakerPages[speakerPages.length - 1].appendChild(card);
+        });
 
-        // ---------------------------------------------------------------- poster peel transition
-        // A fold line sweeps from one corner across the frame. The scene keeps the half-plane past the fold;
-        // the peeled part is mirrored across the fold as the cream back of the poster.
-        function clipHalfPlane(points, keep) {
-          var out = [];
-          for (var i = 0; i < points.length; i += 1) {
-            var a = points[i];
-            var b = points[(i + 1) % points.length];
-            var da = keep(a);
-            var db = keep(b);
-            if (da >= 0) out.push(a);
-            if ((da >= 0) !== (db >= 0)) {
-              var k = da / (da - db);
-              out.push([a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k]);
+        // C11 partner grid: one group per tier, its logos split into balanced rows in site order.
+        var partners = $("#q7-partners");
+        PARTNER_ROWS.forEach(function (tierLogos, r) {
+          var tier = PARTNER_TIERS[r];
+          var perRow = Math.ceil(tierLogos.length / tier.rows);
+          var lines = [];
+          for (var first = 0; first < tierLogos.length; first += perRow) lines.push(tierLogos.slice(first, first + perRow));
+          // Same formula as src/pages/partenaires.astro: width ~ aspect^0.6, height ~ aspect^-0.4.
+          var heightOf = function (logo) {
+            return tier.unit * Math.pow(logo[1], -0.4) * logo[2];
+          };
+          // One fit for the whole tier, so a logo keeps its tier's scale whatever its row.
+          var fit = lines.reduce(function (smallest, line) {
+            var lineWidth = line.reduce(function (sum, logo) {
+              return sum + heightOf(logo) * logo[1];
+            }, tier.gap * (line.length - 1));
+            return Math.min(smallest, PARTNER_ROW_MAX_WIDTH / lineWidth);
+          }, 1);
+          // Clamp after the fit, so a full row keeps the site's proportions.
+          var heightIn = function (logo) {
+            return Math.min(tier.maxHeight, heightOf(logo) * fit);
+          };
+          var cellWidth = tier.cells
+            ? Math.max.apply(null, tierLogos.map(function (logo) {
+                return heightIn(logo) * logo[1];
+              }))
+            : 0;
+          var group = el("div", "ptier");
+          lines.forEach(function (line) {
+            var row = el("div", "prow");
+            row.style.gap = tier.gap * fit + "px";
+            if (tier.cells) {
+              row.style.display = "grid";
+              row.style.gridTemplateColumns = "repeat(" + line.length + ", " + cellWidth + "px)";
+              row.style.justifyItems = "center";
+            }
+            line.forEach(function (logo) {
+              var tile = el("div", "ptile");
+              var height = heightIn(logo);
+              tile.style.width = height * logo[1] + "px";
+              tile.style.height = height + "px";
+              tile.style.setProperty("--logo", 'url("assets/partners/mono/' + encodeURIComponent(logo[0] + ".png") + '")');
+              row.appendChild(tile);
+            });
+            group.appendChild(row);
+          });
+          partners.appendChild(group);
+        });
+
+        function createScreenPowerOn() {
+          var canvas = $("#q1-screen"), ctx = canvas.getContext("2d");
+          var w=canvas.width,h=canvas.height;
+          var room=$("#q1-source-on"),image=$("#q1-source-programme");
+          var orange=document.createElement("canvas"), picture=document.createElement("canvas");
+          orange.width=picture.width=w;orange.height=picture.height=h;
+          var sx=room.naturalWidth/1920,sy=room.naturalHeight/1080;
+          orange.getContext("2d").drawImage(room,660*sx,89*sy,607*sx,453*sy,0,0,w,h);
+          // Reconstruct the first programme image with its actual cell crop and shade.
+          var card=document.createElement("canvas"),cc=card.getContext("2d");
+          var cw=card.width=Q3_CW*4,ch=card.height=Q3_CH*4;
+          var fit=Math.max(cw/image.naturalWidth,ch/image.naturalHeight)*1.08;
+          var iw=image.naturalWidth*fit,ih=image.naturalHeight*fit;
+          cc.drawImage(image,(cw-iw)/2,(ch-ih)/2,iw,ih);
+          var side=cc.createLinearGradient(0,0,cw,0);
+          side.addColorStop(0,"rgba(24,21,21,0.45)");side.addColorStop(0.6,"rgba(24,21,21,0)");side.addColorStop(1,"rgba(24,21,21,0)");
+          cc.fillStyle=side;cc.fillRect(0,0,cw,ch);
+          var lower=cc.createLinearGradient(0,ch,0,0);
+          lower.addColorStop(0,"rgba(24,21,21,0.82)");lower.addColorStop(0.42,"rgba(24,21,21,0.35)");lower.addColorStop(0.7,"rgba(24,21,21,0)");lower.addColorStop(1,"rgba(24,21,21,0)");
+          cc.fillStyle=lower;cc.fillRect(0,0,cw,ch);
+          // A 16:9 picture inside the physical 4:3 screen. Its letterbox leaves the viewport during the zoom.
+          var pc=picture.getContext("2d"),ph=w*9/16,py=(h-ph)/2,cropWidth=ch*16/9;
+          pc.fillStyle="#09122e";pc.fillRect(0,0,w,h);
+          pc.drawImage(card,(cw-cropWidth)/2,0,cropWidth,ch,0,py,w,ph);
+          var rand=rng(9184),bands=[];
+          // Spatially random decoder blocks, all clipped by the physical screen canvas. No sweep.
+          for(var row=0;row<30;row++){
+            var x=0,y=Math.floor(row*h/30),bottom=Math.ceil((row+1)*h/30);
+            while(x<w){
+              var width=Math.min(w-x,Math.round(120+rand()*350));
+              bands.push({x:x,y:y,w:width,h:bottom-y,at:0.035+rand()*0.68,ink:rand()<0.3,colour:rand()<0.5?BLUE:ORANGE});
+              x+=width;
             }
           }
-          return out;
+          return function(p){
+            ctx.globalAlpha=1;
+            if(p>=1){ctx.drawImage(picture,0,0);return;}
+            ctx.drawImage(orange,0,0);
+            if(p<=0)return;
+            bands.forEach(function(b){
+              var age=p-b.at;
+              if(age<0)return;
+              if(b.ink&&age<0.09){ctx.fillStyle=b.colour;ctx.fillRect(b.x,b.y,b.w,b.h);}
+              else if(age<0.15&&age>0.12)return;
+              else ctx.drawImage(picture,b.x,b.y,b.w,b.h,b.x,b.y,b.w,b.h);
+            });
+          };
         }
-        function polygonCss(points) {
-          if (points.length < 3) return 'polygon(0 0, 0 0, 0 0)';
-          return "polygon(" + points.map(function (q) {
-            return q[0].toFixed(1) + "px " + q[1].toFixed(1) + "px";
-          }).join(", ") + ")";
+
+        // ---------------------------------------------------------------- timeline (output seconds)
+
+        // Text lands in two offset layers that snap into register, then the orange layer goes.
+        function layIn(sel, at, dur) {
+          dur = dur || 0.55;
+          var node = $(sel);
+          var ghost = node.querySelector(".ghost");
+          var face = node.querySelector(".face");
+          tl.fromTo(face, { opacity: 0, x: 6 }, { opacity: 1, x: 0, duration: dur, ease: "power3.out" }, at);
+          tl.fromTo(ghost, { opacity: 0.8, x: -9, y: 3 }, { opacity: 0.8, x: 0, y: 0, duration: dur, ease: "power3.out", immediateRender: false }, at);
+          tl.to(ghost, { opacity: 0, duration: 0.2, ease: "none" }, at + dur);
         }
-        function peelScene(tl, node, at, dur) {
-          var flap = el("div", "peel-flap");
-          var back = el("div", "peel-back");
-          var shade = el("div", "peel-shade");
-          back.appendChild(shade);
-          flap.appendChild(back);
-          node.appendChild(flap);
-          var corner = [1920, 1080];
-          var angle = Math.atan2(-1080, -1920) + 0.16;
-          var u = [Math.cos(angle), Math.sin(angle)];
-          var rect = [[0, 0], [1920, 0], [1920, 1080], [0, 1080]];
-          var reach = Math.max.apply(null, rect.map(function (q) {
-            return (q[0] - corner[0]) * u[0] + (q[1] - corner[1]) * u[1];
-          }));
+        function fadeIn(sel, at, dur) {
+          tl.fromTo(sel, { opacity: 0 }, { opacity: 1, duration: dur || 0.4, ease: "power2.out" }, at);
+        }
+        // The silver label arrives, presses flat and stays stuck; then its corner lifts, as on the site.
+        function stick(sel, at) {
+          tl.fromTo(sel, { opacity: 0 }, { opacity: 1, duration: 0.08, ease: "none" }, at);
+          tl.fromTo(sel, { scale: 1.18, rotation: 7, y: -30 }, { scale: 1, rotation: 2, y: 0, duration: 0.32, ease: "power2.in" }, at);
+          tl.fromTo(sel, { "--sx": "-20%" }, { "--sx": "70%", duration: 0.35, ease: "power2.out" }, at + 0.32);
+          tl.fromTo(sel, { "--fold": "0px" }, { "--fold": "44px", duration: 0.54, ease: "expo.out" }, at + 0.68);
+        }
+
+        // Every cut sits on the 120 BPM grid of the music: a beat every 0.5 s, a bar every 2 s.
+        // Registered room power-on in scattered brand bars, and measured on-axis light/screen pushes.
+        // Only the portrait carousel translates, following the site reference approved for Q5.
+
+        // Identical type entrance for both hook sentences; restrained orange register layer.
+        function hookIn(sel, at) {
+          var node = $(sel);
+          tl.fromTo(node.querySelector(".face"), { opacity: 0, x: 3 }, { opacity: 1, x: 0, duration: 0.45, ease: "power2.out" }, at);
+          tl.fromTo(node.querySelector(".ghost"), { opacity: 0.24, x: -5, y: 2 }, { opacity: 0, x: 0, y: 0, duration: 0.45, ease: "power2.out", immediateRender: false }, at);
+        }
+        hookIn("#q1-t1", 0.05);
+        hookIn("#q1-t2", 0.13);
+        tl.to("#q1-c01", { opacity: 0, duration: 0.35 }, 2.15);
+        // Power-on, one beat: the Q2 to Q3 bar glitch without its sweep. Bars flash and open onto the
+        // registered lit plate in scattered order; the seed puts ink on the first frame after the beat.
+        fragment("#q1-l2", 2.5, 0.5, 2359, "scatter");
+        hookIn("#q1-t3", 2.5);
+        hookIn("#q1-t4", 2.58);
+        tl.to(["#q1-c02", "#q1-caption-veil"], { opacity: 0, duration: 0.25 }, 4.25);
+        // The orange standby screen reveals the first programme image before the camera approaches.
+        tl.set("#q1-screen", { opacity: 0 }, 0);
+        tl.set("#q1-screen", { opacity: 1 }, 3.6);
+        tl.fromTo(driver(drawScreenOn), { v: 0 }, { v: 1, duration: 0.5, ease: "none" }, 3.6);
+        // One-second screen crossing. Acceleration stays in the room; braking starts in the programme image.
+        var screenDepth = 1920 / 607;
+        var screenTravel = 1;
+        var approach = 0.3;
+        var startSlope = 0.015;
+        var crossingSlope = (1 - approach * startSlope / 2) / (1 - approach / 2);
+        function cameraProgress(p) {
+          var a=approach,m=crossingSlope,low=startSlope;
+          if(p<=a)return low*p+(m-low)*(p/2-a*Math.sin(Math.PI*p/a)/(2*Math.PI));
+          return a*(low+m)/2+m*(p-a);
+        }
+        function screenPush(p) {
+          var u=cameraProgress(Math.max(0,Math.min(1,p)));
+          var follow=u*u*(3-2*u);
+          gsap.set("#q1-cam", {transformOrigin:"963.5px 315.5px",scale:Math.pow(screenDepth,u),x:(960-963.5)*follow,y:(540-315.5)*follow});
+        }
+        screenPush(0);
+        tl.fromTo(driver(screenPush),{v:0},{v:1,duration:screenTravel,ease:"none"},4.5);
+        var crossingSpeed=Math.log(screenDepth)*crossingSlope/screenTravel;
+        var settleTime=0.2,restSpeed=0.008;
+        function programmeEntryScale(t){
+          var elapsed=Math.min(Math.max(t,0),settleTime);
+          var travel=crossingSpeed*(elapsed/2+settleTime*Math.sin(Math.PI*elapsed/settleTime)/(2*Math.PI));
+          return Math.exp(travel);
+        }
+
+        // Q3 (essai, after film-alt-2): sixteen session titles phrased as sentences, from src/content/sessions.
+        // The first four play full frame; then a pure zoom out (fixed point, no translation) lands on the 2x2 they
+        // belong to, then on the full 4x4 grid. The four full-frame pains, chosen by the user on 04/11: production,
+        // cost, the demo that never fails, sovereignty.
+        var Q3_QUOTES = [
+          ["industrialisation", "Nos POCs ne passent jamais en production"],
+          ["stage-1-talk-8-finops", "J’ai consommé mon budget IA en mai"],
+          ["voice-agents", "En démo, mon agent IA vocal ne se trompe jamais"],
+          ["souverainete", "Les Américains ont pris en otage mon SI"],
+          ["agents-enterprise", "Je ne sais pas ce que mes équipes mettent dans ChatGPT"],
+          ["datacenter", "Mes GPUs chauffent et ma facture grimpe"],
+          ["agentic-coding", "Je n’ai pas confiance dans mes pull-requests générées"],
+          ["conduite-changement", "Une partie de mon équipe a peur que l’IA lui prenne son poste"],
+          ["inference", "L’inférence de mon Mac mini est lente"],
+          ["nouvelles-menaces-cyber", "Ma sécurité ne fait pas le poids face aux IA"],
+          ["ia-industrie", "Mon concurrent utilise des humanoïdes dans sa chaine de production"],
+          ["agent-evaluation", "Je n’arrive pas à savoir si mes agents sont performants ou non"],
+          ["cyber-ai", "Des ados de 15 ans utilisent ChatGPT pour exfiltrer mes données"],
+          ["physical-ai", "Mon modèle a le droit de se tromper. Mon robot, non"],
+          ["product-velocity", "Je shippe plus vite que jamais, et je ne sais plus pourquoi"],
+          ["stage-2-talk-3-slm", "Mon modèle ne tient pas sur une puce embarquée"],
+        ];
+        function q3Rect(r, c) {
+          return { x: Q3_MARGIN + c * (Q3_CW + Q3_GAP), y: Q3_MARGIN + r * (Q3_CH + Q3_GAP), w: Q3_CW, h: Q3_CH };
+        }
+        // Grid slots: the first four form the central 2x2, visited right, down, then left, so each move between
+        // full-frame shots is a single step across the grid; the others fill the ring around it.
+        var Q3_SLOTS = [[1, 1], [1, 2], [2, 2], [2, 1], [0, 1], [0, 2], [1, 3], [2, 3], [3, 2], [3, 1], [2, 0], [1, 0], [0, 0], [0, 3], [3, 3], [3, 0]];
+        var Q3_FULL = [5.5, 8.75, 11.75, 14.75];
+        // Between two full-frame shots the camera travels to the next cell in one beat, centred on the cut, with a
+        // slight pull back: the viewer is already inside the mosaic before the zoom out reveals it. Approved
+        // exception to the no-shift rule (Dorian, 04/11), like the speakers carousel.
+        var Q3_PAN = 0.5, Q3_PAN_DIP = 0.1;
+        var Q3_TO_FOUR = 17.75, Q3_TO_ALL = 19.75, Q3_ZOOM = 0.75;
+        var Q3_ALL_AT = 20, Q3_ALL_STEP = 0.125, Q3_FLASH = 2 / 30;
+        var Q3_FIRST_TEXT = 6;
+        var q3Lens = $("#q3-lens");
+        var q3Cells = Q3_QUOTES.map(function (entry, i) {
+          var R = q3Rect(Q3_SLOTS[i][0], Q3_SLOTS[i][1]);
+          var node = el("div", "q3-cell",
+            '<img class="art" src="assets/talks/' + entry[0] + '-optimized.webp" alt=""><div class="shade"></div>' +
+            '<div class="q3-idx" data-layout-allow-overlap data-layout-allow-occlusion>' + String(i + 1).padStart(2, "0") + "</div>" +
+            '<div class="q3-txt" data-layout-allow-overlap data-layout-allow-occlusion>«\u00a0' + entry[1] + "\u00a0»</div>" +
+            '<div class="q3-flash" style="background:' + (i % 2 ? BLUE : ORANGE) + '"></div><div class="q3-liser"></div>');
+          node.style.cssText = "left:" + R.x + "px;top:" + R.y + "px;width:" + R.w + "px;height:" + R.h + "px";
+          q3Lens.appendChild(node);
+          // A full-frame cell is on from the start of the move that brings it in.
+          var at = i === 0 ? Q3_FULL[0] : i < 4 ? Q3_FULL[i] - Q3_PAN / 2 : Q3_ALL_AT + (i - 4) * Q3_ALL_STEP;
+          return { node: node, rect: R, at: at, text: node.querySelector(".q3-txt"), flash: node.querySelector(".q3-flash"), liser: node.querySelector(".q3-liser") };
+        });
+        // Camera states { s, x, y }: screen = world * s + (x, y).
+        function q3Cover(R) {
+          var s = Math.max(1920 / R.w, 1080 / R.h);
+          return { s: s, x: (1920 - R.w * s) / 2 - R.x * s, y: (1080 - R.h * s) / 2 - R.y * s };
+        }
+        // A slow push on the frame centre during each full-frame shot.
+        function q3Push(c, u) {
+          var s = c.s * (1 + 0.025 * u);
+          return { s: s, x: 960 - (s * (960 - c.x)) / c.s, y: 540 - (s * (540 - c.y)) / c.s };
+        }
+        // Pure zoom between two framings: the world point that stays still on screen is solved, scale is exponential.
+        function q3Zoom(a, b, u) {
+          var wx = (b.x - a.x) / (a.s - b.s), wy = (b.y - a.y) / (a.s - b.s);
+          var px = a.s * wx + a.x, py = a.s * wy + a.y;
+          var s = a.s * Math.pow(b.s / a.s, u);
+          return { s: s, x: px - s * wx, y: py - s * wy };
+        }
+        var q3Four = (function () {
+          var R = { x: q3Rect(1, 1).x, y: q3Rect(1, 1).y, w: Q3_CW * 2 + Q3_GAP, h: Q3_CH * 2 + Q3_GAP };
+          var s = Math.min((1920 - 2 * Q3_MARGIN) / R.w, (1080 - 2 * Q3_MARGIN) / R.h);
+          return { s: s, x: Q3_MARGIN + (1920 - 2 * Q3_MARGIN - R.w * s) / 2 - R.x * s, y: Q3_MARGIN + (1080 - 2 * Q3_MARGIN - R.h * s) / 2 - R.y * s };
+        })();
+        var q3All = { s: 1, x: 0, y: 0 };
+        var q3Ease = gsap.parseEase("power2.inOut");
+        var q3PanEase = gsap.parseEase("power3.inOut");
+        // Full-frame shot k at time t, with its slow push.
+        function q3Hold(k, t) {
+          var end = k < 3 ? Q3_FULL[k + 1] : Q3_TO_FOUR;
+          return q3Push(q3Cover(q3Cells[k].rect), (t - Q3_FULL[k]) / (end - Q3_FULL[k]));
+        }
+        // Travel between two framings: the world point at the frame centre moves in a straight line, the scale
+        // dips by Q3_PAN_DIP halfway so the gaps and the neighbouring cells show.
+        function q3Pan(a, b, u) {
+          var e = q3PanEase(u);
+          var s = (a.s + (b.s - a.s) * e) * (1 - Q3_PAN_DIP * Math.sin(Math.PI * e));
+          var ax = (960 - a.x) / a.s, ay = (540 - a.y) / a.s;
+          var wx = ax + ((960 - b.x) / b.s - ax) * e, wy = ay + ((540 - b.y) / b.s - ay) * e;
+          return { s: s, x: 960 - wx * s, y: 540 - wy * s };
+        }
+        function q3Camera(t) {
+          if (t < Q3_TO_FOUR) {
+            for (var j = 1; j < 4; j++) {
+              var from = Q3_FULL[j] - Q3_PAN / 2, to = Q3_FULL[j] + Q3_PAN / 2;
+              if (t >= from && t < to) return q3Pan(q3Hold(j - 1, from), q3Hold(j, to), (t - from) / Q3_PAN);
+            }
+            var k = 0;
+            while (k < 3 && t >= Q3_FULL[k + 1]) k += 1;
+            return q3Hold(k, t);
+          }
+          if (t < Q3_TO_ALL) return q3Zoom(q3Push(q3Cover(q3Cells[3].rect), 1), q3Four, q3Ease(Math.min(1, (t - Q3_TO_FOUR) / Q3_ZOOM)));
+          return q3Zoom(q3Four, q3All, q3Ease(Math.min(1, (t - Q3_TO_ALL) / Q3_ZOOM)));
+        }
+        function q3Render(t) {
+          var c = q3Camera(t);
+          q3Lens.style.transform = "translate(" + c.x + "px, " + c.y + "px) scale(" + c.s + ")";
+          q3Cells.forEach(function (cell, i) {
+            var on = t >= cell.at;
+            cell.node.style.opacity = on ? 1 : 0;
+            cell.text.style.opacity = i === 0 && t < Q3_FIRST_TEXT ? 0 : 1;
+            if(i===0){
+              cell.node.querySelector(".art").style.transform="scale("+(1.08*programmeEntryScale(t-Q3_FULL[0]))+")";
+              cell.node.querySelector(".q3-idx").style.opacity=t<Q3_FIRST_TEXT?0:0.8;
+            }
+            // Full-frame shots travel across the grid; only the ring cells flash on their beat as they land.
+            cell.flash.style.opacity = i >= 4 && on && t < cell.at + Q3_FLASH ? 1 : 0;
+            cell.liser.style.opacity = i === 3 && t >= Q3_TO_FOUR && t < Q3_TO_ALL ? 1 : 0;
+          });
+        }
+        q3Render(5.5);
+        tl.fromTo(driver(q3Render), { v: 5.5 }, { v: 25.5, duration: 20, ease: "none", immediateRender: false }, 5.5);
+        tl.fromTo("#q3-scrim", { opacity: 0 }, { opacity: 1, duration: 0.25, immediateRender: false }, 22.25);
+        fadeIn("#q3-say", 22.25, 0.2);
+
+        // Essai Q3: everything from Q4 on keeps its former times, written below, and is shifted by Q3_EXTRA
+        // (one nested timeline) so the longer Q3 does not move a single cut off the 120 BPM grid.
+        var Q3_EXTRA = 8;
+        var tlMain = tl;
+        tl = gsap.timeline();
+
+        // Q3 to Q4: the default scattered brand-bar glitch.
+        fragment("#q4-cam", 21.25, 0.5, 812, "scatter");
+        tl.fromTo("#q4-bg", { scale: 1 }, { scale: 1.1, duration: 11.25, ease: "none" }, 21.25);
+        tl.set("#q4-va", { opacity: 0 }, 21.25);
+        tl.set(["#q4-c09", "#q4-f1", "#q4-f2", "#q4-f3", "#q4-f4"], { opacity: 0 }, 21.25);
+        layIn("#q4-t1", 21.8, 0.5);
+        fadeIn("#q4-l1", 23.25, 0.4);
+        fadeIn("#q4-l2", 24.25, 0.4);
+        // C08 starts on this beat: its title, then one tile per beat, all timed from here.
+        var C08_AT = 28.25;
+        tl.set(["#q4-c08", "#q4-vc"], { opacity: 0 }, C08_AT);
+        tl.set(["#q4-va", "#q4-c09"], { opacity: 1 }, C08_AT);
+        layIn("#q4-t2", C08_AT, 0.5);
+        // One block: the title over a row of four equal tiles on the film's 96 px margins (408 px each), centred
+        // vertically in the safe area (96 px from the top, nothing to read below y 918). Each picture keeps one
+        // fixed place from its first frame; whole pixels keep every edge sharp.
+        var Q4_TILES = ["#q4-f1", "#q4-f2", "#q4-f3", "#q4-f4"];
+        var Q4_TILE_GAP = 32;
+        var Q4_TITLE_GAP = 80;
+        var Q4_TILE_W = (1920 - 2 * 96 - (Q4_TILES.length - 1) * Q4_TILE_GAP) / Q4_TILES.length;
+        Q4_TILES.forEach(function (sel, i) {
+          $(sel).style.left = 96 + i * (Q4_TILE_W + Q4_TILE_GAP) + "px";
+          $(sel).style.width = Q4_TILE_W + "px";
+        });
+        var q4Title = $("#q4-c09");
+        var q4Top = Math.round((96 + 918 - (q4Title.offsetHeight + Q4_TITLE_GAP + $(Q4_TILES[0]).offsetHeight)) / 2);
+        q4Title.style.top = q4Top + "px";
+        Q4_TILES.forEach(function (sel) {
+          $(sel).style.top = q4Top + q4Title.offsetHeight + Q4_TITLE_GAP + "px";
+        });
+        // Each tile lands on its beat through the film's bar fragmentation at tile scale, as in the Q2 to Q3 cut:
+        // long flat orange and blue bars on the picture's own row grid flash as ink, then open onto it, left to
+        // right in staircases, over one beat. Its caption cuts in on the same beat. Each tile paints its own ink
+        // canvas, because the scene-wide #frag-ink is not live this late in the film.
+        var TILE_ROWS = 10;
+        var TILE_BAR_MIN = 112;
+        var TILE_BAR_MAX = 300;
+        var TILE_INK_SHARE = 0.6;
+        var TILE_FLASH = 0.3;
+        function tileBars(w, h, seed) {
+          var rand = rng(seed);
+          var bars = [];
+          for (var r = 0; r < TILE_ROWS; r += 1) {
+            var y = Math.round((r * h) / TILE_ROWS);
+            var x = 0;
+            while (x < w) {
+              var bw = Math.round(TILE_BAR_MIN + rand() * (TILE_BAR_MAX - TILE_BAR_MIN));
+              if (w - (x + bw) < TILE_BAR_MIN) bw = w - x;
+              // Left to right, rows grouped in threes into staircases, as in makeBlocks().
+              var th = ((x + bw / 2) / w) * 0.7 + rand() * 0.22 + (Math.floor(r / 3) % 2) * 0.05;
+              // Ink alternates by row: at this scale, stacked bars of one colour would merge into a block.
+              bars.push({ x: x, y: y, w: bw, h: Math.round(((r + 1) * h) / TILE_ROWS) - y, th: th, ink: r % 2 ? ORANGE : BLUE, isInked: rand() < TILE_INK_SHARE });
+              x += bw;
+            }
+          }
+          // The first bar flashes on the beat and the last one opens as the beat ends.
+          var thresholds = bars.map(function (b) {
+            return b.th;
+          });
+          var lo = Math.min.apply(null, thresholds);
+          var hi = Math.max.apply(null, thresholds);
+          bars.forEach(function (b) {
+            b.th = ((b.th - lo) / (hi - lo)) * (1 - TILE_FLASH);
+          });
+          return bars;
+        }
+        function fragmentTile(sel, at, dur, seed) {
+          var tile = $(sel);
+          var pic = tile.querySelector(".img");
+          var w = pic.offsetWidth;
+          var h = pic.offsetHeight;
+          var ink = el("canvas", "q4-ink");
+          ink.width = w;
+          ink.height = h;
+          tile.appendChild(ink);
+          var ctx = ink.getContext("2d");
+          var bars = tileBars(w, h, seed);
           function apply(p) {
-            if (p <= 0) {
-              node.style.clipPath = "";
-              flap.style.display = "none";
+            ctx.clearRect(0, 0, w, h);
+            if (p >= 1) {
+              pic.style.clipPath = "none";
               return;
             }
-            var dist = p * (reach + 40);
-            function side(q) {
-              return (q[0] - corner[0]) * u[0] + (q[1] - corner[1]) * u[1] - dist;
-            }
-            var kept = clipHalfPlane(rect, side);
-            var peeled = clipHalfPlane(rect, function (q) {
-              return -side(q);
+            var opened = [];
+            bars.forEach(function (b) {
+              if (p >= b.th + TILE_FLASH) {
+                opened.push("M" + b.x + " " + b.y + "h" + b.w + "v" + b.h + "h" + -b.w + "Z");
+              } else if (b.isInked && p > b.th) {
+                ctx.fillStyle = b.ink;
+                ctx.fillRect(b.x, b.y, b.w, b.h);
+              }
             });
-            var mirrored = peeled.map(function (q) {
-              var d = side(q);
-              return [q[0] - 2 * d * u[0], q[1] - 2 * d * u[1]];
-            });
-            node.style.clipPath = polygonCss(kept);
-            flap.style.display = "block";
-            back.style.clipPath = polygonCss(mirrored);
-            var fold = [corner[0] + dist * u[0], corner[1] + dist * u[1]];
-            var theta = (Math.atan2(-u[0], u[1]) * 180) / Math.PI;
-            shade.style.transform = "translate(" + fold[0].toFixed(1) + "px," + fold[1].toFixed(1) + "px) rotate(" + theta.toFixed(2) + "deg) translate(-2400px, 0)";
+            pic.style.clipPath = 'path("' + (opened.join("") || "M 0 0 Z") + '")';
           }
           apply(0);
-          tl.fromTo(driver(apply), { v: 0 }, { v: 1, duration: dur, ease: "power2.in" }, at);
+          tl.set(sel, { opacity: 1 }, at);
+          tl.fromTo(driver(apply), { v: 0 }, { v: 1, duration: dur, ease: "none" }, at);
         }
-
-        // ---------------------------------------------------------------- static DOM
-        var s1Mark = $("#s1-mark");
-        var s1Arms = {};
-        ["orange", "cream"].forEach(function (ink) {
-          var layer = el("div", "");
-          layer.style.position = "absolute";
-          layer.style.inset = "0";
-          layer.id = "s1-ink-" + ink;
-          ARM_KEYS.concat(["dot"]).forEach(function (key) {
-            var svg = markSvg(key, ink === "cream" ? "#F9F4EC" : "#FE4D1B", "mark");
-            layer.appendChild(svg);
-            (s1Arms[key] = s1Arms[key] || []).push(svg);
-          });
-          s1Mark.appendChild(layer);
+        // The four tiles open almost together on the beat once the title has landed (user, 04/11: one beat per
+        // tile was too long), the DJ set a hair last. Seeds picked so that each tile's ink peaks between 33 and
+        // 36 % of its picture, within the art direction's 40 to 50 % ceiling.
+        var Q4_TILE_SEEDS = [4107, 4111, 4108, 4104];
+        var Q4_TILE_STAGGER = 0.08;
+        Q4_TILES.forEach(function (sel, i) {
+          fragmentTile(sel, C08_AT + 0.5 + i * Q4_TILE_STAGGER, 0.5, Q4_TILE_SEEDS[i]);
         });
-        var s1Letters = buildWordmark($("#s1-wm"), true);
-
-        // Hero pass, after HeroAffiche.astro: brand, over-title, date, venue with the Région.
-        var passContent = objShell($("#s1-pass"));
-        passContent.setAttribute("data-layout-allow-overlap", "");
-        passContent.innerHTML =
-          '<div class="head"><div class="wordmark">' +
-          wordmarkHtml() +
-          '</div><div class="markicon"></div></div>' +
-          '<div class="body" style="gap: 14px"><div class="lab" style="font-size: 20px">Mardi · Accueil 08:30</div>' +
-          '<div class="pdate"><strong>17</strong><span><b>Novembre</b><b>2026</b></span></div></div>' +
-          '<div class="pbottom"><div class="pvenue"><strong>Hôtel de Région</strong><span>Nantes</span></div>' +
-          '<div class="region-logo" style="width: 150px; height: 72px"></div></div>';
-        passContent.querySelectorAll("*").forEach(function (n) {
-          n.setAttribute("data-layout-allow-overlap", "");
-        });
-
-        var s2L1 = splitWords($("#s2-l1"), "est déjà", true);
-        var s2L2 = splitWords($("#s2-l2"), "chez vous.", "it");
-        var s2Now = splitChars($("#s2-now"), "C’est maintenant");
-        s2Now.forEach(function (ch) {
-          ch.setAttribute("data-layout-allow-overlap", "");
-        });
-        var s2Complex = splitWords($("#s2-complex-main"), "que ça se complique.", false);
-
-
-        // Live /speakers order on genai-days-nantes.com (main 699a0bd, 2026-10-19, 29 speakers).
-        var SPEAKERS = [
-          ["christelle-morancais", "Christelle Morançais", "Région Pays de la Loire"],
-          ["jean-baptiste-kempf", "Jean-Baptiste Kempf", "VLC · Scaleway · Kyber"],
-          ["julien-lesaicherre", "Julien Lesaicherre", "ElevenLabs"],
-          ["tiffany-souterre", "Tiffany Souterre", "AWS"],
-          ["frederic-didier", "Frédéric Didier", "Groupe Crédit Agricole"],
-          ["regis-dubrulle-anssi", "Régis Dubrulle", "ANSSI"],
-          ["olivier-lauvray", "Olivier Lauvray", "VSORA"],
-          ["quentin-adam", "Quentin Adam", "Clever Cloud"],
-          ["laurent-duthoit-meudon", "Laurent Duthoit", "Renault Group"],
-          ["nicolas-martignole-wide", "Nicolas Martignole", "Back Market"],
-          ["theo-hubert", "Théo Hubert", "AlphaEdge"],
-          ["jean-yves-simon", "Jean-Yves Simon", "Mirakl"],
-          ["camille-croze-linkedin", "Camille Croze", "Wandercraft"],
-          ["constance-nebbula", "Constance Nebbula", "Région Pays de la Loire"],
-          ["delphine-ziegler", "Delphine Ziegler", "Doctolib"],
-          ["gael-brisson", "Gaël Brisson", "Swiftask"],
-          ["tristan-fransen", "Tristan Fransen", "Pennylane"],
-          ["emmanuel-marboeuf", "Emmanuel Marboeuf", "BWorlds"],
-          ["pauline-corriou", "Pauline Corriou", "Motiv"],
-          ["sebastien-le-corfec-epopee", "Sébastien Le Corfec", "Épopée Gestion · West Web Festival"],
-          ["thomas-mathieu-audencia", "Thomas Mathieu", "Guest Suite"],
-          ["david-leaurant", "David Léaurant", "ADN Ouest"],
-          ["celine-haentzler", "Céline Haentzler", "Betclic Group"],
-          ["florian-herveou", "Florian Hervéou", "Startup Palace · _icilundi"],
-          ["annabelle-koster-devfest", "Annabelle Koster", "SFEIR"],
-          ["marie-fleur-sacreste", "Marie-Fleur Sacreste", "Marie-Fleur Sacreste Consulting"],
-          ["jaafar-steiblen-raji", "Jaafar Steiblen-Raji", "Explore the Vault"],
-          ["benoit-hediard", "Benoit Hediard", "Globetrotters.ai"],
-        ];
-        // The final arrangement: photos laid on a table. Equal cards of 172 x 241 on a loose 8/8/8/5 base, each with a seeded
-        // offset (up to +-30 / +-24 px) and turn (3 to 7 deg). A card may only overlap the top 22 % of a card under it (hair,
-        // never a face or a name) and never the count; a candidate that breaks this is redrawn.
-        var S5_CARD = { w: 172, h: 241, scale: 172 / 300 };
-        var S5_BASE = { left: 174, top: 42, cols: 8, pitchX: 200, pitchY: 252 };
-        // The count takes the three free cells at the end of the last row.
-        var S5_TITLE_BOX = { x: 1174, y: 798, w: 572, h: 241 };
-        function s5Base(k) {
-          return { x: S5_BASE.left + (k % S5_BASE.cols) * S5_BASE.pitchX, y: S5_BASE.top + Math.floor(k / S5_BASE.cols) * S5_BASE.pitchY };
+        tl.to(["#q4-c09", "#q4-f1", "#q4-f2", "#q4-f3", "#q4-f4", "#q4-va"], { opacity: 0, duration: 0.3 }, 32.1);
+        // Q4 to Q5: back to the rails alone, then the camera pushes into their central light, and the speakers'
+        // page is seen through it at the same scale. The light fills the frame at full speed, so no magnified grain
+        // lingers; the headline carries the end of the push and comes to rest on the beat, so no frame is empty
+        // cream. The gate is the light itself, measured at half intensity on tracks-rails-v4 at the start of the push
+        // (re-measure it if the rails change), and shares the outgoing camera: no halo, no growing card.
+        var Q5_AT = 32.5;
+        var GATE = { left: 939, right: 988, top: 0, bottom: 209 };
+        var GATE_DEPTH = 160;
+        // The fixed point that brings the light's centre (963.5, 180) to the frame centre at full depth.
+        var gateOrigin = [(GATE_DEPTH * 963.5 - 960) / (GATE_DEPTH - 1), (GATE_DEPTH * 180 - 540) / (GATE_DEPTH - 1)];
+        function lightGate(p) {
+          var u = p * p * p * (10 + p * (-15 + 6 * p));
+          var scale = Math.pow(GATE_DEPTH, u);
+          var ox = gateOrigin[0];
+          var oy = gateOrigin[1];
+          gsap.set("#q4-cam", { transformOrigin: ox + "px " + oy + "px", scale: scale });
+          var left = ox + (GATE.left - ox) * scale;
+          var right = ox + (GATE.right - ox) * scale;
+          var top = oy + (GATE.top - oy) * scale;
+          var bottom = oy + (GATE.bottom - oy) * scale;
+          var mask = p >= 1 ? "none" : "polygon(" + left + "px " + top + "px," + right + "px " + top + "px," + right + "px " + bottom + "px," + left + "px " + bottom + "px)";
+          $("#q5-cam").style.clipPath = mask;
         }
-        // Corners of a card rect, inset [left, top, right, bottom], turned by rot degrees around the card centre.
-        function s5Quad(c, inset) {
-          var cx = c.x + S5_CARD.w / 2;
-          var cy = c.y + S5_CARD.h / 2;
-          var a = (c.rot * Math.PI) / 180;
-          var cos = Math.cos(a);
-          var sin = Math.sin(a);
-          var l = -S5_CARD.w / 2 + inset[0];
-          var t = -S5_CARD.h / 2 + inset[1];
-          var r = S5_CARD.w / 2 - inset[2];
-          var b = S5_CARD.h / 2 - inset[3];
-          return [[l, t], [r, t], [r, b], [l, b]].map(function (q) {
-            return [cx + q[0] * cos - q[1] * sin, cy + q[0] * sin + q[1] * cos];
-          });
-        }
-        // Separating-axis test for two convex quads.
-        function s5Overlap(A, B) {
-          return ![A, B].some(function (P) {
-            return P.some(function (p1, i) {
-              var p2 = P[(i + 1) % P.length];
-              var nx = p2[1] - p1[1];
-              var ny = p1[0] - p2[0];
-              var a = A.map(function (q) {
-                return q[0] * nx + q[1] * ny;
-              });
-              var b = B.map(function (q) {
-                return q[0] * nx + q[1] * ny;
-              });
-              return Math.max.apply(null, a) < Math.min.apply(null, b) || Math.max.apply(null, b) < Math.min.apply(null, a);
-            });
-          });
-        }
-        var S5_FACE = [6, 0.22 * S5_CARD.h, 6, 0];
-        var s5TitleQuad = [[S5_TITLE_BOX.x, S5_TITLE_BOX.y], [S5_TITLE_BOX.x + S5_TITLE_BOX.w, S5_TITLE_BOX.y], [S5_TITLE_BOX.x + S5_TITLE_BOX.w, S5_TITLE_BOX.y + S5_TITLE_BOX.h], [S5_TITLE_BOX.x, S5_TITLE_BOX.y + S5_TITLE_BOX.h]];
-        var s5Rand = seededRandom(1911);
-        var s5Layout = [];
-        SPEAKERS.forEach(function (sp, k) {
-          var base = s5Base(k);
-          // Upper rows lie on top, so a card below can only lose its hair under the name band above it.
-          var z = (4 - Math.floor(k / S5_BASE.cols)) * 30 + (k % S5_BASE.cols);
-          var pick = null;
-          for (var attempt = 0; attempt < 400 && !pick; attempt += 1) {
-            var amp = attempt < 200 ? 1 : attempt < 300 ? 0.6 : 0.3;
-            var turn = (s5Rand() < 0.5 ? -1 : 1) * (3 + s5Rand() * 4) * amp;
-            var c = { x: base.x + (s5Rand() - 0.5) * 60 * amp, y: base.y + (s5Rand() - 0.5) * 48 * amp, rot: turn, z: z };
-            var card = s5Quad(c, [0, 0, 0, 0]);
-            var face = s5Quad(c, S5_FACE);
-            var inFrame = card.every(function (q) {
-              return q[0] > 24 && q[0] < 1896 && q[1] > 24 && q[1] < 1056;
-            });
-            var clear =
-              inFrame &&
-              !s5Overlap(card, s5TitleQuad) &&
-              s5Layout.every(function (m) {
-                return c.z > m.z ? !s5Overlap(card, s5Quad(m, S5_FACE)) : !s5Overlap(s5Quad(m, [0, 0, 0, 0]), face);
-              });
-            if (clear) pick = c;
-          }
-          s5Layout.push(pick || { x: base.x, y: base.y, rot: 0, z: z });
-        });
-        function s5SlotOf(k) {
-          return s5Layout[k];
-        }
-        var s5Title = $("#s5-title");
-        s5Title.style.left = S5_TITLE_BOX.x + "px";
-        s5Title.style.top = S5_TITLE_BOX.y + "px";
-        s5Title.style.width = S5_TITLE_BOX.w + "px";
-        s5Title.style.height = S5_TITLE_BOX.h + "px";
-        $("#s5-count").textContent = String(SPEAKERS.length);
-        var s5Slots = SPEAKERS.map(function (sp, k) {
-          var node = el("div", "s5-slot");
-          node.innerHTML =
-            '<div class="poster small"><div class="card"><div class="ph"><img src="assets/speakers/' +
-            sp[0] +
-            '-optimized.webp" alt="" /></div><div class="band"><b>' +
-            sp[1] +
-            '</b><span class="lab">' +
-            sp[2] +
-            "</span></div></div></div>";
-          node.dataset.rot = s5Layout[k].rot.toFixed(2);
-          node.dataset.z = String(s5Layout[k].z);
-          node.style.left = s5Layout[k].x.toFixed(1) + "px";
-          node.style.top = s5Layout[k].y.toFixed(1) + "px";
-          node.style.zIndex = node.dataset.z;
-          node.setAttribute("data-layout-allow-overlap", "");
-          node.querySelectorAll("*").forEach(function (n) {
-            n.setAttribute("data-layout-allow-overlap", "");
-          });
-          $("#s5-world").appendChild(node);
-          return node;
+        lightGate(0);
+        tl.fromTo(driver(lightGate), { v: 0 }, { v: 1, duration: 1, ease: "none" }, Q5_AT);
+        // The flat cream takes over the light's own white without a pop.
+        tl.fromTo("#q5-cam", { opacity: 0 }, { opacity: 1, duration: 0.25, ease: "none" }, Q5_AT);
+        // On the beat the light has become the page: the headline lands with the film's two-layer type gesture and
+        // the first five speakers come with it. Then one block move every 3.75 s, like the site's arrow, so each
+        // page holds still at least 3.35 s.
+        var SPEAKER_PAGE_AT = Q5_AT + 1;
+        var SPEAKER_PAGE_EVERY = 3.75;
+        var SPEAKER_TURN = 0.4;
+        // A page is the window's width plus the track gap (.speaker-page, #q5-track).
+        var speakerPageStep = 1728 + 24;
+        layIn("#q5-txt", SPEAKER_PAGE_AT, 0.5);
+        tl.fromTo("#q5-window", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, SPEAKER_PAGE_AT);
+        speakerPages.slice(1).forEach(function (page, k) {
+          var at = SPEAKER_PAGE_AT + SPEAKER_PAGE_EVERY * (k + 1);
+          tl.fromTo(speakerTrack, { x: -k * speakerPageStep }, { x: -(k + 1) * speakerPageStep, duration: SPEAKER_TURN, ease: "power2.inOut", immediateRender: false }, at);
         });
 
-        $("#s6-stub-wm").innerHTML = wordmarkHtml();
-
-        // Programme checked against the live /programme, 2026-10-07: unchanged since v4.
-        // S7 clock: a real 12-hour face (hours at their true positions) for the day, 08:30 to 22:00 (event.json).
-        var CLOCK_R = 290;
-        function clockPolar(deg, r) {
-          var a = (deg * Math.PI) / 180;
-          return (r * Math.sin(a)).toFixed(1) + " " + (-r * Math.cos(a)).toFixed(1);
-        }
-        (function () {
-          var R = CLOCK_R;
-          var s = '<circle r="' + R + '" fill="rgba(9,18,46,0.35)" stroke="#F9F4EC" stroke-width="4" />';
-          // Afterwork sector, 18:00 to 22:00 (6 to 10 on the face), drawn as the hands pass.
-          s += '<path id="s7-sector" d="M' + clockPolar(180, R - 14) + " A" + (R - 14) + " " + (R - 14) + " 0 0 1 " + clockPolar(300, R - 14) + '" fill="none" stroke="#FE4D1B" stroke-width="16" />';
-          for (var m = 0; m < 60; m += 1) {
-            var major = m % 5 === 0;
-            var a = clockPolar(m * 6, R - 8).split(" ");
-            var b = clockPolar(m * 6, R - (major ? 34 : 18)).split(" ");
-            s += '<line x1="' + a[0] + '" y1="' + a[1] + '" x2="' + b[0] + '" y2="' + b[1] + '" stroke="#F9F4EC" stroke-width="' + (major ? 5 : 2) + '" />';
-          }
-          for (var h = 1; h <= 12; h += 1) {
-            var q = clockPolar(h * 30, R - 72).split(" ");
-            s += '<text x="' + q[0] + '" y="' + (Number(q[1]) + 17).toFixed(1) + '" text-anchor="middle" font-family="EB Garamond" font-weight="800" font-size="48" fill="#F9F4EC">' + h + "</text>";
-          }
-          s += '<g id="s7-hour"><path d="M-11 26 L-7 ' + -Math.round(R * 0.52) + " L0 " + -Math.round(R * 0.58) + " L7 " + -Math.round(R * 0.52) + ' L11 26 Z" fill="#FE4D1B" /></g>';
-          s += '<g id="s7-min"><path d="M-6 34 L-4 ' + -Math.round(R * 0.84) + " L0 " + -Math.round(R * 0.9) + " L4 " + -Math.round(R * 0.84) + ' L6 34 Z" fill="#F9F4EC" /></g>';
-          s += '<circle r="16" fill="#F9F4EC" /><circle r="6" fill="#FE4D1B" />';
-          $("#s7-clock").innerHTML = s;
-        })();
-        var s7Sector = $("#s7-sector");
-        var s7SectorLen = s7Sector.getTotalLength();
-        s7Sector.style.strokeDasharray = s7SectorLen + " " + s7SectorLen;
-        var s7Hour = $("#s7-hour");
-        var s7Min = $("#s7-min");
-        var s7Read = $("#s7-read");
-        function s7Clock(h) {
-          s7Hour.setAttribute("transform", "rotate(" + (((h % 12) / 12) * 360).toFixed(2) + ")");
-          s7Min.setAttribute("transform", "rotate(" + (((h * 60) % 60) * 6).toFixed(2) + ")");
-          s7Sector.style.strokeDashoffset = (s7SectorLen * (1 - Math.max(0, Math.min(1, (h - 18) / 4)))).toFixed(2);
-          var mins = Math.round((h * 60) / 5) * 5;
-          var hh = Math.floor(mins / 60);
-          var mm = mins % 60;
-          s7Read.textContent = (hh < 10 ? "0" : "") + hh + ":" + (mm < 10 ? "0" : "") + mm;
-        }
-        s7Clock(8.5);
-
-        // S7 mirror ball: latitude bands of facets; spinning moves the facets in longitude, so it really turns.
-        var BALL_R = 56;
-        var BALL_BANDS = 9;
-        var ballSvg = $("#s7-ball svg");
-        ballSvg.innerHTML =
-          '<defs><radialGradient id="s7-ball-g" cx="38%" cy="32%" r="75%"><stop offset="0" stop-color="#e9ebf0" /><stop offset="0.55" stop-color="#8f94a6" /><stop offset="1" stop-color="#2b2f45" /></radialGradient>' +
-          '<clipPath id="s7-ball-c"><circle r="' + BALL_R + '" /></clipPath></defs><rect x="-6" y="-66" width="12" height="9" fill="#393636" />' +
-          '<circle r="' + BALL_R + '" fill="url(#s7-ball-g)" /><g clip-path="url(#s7-ball-c)" id="s7-facets"></g><circle r="' + BALL_R + '" fill="none" stroke="#393636" stroke-width="2" />';
-        var ballTiles = [];
-        for (var j = 0; j < BALL_BANDS; j += 1) {
-          var lat = (-80 + (j + 0.5) * (160 / BALL_BANDS)) * (Math.PI / 180);
-          var count = Math.max(4, Math.round(16 * Math.cos(lat)));
-          for (var k = 0; k < count; k += 1) {
-            var tile = document.createElementNS(SVG_NS, "rect");
-            tile.setAttribute("stroke", "rgba(30, 32, 48, 0.55)");
-            tile.setAttribute("stroke-width", "0.8");
-            $("#s7-facets").appendChild(tile);
-            ballTiles.push({ node: tile, lat: lat, lon: (k / count) * Math.PI * 2, count: count, shade: ((j * 31 + k * 17) % 7) / 6 });
-          }
-        }
-        var BALL_BAND_H = (2 * BALL_R * Math.sin((80 * Math.PI) / 180)) / BALL_BANDS;
-        function spinBall(rot) {
-          ballTiles.forEach(function (t) {
-            var th = t.lon + rot;
-            var c = Math.cos(th);
-            if (c <= 0.02) {
-              t.node.setAttribute("opacity", "0");
-              return;
-            }
-            var w = ((2 * Math.PI * BALL_R * Math.cos(t.lat)) / t.count) * c;
-            var x = BALL_R * Math.cos(t.lat) * Math.sin(th);
-            var y = -BALL_R * Math.sin(t.lat);
-            var light = Math.max(0, 0.25 + 0.55 * t.shade * c - 0.3 * (x / BALL_R) - 0.25 * (y / BALL_R));
-            t.node.setAttribute("x", (x - w / 2).toFixed(2));
-            t.node.setAttribute("y", (y - BALL_BAND_H / 2).toFixed(2));
-            t.node.setAttribute("width", Math.max(0.5, w - 0.6).toFixed(2));
-            t.node.setAttribute("height", (BALL_BAND_H * Math.cos(t.lat) * 0.92 + 1).toFixed(2));
-            t.node.setAttribute("fill", "rgba(255, 255, 255, " + Math.min(0.92, light).toFixed(3) + ")");
-            t.node.setAttribute("opacity", "1");
-          });
-        }
-        // Light specks thrown by the ball: crisp squares turning across the whole frame.
-        var speckRand = seededRandom(1811);
-        var specks = [];
-        for (var sp = 0; sp < 48; sp += 1) {
-          var speck = el("i", "");
-          var size = 9 + Math.round(speckRand() * 10);
-          speck.style.width = size + "px";
-          speck.style.height = size + "px";
-          speck.style.background = sp % 5 === 0 ? "#FE4D1B" : "#F9F4EC";
-          speck.style.opacity = (0.45 + speckRand() * 0.45).toFixed(2);
-          $("#s7-specks").appendChild(speck);
-          specks.push({ node: speck, r: 90 + speckRand() * 1050, a: speckRand() * Math.PI * 2 });
-        }
-        function paintDisco(u) {
-          var rot = u * 1.6;
-          spinBall(rot);
-          specks.forEach(function (s) {
-            var a = s.a + rot * 0.35;
-            s.node.style.transform = "translate(" + (960 + s.r * Math.cos(a)).toFixed(1) + "px," + (560 + s.r * 0.6 * Math.sin(a)).toFixed(1) + "px) rotate(45deg)";
-          });
-          // The string sways once the drop has landed, damped: a pendulum settling, no bounce.
-          var sway = u - 0.5;
-          $("#s7-ball").style.rotate = sway > 0 ? (3 * Math.exp(-1.1 * sway) * Math.sin(2.4 * sway)).toFixed(3) + "deg" : "0deg";
-        }
-        paintDisco(0);
-
-        // Live /partenaires order and tiers, rechecked 2026-10-12. The site sizes tiers and names none; so does the board.
-        // Each entry: mono mask in assets/partners/mono/ (tools/partners_mono.py), trimmed aspect ratio, ink density.
-        var PARTNER_ROWS = [
-          [["logo-pays_de_la_loire", 2.09, 0.341], ["clever-cloud", 3.857, 0.257], ["swiftask-optimized", 4.298, 0.299], ["adn-ouest-optimized", 2.36, 0.293]],
-          [["club-eti-pdll-optimized", 1.12, 0.214], ["ippon-optimized", 3.456, 0.541], ["alphaedge", 5.981, 0.257], ["Logo Elastic-optimized", 3.119, 0.299], ["Logo techtown-optimized", 5.836, 0.453], ["Logo_Cross_Data-optimized", 6.207, 0.334], ["sfeir-optimized", 2.98, 0.289], ["wescale-optimized", 3.533, 0.254]],
-          [["Jems-logo-optimized", 1.69, 0.373], ["icilundi-optimized", 4.855, 0.373], ["bworlds-lockup-mono-black-optimized", 3.678, 0.463], ["externatic_horizontal-optimized", 5.926, 0.344], ["explore-the-vault-logo-optimized", 6.647, 0.609], ["leboncoin-tech-optimized", 2.754, 0.271], ["la-cantine-french-tech-optimized", 2.273, 0.136], ["devoteam-mono-optimized", 3.381, 0.263]],
-        ];
-        // Optical size, not box size: every logo in a tier gets the same box area weighted by the square root of its ink
-        // density, so wide wordmarks come out shorter, square or airy marks taller. maxHeight tames square marks.
-        var PARTNER_TIERS = [
-          { area: 22000, maxHeight: 140, gap: 64 },
-          { area: 9400, maxHeight: 105, gap: 46 },
-          { area: 7000, maxHeight: 84, gap: 36 },
-        ];
-        var PARTNER_ROW_MAX_WIDTH = 1720;
-        $$("#s9-partners .prow").forEach(function (row, r) {
-          var tier = PARTNER_TIERS[r];
-          var sizes = PARTNER_ROWS[r].map(function (logo) {
-            var height = Math.min(tier.maxHeight, Math.sqrt(tier.area / (logo[1] * Math.sqrt(logo[2]))));
-            return [height * logo[1], height];
-          });
-          var rowWidth = sizes.reduce(function (sum, size) {
-            return sum + size[0];
-          }, tier.gap * (sizes.length - 1));
-          var fit = Math.min(1, PARTNER_ROW_MAX_WIDTH / rowWidth);
-          row.style.gap = tier.gap * fit + "px";
-          PARTNER_ROWS[r].forEach(function (logo, i) {
-            var tile = el("div", "ptile");
-            tile.style.width = sizes[i][0] * fit + "px";
-            tile.style.height = sizes[i][1] * fit + "px";
-            var mark = el("div", "plogo");
-            mark.style.setProperty("--logo", 'url("assets/partners/mono/' + encodeURIComponent(logo[0] + ".png") + '")');
-            tile.appendChild(mark);
-            row.appendChild(tile);
-          });
+        // Q7: sponsors for 3.5 s, then the final poster for 6 s on the same held background, after a hard cut on
+        // the beat. The evening card (former Q6) is gone: its DJ set is now a highlight in C08. Times are former
+        // times, like the rest of this sub-timeline; Q7_AT is where Q6 used to start, plus the 10 s Q5 gained.
+        var Q7_AT = 48.5;
+        var POSTER_AT = Q7_AT + 3.5;
+        tl.fromTo("#q7-bg", { scale: 1.06 }, { scale: 1.04, duration: 3.5, ease: "none" }, Q7_AT);
+        tl.set("#q7-endl", { opacity: 0 }, Q7_AT);
+        layIn("#q7-t1", Q7_AT + 0.05, 0.5);
+        partners.querySelectorAll(".ptier").forEach(function (group, r) {
+          tl.fromTo(group, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, Q7_AT + 0.25 + r * 0.25);
         });
+        tl.set(["#q7-title", "#q7-partners"], { opacity: 0 }, POSTER_AT);
+        tl.set("#q7-endl", { opacity: 1 }, POSTER_AT);
+        layIn("#q7-wm", POSTER_AT, 0.5);
+        layIn("#q7-tag", POSTER_AT + 0.3, 0.5);
+        layIn("#q7-sig", POSTER_AT + 0.55, 0.5);
+        fadeIn("#q7-info", POSTER_AT + 0.85, 0.35);
+        fadeIn("#q7-book", POSTER_AT + 1.1, 0.35);
+        stick("#q7-pass", POSTER_AT + 1.5);
 
-        function buildLockup(row, color) {
-          var mark = el("div", "s9-mark");
-          ARM_KEYS.concat(["dot"]).forEach(function (key) {
-            mark.appendChild(markSvg(key, color, "mark"));
-          });
-          row.appendChild(mark);
-          var wm = el("div", "wordmark s9-wm");
-          row.appendChild(wm);
-          return { mark: mark, letters: buildWordmark(wm, true) };
-        }
-        var s9Main = buildLockup($("#s9-row"), "#F9F4EC");
-        buildLockup($("#s9-ghost"), "#FE4D1B");
-        var s9Sig = splitWords($("#s9-sig"), "L’intelligence artificielle, ici et maintenant.", false);
-
-        // ---------------------------------------------------------------- timeline
-        function build() {
-          // v5: the v4 choreography is authored in source seconds; reading holds (tools/holds.json,
-          // mirrored in music/music_lab.py) push everything after each hold point, so text sits still to be read.
-          var HOLDS = [[2.545, 0.75], [3.715, 0.75], [4.995, 0.75], [6.545, 1.0], [7.275, 0.75], [7.775, 0.75], [8.275, 0.75], [8.715, 0.75], [11.495, 1.5], [14.55, 4.0], [21.495, 2.75], [24.6, 0.5], [27.4, 2.0]];
-          function T(t) {
-            var out = t;
-            HOLDS.forEach(function (h) {
-              if (t >= h[0]) out += h[1];
-            });
-            return out;
-          }
-          var master = gsap.timeline({ paused: true });
-          var tl = {
-            to: function (a, b, at) {
-              return master.to(a, b, T(at));
-            },
-            fromTo: function (a, b, c, at) {
-              return master.fromTo(a, b, c, T(at));
-            },
-            set: function (a, b, at) {
-              return master.set(a, b, T(at));
-            },
-          };
-          var TOTAL = T(28);
-
-          var grainRand = seededRandom(20261117);
-          var grain = $("#grain");
-          for (var g = 0; g < TOTAL * 15; g += 1) {
-            master.set(grain, { backgroundPosition: Math.floor(grainRand() * 512) + "px " + Math.floor(grainRand() * 512) + "px" }, g / 15);
-          }
-
-          // ============ S1 · printing the cover poster (0 to 3)
-          // Two flat coats: the squeegee lays the blue key plate, then the orange plate directly in register,
-          // the second pass landing on the drop. origFade (composition variable, the user is choosing) lets the
-          // original art settle over the plates; off, the two plates stay the final image.
-          // music/music_lab.py keys its scrape, press and swipe SFX to these times.
-          var vars = (window.__hyperframes && window.__hyperframes.getVariables && window.__hyperframes.getVariables()) || {};
-          var ORIG_FADE = vars.origFade !== false;
-          var cover = prints.cover;
-          var COAT = ["inset(0% 100% 0% 0%)", "inset(0% 0% 0% 0%)"];
-          tl.fromTo(".s1-meta", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out", stagger: 0.08 }, 0.05);
-          tl.fromTo(cover.sheet, { clipPath: COAT[0] }, { clipPath: COAT[1], duration: 0.42, ease: "power1.inOut" }, 0.08);
-          tl.fromTo("#s1-squeegee", { x: -120 }, { x: 1990, duration: 0.42, ease: "power1.inOut" }, 0.08);
-          tl.fromTo(cover.signal, { clipPath: COAT[0] }, { clipPath: COAT[1], duration: 0.4, ease: "power1.inOut" }, DROP - 0.4);
-          tl.fromTo("#s1-squeegee", { x: -120 }, { x: 1990, duration: 0.4, ease: "power1.inOut", immediateRender: false }, DROP - 0.4);
-          tl.set([".regmark", ".s1-meta"], { opacity: 0 }, DROP);
-          if (ORIG_FADE) tl.fromTo(cover.orig, { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.inOut" }, DROP + 0.12);
-          tl.fromTo("#s1-scrim", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" }, DROP);
-          // Mark: four arms arrive, the orange plate lands out of register and snaps on the beat.
-          ARM_KEYS.forEach(function (key, i) {
-            var v = ARM_VECTORS[key];
-            s1Arms[key].forEach(function (svg) {
-              tl.fromTo(svg, { x: v[0] * 260, y: v[1] * 260, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.5, ease: "expo.out" }, 1.0 + i * 0.03);
-            });
-          });
-          s1Arms.dot.forEach(function (svg) {
-            tl.fromTo(svg, { scale: 0, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.3, ease: "expo.out" }, 1.2);
-          });
-          tl.fromTo("#s1-ink-orange", { x: 16, y: 12 }, { x: 5, y: 4, duration: 0.3, ease: "expo.out" }, 1.5);
-          tl.fromTo(s1Letters.slice(0, 5), { yPercent: 115 }, { yPercent: 0, duration: 0.5, ease: "expo.out", stagger: 0.045 }, 1.25);
-          tl.fromTo(s1Letters.slice(5), { yPercent: 115 }, { yPercent: 0, duration: 0.5, ease: "expo.out", stagger: 0.045 }, 1.55);
-          // The hero pass is stuck on and stays: it presses flat on 2.2 (frame 66), then a thumb smooths it.
-          tl.fromTo("#s1-pass", { opacity: 0 }, { opacity: 1, duration: 0.1, ease: "none" }, 1.9);
-          tl.fromTo("#s1-pass", { scale: 1.16, rotation: 6, y: -24, "--lift": 1 }, { scale: 1, rotation: 2, y: 0, "--lift": 0, duration: 0.3, ease: "power2.in" }, 1.9);
-          tl.fromTo("#s1-pass", { "--sx": "-20%" }, { "--sx": "30%", duration: 0.25, ease: "power2.out" }, 2.22);
-          // Cut: the cover breaks into its own rectangular blocks onto the next poster.
-          fragment(tl, "#s2", 2.55, 0.5, 301, "ltr");
-
-          // ============ S2 · tagline (2.55 to 7)
-          var koText = $("#s2-ko-text");
-          var koGhost = $("#s2-ko-ghost");
-          tl.fromTo(koGhost, { x: 30, y: 22 }, { x: 0, y: 0, duration: 0.26, ease: "expo.out" }, 3.0);
-          tl.to(koGhost, { opacity: 0, duration: 0.2, ease: "none" }, 3.18);
-          register(tl, "manifesto", 3.0, [30, 22]);
-          tl.fromTo(prints.manifesto.host, { scale: 1.08 }, { scale: 1, duration: 1.5, ease: "power2.out" }, 2.55);
-          // Through the letterform: the counter of the I opens onto the whole poster.
-          var bbox = koText.getBBox();
-          var holeX = bbox.x + bbox.width * 0.56;
-          var holeY = bbox.y + bbox.height * 0.55;
-          tl.fromTo(koText, { scale: 1 }, { scale: 26, svgOrigin: holeX + " " + holeY, duration: 0.3, ease: "power4.in" }, 3.2);
-          tl.set("#s2-ko", { opacity: 0 }, 3.5);
-          tl.fromTo("#s2-scrim", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 3.45);
-          tl.fromTo("#s2-gen .ch", { yPercent: 110 }, { yPercent: 0, duration: 0.42, ease: "expo.out" }, 3.5);
-          // Nantes: the château mirror poster breaks in through its blocks.
-          fragment(tl, "#s2-b", 3.72, 0.34, 402, "rise");
-          register(tl, "miroir", 4.0, [30, 22]);
-          tl.fromTo(prints.miroir.host, { scale: 1.06 }, { scale: 1, duration: 1.2, ease: "power2.out" }, 3.8);
-          tl.fromTo(s2L1, { yPercent: 110 }, { yPercent: 0, duration: 0.42, ease: "power4.out", stagger: 0.07 }, 4.0);
-          tl.fromTo(s2L2, { yPercent: 110 }, { yPercent: 0, duration: 0.42, ease: "power4.out", stagger: 0.07 }, 4.5);
-          tl.fromTo("#s2-bar", { scaleX: 0 }, { scaleX: 1, duration: 0.45, ease: "expo.out" }, 4.62);
-          // Hard cut on the beat to bare paper.
-          tl.set("#s2-c", { opacity: 0 }, 0);
-          tl.set("#s2-c", { opacity: 1 }, 5.0);
-          tl.set("#s2-a", { opacity: 0 }, 4.08);
-          tl.set("#s2-b", { opacity: 0 }, 5.0);
-          tl.set(["#s2-hud-l", "#s2-hud-r"], { color: "#393636" }, 0);
-          tl.set(["#s2-hud-l", "#s2-hud-r"], { color: "#F9F4EC" }, 3.5);
-          tl.set(["#s2-hud-l", "#s2-hud-r"], { color: "#393636" }, 5.0);
-          tl.fromTo(s2Now, { rotationX: -95, opacity: 0 }, { rotationX: 0, opacity: 1, duration: 0.5, ease: "expo.out", stagger: 0.022 }, 5.0);
-          var ghosts = $$("#s2-complex .ghost-b, #s2-complex .ghost-o");
-          tl.set(ghosts, { opacity: 0 }, 0);
-          var gap = 0.05;
-          var at = 5.75;
-          s2Complex.forEach(function (wd) {
-            tl.fromTo(wd, { x: 230, opacity: 0.35 }, { x: 0, opacity: 1, duration: 0.3, ease: "power4.out", immediateRender: false }, at);
-            at += gap;
-            gap *= 0.84;
-          });
-          tl.set(s2Complex, { opacity: 0 }, 0);
-          tl.set(ghosts, { opacity: 1 }, 6.0);
-          var tear = seededRandom(1711);
-          for (var f = 0; f < 13; f += 1) {
-            var amp = 28 * (1 - f / 13);
-            tl.set("#s2-complex .ghost-o", { x: (tear() - 0.3) * amp * 2, y: (tear() - 0.5) * amp * 0.6 }, 6.0 + f / 30);
-            tl.set("#s2-complex .ghost-b", { x: -(tear() - 0.3) * amp * 2, y: (tear() - 0.5) * amp * 0.6 }, 6.0 + f / 30);
-          }
-          tl.set(ghosts, { x: 0, y: 0 }, 6.44);
-          tl.set("#s2-complex .ghost-o", { x: 5, y: 3 }, 6.44);
-
-          // ============ S3 · the four issues, a poster pulled per beat (6.55 to 9)
-          var words = $$(".s3-word");
-          var names = $$(".s3-name");
-          tl.fromTo("#s3-kicker", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }, 6.6);
-          tl.fromTo("#s3-progress", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "none" }, 6.7);
-          tl.fromTo(".s3-crop", { scale: 0 }, { scale: 1, duration: 0.3, ease: "expo.out", stagger: 0.04 }, 6.6);
-          var issueNames = ["costs", "shadow", "sovereignty", "production"];
-          var count = $("#s3-count");
-          pull(tl, "costs", 6.55, { dir: "right", dur: 0.36, offset: [40, 26], register: 7.0 });
-          // Layers fully covered by the next print leave the page.
-          tl.set("#s2", { opacity: 0 }, 6.92);
-          ["shadow", "sovereignty", "production"].forEach(function (name, i) {
-            var beat = 7.5 + i * 0.5;
-            pull(tl, name, beat - 0.22, { dir: "right", dur: 0.2, offset: [30, 20], register: beat });
-          });
-          issueNames.forEach(function (name, i) {
-            tl.fromTo(prints[name].host, { scale: 1.08 }, { scale: 1, duration: 0.9, ease: "power2.out" }, i === 0 ? 6.55 : 7.28 + (i - 1) * 0.5);
-          });
-          [7.0, 7.5, 8.0, 8.5].forEach(function (beat, i) {
-            // Only the words and the picture change: the issue name rises out of its mask, its session title follows.
-            tl.fromTo(names[i], { yPercent: 105 }, { yPercent: 0, duration: 0.34, ease: "power4.out" }, beat);
-            tl.fromTo(words[i], { y: 120, opacity: 0 }, { y: 0, opacity: 1, duration: 0.36, ease: "power3.out" }, beat + 0.06);
-            if (i < 3) {
-              tl.to(names[i], { yPercent: -105, duration: 0.18, ease: "power4.in" }, beat + 0.32);
-              tl.to(words[i], { y: -120, opacity: 0, duration: 0.18, ease: "power4.in" }, beat + 0.32);
-            }
-            tl.set(count, { textContent: "0" + (i + 1) + " / 04" }, beat);
-            tl.fromTo($$("#s3-progress i")[i], { "--fill": 0 }, { "--fill": 1, duration: 0.35, ease: "expo.out" }, beat);
-          });
-          fragment(tl, "#s4", 8.72, 0.34, 503, "ltr");
-
-          // ============ S4 · two tracks (8.55 to 12)
-          register(tl, "rails", 9.0, [36, 24]);
-          tl.fromTo(prints.rails.host, { scale: 1.07 }, { scale: 1, duration: 1.4, ease: "power2.out" }, 8.55);
-          // Each track is set in type on its own rail: the name rises out of its mask, audience and kicker follow.
-          [["#s4-cap-l", 9.5], ["#s4-cap-r", 10.0]].forEach(function (cap) {
-            tl.fromTo(cap[0] + " .who .m > span", { yPercent: 110 }, { yPercent: 0, duration: 0.5, ease: "expo.out" }, cap[1]);
-            tl.fromTo([cap[0] + " .lab", cap[0] + " .what"], { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out", stagger: 0.08 }, cap[1] + 0.12);
-          });
-          tl.fromTo("#s4-title", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 10.6);
-          tl.to("#s4-b-inner", { scale: 3.4, duration: 0.5, ease: "power3.in", transformOrigin: "50% 60%" }, 11.5);
-          tl.to("#s4-b-inner", { filter: "blur(20px)", duration: 0.5, ease: "power3.in" }, 11.5);
-
-          // ============ S5 · speakers pasted as snapshots, then the avalanche onto the full wall (12 to 15.05)
-          // From speakers-lab iteration 6, variant 1. Authored in scene seconds on the master timeline from T(12):
-          // the structural hold at 14.55 only sets how long the full wall holds before the cut to S6.
-          var S5_AT = T(12.0);
-          var S5_LEN = T(15.05) - S5_AT;
-          // The background is shown registered from its first frame: no plate snap here.
-          tl.set(prints.speakers.orig, { opacity: 1 }, 12.0);
-          tl.fromTo("#s5-bg", { scale: 1.3, filter: "blur(18px)" }, { scale: 1, filter: "blur(0px)", duration: 0.55, ease: "expo.out" }, 12.0);
-          // Travelling on the first row, zoomed so a card is 576 px wide, at 949 px/s on screen (r9: every arrival time x1.12).
-          // Poster 0 appears at once with its left edge at x 1150; posters 1 to 4 appear as their left edge reaches x 1640.
-          var S5_SLOW = 1.12;
-          var S5_ZOOM = 576 / S5_CARD.w;
-          var S5_SPEED = 850 / 0.8 / S5_SLOW / S5_ZOOM;
-          var S5_CX0 = s5SlotOf(0).x - (1150 - 960) / S5_ZOOM;
-          var S5_CY0 = s5SlotOf(0).y + S5_CARD.h / 2;
-          // The five headliners of the site carousel travel in; the structural hold at 14.55 (4 s) makes room for them.
-          var S5_LEADS = [0, 1, 2, 3, 4];
-          var s5Paste = S5_LEADS.map(function (k) {
-            return k === 0 ? 0 : (960 + (s5SlotOf(k).x - S5_CX0) * S5_ZOOM - 1640) / (S5_SPEED * S5_ZOOM);
-          });
-          var S5_BURST = s5Paste[S5_LEADS.length - 1] + 0.6 * S5_SLOW;
-          var S5_SETTLE = 0.75 * S5_SLOW;
-          var S5_LAND = S5_BURST + S5_SETTLE + 0.1 * S5_SLOW;
-          var s5PullEase = gsap.parseEase("expo.inOut");
-          var s5World = $("#s5-world");
-          var S5_BEAM_X = 960;
-          var S5_BEAM_R = 350;
-          var s5Travellers = S5_LEADS.map(function (k) {
-            return s5Slots[k].querySelector(".poster");
-          });
-          function s5Camera(t) {
-            var p = s5PullEase(Math.max(0, Math.min(1, (t - S5_BURST) / S5_SETTLE)));
-            var drift = Math.max(0, Math.min(1, (t - S5_LAND - 0.25) / (S5_LEN - S5_LAND - 0.25)));
-            var z = (S5_ZOOM + (1 - S5_ZOOM) * p) * (1 + 0.015 * drift * drift * (3 - 2 * drift));
-            var cx = S5_CX0 + S5_SPEED * t + (960 - S5_CX0 - S5_SPEED * t) * p;
-            var cy = S5_CY0 + (540 - S5_CY0) * p;
-            s5World.style.transform = "translate(" + (960 - cx * z).toFixed(2) + "px," + (540 - cy * z).toFixed(2) + "px) scale(" + z.toFixed(4) + ")";
-            // The spotlight beam of the background art stands at the frame centre: a travelling poster grows as it crosses it
-            // (cosine bell over +-350 px of screen x, up to x1.27, a little brighter), then shrinks back. Fades out with the pull back.
-            s5Travellers.forEach(function (poster, k) {
-              var screenX = 960 + (s5SlotOf(k).x + S5_CARD.w / 2 - cx) * z;
-              var d = Math.abs(screenX - S5_BEAM_X);
-              var bell = (d < S5_BEAM_R ? 0.5 + 0.5 * Math.cos((Math.PI * d) / S5_BEAM_R) : 0) * (1 - p);
-              var g = 1 + 0.27 * bell;
-              poster.style.transform = "translate(" + (-(S5_CARD.w / 2) * (g - 1)).toFixed(2) + "px," + (-(S5_CARD.h / 2) * (g - 1)).toFixed(2) + "px) scale(" + (S5_CARD.scale * g).toFixed(4) + ")";
-              poster.style.filter = bell > 0.001 ? "brightness(" + (1 + 0.12 * bell).toFixed(3) + ")" : "none";
-              s5Slots[k].style.zIndex = bell > 0.001 ? "200" : s5Slots[k].dataset.z;
-            });
-          }
-          s5Camera(0);
-          master.fromTo(driver(s5Camera), { v: 0 }, { v: S5_LEN, duration: S5_LEN, ease: "none" }, S5_AT);
-          // The five headliners arrive as snapshots that grow: opaque from their first frame, scaled up from 0.55.
-          s5Paste.forEach(function (at, k) {
-            var rot = Number(s5Slots[k].dataset.rot);
-            master.set(s5Slots[k], { opacity: 1 }, S5_AT + at);
-            master.fromTo(s5Slots[k], { scale: 0.55, rotation: rot + 3, "--lift": 1 }, { scale: 1, rotation: rot, "--lift": 0, duration: 0.5 * S5_SLOW, ease: "expo.out" }, S5_AT + at);
-          });
-          // The avalanche: the others rain down, slap a little off their marks, then settle onto the table.
-          var s5Rest = [];
-          for (var s5k = S5_LEADS.length; s5k < SPEAKERS.length; s5k += 1) s5Rest.push(s5k);
-          s5Rest.sort(function (a, b) {
-            return ((a * 7919) % 31) - ((b * 7919) % 31);
-          });
-          var s5Fall = seededRandom(4242);
-          s5Rest.forEach(function (k, i) {
-            var rot = Number(s5Slots[k].dataset.rot);
-            var at = S5_AT + S5_BURST + (0.08 + i * 0.022) * S5_SLOW;
-            var dx = (s5Fall() - 0.5) * 70;
-            var dy = (s5Fall() - 0.5) * 50;
-            var drot = (s5Fall() - 0.5) * 14;
-            master.fromTo(s5Slots[k], { opacity: 1, x: dx + (s5Fall() - 0.5) * 300, y: -1300 - s5Fall() * 300, rotation: rot + (s5Fall() - 0.5) * 50, scale: 1.1, "--lift": 1 }, { x: dx, y: dy, rotation: rot + drot, scale: 1, "--lift": 0.3, duration: 0.32 * S5_SLOW, ease: "power2.in" }, at);
-            master.to(s5Slots[k], { x: 0, y: 0, rotation: rot, "--lift": 0, duration: 0.32 * S5_SLOW, ease: "power3.out" }, at + (0.32 + 0.12 + s5Fall() * 0.12) * S5_SLOW);
-          });
-          master.fromTo(s5Title, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6, ease: "expo.out" }, S5_AT + S5_LAND);
-          fragment(tl, "#s6", 14.6, 0.46, 604, "rise");
-
-          // ============ S6 · numbers on the château poster (14.6 to 18)
-          tl.fromTo(prints.castle.host, { scale: 1.07 }, { scale: 1, duration: 1.6, ease: "power2.out" }, 14.6);
-          register(tl, "castle", 15.0, [34, 24]);
-          var num = $("#s6-num");
-          var numGhost = $("#s6-num-ghost");
-          tl.fromTo(
-            driver(function (v) {
-              num.textContent = String(Math.round(v));
-              numGhost.textContent = String(Math.round(v));
-            }),
-            { v: 0 },
-            { v: 400, duration: 0.95, ease: "expo.out" },
-            15.05,
-          );
-          tl.fromTo("#s6-num-ghost", { x: 40, y: 28, opacity: 0.9 }, { x: 0, y: 0, duration: 0.24, ease: "expo.out" }, 16.0);
-          tl.to("#s6-num-ghost", { opacity: 0, duration: 0.3, ease: "none" }, 16.2);
-          tl.set("#s6-num-ghost", { opacity: 0 }, 0);
-          tl.set("#s6-num-ghost", { opacity: 0.9 }, 15.05);
-          tl.fromTo("#s6-places", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 15.3);
-          // The ticket is set down on the poster, then its price is counted.
-          tl.fromTo(
-            "#s6-ticket",
-            { x: 180, y: 80, rotation: 9, rotationX: 18, scale: 1.08, opacity: 0 },
-            { x: 0, y: 0, rotation: -4, rotationX: 4, scale: 1, opacity: 1, duration: 0.55, ease: "power3.out" },
-            15.45,
-          );
-          var price = $("#s6-price");
-          tl.fromTo(
-            driver(function (v) {
-              price.innerHTML = Math.round(v) + " €";
-            }),
-            { v: 0 },
-            { v: 147, duration: 0.5, ease: "expo.out" },
-            16.0,
-          );
-
-          // ============ S7 · the day on a clock (17.55 to 22)
-          // The château poster is peeled off the wall from its bottom-right corner; the Hôtel de Région is already pasted under it.
-          peelScene(tl, $("#s6"), 17.5, 0.5);
-          register(tl, "hotel", 17.95, [-40, 26]);
-          tl.fromTo(prints.hotel.host, { scale: 1.06 }, { scale: 1, duration: 2.2, ease: "power2.out" }, 17.55);
-          tl.fromTo("#s7-dim", { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power2.out" }, 17.75);
-          tl.fromTo("#s7-title", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 17.95);
-          tl.fromTo(["#s7-clock", "#s7-read"], { opacity: 0, scale: 0.94, transformOrigin: "50% 50%" }, { opacity: 1, scale: 1, duration: 0.5, ease: "expo.out" }, 18.05);
-          // The hands run through the day and stop on each highlight: noon (Startup Contest), 18:00, then on to 22:00.
-          var hours = driver(s7Clock);
-          tl.fromTo(hours, { v: 8.5 }, { v: 12, duration: 0.7, ease: "power3.inOut" }, 18.3);
-          tl.fromTo(hours, { v: 12 }, { v: 18, duration: 0.65, ease: "power3.inOut", immediateRender: false }, 19.55);
-          tl.fromTo(hours, { v: 18 }, { v: 22, duration: 0.9, ease: "power2.inOut", immediateRender: false }, 21.2);
-          // Podcast and the Apéro are both at 18:00; the Apéro waits 0.8 s so each is read on its own.
-          [["#s7-m1", 19.0], ["#s7-m2", 20.2], ["#s7-m3", 21.0]].forEach(function (m) {
-            tl.fromTo(m[0] + " > *", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.45, ease: "power3.out", stagger: 0.05 }, m[1]);
-          });
-          tl.fromTo(".s7-cc", { opacity: 0, scale: 0.8, transformOrigin: "0% 60%" }, { opacity: 1, scale: 1, duration: 0.4, ease: "expo.out" }, 20.55);
-          // The DJ set: the mirror ball drops in on its string as the hands leave 18:00; its specks sweep the frame
-          // until the cut (painted in output seconds, so they keep turning through the reading hold).
-          tl.fromTo("#s7-ball", { y: -1000 }, { y: 0, duration: 0.7, ease: "power3.out" }, 21.2);
-          tl.fromTo("#s7-specks", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" }, 21.35);
-          var discoDur = T(22.05) - T(21.2);
-          tl.fromTo(driver(paintDisco), { v: 0 }, { v: discoDur, duration: discoDur, ease: "none" }, 21.2);
-          fragment(tl, "#s9", 21.5, 0.55, 905, "rise");
-          // ============ S9 · partners board, then Footer Echo on the château (21.5 to 28)
-          tl.fromTo("#s9-frame", { scale: 1.22, transformOrigin: "50% 30%" }, { scale: 1.12, duration: 7.5, ease: "power2.out" }, 21.5);
-          register(tl, "chateau", 22.0, [38, 26]);
-          // Partners first, on the same poster the lockup will use; the tiles lift off before the wordmark lands.
-          tl.fromTo("#s9-pscrim", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power1.out" }, 22.05);
-          tl.fromTo("#s9-ptitle", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 22.15);
-          $$("#s9-partners .prow").forEach(function (row, r) {
-            tl.fromTo(row.children, { opacity: 0, y: 34, scale: 0.94 }, { opacity: 1, y: 0, scale: 1, duration: 0.42, ease: "power3.out", stagger: 0.045 }, 22.35 + r * 0.25);
-          });
-          tl.to("#s9-partners .ptile", { opacity: 0, y: -40, duration: 0.3, ease: "power2.in", stagger: 0.012 }, 24.65);
-          tl.to("#s9-ptitle", { opacity: 0, duration: 0.25, ease: "none" }, 24.75);
-          tl.to("#s9-pscrim", { opacity: 0, duration: 0.4, ease: "power1.in" }, 24.75);
-          tl.fromTo(s9Main.mark.children, { scale: 0.4, opacity: 0, transformOrigin: "50% 50%" }, { scale: 1, opacity: 1, duration: 0.45, ease: "expo.out", stagger: 0.03 }, 25);
-          tl.fromTo(s9Main.letters, { yPercent: 115 }, { yPercent: 0, duration: 0.5, ease: "expo.out", stagger: 0.04 }, 25.05);
-          tl.fromTo("#s9-ghost", { opacity: 0, x: 42, y: 30 }, { opacity: 1, x: 7, y: 5, duration: 0.4, ease: "expo.out" }, 25.45);
-          var sigGap = 0.05;
-          var sigAt = 25.75;
-          s9Sig.forEach(function (wd) {
-            tl.fromTo(wd, { x: 230, opacity: 0 }, { x: 0, opacity: 1, duration: 0.34, ease: "power4.out" }, sigAt);
-            sigAt += sigGap;
-            sigGap *= 0.84;
-          });
-          tl.fromTo("#s9-rule", { scaleX: 0, transformOrigin: "50% 50%" }, { scaleX: 1, duration: 0.6, ease: "expo.out" }, 26.05);
-          tl.fromTo("#s9-date", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 26.2);
-          tl.fromTo("#s9-url", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 26.3);
-          tl.fromTo("#s9-foot", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 26.5);
-          // Last hit: the orange plate locks into register.
-          tl.to("#s9-ghost", { x: 0, y: 0, duration: 0.3, ease: "expo.out" }, 27);
-
-          window.__timelines["main"] = master;
-        }
-
-        Promise.all([
-          document.fonts.load('700 100px "EB Garamond"'),
-          document.fonts.load('800 100px "EB Garamond"'),
-          document.fonts.load('400 100px "EB Garamond"'),
-          document.fonts.load('italic 600 100px "EB Garamond"'),
-          document.fonts.load('700 30px "Arial Label"'),
-          document.fonts.load('400 30px "Special Elite"'),
-        ]).then(build, build);
+        // Dorian: remove one second of the Q2 hold; ripple all later sequences together.
+        var INTRO_HOLD_TRIM = 4.25; // Earlier intro trims plus removal of the Q2 hold
+        tlMain.add(tl, Q3_EXTRA - INTRO_HOLD_TRIM);
+        tl = tlMain;
+        window.__timelines["main"] = tl;
       })();
     </script>
   </body>

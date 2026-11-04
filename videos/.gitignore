@@ -8,6 +8,9 @@ __pycache__/
 .hyperframes/
 .thumbnails/
 
-# Music variants are regenerated on demand, only the film's track (M2) is versioned
+# Music cuts are regenerated on demand; only the film's current track is versioned
 film/assets/audio/music-*.wav
-!film/assets/audio/music-M2.wav
+!film/assets/audio/music-W1-lyria35-61.75s.wav
+
+# Packs vMix / OBS livrés aux régies (zips lourds, régénérés par scripts/export_habillage.py)
+habillage-captation/livrables/
