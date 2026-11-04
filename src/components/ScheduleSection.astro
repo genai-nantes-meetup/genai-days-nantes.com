@@ -193,8 +193,14 @@ const dayparts = [
   <div class="schedule-section__inner">
     <div class="schedule-track-guide">
       <div class="schedule-track-headings" aria-label={copy.trackHeadingsLabel}>
-        <h3 class="schedule-track-heading schedule-track-heading--decideurs"><TrackMark track="decideurs" locale={locale} /></h3>
-        <h3 class="schedule-track-heading schedule-track-heading--tech"><TrackMark track="tech" locale={locale} /></h3>
+        <h3 class="schedule-track-heading schedule-track-heading--decideurs">
+          <TrackMark track="decideurs" locale={locale} />
+          <span class="schedule-track-room">{trackById.get('decideurs')?.room}</span>
+        </h3>
+        <h3 class="schedule-track-heading schedule-track-heading--tech">
+          <TrackMark track="tech" locale={locale} />
+          <span class="schedule-track-room">{trackById.get('tech')?.room}</span>
+        </h3>
       </div>
 
       <div class="schedule-tabs" role="group" aria-label={copy.trackFilterLabel}>
@@ -207,6 +213,7 @@ const dayparts = [
           data-schedule-tab="decideurs"
         >
           <TrackMark track="decideurs" locale={locale} />
+          <span class="schedule-track-room">{trackById.get('decideurs')?.room}</span>
         </button>
         <button
           id="schedule-tab-tech"
@@ -217,6 +224,7 @@ const dayparts = [
           data-schedule-tab="tech"
         >
           <TrackMark track="tech" locale={locale} />
+          <span class="schedule-track-room">{trackById.get('tech')?.room}</span>
         </button>
       </div>
     </div>
@@ -451,6 +459,9 @@ const dayparts = [
 
   .schedule-track-heading {
     display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
     padding-block: 0.7rem 0.6rem;
     border-top: 1px solid rgb(57 54 54 / 18%);
     color: var(--color-brand-black);
@@ -470,6 +481,16 @@ const dayparts = [
 
   .schedule-track-heading--tech {
     border-top-color: var(--color-brand-orange);
+  }
+
+  .schedule-track-room {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: var(--tracking-ui);
+    line-height: 1.2;
+    opacity: 0.72;
+    text-transform: uppercase;
   }
 
   .schedule-panel {
@@ -659,6 +680,8 @@ const dayparts = [
 
   .schedule-tab {
     display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
     align-items: center;
     justify-content: center;
     min-height: 3rem;
