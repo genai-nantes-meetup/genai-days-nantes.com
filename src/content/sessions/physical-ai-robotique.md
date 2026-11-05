@@ -6,15 +6,13 @@ track: "tech"
 startTime: "13:45"
 durationMinutes: 40
 room: ""
-speakerSlugs: []
+speakerSlugs: ["roch-mollero"]
 format: "talk"
-themes: ["Physical AI", "Temps réel", "Sécurité fonctionnelle"]
+themes: ["Physical AI", "Modèles du monde", "Apprentissage par renforcement"]
 illustration:
   alt: "Un modèle et un robot versent chacun un liquide sur un damier, l'un l'échoue sans conséquence, l'autre le renverse"
   src: "/talks/physical-ai-optimized.webp"
   variant: "transformation"
 ---
 
-Comment valider et sécuriser un modèle avant de le déployer sur un robot physique, entre contraintes temps réel, latence et tests de sécurité fonctionnelle.
-
-Contrairement à un modèle purement logiciel, une erreur ici a des conséquences physiques : cette session détaille les méthodes pour valider un modèle avant de le laisser piloter une machine réelle.
+Cette présentation retrace les avancées historiques qui ont donné naissance à la Physical AI, et permettent aujourd’hui aux robots d’apprendre à agir dans le monde réel : apprentissage par démonstration, modèles vision-langage-action (VLA), modèles du monde (World Models) et apprentissage par renforcement (RL). On montre ensuite comment Gobano Robotics assemble ces briques pour automatiser des tâches de manipulation industrielle, notamment de matières souples. À travers des démonstrations et des exemples de déploiement, le talk explore le passage d’un geste appris à un travail autonome, avec ses enjeux de fiabilité, de reprise après erreur et de débit utile, et de nombreuses vidéos du processus.

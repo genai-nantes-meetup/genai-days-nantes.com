@@ -40,7 +40,7 @@
   "src/content/sessions/inference-serving.md": "ff366c569dc30241f95f39dae7d8e92f2b17eaa186fd7be0288c181ca58c3a60",
   "src/content/sessions/keynote-ouverture-christelle-morancais.md": "a4e2ef98aa94887142049c35d3dd23ca62b08503faf01cc9a1d6a6db865fcabc",
   "src/content/sessions/nouvelles-menaces-cyber.md": "2270c48b4e0aef1386502514b0b3458294e5ed66877be28501d5c8d4f32c4f32",
-  "src/content/sessions/physical-ai-robotique.md": "6c4b18c1d9f30feb8e2ed4d510e8969f95a86e1e26da77dd8b2af2e1648f6eef",
+  "src/content/sessions/physical-ai-robotique.md": "4abf8b1de9f0b1fbdb6196f93a48a40ba3672bc0a18994e41654f04154509f88",
   "src/content/sessions/podcast-maci.md": "b2c03049248074866622db12e5ccf3cfd9ad0b8614651e36dc67c7f98a8fad3e",
   "src/content/sessions/product-velocity.md": "6d49d62679d8e2fe98f9989a1902c4354447a356d72839298c1c8ce23e59c8ab",
   "src/content/sessions/slm-compression-modeles.md": "e4c247d3615a1082530be735f1b3cebb9e61f25f1a68db286d141a623d2b9d23",
@@ -75,6 +75,7 @@
   "src/content/speakers/pauline-corriou.md": "f6d35c41aad7d10626c7d678bcb6e9f3b3eec5922652e41f08b4bab0e7dd9de4",
   "src/content/speakers/quentin-adam.md": "02923609ea3bfac23144e10be3f3ecd9d5f6481f7671c08242968db406a0fc4e",
   "src/content/speakers/regis-dubrulle.md": "5f85d869dfc42ec6e601dc2fbc595f07202400877c048096f6b4d2dcaa16c917",
+  "src/content/speakers/roch-mollero.md": "5596c146ec5451d3a4ca19f09391a45c07cbdd5b83f50ae98022a2807f235d05",
   "src/content/speakers/sebastien-le-corfec.md": "40e4277c8cf06cf48884689a3e0f97b75afbc8f89f9d96019381c7ea5ea302a1",
   "src/content/speakers/theo-hubert.md": "5f2b7da7882d8edca22bff1519b03d04bd6d6e9c8e7f34efc93709640ba527f4",
   "src/content/speakers/thomas-mathieu.md": "50e7c947c4abd10b526b43cdcf45803894bb3b9011186e43812a980691d491c1",
@@ -88,8 +89,8 @@
   "src/content/team/samuel-berthe.md": "e290b70921a2aec894eb786337035b94ea789085845cc3c8ff1ffef67d11b60d",
   "src/content/tracks/decideurs.md": "02e638ca02a9781a2b29762f441bc735f5c273f36b72b04a514da33bc45a8be6",
   "src/content/tracks/tech.md": "4195566b4477e3cafec8ec6cef73511337c032f3a49702293079e27d9ebbf38e",
-  "src/lib/cta-links.ts": "f0714d00307ad451ef193cf8806257aa9850fe11b63d647365c7311cfd1e9b96",
+  "src/lib/cta-links.ts": "4b371bd87f8c8b53f45d2aad75dfef0d8b23ef2a729f1f88bad504d0c22479c9",
   "src/lib/programme.ts": "7ba24b403f4c1eb13423294d7a8d1d56e4070f14fd6b9c6128fa2cea47b1268b",
-  "src/lib/speakers.ts": "21314f58b00a49f591e23c2622a032d09bb03effb6450c452004692372304aa2",
+  "src/lib/speakers.ts": "93af36adab13084d1cb4438f2cb12de48e4c056227646d2bcfaea42f32a74cb7",
   "src/styles/global.css": "35d9390f028fc0645bded079614c0c01eb77c353cc1588da505ba614dafe0726"
 }

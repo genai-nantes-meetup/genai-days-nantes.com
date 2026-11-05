@@ -112,6 +112,7 @@ export const SPEAKER_PORTRAIT_DIMENSIONS: Record<string, { width: number; height
   'pauline-corriou': { width: 800, height: 800 },
   'quentin-adam': { width: 800, height: 800 },
   'regis-dubrulle': { width: 1000, height: 1000 },
+  'roch-mollero': { width: 374, height: 374 },
   'sebastien-le-corfec': { width: 760, height: 760 },
   'thomas-mathieu': { width: 1000, height: 1000 },
   'tiffany-souterre': { width: 610, height: 610 },
