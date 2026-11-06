@@ -136,6 +136,7 @@ const copy = {
     provisionalTitle: 'Programmation à venir',
     atTime: 'à',
     quote: (text: string) => `"${text}"`,
+    hostedBy: (name: string) => `Avec ${name}`,
     notice: 'Horaires et contenus susceptibles d’évoluer.',
   },
   en: {
@@ -160,6 +161,7 @@ const copy = {
     provisionalTitle: 'To be announced',
     atTime: 'at',
     quote: (text: string) => `“${text}”`,
+    hostedBy: (name: string) => `With ${name}`,
     notice: 'Times and content are subject to change.',
   },
 }[locale];
@@ -347,6 +349,39 @@ const dayparts = [
                         </div>
                       ))}
                     </div>
+                  );
+                }
+
+                const hostsByTrack = slot.hostsByTrack;
+
+                if (hostsByTrack) {
+                  return (
+                    <article
+                      class="schedule-common schedule-common--keynote schedule-common--split"
+                      id={`creneau-${slot.time.replace(':', '')}`}
+                      data-schedule-slot={slot.time}
+                      data-reveal
+                    >
+                      <time class="schedule-common__time" datetime={slot.time}>{slot.time}</time>
+                      <div>
+                        <p class="schedule-common__meta">
+                          {commonKindLabels[slot.kind]}
+                          {slot.durationMinutes ? ` · ${slot.durationMinutes} min` : ''}
+                        </p>
+                        <h4 class="schedule-common__title">
+                          {slot.title[locale]}
+                          <span class="sr-only"> {copy.atTime} {slot.time}</span>
+                        </h4>
+                      </div>
+                      <ul class="schedule-common__rooms">
+                        {trackIds.map((trackId) => (
+                          <li class="schedule-common__room" data-schedule-track={trackId}>
+                            <span class="schedule-common__meta">{trackById.get(trackId)?.room}</span>
+                            <span class="schedule-common__host">{copy.hostedBy(hostsByTrack[trackId])}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </article>
                   );
                 }
 
@@ -579,6 +614,30 @@ const dayparts = [
     color: var(--color-brand-white);
   }
 
+  /* Une keynote donnée en parallèle dans chaque salle : l'en-tête commun une
+   * seule fois, puis une moitié par salle, alignée sur la colonne du parcours. */
+  .schedule-common__rooms {
+    position: relative;
+    grid-column: 1 / -1;
+    display: grid;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0.75rem 0 0 5.5rem;
+    border-top: 1px dashed rgb(255 255 255 / 22%);
+    list-style: none;
+  }
+
+  .schedule-common__room {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .schedule-common__host {
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
+
   .schedule-common--transition {
     min-height: 4.5rem;
     border-left-style: dashed;
@@ -725,6 +784,24 @@ const dayparts = [
 
     .schedule-conference-row {
       grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    /* Les deux moitiés s'alignent sur les colonnes des parcours au-dessus : le
+     * pointillé tombe dans la gouttière, chaque moitié garde le retrait du titre. */
+    .schedule-common__rooms {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0;
+      margin-inline: -1rem;
+      padding: 0.75rem 0 0;
+    }
+
+    .schedule-common__room {
+      padding-left: calc(1rem + 5.5rem);
+    }
+
+    .schedule-common__room + .schedule-common__room {
+      padding-left: calc(1.5rem + 5.5rem);
+      border-left: 1px dashed rgb(255 255 255 / 35%);
     }
 
     /* Un talk plus long qu'un créneau (ex. 80 min sur deux créneaux) porte une

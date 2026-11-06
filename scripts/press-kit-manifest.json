@@ -91,7 +91,7 @@
   "src/content/tracks/decideurs.md": "02e638ca02a9781a2b29762f441bc735f5c273f36b72b04a514da33bc45a8be6",
   "src/content/tracks/tech.md": "4195566b4477e3cafec8ec6cef73511337c032f3a49702293079e27d9ebbf38e",
   "src/lib/cta-links.ts": "4b371bd87f8c8b53f45d2aad75dfef0d8b23ef2a729f1f88bad504d0c22479c9",
-  "src/lib/programme.ts": "7ba24b403f4c1eb13423294d7a8d1d56e4070f14fd6b9c6128fa2cea47b1268b",
+  "src/lib/programme.ts": "84bfbb3b5c3ca3376551330bb9966813b8e1fa95a16b1a1c707f13c9f8ed0535",
   "src/lib/speakers.ts": "93af36adab13084d1cb4438f2cb12de48e4c056227646d2bcfaea42f32a74cb7",
   "src/styles/global.css": "35d9390f028fc0645bded079614c0c01eb77c353cc1588da505ba614dafe0726"
 }

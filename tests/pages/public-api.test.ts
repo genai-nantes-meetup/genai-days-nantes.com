@@ -101,9 +101,16 @@ describe('public JSON API', () => {
     type Entry = { id: string; kind: string; title: string; startTime: string; durationMinutes: number | null; pageUrl: string | null };
     const byId = (json: { sessions: Entry[] }, id: string) => json.sessions.find((item) => item.id === id);
 
-    const closing = byId(fr.json, 'keynote-1735')!;
-    expect(closing).toMatchObject({ kind: 'session', startTime: '17:35', durationMinutes: 15, pageUrl: null });
-    expect(byId(en.json, 'keynote-1735')!.title).toBe('Closing keynote');
+    // The closing keynote runs in both track rooms at once: one entry per room.
+    expect(byId(fr.json, 'keynote-1735')).toBeUndefined();
+    expect(byId(fr.json, 'keynote-1735-decideurs')).toMatchObject({
+      kind: 'session', startTime: '17:35', durationMinutes: 15, pageUrl: null,
+      track: 'decideurs', room: 'Hémicycle', description: 'Avec Maxime Pitussi',
+    });
+    expect(byId(fr.json, 'keynote-1735-tech')).toMatchObject({
+      track: 'tech', room: 'Salle Loire', description: 'Avec Samuel Berthe',
+    });
+    expect(byId(en.json, 'keynote-1735-tech')!.title).toBe('Closing keynote');
 
     expect(byId(fr.json, 'meal-1225')).toMatchObject({ kind: 'lunch', title: 'Déjeuner', durationMinutes: 80 });
     const breaks = fr.json.sessions.filter((item: Entry) => item.kind === 'break');

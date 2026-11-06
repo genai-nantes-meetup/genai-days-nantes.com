@@ -135,6 +135,11 @@ async function buildSpeakers(locale: Locale, toAbsoluteUrl: UrlBuilder) {
 
 type SessionEntryKind = 'session' | 'break' | 'lunch';
 
+const SLOT_HOST_LABELS: Record<Locale, (name: string) => string> = {
+  fr: (name) => `Avec ${name}`,
+  en: (name) => `With ${name}`,
+};
+
 function getSlotEntryKind(slot: ProgrammeSlot): SessionEntryKind {
   if (slot.kind === 'transition') return 'break';
   if (slot.kind === 'meal') return 'lunch';
@@ -177,9 +182,9 @@ async function buildSessions(locale: Locale, toAbsoluteUrl: UrlBuilder) {
         pageUrl: toAbsoluteUrl(localizePath(`/programme/${session.id}`, locale)) as string | null,
       };
   });
-  const slotEntries = getSessionlessSlots(sessions).map((slot) => {
+  const slotEntries = getSessionlessSlots(sessions).flatMap((slot) => {
     const kind = getSlotEntryKind(slot);
-    return {
+    const baseEntry = {
       id: getSlotId(slot),
       kind,
       title: slot.title[locale],
@@ -198,6 +203,19 @@ async function buildSessions(locale: Locale, toAbsoluteUrl: UrlBuilder) {
       image: null,
       pageUrl: null,
     };
+    if (!slot.hostsByTrack) return [baseEntry];
+
+    return Object.entries(slot.hostsByTrack).map(([trackId, host]) => {
+      const track = trackById.get(trackId);
+      return {
+        ...baseEntry,
+        id: `${baseEntry.id}-${trackId}`,
+        description: SLOT_HOST_LABELS[locale](host),
+        track: trackId,
+        trackName: track?.shortName ?? null,
+        room: track?.room ?? null,
+      };
+    });
   });
   const entries = [...sessionEntries, ...slotEntries].sort(
     (left, right) =>

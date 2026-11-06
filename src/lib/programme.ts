@@ -16,7 +16,12 @@ export interface ProgrammeSlot {
   kind: ProgrammeSlotKind;
   durationMinutes?: number;
   detail?: Record<Locale, string>;
+  /* A keynote given twice in parallel, once per track room, so attendees stay
+   * in their room instead of gathering in the hall. */
+  hostsByTrack?: Record<SplitTrackId, string>;
 }
+
+export type SplitTrackId = 'decideurs' | 'tech';
 
 export const PROGRAMME_SLOTS: ProgrammeSlot[] = [
   {
@@ -119,6 +124,7 @@ export const PROGRAMME_SLOTS: ProgrammeSlot[] = [
     title: { fr: 'Keynote de clôture', en: 'Closing keynote' },
     kind: 'keynote',
     durationMinutes: 15,
+    hostsByTrack: { decideurs: 'Maxime Pitussi', tech: 'Samuel Berthe' },
   },
   {
     time: '18:00',
