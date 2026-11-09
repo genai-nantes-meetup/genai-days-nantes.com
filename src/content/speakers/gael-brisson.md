@@ -1,16 +1,16 @@
 ---
 name: "Gaël Brisson"
-role: "Cofondateur & CFO"
+role: "Président cofondateur"
 company: "Swiftask"
 bio: "Cofondateur de Swiftask, Gaël Brisson met trente ans d’entrepreneuriat numérique au service de la gouvernance d’une plateforme d’agents IA d’entreprise en forte croissance."
 profile:
   - "Ingénieur formé à l’Icam, Gaël Brisson est entrepreneur depuis l’âge de 25 ans. Il construit son parcours autour du numérique responsable et de l’hébergement web, notamment chez DRI.fr, hébergeur nantais engagé pour l’open source, qu’il préside puis accompagne comme associé depuis 2014."
-  - "En 2024, il rejoint Stanislas Randriamilasoa et Matthieu Lardillet pour cofonder Swiftask, plateforme nantaise permettant aux entreprises de créer, orchestrer et gouverner des flottes d’agents IA sans code. Comme directeur financier, il structure la croissance de l’entreprise, passée d’une poignée de clients à plus de 100 entreprises et 14 000 agents IA actifs, avec une levée de 1,55 million d’euros en 2026."
+  - "En 2024, il rejoint Stanislas Randriamilasoa et Matthieu Lardillet pour cofonder Swiftask, plateforme nantaise permettant aux entreprises de créer, orchestrer et gouverner des flottes d’agents IA sans code. Comme président, il structure la croissance de l’entreprise, passée d’une poignée de clients à plus de 100 entreprises et 14 000 agents IA actifs, avec une levée de 1,55 million d’euros en 2026."
   - "En parallèle, il préside Holiworking, qui organise le télétravail international des salariés, Data Inceptio, spécialisée en conseil et formation data et IA, et depuis fin 2025 Greenspector, pionnier français du numérique responsable qui accompagne notamment la SNCF, Air France et Decathlon dans leur sobriété numérique."
 genaiLegitimacy: "Gaël Brisson pilote la gouvernance d’une plateforme qui orchestre plusieurs dizaines de milliers d'agents IA chez une centaine d’entreprises clientes, un terrain concret pour mesurer les coûts réels et la gouvernance de l’IA agentique à l’échelle."
 careerHighlights:
   - period: "Depuis 2024"
-    title: "Cofondateur de Swiftask"
+    title: "Président cofondateur de Swiftask"
     description: "Développement d’une plateforme d’agents IA d’entreprise passée à plus de 100 clients et dizaines de milliers d'agents actifs, avec une levée de 1,55 million d’euros en 2026."
   - period: "Depuis 2025"
     title: "Président de Greenspector"
@@ -23,7 +23,7 @@ careerHighlights:
     description: "Accompagnement d’un hébergeur web nantais engagé pour l’open source et l’infogérance responsable, dont il a été président."
 companies:
   - name: "Swiftask"
-    relationship: "Cofondateur depuis 2024"
+    relationship: "Président cofondateur depuis 2024"
     description: "Swiftask est une plateforme nantaise d’IA d’entreprise sans code qui permet de créer, orchestrer et gouverner une flotte d’agents IA autonomes connectés aux outils métier, avec sécurité et conformité RGPD."
     website: "https://swiftask.ai/"
     logo: "/logos/swiftask-square-optimized.svg"
