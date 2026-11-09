@@ -18,4 +18,4 @@ illustration:
 
 Des startups présentent leur projet d’intelligence artificielle devant un jury d’entrepreneurs et de décideurs. Florian Hervéou anime les pitchs, les questions et la délibération.
 
-Les trois finalistes pitchent : Emmanuel Marboeuf (BWorlds), Pauline Corriou (Motiv) et Aurélie Pécaud (Laborhêto).
+Les trois finalistes pitchent : Emmanuel Marboeuf (BWorlds), Pauline Corriou (Motiv) et Aurélie Pécaud (Laborhêto). Benoit Hediard, maître de cérémonie de la journée, pitche aussi.
