@@ -61,8 +61,15 @@ export const SPEAKER_PROMINENCE_ORDER = [
   'jean-yves-simon',
 ] as const;
 
-/* Pitcheurs du Startup Contest : après les autres speakers, avant les MC. */
-export const SPEAKER_STARTUP_CONTEST_PITCHERS_ORDER = ['emmanuel-marboeuf', 'pauline-corriou', 'aurelie-pecaud'] as const;
+/* Pitcheurs du Startup Contest : après les autres speakers, avant le jury.
+ * Benoit Hediard y figure aussi : il est MC de la journée et pitche au concours,
+ * et cette page le montre aux côtés des pitcheurs. */
+export const SPEAKER_STARTUP_CONTEST_PITCHERS_ORDER = [
+  'emmanuel-marboeuf',
+  'pauline-corriou',
+  'aurelie-pecaud',
+  'benoit-hediard',
+] as const;
 
 /* Jury du Startup Contest : après les pitcheurs, avant les MC. */
 export const SPEAKER_STARTUP_CONTEST_JURY_ORDER = ['sebastien-le-corfec', 'thomas-mathieu', 'david-leaurant'] as const;
@@ -76,7 +83,6 @@ export const SPEAKER_MASTERS_OF_CEREMONIES_ORDER = [
     'annabelle-koster',
     'marie-fleur-sacreste',
     'jaafar-steiblen-raji',
-    'benoit-hediard',
 ] as const;
 
 /* Dimensions réelles des fichiers portrait, non dérivables du schéma de la
