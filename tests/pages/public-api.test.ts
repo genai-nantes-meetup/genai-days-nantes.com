@@ -81,8 +81,8 @@ describe('public JSON API', () => {
 
     const frEntry = fr.json.sessions.find((item: { id: string }) => item.id === 'agentic-coding');
     const enEntry = en.json.sessions.find((item: { id: string }) => item.id === 'agentic-coding');
-    expect(frEntry.title).toBe('Plus je lui donne de context, moins il est bon');
-    expect(enEntry.title).toBe('The more context I give it, the worse it gets');
+    expect(frEntry.title).toBe('Un ticket bon à 70 % est un ticket à zéro');
+    expect(enEntry.title).toBe('A ticket that is 70% good is a zero ticket');
     expect(frEntry.pageUrl).toBe('https://example.com/programme/agentic-coding');
     expect(enEntry.pageUrl).toBe('https://example.com/en/program/agentic-coding');
     expect(frEntry.quoteTitle).toBe(true);
