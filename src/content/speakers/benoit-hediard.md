@@ -7,6 +7,7 @@
 name: "Benoit Hediard"
 role: "Fondateur"
 company: "Globetrotters.ai"
+eventRole: "finaliste"
 bio: "Maître de cérémonie de GenAI Days, Benoit Hediard est le fondateur de Globetrotters.ai, qui aide les acteurs du voyage à être compris et recommandés par les assistants IA. Il est cofondateur et ancien CTO d’Agorapulse."
 profile:
   - "Benoit Hediard est un entrepreneur nantais. En 2011, il cofonde Agorapulse, une plateforme française de gestion des réseaux sociaux, dont il est le CTO. Il la mène de zéro à plus de 20 M$ de revenus récurrents annuels et raconte ce parcours de startup à scale-up dans une série d’articles sur Medium."
