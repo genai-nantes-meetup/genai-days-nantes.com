@@ -186,7 +186,9 @@ export async function getSessionPagePaths() {
         track: trackById.get(session.data.track),
         previousSession: sameTrackSessions[sessionIndex - 1],
         nextSession: sameTrackSessions[sessionIndex + 1],
-        speakers: session.data.speakerSlugs
+        /* Les invités (guestSlugs) ne comptent que sur la fiche de la session :
+         * les pages intervenant et le programme lisent speakerSlugs seul. */
+        speakers: [...new Set([...session.data.speakerSlugs, ...session.data.guestSlugs])]
           .map((slug) => speakerById.get(slug))
           .filter((speaker): speaker is CollectionEntry<'speakers'> => Boolean(speaker)),
       },

@@ -91,6 +91,11 @@ const sessions = defineCollection({
     durationMinutes: z.number(),
     room: z.string(),
     speakerSlugs: z.array(z.string()),
+    /* Invités affichés sur la fiche de la session sans être rattachés à leur
+     * page intervenant : le podcast enregistré en public reçoit des invités
+     * qui ont déjà leur propre session, et leur page ne doit pas lister le
+     * podcast. Les autres sessions laissent ce champ vide. */
+    guestSlugs: z.array(z.string()).default([]),
     presentedBy: z
       .object({
         name: z.string(),

@@ -97,7 +97,7 @@ describe('content collections', () => {
     const speakerIds = new Set(speakers.map((speaker) => speaker.id));
 
     for (const session of sessions) {
-      for (const slug of session.data.speakerSlugs) {
+      for (const slug of [...session.data.speakerSlugs, ...session.data.guestSlugs]) {
         expect(speakerIds.has(slug)).toBe(true);
       }
     }

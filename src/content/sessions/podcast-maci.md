@@ -8,6 +8,7 @@ startTime: "18:00"
 durationMinutes: 120
 room: "Salle Loire"
 speakerSlugs: []
+guestSlugs: ["florian-bruniaux", "olivier-lauvray"]
 presentedBy:
   name: "Clever Cloud"
   website: "https://www.clever.cloud/"

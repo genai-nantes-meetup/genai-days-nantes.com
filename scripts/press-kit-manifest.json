@@ -42,7 +42,7 @@
   "src/content/sessions/keynote-ouverture-christelle-morancais.md": "a4e2ef98aa94887142049c35d3dd23ca62b08503faf01cc9a1d6a6db865fcabc",
   "src/content/sessions/nouvelles-menaces-cyber.md": "2270c48b4e0aef1386502514b0b3458294e5ed66877be28501d5c8d4f32c4f32",
   "src/content/sessions/physical-ai-robotique.md": "4abf8b1de9f0b1fbdb6196f93a48a40ba3672bc0a18994e41654f04154509f88",
-  "src/content/sessions/podcast-maci.md": "b2c03049248074866622db12e5ccf3cfd9ad0b8614651e36dc67c7f98a8fad3e",
+  "src/content/sessions/podcast-maci.md": "6da5a1a68540a351ac61a7530b31058a8dcd37e2bb2f5c7ab0a4238b9ebe3e51",
   "src/content/sessions/product-velocity.md": "6d49d62679d8e2fe98f9989a1902c4354447a356d72839298c1c8ce23e59c8ab",
   "src/content/sessions/slm-compression-modeles.md": "e4c247d3615a1082530be735f1b3cebb9e61f25f1a68db286d141a623d2b9d23",
   "src/content/sessions/souverainete-ia.md": "fb3f4bdd1e9e31392cfdf2ac1154ed7a96e959fc244bf4334eb58d596e30bb5c",
@@ -91,7 +91,7 @@
   "src/content/tracks/decideurs.md": "02e638ca02a9781a2b29762f441bc735f5c273f36b72b04a514da33bc45a8be6",
   "src/content/tracks/tech.md": "4195566b4477e3cafec8ec6cef73511337c032f3a49702293079e27d9ebbf38e",
   "src/lib/cta-links.ts": "4b371bd87f8c8b53f45d2aad75dfef0d8b23ef2a729f1f88bad504d0c22479c9",
-  "src/lib/programme.ts": "84bfbb3b5c3ca3376551330bb9966813b8e1fa95a16b1a1c707f13c9f8ed0535",
+  "src/lib/programme.ts": "6bf7eb5df2028f3894856ea37e103b28b020029042be2bdc8609c2954348ec06",
   "src/lib/speakers.ts": "8c87d0100d98c40a1878d1dfb84606116f20d817a167f60441565a4ea11f9358",
   "src/styles/global.css": "35d9390f028fc0645bded079614c0c01eb77c353cc1588da505ba614dafe0726"
 }
