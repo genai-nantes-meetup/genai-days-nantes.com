@@ -1,7 +1,7 @@
 ---
-title: "Un ticket bon à 70 % est un ticket à zéro"
+title: "Plus je lui donne de context, moins il est bon"
 subtitle: "Pourquoi nous avons tué notre agent pour le rendre fiable"
-seoTitle: "Un ticket bon à 70 % est un ticket à zéro"
+seoTitle: "Plus je lui donne de context, moins il est bon"
 track: "tech"
 startTime: "10:20"
 durationMinutes: 40

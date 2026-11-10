@@ -1,7 +1,7 @@
 ---
-title: "A ticket that is 70% good is a zero ticket"
+title: "The more context I give it, the worse it gets"
 subtitle: "Why we killed our agent to make it reliable"
-seoTitle: "A ticket that is 70% good is a zero ticket"
+seoTitle: "The more context I give it, the worse it gets"
 themes: ["AI Ops", "Customer support", "Business impact"]
 illustration:
   alt: "A stack of pages flies up above a head where an overloaded electronic brain lights up"
