@@ -26,10 +26,9 @@ function commonSessionAt(time: string) {
   return findCommonSessionAt(sessions, time);
 }
 
-function parallelSessionAt(time: string) {
-  return sessions.find(
-    (session) => session.data.startTime === time && session.data.track === 'commun' && parallelSessionColumns.has(session.id),
-  );
+function parallelSessionAt(slot: ProgrammeSlot) {
+  if (!slot.parallelSessionId) return undefined;
+  return sessions.find((session) => session.id === slot.parallelSessionId);
 }
 
 function toMinutes(time: string) {
@@ -307,7 +306,7 @@ const dayparts = [
                 }
 
                 const slot = group;
-                const parallelSession = slot.kind === 'social' ? parallelSessionAt(slot.time) : undefined;
+                const parallelSession = slot.kind === 'social' ? parallelSessionAt(slot) : undefined;
 
                 if (parallelSession) {
                   const sessionColumn = parallelSessionColumns.get(parallelSession.id) ?? 'tech';

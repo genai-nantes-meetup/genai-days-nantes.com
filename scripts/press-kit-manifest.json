@@ -1,5 +1,5 @@
 {
-  "scripts/build-press-kit.py": "b03f188fec30feacd2b51c6cbadfd959df57839b6f185a02d5c3b84229f0a2fb",
+  "scripts/build-press-kit.py": "8b435736e12ec767292006b79573f096e12922999338ef4c246187b8b8e3481f",
   "src/components/HeroAffiche.astro": "e0dc1800e43e16ad6226cefaf92581516d8c6792259d4f3be19e9105947f459f",
   "src/content/event.json": "e376eb672e9f9d1ccf380c2f8e3bb6ecdb0ecc8a45e44a196bfa20022ffcf91f",
   "src/content/partners/adn-ouest.md": "a6612c9e52e50c59bb8491640dc004827b2538200cfc887a29b85de883628e1f",
@@ -42,7 +42,7 @@
   "src/content/sessions/keynote-ouverture-christelle-morancais.md": "a4e2ef98aa94887142049c35d3dd23ca62b08503faf01cc9a1d6a6db865fcabc",
   "src/content/sessions/nouvelles-menaces-cyber.md": "2270c48b4e0aef1386502514b0b3458294e5ed66877be28501d5c8d4f32c4f32",
   "src/content/sessions/physical-ai-robotique.md": "4abf8b1de9f0b1fbdb6196f93a48a40ba3672bc0a18994e41654f04154509f88",
-  "src/content/sessions/podcast-maci.md": "d646750af343b490f36d8e507eefddefc121e7743282866f5ae52ad53cd1b83d",
+  "src/content/sessions/podcast-maci.md": "622d8b1d3e4d4cb489950d051b8d51d14525caa9037c072def87c708de200dce",
   "src/content/sessions/product-velocity.md": "6d49d62679d8e2fe98f9989a1902c4354447a356d72839298c1c8ce23e59c8ab",
   "src/content/sessions/slm-compression-modeles.md": "e4c247d3615a1082530be735f1b3cebb9e61f25f1a68db286d141a623d2b9d23",
   "src/content/sessions/souverainete-ia.md": "fb3f4bdd1e9e31392cfdf2ac1154ed7a96e959fc244bf4334eb58d596e30bb5c",
@@ -91,7 +91,7 @@
   "src/content/tracks/decideurs.md": "115b36b601ea2a7c25c384aa8821321150cc3fccdd94cbe119a102ee72757dd7",
   "src/content/tracks/tech.md": "854c08266114feb6f5bca56e3d30e8cbbec78b1290428f9fa1b1825fc7184b84",
   "src/lib/cta-links.ts": "4b371bd87f8c8b53f45d2aad75dfef0d8b23ef2a729f1f88bad504d0c22479c9",
-  "src/lib/programme.ts": "6bf7eb5df2028f3894856ea37e103b28b020029042be2bdc8609c2954348ec06",
+  "src/lib/programme.ts": "bc1ad74ef3d6b5a269573fbc3ce029b0cea0443e6a040f4e15f2d392a25cd63d",
   "src/lib/speakers.ts": "8c87d0100d98c40a1878d1dfb84606116f20d817a167f60441565a4ea11f9358",
   "src/styles/global.css": "35d9390f028fc0645bded079614c0c01eb77c353cc1588da505ba614dafe0726"
 }

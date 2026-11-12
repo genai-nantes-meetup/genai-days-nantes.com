@@ -107,7 +107,12 @@ def programme_slots() -> list[dict]:
         fields = {key: single or double for key, single, double in field.findall(block)}
         title = french_title.search(block)
         if "time" in fields and title:
-            slots.append({"time": fields["time"], "title": title.group(1) or title.group(2), "kind": fields["kind"]})
+            slots.append({
+                "time": fields["time"],
+                "title": title.group(1) or title.group(2),
+                "kind": fields["kind"],
+                "parallelSessionId": fields.get("parallelSessionId"),
+            })
     return slots
 
 
@@ -1017,8 +1022,12 @@ def build_context(tmp: Path) -> dict:
             elif slot["kind"] == "social":
                 closing = next((c for c in slots if c["kind"] == "closing"), None)
                 detail = f"Jusqu’à {closing['time'].replace(':', 'h')}" if closing else ""
-                if common:
-                    detail += f" · {common['title']} enregistré en public"
+                parallel = next((s for s in sessions if s["id"] == slot["parallelSessionId"]), None)
+                if parallel:
+                    detail += (
+                        f" · {parallel['title']} enregistré en public "
+                        f"à {parallel['startTime'].replace(':', 'h')}"
+                    )
             elif slot["kind"] == "keynote":
                 detail = "Intervention à annoncer"
             rows.append({"kind": "common", "time": slot["time"].replace(":", "h"), "title": title, "detail": detail})

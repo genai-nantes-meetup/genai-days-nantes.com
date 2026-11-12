@@ -19,6 +19,10 @@ export interface ProgrammeSlot {
   /* A keynote given twice in parallel, once per track room, so attendees stay
    * in their room instead of gathering in the hall. */
   hostsByTrack?: Record<SplitTrackId, string>;
+  /* A session running alongside this slot, which may open a few minutes before
+   * it starts (the live podcast starts at 18:10 while the afterwork opens at
+   * 18:00). The slot keeps its own time, the session keeps its startTime. */
+  parallelSessionId?: string;
 }
 
 export type SplitTrackId = 'decideurs' | 'tech';
@@ -130,6 +134,7 @@ export const PROGRAMME_SLOTS: ProgrammeSlot[] = [
     time: '18:00',
     title: { fr: 'Afterwork', en: 'Afterwork' },
     kind: 'social',
+    parallelSessionId: 'podcast-maci',
   },
   {
     time: '22:00',

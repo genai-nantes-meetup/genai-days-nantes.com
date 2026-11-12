@@ -137,8 +137,14 @@ describe('content collections', () => {
       return hours * 60 + minutes;
     };
     const slots = new Set(PROGRAMME_SLOTS.map((slot) => slot.time));
+    /* A session can run alongside a common slot without starting on it: the
+     * live podcast starts at 18:10 during the 18:00 afterwork. */
+    const parallelSlotTimes = new Map(
+      PROGRAMME_SLOTS.flatMap((slot) => (slot.parallelSessionId ? [[slot.parallelSessionId, slot.time] as const] : [])),
+    );
     for (const session of sessions) {
-      expect(slots.has(session.data.startTime), session.id).toBe(true);
+      const scheduledAt = parallelSlotTimes.get(session.id) ?? session.data.startTime;
+      expect(slots.has(scheduledAt), session.id).toBe(true);
       const start = minutes(session.data.startTime);
       const end = start + session.data.durationMinutes;
       const overlaps = sessions.filter((other) => other.id !== session.id

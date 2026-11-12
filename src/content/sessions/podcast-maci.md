@@ -4,7 +4,7 @@ quoteTitle: false
 subtitle: "By CleverCloud"
 seoTitle: "Podcast MACI de Clever Cloud enregistré en public"
 track: "commun"
-startTime: "18:00"
+startTime: "18:10"
 durationMinutes: 120
 room: "Hémicycle"
 speakerSlugs: []

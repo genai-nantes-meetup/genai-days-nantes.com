@@ -218,7 +218,7 @@ DÉROULÉ D'UNE SESSION (déroulé de base)
    ({SIGNATURE} par-dessus la caméra).
 4. Startup Contest (11:55) : {CONTEST} dans l'ordre. 1 en ouverture, 2, 3 et 4
    pendant chaque pitch, 5 pendant la délibération du jury.
-5. Podcast (18:00) : bumper de {BUMPERS}, puis caméra avec {SIGNATURE} par-dessus.
+5. Podcast (18:10) : bumper de {BUMPERS}, puis caméra avec {SIGNATURE} par-dessus.
 6. Fin de journée et fin de chaque vidéo : {END_CARD}.
 
 Deux scènes tournent en parallèle (Décider et Implémenter) : la colonne Parcours du
