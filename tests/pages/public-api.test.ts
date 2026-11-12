@@ -89,7 +89,7 @@ describe('public JSON API', () => {
     expect(fr.json.sessions.find((item: { id: string }) => item.id === 'podcast-maci').quoteTitle).toBe(false);
     expect(fr.json.sessions.every((item: { quoteTitle: unknown }) => typeof item.quoteTitle === 'boolean')).toBe(true);
     expect(frEntry.room).toBe('Salle Loire');
-    expect(fr.json.sessions.find((item: { id: string }) => item.id === 'podcast-maci').room).toBe('Salle Loire');
+    expect(fr.json.sessions.find((item: { id: string }) => item.id === 'podcast-maci').room).toBe('Hémicycle');
 
     const starts = fr.json.sessions.map((item: { startTime: string }) => item.startTime);
     expect([...starts].sort()).toEqual(starts);

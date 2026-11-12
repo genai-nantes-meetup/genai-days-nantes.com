@@ -16,7 +16,7 @@ const tracks = await getLocalizedCollection('tracks', locale);
 const speakerById = new Map(speakers.map((speaker) => [speaker.id, speaker]));
 const trackById = new Map(tracks.map((track) => [track.id, track.data]));
 const trackIds = ['decideurs', 'tech'] as const;
-const parallelSessionColumns = new Map<string, (typeof trackIds)[number]>([['podcast-maci', 'tech']]);
+const parallelSessionColumns = new Map<string, (typeof trackIds)[number]>([['podcast-maci', 'decideurs']]);
 
 function sessionAt(time: string, track: (typeof trackIds)[number]) {
   return sessions.find((session) => session.data.startTime === time && session.data.track === track);

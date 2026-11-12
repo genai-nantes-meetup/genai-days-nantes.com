@@ -1,7 +1,7 @@
 ---
 title: "Podcast Message à caractère informatique"
 subtitle: "By CleverCloud"
-room: "Loire Room"
+room: "Hémicycle"
 seoTitle: "Podcast MACI by Clever Cloud, recorded live"
 themes: ["Tech news", "Cloud", "Podcast"]
 illustration:

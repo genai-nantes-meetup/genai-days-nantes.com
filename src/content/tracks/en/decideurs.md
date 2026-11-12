@@ -3,7 +3,7 @@ name: "For those who decide"
 shortName: "Those who decide"
 room: "Hémicycle"
 description: "AI strategy, governance and ROI for IT decision-makers and executive leadership."
-formats: ["Talks", "Panel", "Startup Contest"]
+formats: ["Talks", "Panel", "Startup Contest", "Live podcast"]
 themes:
   - "Use cases, costs and ROI"
   - "Shadow AI and sovereignty"

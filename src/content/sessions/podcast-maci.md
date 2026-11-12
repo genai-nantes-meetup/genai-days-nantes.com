@@ -6,7 +6,7 @@ seoTitle: "Podcast MACI de Clever Cloud enregistré en public"
 track: "commun"
 startTime: "18:00"
 durationMinutes: 120
-room: "Salle Loire"
+room: "Hémicycle"
 speakerSlugs: []
 guestSlugs: ["florian-bruniaux", "olivier-lauvray"]
 presentedBy:

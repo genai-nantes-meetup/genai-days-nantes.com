@@ -4,7 +4,7 @@ shortName: "Ceux qui décident"
 accentColor: "blue"
 room: "Hémicycle"
 description: "Stratégie, gouvernance et ROI de l'IA pour les décideurs SI et direction générale."
-formats: ["Conférences", "Table ronde", "Startup Contest"]
+formats: ["Conférences", "Table ronde", "Startup Contest", "Podcast en public"]
 themes:
   - "Usages, coûts et ROI"
   - "Shadow AI et souveraineté"
