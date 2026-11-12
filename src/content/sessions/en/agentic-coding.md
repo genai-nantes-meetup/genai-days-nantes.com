@@ -2,7 +2,7 @@
 title: "The more context I give it, the worse it gets"
 subtitle: "Why we killed our agent to make it reliable"
 seoTitle: "The more context I give it, the worse it gets"
-themes: ["AI Ops", "Customer support", "Business impact"]
+themes: ["AI Ops", "Customer support", "Business impact", "AI factory"]
 illustration:
   alt: "A stack of pages flies up above a head where an overloaded electronic brain lights up"
 ---

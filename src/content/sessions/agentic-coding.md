@@ -8,7 +8,7 @@ durationMinutes: 40
 room: ""
 speakerSlugs: ["charli-idrac"]
 format: "talk"
-themes: ["AI Ops", "Support client", "Impact business"]
+themes: ["AI Ops", "Support client", "Impact business", "AI factory"]
 illustration:
   alt: "Une pile de pages s'envole au-dessus d'une tête où un cerveau électronique surchargé s'illumine"
   src: "/talks/context-engineering-optimized.webp"
