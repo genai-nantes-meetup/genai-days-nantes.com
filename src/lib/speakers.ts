@@ -9,6 +9,7 @@ export const SPEAKER_EVENT_ROLE_LABELS = {
   fr: {
     jury: 'Jury du Startup Contest',
     animateur: 'Animateur du Startup Contest',
+    'animateur-podcast': 'Animateur Podcast',
     finaliste: 'Finaliste du Startup Contest',
     'monsieur-loyal': 'Monsieur Loyal',
     'madame-loyale': 'Madame Loyale',
@@ -19,6 +20,7 @@ export const SPEAKER_EVENT_ROLE_LABELS = {
   en: {
     jury: 'Startup Contest judge',
     animateur: 'Startup Contest host',
+    'animateur-podcast': 'Podcast host',
     finaliste: 'Startup Contest finalist',
     'monsieur-loyal': 'Master of ceremonies',
     'madame-loyale': 'Master of ceremonies',
@@ -30,6 +32,7 @@ export const SPEAKER_EVENT_ROLE_SHORT_LABELS = {
   fr: {
     jury: 'Jury',
     animateur: 'Animateur',
+    'animateur-podcast': 'Animateur Podcast',
     finaliste: 'Finaliste Startup Contest',
     'monsieur-loyal': 'Monsieur Loyal',
     'madame-loyale': 'Madame Loyale',
@@ -38,6 +41,7 @@ export const SPEAKER_EVENT_ROLE_SHORT_LABELS = {
   en: {
     jury: 'Judge',
     animateur: 'Host',
+    'animateur-podcast': 'Podcast host',
     finaliste: 'Startup Contest finalist',
     'monsieur-loyal': 'Master of ceremonies',
     'madame-loyale': 'Master of ceremonies',
