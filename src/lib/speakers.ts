@@ -108,6 +108,7 @@ export const SPEAKER_PORTRAIT_DIMENSIONS: Record<string, { width: number; height
   'florian-herveou': { width: 600, height: 600 },
   'frederic-didier': { width: 490, height: 490 },
   'gael-brisson': { width: 1024, height: 1024 },
+  'horacio-gonzalez': { width: 800, height: 800 },
   'jaafar-steiblen-raji': { width: 800, height: 920 },
   'jean-yves-simon': { width: 800, height: 800 },
   'julien-lesaicherre': { width: 800, height: 800 },
@@ -144,6 +145,7 @@ export const SPEAKER_PORTRAIT_SMALL: Partial<Record<string, string>> = {
   'delphine-ziegler': '/speakers/delphine-ziegler-480-optimized.webp',
   'emmanuel-marboeuf': '/speakers/emmanuel-marboeuf-480-optimized.webp',
   'gael-brisson': '/speakers/gael-brisson-480-optimized.webp',
+  'horacio-gonzalez': '/speakers/horacio-gonzalez-480-optimized.webp',
   'jaafar-steiblen-raji': '/speakers/jaafar-steiblen-raji-480-optimized.webp',
   'julien-lesaicherre': '/speakers/julien-lesaicherre-480-optimized.webp',
   'nicolas-martignole': '/speakers/nicolas-martignole-wide-480-optimized.webp',
@@ -171,9 +173,16 @@ export function getSpeakerPortraitSrcset(speakerId: string, fullPhoto: string): 
  * Chaque groupe suit l'ordre de son tableau, sauf « autres » (alphabétique). */
 const SPEAKER_GROUP_OTHERS = 1;
 
+/* Intervenants affichés en fin du groupe « autres », après le tri alphabétique
+ * et juste avant les pitcheurs du Startup Contest. */
+export const SPEAKER_OTHERS_END_ORDER = ['horacio-gonzalez'] as const;
+
 function speakerGroupAndRank(id: string): [group: number, rank: number] {
   const prominenceIndex = (SPEAKER_PROMINENCE_ORDER as readonly string[]).indexOf(id);
   if (prominenceIndex !== -1) return [0, prominenceIndex];
+
+  const othersEndIndex = (SPEAKER_OTHERS_END_ORDER as readonly string[]).indexOf(id);
+  if (othersEndIndex !== -1) return [SPEAKER_GROUP_OTHERS, 1 + othersEndIndex];
 
   const pitcherIndex = (SPEAKER_STARTUP_CONTEST_PITCHERS_ORDER as readonly string[]).indexOf(id);
   if (pitcherIndex !== -1) return [SPEAKER_GROUP_OTHERS + 1, pitcherIndex];

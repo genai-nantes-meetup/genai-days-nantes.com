@@ -42,7 +42,7 @@
   "src/content/sessions/keynote-ouverture-christelle-morancais.md": "a4e2ef98aa94887142049c35d3dd23ca62b08503faf01cc9a1d6a6db865fcabc",
   "src/content/sessions/nouvelles-menaces-cyber.md": "2270c48b4e0aef1386502514b0b3458294e5ed66877be28501d5c8d4f32c4f32",
   "src/content/sessions/physical-ai-robotique.md": "4abf8b1de9f0b1fbdb6196f93a48a40ba3672bc0a18994e41654f04154509f88",
-  "src/content/sessions/podcast-maci.md": "622d8b1d3e4d4cb489950d051b8d51d14525caa9037c072def87c708de200dce",
+  "src/content/sessions/podcast-maci.md": "c55e9f0744ec537da3e4fa95202824246c819b7fab1d68f6bc60feb4fa07bc10",
   "src/content/sessions/product-velocity.md": "6d49d62679d8e2fe98f9989a1902c4354447a356d72839298c1c8ce23e59c8ab",
   "src/content/sessions/slm-compression-modeles.md": "e4c247d3615a1082530be735f1b3cebb9e61f25f1a68db286d141a623d2b9d23",
   "src/content/sessions/souverainete-ia.md": "fb3f4bdd1e9e31392cfdf2ac1154ed7a96e959fc244bf4334eb58d596e30bb5c",
@@ -66,6 +66,7 @@
   "src/content/speakers/florian-herveou.md": "5ccdbfea6d89cafae806aa47f79ddb1abe40193d8758d35390e426400b87bd27",
   "src/content/speakers/frederic-didier.md": "df966c7d7d26194f2b7843a54f3cba146758028bd064584ea2fdc77b1c634b75",
   "src/content/speakers/gael-brisson.md": "877b05c4acc93501535debfe14e2e0a62b0fd9f9c12f910fd9abcab41991f23a",
+  "src/content/speakers/horacio-gonzalez.md": "fb5433e326ac05f7203d509412249390925ff072d75846c92c180917e3ee5ade",
   "src/content/speakers/jaafar-steiblen-raji.md": "fe4776aafd5091d96a387660166a1044c9d6be733fc0ea822787e2e82f6011fa",
   "src/content/speakers/jean-baptiste-kempf.md": "ef1293508a5068f4c142a2634e2e8f8ef9a2349c147d4b54122456fcfcd55ce3",
   "src/content/speakers/jean-yves-simon.md": "a6abe077cb91aef11de25f44052d3fd2e50ede5790e995323bcfea1531d5d6c3",
@@ -93,6 +94,6 @@
   "src/content/tracks/tech.md": "854c08266114feb6f5bca56e3d30e8cbbec78b1290428f9fa1b1825fc7184b84",
   "src/lib/cta-links.ts": "4b371bd87f8c8b53f45d2aad75dfef0d8b23ef2a729f1f88bad504d0c22479c9",
   "src/lib/programme.ts": "bc1ad74ef3d6b5a269573fbc3ce029b0cea0443e6a040f4e15f2d392a25cd63d",
-  "src/lib/speakers.ts": "dcc37daf299915d44558cc347b6138143a94f18d7f9c6ac12e0bc737e5232e63",
+  "src/lib/speakers.ts": "5075adf1fcd243910c515563329c68802c6717194246e81c701fb8b77af47980",
   "src/styles/global.css": "35d9390f028fc0645bded079614c0c01eb77c353cc1588da505ba614dafe0726"
 }

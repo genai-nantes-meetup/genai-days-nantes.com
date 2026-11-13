@@ -7,8 +7,8 @@ track: "commun"
 startTime: "18:10"
 durationMinutes: 120
 room: "Hémicycle"
-speakerSlugs: []
-guestSlugs: ["florian-bruniaux", "olivier-lauvray"]
+speakerSlugs: ["horacio-gonzalez"]
+guestSlugs: ["florian-bruniaux", "olivier-lauvray", "theo-hubert", "roch-mollero"]
 presentedBy:
   name: "Clever Cloud"
   website: "https://www.clever.cloud/"
