@@ -79,11 +79,11 @@ Le film (`SPEAKERS`, `PARTNER_ROWS` dans `index.html`) et l'habillage (`SESSIONS
 Pages HTML ouvertes dans un navigateur ou chargées comme source navigateur dans OBS. Pas de rendu vidéo.
 
 ```bash
-python3 -m http.server 8000                                        # board.html, bumpers.html?session=<slug>[&layout=c]
+python3 -m http.server 8000                                        # board.html, deroule.html (rendu final écran par écran), bumpers.html?session=<slug>
 uv run --with pillow python scripts/build_single_html.py .         # fichier unique hors ligne, ignoré par git
 ```
 
-Portraits : `scripts/normalise_faces.py <source> <sortie>` (OpenCV) recadre les originaux de `assets/speakers/` vers `assets/speakers/norm/` à taille de visage et ligne des yeux constantes.
+Portraits : source unique, le site. `scripts/normalise_faces.py [slug ...]` (OpenCV) lit le champ `photo` de chaque speaker dans `src/content/speakers/` et écrit seulement les recadrages dérivés dans `assets/speakers/norm/`, à taille de visage et ligne des yeux constantes. Sans argument, il traite tous les speakers de `SESSIONS`. L'habillage ne garde aucune copie des photos : pour changer un portrait, on change la photo du site puis on relance le script. Commande : `uv run --with "opencv-python-headless<5" --with numpy --with pyyaml python videos/habillage-captation/scripts/normalise_faces.py`.
 
 ## Sorties et git
 
