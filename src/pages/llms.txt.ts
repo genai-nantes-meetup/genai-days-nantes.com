@@ -79,7 +79,7 @@ export const GET: APIRoute = async ({ site, url }) => {
       });
       if (session.data.presentedBy) contributors.push(session.data.presentedBy.name);
       const contributorLine = contributors.length > 0 ? ` Avec : ${contributors.join(' · ')}.` : '';
-      const description = session.body?.trim() ? ` ${stripMarkdownToPlainText(session.body)}` : '';
+      const description = session.body?.trim() ? ` ${stripMarkdownToPlainText(session.body, { keepLinkUrls: true })}` : '';
       const track = session.data.track === 'commun' ? 'Temps commun' : (trackById.get(session.data.track) ?? session.data.track);
       const roomLabel = session.data.room || roomByTrack.get(session.data.track);
 

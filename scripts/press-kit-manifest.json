@@ -32,7 +32,7 @@
   "src/content/sessions/agentic-coding.md": "d87d0941db30f4fde6bfcfe32b756c5af33cf726fb10c238c44cb0e00d486cb6",
   "src/content/sessions/agents-entreprise-shadowai-knowledge.md": "acffc28779c73739d423f71836905c13e686bdf57ee21daadfafbd1c509d884e",
   "src/content/sessions/conduite-changement-ia.md": "6add86207be572e4d723b9fc4bf3c0bbe75525a3c0efa9848ecf6c480cfab8d3",
-  "src/content/sessions/cyber-ai.md": "66ee1fc666f84848c680b3d6e826693bba84792ac946e207a07d627a25ea46fc",
+  "src/content/sessions/cyber-ai.md": "b400b23c79c7caa54c2a3b13428ed0b17959b109e663e4b1996871b6cb5027cf",
   "src/content/sessions/finops-agents.md": "67271179fba5f45d9404998fb27de8d52bd2192bd09d8afcd14ca27931d6f922",
   "src/content/sessions/gpu-architecture.md": "d75866aa27bdb810840066025ee5db487ead4e889191c4d07b40b75d0b0e267c",
   "src/content/sessions/harness-context-engineering.md": "e770f2ac2e9ae3b20e47e870c3954d815c40d6e97734bc684113d3a320f6fc35",
@@ -49,6 +49,7 @@
   "src/content/sessions/startup-contest.md": "85f71d43fda00ed3ed52c2edcc0eb8ff4d7e077f346156ea1c11f7a419a82c70",
   "src/content/sessions/voice-agents.md": "720b8598f257ca742b6ba6630762a3281a7aaf3124ee828a78fee207903666a4",
   "src/content/speakers/annabelle-koster.md": "5647626b8a757b6206b6d60e86b51f7a81610abaf969ba7b43b534ce8da92f47",
+  "src/content/speakers/antoine-brossault.md": "fbcf32eda6233d0561c83b2f96f2386f98cb09452255e9ae1acccddddb37a0b2",
   "src/content/speakers/aurelie-pecaud.md": "84266333926c8759fe29f46ca21d8bfdb751b494d0844e823e102b3addb06c83",
   "src/content/speakers/benoit-hediard.md": "c8919f3cd85c31e3d3e7d30b1831796b68553cd9e5d8e9774a9bd439c225cd8f",
   "src/content/speakers/camille-croze.md": "e302d10f0e8f89fffdc918bcaa836e0183b38e8d7f191e0076bb95eeccfa25e7",
@@ -92,6 +93,6 @@
   "src/content/tracks/tech.md": "854c08266114feb6f5bca56e3d30e8cbbec78b1290428f9fa1b1825fc7184b84",
   "src/lib/cta-links.ts": "4b371bd87f8c8b53f45d2aad75dfef0d8b23ef2a729f1f88bad504d0c22479c9",
   "src/lib/programme.ts": "bc1ad74ef3d6b5a269573fbc3ce029b0cea0443e6a040f4e15f2d392a25cd63d",
-  "src/lib/speakers.ts": "8c87d0100d98c40a1878d1dfb84606116f20d817a167f60441565a4ea11f9358",
+  "src/lib/speakers.ts": "dcc37daf299915d44558cc347b6138143a94f18d7f9c6ac12e0bc737e5232e63",
   "src/styles/global.css": "35d9390f028fc0645bded079614c0c01eb77c353cc1588da505ba614dafe0726"
 }

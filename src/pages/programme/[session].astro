@@ -216,14 +216,16 @@ const sessionUrl = new URL(
 const startDateTime = toISODateTime(session.data.startTime);
 const endDateTime = toISODateTime(endTime);
 const speakerNames = speakers.map((speaker) => speaker.data.name).join(", ");
-const pageDescription = session.body?.trim()
-  ? stripMarkdownToPlainText(session.body)
-  : copy.fallbackDescription(
-      formatLabel,
-      speakerNames,
-      session.data.startTime,
-      displayRoom,
-    );
+const pageDescription = session.data.seoDescription?.trim()
+  ? session.data.seoDescription.trim()
+  : session.body?.trim()
+    ? stripMarkdownToPlainText(session.body)
+    : copy.fallbackDescription(
+        formatLabel,
+        speakerNames,
+        session.data.startTime,
+        displayRoom,
+      );
 const pageTitle = `${session.data.seoTitle ?? session.data.title} · GENAI DAYS`;
 const socialImage = session.data.illustration?.src
   ? { src: session.data.illustration.src, alt: session.data.illustration.alt }
@@ -838,6 +840,22 @@ const breadcrumbJsonLd = {
 
   .session-description :global(li + li) {
     margin-top: 0.35em;
+  }
+
+  /* Les liens du Markdown arrivent avec la couleur héritée du texte (le reset
+   * les neutralise) : on leur rend le bleu de marque et un soulignement lisible
+   * au clavier comme à la souris. */
+  .session-description :global(a) {
+    color: var(--color-brand-blue);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--color-brand-blue) 35%, transparent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+    transition: text-decoration-color 160ms ease-out;
+  }
+
+  .session-description :global(a:hover) {
+    text-decoration-color: currentColor;
   }
 
   .session-tags {

@@ -21,7 +21,9 @@ describe('llms.txt', () => {
     for (const session of sessions) {
       expect(text).toContain(session.data.title);
       expect(text).toContain(`https://example.com/programme/${session.id}`);
-      if (session.body?.trim()) expect(text).toContain(stripMarkdownToPlainText(session.body));
+      if (session.body?.trim()) {
+        expect(text).toContain(stripMarkdownToPlainText(session.body, { keepLinkUrls: true }));
+      }
     }
   });
 

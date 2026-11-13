@@ -91,6 +91,7 @@ export const SPEAKER_MASTERS_OF_CEREMONIES_ORDER = [
  * l'espace d'image avant chargement et éviter un décalage de mise en page. */
 export const SPEAKER_PORTRAIT_DIMENSIONS: Record<string, { width: number; height: number }> = {
   'annabelle-koster': { width: 800, height: 800 },
+  'antoine-brossault': { width: 449, height: 449 },
   'aurelie-pecaud': { width: 800, height: 800 },
   'celine-haentzler': { width: 800, height: 800 },
   'charli-idrac': { width: 800, height: 800 },

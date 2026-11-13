@@ -86,6 +86,10 @@ const sessions = defineCollection({
     quoteTitle: z.boolean().default(true),
     subtitle: z.string().optional(),
     seoTitle: z.string().optional(),
+    /* Résumé court pour la meta description et le JSON-LD : une description
+     * longue (sections, listes, liens) reste le corps Markdown, mais son
+     * aplatissement ne doit pas servir d'extrait. Absent, le corps est aplati. */
+    seoDescription: z.string().optional(),
     track: z.enum(['decideurs', 'tech', 'commun']),
     startTime: z.string(),
     durationMinutes: z.number(),
@@ -212,6 +216,7 @@ const sessionsEn = defineCollection({
     title: z.string(),
     subtitle: z.string().optional(),
     seoTitle: z.string().optional(),
+    seoDescription: z.string().optional(),
     themes: z.array(z.string()).optional(),
     illustration: z.object({ alt: z.string() }).optional(),
   }),
