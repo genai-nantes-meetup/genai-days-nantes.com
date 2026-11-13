@@ -1,8 +1,8 @@
 ---
 title: "Mes agents IA sont la nouvelle cible des attaques"
-subtitle: "Gouvernance, sandbox et moindre privilège à l’échelle d’une entreprise"
+subtitle: "Sécurité, sandbox et moindre privilège à l’échelle d’une entreprise"
 seoTitle: "Mes agents IA sont la nouvelle cible des attaques"
-seoDescription: "Comment Cloudflare a équipé toute l’entreprise en agents IA en moins d’un an : gouvernance, sandbox, moindre privilège et Gatekeepers."
+seoDescription: "Comment Cloudflare a équipé toute l’entreprise en agents IA en moins d’un an : sécurité, sandbox, moindre privilège et Gatekeepers."
 track: "tech"
 startTime: "15:20"
 durationMinutes: 40

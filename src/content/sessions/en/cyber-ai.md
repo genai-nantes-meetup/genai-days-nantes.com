@@ -1,8 +1,8 @@
 ---
 title: "My AI agents are the new target for attackers"
-subtitle: "Governance, sandboxing and least privilege at company scale"
+subtitle: "Security, sandboxing and least privilege at company scale"
 seoTitle: "My AI agents are the new target for attackers"
-seoDescription: "How Cloudflare equipped the whole company with AI agents in under a year: governance, sandboxing, least privilege and Gatekeepers."
+seoDescription: "How Cloudflare equipped the whole company with AI agents in under a year: security, sandboxing, least privilege and Gatekeepers."
 themes: ["AI agents", "Governance", "Agent security", "Cloudflare OS"]
 illustration:
   alt: "A figure seen from behind watches a stream of data scroll past, overlaid on a city at night"
