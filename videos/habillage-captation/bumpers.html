@@ -24,7 +24,7 @@ body{margin:0;background:var(--page);color:var(--text);font:16px/1.55 Arial,Helv
 .wrap{max-width:1480px;margin:0 auto;padding:0 max(16px,3vw)}
 .lb{font-family:Arial,Helvetica,sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.12em}
 
-.masthead{padding:56px 0 28px;border-bottom:1px solid var(--line)}
+.masthead{padding-top:56px;padding-bottom:28px;border-bottom:1px solid var(--line)}
 .masthead .kicker{font-size:12px;color:var(--accent)}
 .masthead h1{font-family:"EB Garamond",serif;font-weight:600;font-size:clamp(40px,6vw,76px);line-height:1;margin:14px 0 18px;letter-spacing:-.01em}
 .masthead h1 em{font-style:italic;color:var(--orange)}
@@ -32,6 +32,8 @@ body{margin:0;background:var(--page);color:var(--text);font:16px/1.55 Arial,Helv
 .masthead .facts{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:20px;font-size:11px;color:var(--muted)}
 .masthead .switch{display:inline-block;margin-top:22px;padding:10px 18px;border-radius:999px;background:var(--blue);color:#F9F4EC;text-decoration:none;font-size:12px;box-shadow:4px 4px 0 var(--orange)}
 .masthead .switch:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--orange)}
+.masthead .back{display:inline-block;margin:22px 12px 0 0;padding:9px 17px;border:1px solid var(--line);border-radius:999px;color:var(--text);text-decoration:none;font-size:12px}
+.masthead .back:hover{border-color:var(--accent)}
 .slot{padding:44px 0 4px}
 .slot h2{display:flex;align-items:baseline;gap:16px;margin:0 0 18px;font-family:"EB Garamond",serif;font-weight:600;font-size:34px}
 .slot h2 .lb{font-size:11px;color:var(--muted)}
@@ -59,7 +61,10 @@ body.solo{background:#09122E;overflow:hidden}
 body.solo .cv{position:relative;transform:none}
 /* Key mode (&key=1): vMix overlay PNG, camera and slides become alpha holes, stand-in footage goes */
 html.key,body.solo.key{background:transparent}
-.key .talk .footage,.key .talk .camtag,.key .talk .slide>*{display:none}
+.key .talk .footage,.key .talk .camtag,.key .talk .slide>*,.key .talk .subs{display:none}
+/* Live subtitles stand-in: shows where the régie burns them in, never exported in key mode */
+.talk .subs{position:absolute;left:560px;width:1320px;text-align:center;font:500 34px/1.35 Arial,Helvetica,sans-serif;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.6)}
+.talk .subs .tag{display:block;font:500 13px "Azeret Mono",monospace;letter-spacing:.12em;color:rgba(255,255,255,.4);margin-bottom:10px;text-shadow:none}
 
 /* Poster in two passes: the session art, then an orange copy of its darks printed off register */
 .poster{position:absolute;overflow:hidden;background:var(--cream);isolation:isolate}
@@ -117,9 +122,6 @@ html.key,body.solo.key{background:transparent}
 .t-decide .tba .seat svg,.t-common .tba .seat svg{color:#7d82ff}
 .tba .name{font-family:"EB Garamond",serif;font-size:48px;font-weight:500;font-style:italic;line-height:1}
 .tba .role{font-size:16px;margin-top:14px;opacity:.75}
-.host{display:flex;align-items:center;gap:30px}
-.host img{height:76px}
-.host .role{font-size:18px;opacity:.88;line-height:1.5}
 
 /* In-talk frames (?view=talks), same look as the board's "Slides et intervenant" and "Tables rondes et jury" */
 .talk .relief{text-shadow:.04em .04em 0 var(--orange)}
@@ -137,13 +139,15 @@ html.key,body.solo.key{background:transparent}
 .talk .slide .sl-c{position:absolute;right:7%;top:30%;width:34%;height:52%;border:3px solid #d5d5da;border-radius:6px;background:repeating-linear-gradient(90deg,transparent 0 18%,#e6e6ea 18% 20%)}
 .talk .slide .sl-c i{position:absolute;bottom:0;width:12%;background:#9a9aa3}
 .talk .slide .sl-n{position:absolute;right:3%;bottom:4%;font:500 15px "Azeret Mono",monospace;color:#9a9aa3;letter-spacing:.1em}
-.talk .filet .rule{width:110px;height:6px;background:var(--orange);margin-bottom:22px}
-.talk .filet .name{font-family:"EB Garamond",serif;font-weight:600;line-height:1;text-shadow:.04em .04em 0 var(--orange)}
-.talk .filet .name.tbd{font-weight:500;font-style:italic}
-.talk .filet .role{font:700 17px/1.45 Arial,Helvetica,sans-serif;text-transform:uppercase;letter-spacing:.12em;margin-top:14px;opacity:.9}
-.talk .filet .host-strap{display:flex;align-items:center;gap:28px}
-.talk .filet .host-strap img{height:64px}
-.talk .filet .host-strap .role{margin-top:0}
+.talk .spk-card{padding:20px 24px 22px;background:rgba(9,18,46,.66);border-radius:4px}
+.talk .spk-card .name{font-family:"EB Garamond",serif;font-weight:600;line-height:1;text-shadow:.04em .04em 0 var(--orange)}
+.talk .spk-card .name.tbd{font-weight:500;font-style:italic}
+.talk .spk-card .role{font:700 13px/1.4 Arial,Helvetica,sans-serif;text-transform:uppercase;letter-spacing:.1em;margin-top:10px;opacity:.9}
+.talk .spk-card .person+.person{margin-top:14px}
+.talk .panel-people .row{display:flex;align-items:center;gap:18px}
+.talk .panel-people .row+.row{margin-top:18px}
+.talk .panel-people .name{font-size:28px}
+.talk .panel-people .role{font-size:11px;margin-top:6px}
 .talk .bug{position:absolute;left:64px;top:56px;display:flex;align-items:center;gap:16px;opacity:.72;color:var(--cream);z-index:50}
 .talk .bug svg{width:38px;height:38px;fill:currentColor}
 .talk .bug .wm{font-size:34px}
@@ -189,6 +193,7 @@ html.key,body.solo.key{background:transparent}
   <h1>Bumpers <em>d'intro</em></h1>
   <p class="intro"></p>
   <div class="facts lb"><span>Mardi 17 novembre 2026</span><span>Hôtel de Région · Nantes</span></div>
+  <a class="back lb" href="board.html">&larr; Retour au board</a>
   <a class="switch lb" href="?view=talks"></a>
 </header>
 <main class="wrap slots"></main>
@@ -215,21 +220,24 @@ const SESSIONS = [
    speakers:[P("Charli Idrac","charli-idrac","Chief Data & AI Officer","Brevo")]},
   {slug:"voice-agents", time:"11:15", dur:40, track:DECIDE, format:"Conférence", title:"En démo, mon agent IA vocal ne se trompe jamais", art:"voice-agents", side:"left", fx:.5,
    speakers:[P("Julien Lesaicherre","julien-lesaicherre","General Manager France","ElevenLabs")]},
-  {slug:"inference-serving", time:"11:15", dur:40, track:IMPL, format:"Conférence", title:"L’inférence de mon Mac mini est lente", art:"inference", side:"left", fx:.66, bandFx:.45, speakers:[]},
+  {slug:"inference-serving", time:"11:15", dur:40, track:IMPL, format:"Conférence", title:"L’inférence de mon Mac mini est lente", art:"inference", side:"left", fx:.66, bandFx:.45,
+   speakers:[P("Grégoire de Turckheim","gregoire-de-turckheim","Engineering Manager for AI Inference Products","Scaleway")]},
   {slug:"startup-contest", time:"11:55", dur:30, track:DECIDE, format:"Concours", title:"Startup Contest", art:"stage-1-talk-5-startup-contest", side:"left", fx:.5, contest:true,
-   speakers:[P("Florian Hervéou","florian-herveou","Cofondateur","Startup Palace · _icilundi","Animateur"),P("Constance Nebbula","constance-nebbula","Vice-présidente Numérique et IA","Région Pays de la Loire","Jury"),P("Sébastien Le&nbsp;Corfec","sebastien-le-corfec","Associé et cofondateur","Épopée Gestion · West Web Festival","Jury"),P("Thomas Mathieu","thomas-mathieu","CEO et cofondateur","Guest Suite","Jury"),P("David Léaurant","david-leaurant","Président","ADN Ouest","Jury"),P("Emmanuel Marboeuf","emmanuel-marboeuf","Cofondateur","BWorlds","Finaliste","bworlds"),P("Pauline Corriou","pauline-corriou","Cofondatrice et CPO","Motiv","Finaliste","motiv"),P("Aurélie Pécaud","aurelie-pecaud","Cofondatrice & CEO","Laborhêto","Finaliste","laborheto")]},
+   speakers:[P("Florian Hervéou","florian-herveou","Cofondateur","Startup Palace · _icilundi","Animateur"),P("Constance Nebbula","constance-nebbula","Vice-présidente Numérique et IA","Région Pays de la Loire","Jury"),P("Sébastien Le&nbsp;Corfec","sebastien-le-corfec","Associé et cofondateur","Épopée Gestion · West Web Festival","Jury"),P("Thomas Mathieu","thomas-mathieu","CEO et cofondateur","Guest Suite","Jury"),P("David Léaurant","david-leaurant","Président","ADN Ouest","Jury"),P("Emmanuel Marboeuf","emmanuel-marboeuf","Cofondateur","BWorlds","Finaliste","bworlds"),P("Pauline Corriou","pauline-corriou","Cofondatrice et CPO","Motiv","Finaliste","motiv"),P("Aurélie Pécaud","aurelie-pecaud","Cofondatrice & CEO","Laborhêto","Finaliste","laborheto"),P("Benoit Hediard","benoit-hediard","Fondateur","Globetrotters.ai","Pitch","globetrotters")]},
   {slug:"gpu-architecture", time:"11:55", dur:30, track:IMPL, format:"Conférence", title:"Mes GPUs chauffent et ma facture grimpe", art:"datacenter", side:"left", fx:.6,
    speakers:[P("Olivier Lauvray","olivier-lauvray","VP International Business Development","VSORA")]},
   {slug:"finops-agents", time:"13:45", dur:40, track:DECIDE, format:"Conférence", title:"J'ai consommé mon budget IA en mai. Comment finir l'année&nbsp;?", art:"stage-1-talk-8-finops", side:"left", fx:.66,
    speakers:[P("Nicolas Martignole","nicolas-martignole","Principal Engineer","Back Market")]},
-  {slug:"physical-ai-robotique", time:"13:45", dur:40, track:IMPL, format:"Conférence", title:"Mon modèle a le droit de se tromper. Mon robot, non", art:"physical-ai", side:"left", fx:.74, speakers:[]},
+  {slug:"physical-ai-robotique", time:"13:45", dur:40, track:IMPL, format:"Conférence", title:"Mon modèle a le droit de se tromper. Mon robot, non", art:"physical-ai", side:"left", fx:.74,
+   speakers:[P("Roch Molléro","roch-mollero","Directeur technique","Gobano Robotics")]},
   {slug:"ia-pour-industrie", time:"14:25", dur:40, track:DECIDE, format:"Conférence", title:"Mon concurrent utilise des humanoïdes dans sa chaine de production", art:"ia-industrie", side:"left", fx:.7,
    speakers:[P("Laurent Duthoit","laurent-duthoit","Expert robotique Next Gen et IA physique","Renault Group"),P("Camille Croze","camille-croze","Business Development Manager, robots humanoïdes","Wandercraft")]},
   {slug:"slm-compression-modeles", time:"14:25", dur:40, track:IMPL, format:"Conférence", title:"Mon modèle ne tient pas sur une puce embarquée", art:"stage-2-talk-3-slm", side:"right", fx:.22,
    speakers:[P("Théo Hubert","theo-hubert","Cofondateur, Président & CTO","AlphaEdge")]},
   {slug:"industrialisation-projet-ia", time:"15:20", dur:40, track:DECIDE, format:"Conférence", title:"Nos POCs ne passent jamais en production", art:"industrialisation", side:"left", fx:.5,
    speakers:[P("Tiffany Souterre","tiffany-souterre","Senior Developer Advocate","AWS")]},
-  {slug:"cyber-ai", time:"15:20", dur:40, track:IMPL, format:"Conférence", title:"Des ados de 15 ans utilisent ChatGPT pour exfiltrer mes données", art:"nouvelles-menaces-cyber", side:"left", fx:.7, speakers:[]},
+  {slug:"cyber-ai", time:"15:20", dur:40, track:IMPL, format:"Conférence", title:"Mes agents IA sont la nouvelle cible des attaques", art:"nouvelles-menaces-cyber", side:"left", fx:.7,
+   speakers:[P("Antoine Brossault","antoine-brossault","Solutions Engineer","Cloudflare")]},
   {slug:"conduite-changement-ia", time:"16:00", dur:40, track:DECIDE, format:"Table ronde", title:"Une partie de mon équipe a peur que l'IA lui prenne son poste", art:"conduite-changement", side:"left", fx:.5,
    speakers:[P("Camille Marini","camille-marini","Director of Engineering","Alan"),P("Frédéric Didier","frederic-didier","Directeur général adjoint de CA-GIP","Groupe Crédit Agricole"),P("Delphine Ziegler","delphine-ziegler","Engineering Manager","Doctolib"),P("Céline Haentzler","celine-haentzler","GenAI Product Expert","Betclic Group")]},
   {slug:"harness-context-engineering", time:"16:00", dur:40, track:IMPL, format:"Conférence", title:"Je n'ai pas confiance dans mes pull&#8209;requests générées", art:"agentic-coding", side:"left", fx:.72, bandFx:.45,
@@ -238,7 +246,6 @@ const SESSIONS = [
    speakers:[P("Régis Dubrulle","regis-dubrulle","Délégué régional à la sécurité numérique, Pays de la Loire","ANSSI")]},
   {slug:"agent-evaluation", time:"16:55", dur:40, track:IMPL, format:"Conférence", title:"Je n'arrive pas à savoir si mes agents sont performants ou non", art:"agent-evaluation", side:"left", fx:.5,
    speakers:[P("Tristan Fransen","tristan-fransen","Senior Machine Learning Engineer","Pennylane")]},
-  {slug:"podcast-maci", time:"18:10", dur:120, track:COMMON, format:"Podcast en public", title:"Podcast Message à caractère informatique", art:"podcast-maci-clever-cloud", side:"left", fx:.5, speakers:[], host:"clever-cloud"},
 ];
 const TRACK_LABEL = {decide:"Ceux qui décident", impl:"Ceux qui implémentent", common:"Temps commun"};
 const W = 1920, H = 1080;
@@ -249,10 +256,8 @@ const inkPortrait = (slug, size) => {
   return `<div class="inkp" style="width:${size}px;height:${size}px"><div class="pl b"><img src="${src}" alt=""></div><div class="pl o"><img src="${src}" alt=""></div></div>`;
 };
 
-const hostLogo = s => `<img src="assets/partners/${s.host}.png" alt="Clever Cloud">`;
 
 function speakersMarkup(s, colWidth) {
-  if (s.host) return `<div class="spk host">${hostLogo(s)}<div class="role lb">Enregistré en public<br>pendant l'apéro</div></div>`;
   const people = s.speakers;
   if (!people.length) return `<div class="spk tba"><div class="seat">${markSvg}</div><div><div class="name">Speaker To Be Announced</div><div class="role lb">Programme sur genai-days-nantes.com</div></div></div>`;
   if (people.length === 1) {
@@ -281,14 +286,14 @@ function artPlacement(s, boxW, boxH, targetX, fx = s.fx) {
 }
 const ART_TRIMS = {
   "agent-evaluation":.04,"cyber-ai":.025,"datacenter":.02,"ia-industrie":.042,"industrialisation":.035,"inference":.05,
-  "nouvelles-menaces-cyber":.04,"physical-ai":.05,"podcast-maci-clever-cloud":.025,"product-velocity":.06,"stage-0-keynote":.025,
+  "nouvelles-menaces-cyber":.04,"physical-ai":.05,"product-velocity":.06,"stage-0-keynote":.025,
   "stage-1-talk-5-startup-contest":.04,"stage-2-talk-3-slm":.016,"context-engineering":.02,"conduite-changement":.06,
 };
 const ART_SIZES = {
   "agent-evaluation":[2560,1433],"agentic-coding":[2560,1433],"agents-enterprise":[2560,1425],"conduite-changement":[2560,1433],
   "context-engineering":[2560,1433],"cyber-ai":[2560,1433],"datacenter":[2560,1433],"ia-industrie":[2560,1433],
   "industrialisation":[2560,1433],"inference":[2560,1433],"nouvelles-menaces-cyber":[2560,1433],"physical-ai":[2560,1433],
-  "podcast-maci-clever-cloud":[2560,1433],"product-velocity":[2000,2000],"souverainete":[2560,1433],"stage-0-keynote":[2560,1434],
+  "product-velocity":[2000,2000],"souverainete":[2560,1433],"stage-0-keynote":[2560,1434],
   "stage-1-talk-5-startup-contest":[2560,1434],"stage-1-talk-8-finops":[1600,697],"stage-2-talk-3-slm":[2560,1434],"voice-agents":[2560,1433],
 };
 
@@ -354,6 +359,7 @@ function fitTitles(root) {
 // ---------- In-talk frames ----------
 const CHIP_LABEL = {decide:"Décider", impl:"Implémenter", common:"Temps commun"};
 const BAND_W = 520, TALK_CAM_TOP = 536;
+const SUBTITLES = `<div class="subs" style="top:862px"><span class="tag">SOUS-TITRES EN DIRECT</span>Lorem ipsum dolor sit amet, consectetur adipiscing elit,<br>sed do eiusmod tempor incididunt ut labore et dolore.</div>`;
 const BUG = `<div class="bug"><svg viewBox="0 0 199 199"><use href="#genai-mark"/></svg><span class="wm"><b>GEN<i>AI</i></b> DAYS</span><span class="lb">Nantes 2026</span></div>`;
 const SLIDE_MOCK = `<div class="sl-t"></div><div class="sl-l" style="top:30%;width:40%"></div><div class="sl-l" style="top:38%;width:44%"></div><div class="sl-l" style="top:46%;width:36%"></div><div class="sl-l" style="top:54%;width:42%"></div><div class="sl-c"><i style="left:12%;height:30%"></i><i style="left:34%;height:52%"></i><i style="left:56%;height:70%"></i><i style="left:78%;height:88%"></i></div><div class="sl-n">SLIDES 16:9</div>`;
 
@@ -365,15 +371,16 @@ function footage(people, centers, heightPct) {
   }).join("")}</div>`;
 }
 
-function slidesStrap(s) {
+// Speaker card in the left band, under the camera: the strip under the slides stays free for live subtitles
+function speakerCard(s) {
   const people = s.speakers;
-  if (s.host) return `<div class="abs filet" style="left:560px;top:846px"><div class="rule"></div><div class="host-strap">${hostLogo(s)}<div class="role">Enregistré en public<br>pendant l'apéro</div></div></div>`;
-  if (!people.length) return `<div class="abs filet" style="left:560px;top:846px"><div class="rule"></div><div class="name tbd" style="font-size:58px">Speaker To Be Announced</div></div>`;
+  const card = inner => `<div class="abs spk-card" style="left:24px;top:${TALK_CAM_TOP + 266 + 30}px;width:472px">${inner}</div>`;
+  if (!people.length) return card(`<div class="name tbd" style="font-size:38px">Speaker To Be Announced</div>`);
   if (people.length === 1) {
     const p = people[0];
-    return `<div class="abs filet" style="left:560px;top:846px"><div class="rule"></div><div class="name" style="font-size:58px">${p.name}</div><div class="role">${p.role} · ${p.company}</div></div>`;
+    return card(`<div class="name" style="font-size:40px">${p.name}</div><div class="role">${p.role} · ${p.company}</div>`);
   }
-  return people.map((p, i) => `<div class="abs filet" style="left:${560 + i * 680}px;top:846px;width:640px"><div class="rule"></div><div class="name" style="font-size:50px">${p.name}</div><div class="role" style="font-size:15px">${p.role} · ${p.company}</div></div>`).join("");
+  return card(people.map(p => `<div class="person"><div class="name" style="font-size:30px">${p.name}</div><div class="role" style="font-size:12px;margin-top:6px">${p.role} · ${p.company}</div></div>`).join(""));
 }
 
 // Session poster in the left band, slides on the right, name strap under the slides
@@ -390,8 +397,9 @@ function slidesFrame(s) {
     </div>
     <div class="cam" style="left:24px;top:${TALK_CAM_TOP}px;width:472px;height:266px;box-shadow:0 0 0 6px var(--cream)">${cam}<span class="camtag">CAMÉRA LIVE</span></div>
     <div class="slide" style="left:560px;top:60px;width:1320px">${SLIDE_MOCK}</div>
-    ${slidesStrap(s)}
-    <div class="abs lb" style="right:40px;top:1000px;font-size:15px;opacity:.7">genai-days-nantes.com</div>
+    ${speakerCard(s)}
+    ${SUBTITLES}
+    <div class="abs lb" style="right:40px;top:22px;font-size:15px;opacity:.7">genai-days-nantes.com</div>
     ${BUG}
   </div>`;
 }
@@ -408,10 +416,32 @@ function panelFrame(s) {
   </div>`;
 }
 
+// Round tables on YouTube: the camera is the main picture, the left band recaps the session and every panelist
+function panelCamFrame(s) {
+  const src = `assets/sessions/${s.art}.webp`, pos = artPlacement(s, BAND_W, H, BAND_W / 2, s.bandFx ?? s.fx);
+  const centers = s.speakers.map((_, i) => W * (i + 1) / (s.speakers.length + 1));
+  const people = s.speakers.map(p => `<div class="row">${inkPortrait(p.slug, 64)}<div><div class="name">${p.name}</div><div class="role">${p.role} · ${p.company}</div></div></div>`).join("");
+  return `<div class="cv talk panel-cam t-${s.track}" data-slug="${s.slug}">
+    <div class="poster" style="left:0;top:0;width:${BAND_W}px;height:${H}px"><img src="${src}" alt="" style="${pos}"></div>
+    <div class="abs" style="left:0;top:0;width:${BAND_W}px;height:200px;background:linear-gradient(rgba(9,18,46,.5),rgba(9,18,46,0))"></div>
+    <div class="abs tk-box" style="left:24px;top:190px;width:472px;padding:22px 24px 24px;background:rgba(9,18,46,.66);border-radius:4px">
+      <div style="display:flex;gap:14px;align-items:center"><span class="chip">${CHIP_LABEL[s.track]}</span><span class="lb" style="font-size:16px">${s.format} · ${s.time}</span></div>
+      <div class="serif relief tk-title" style="font-size:40px;line-height:1.02;font-weight:600;margin-top:16px">${s.title}</div>
+    </div>
+    ${SUBTITLES}
+    <div class="abs spk-card panel-people" style="left:24px;top:${PANEL_PEOPLE_TOP}px;width:472px">${people}</div>
+    <div class="cam" style="left:560px;top:60px;width:1320px;height:742px;box-shadow:0 0 0 6px var(--cream)">${footage(s.speakers, centers, 70)}<span class="camtag">CAMÉRA LIVE</span></div>
+    <div class="abs lb" style="right:40px;top:22px;font-size:15px;opacity:.7">genai-days-nantes.com</div>
+    ${BUG}
+  </div>`;
+}
+const PANEL_PEOPLE_TOP = 520;
+
 // ---------- Startup Contest ----------
 // The rocket poster sits on the right; its left black wing fades into a matching black under the text column.
 const CONTEST_BLACK = "#14181a", CONTEST_POSTER_X = 560;
 const byTag = (s, tag) => s.speakers.filter(p => p.tag === tag);
+const pitchers = s => s.speakers.filter(p => p.tag === "Finaliste" || p.tag === "Pitch");
 
 function contestBackdrop(s) {
   const box = {w: W - CONTEST_POSTER_X, h: H}, src = `assets/sessions/${s.art}.webp`, pos = artPlacement(s, box.w, box.h, box.w / 2);
@@ -435,7 +465,7 @@ function contestBumper(s) {
   return `<div class="cv lay-A contest t-${s.track}" data-slug="${s.slug}" style="background:${CONTEST_BLACK}">
     ${contestBackdrop(s)}
     <div class="col" style="top:110px;bottom:120px">${meta}<div class="title" style="font-size:104px;margin-top:26px">${s.title}</div>
-      <div style="margin-top:40px"><div class="glabel lb">Finalistes</div>${peopleRow(byTag(s, "Finaliste"), 116, 32)}</div>
+      <div style="margin-top:40px"><div class="glabel lb">Pitchs</div>${peopleRow(pitchers(s), 108, 27)}</div>
       <div style="margin-top:34px"><div class="glabel lb">Jury</div>${peopleRow(byTag(s, "Jury"), 92, 28)}</div>
     </div>
     <div class="foot" style="left:110px;bottom:56px;opacity:1">${hostLine(s)}</div>
@@ -443,7 +473,7 @@ function contestBumper(s) {
 }
 
 function contestSteps(s, current) {
-  const steps = byTag(s, "Finaliste").map((p, i) => `${i + 1} · ${p.company}`).concat("Jury");
+  const steps = pitchers(s).map((p, i) => `${i + 1} · ${p.company}`).concat("Jury");
   return `<div class="steps lb">${steps.map((label, i) => `<span${i === current ? ` class="on"` : ""}>${label}</span>`).join("")}</div>`;
 }
 
@@ -474,7 +504,7 @@ function juryFrame(s) {
       <div class="jury">${jurors.map(p => `<div class="row">${inkPortrait(p.slug, 104)}<div><div class="name">${p.name}</div><div class="role lb"><span>${p.role}</span><br><span>${p.company}</span></div></div></div>`).join("")}</div>
       <div style="margin-top:54px">${hostLine(s)}</div>
     </div>
-    ${contestSteps(s, byTag(s, "Finaliste").length)}
+    ${contestSteps(s, pitchers(s).length)}
     ${BUG}
   </div>`;
 }
@@ -482,23 +512,27 @@ function juryFrame(s) {
 // One frame per session; 3+ people get the round-table slide; the contest has one frame per pitch then the jury. part is 1-based.
 function talkFrames(s) {
   if (s.contest) {
-    const finalists = byTag(s, "Finaliste");
-    return finalists.map((p, i) => ({part: i + 1, caption: `Pitch ${i + 1}/${finalists.length} · ${p.company}`, markup: pitchFrame(s, p, i, finalists.length)}))
-      .concat({part: finalists.length + 1, caption: "Jury", markup: juryFrame(s)});
+    const finalists = pitchers(s);
+    const n = finalists.length;
+    // Parts 1..n: full-screen card between pitches; n+1: jury; n+2..2n+1: camera and slides while each pitch runs
+    return finalists.map((p, i) => ({part: i + 1, caption: `Carton pitch ${i + 1}/${n} · ${p.company}`, markup: pitchFrame(s, p, i, n)}))
+      .concat({part: n + 1, caption: "Jury", markup: juryFrame(s)})
+      .concat(finalists.map((p, i) => ({part: n + 2 + i, caption: `Slides pitch ${i + 1}/${n} · ${p.company}`, markup: slidesFrame({...s, title: `Pitch ${i + 1}/${n} · ${p.company}`, speakers: [p]})})));
   }
   if (s.speakers.length < 3) return [{part: 1, caption: "Slides et intervenant", markup: slidesFrame(s)}];
-  return [{part: 1, caption: "Table ronde", markup: panelFrame(s)}];
+  return [{part: 1, caption: "Table ronde · écran de la salle", markup: panelFrame(s)},
+          {part: 2, caption: "Table ronde · YouTube, caméra en grand", markup: panelCamFrame(s)}];
 }
 
 const VIEWS = {
   bumpers: {
     title: "Bumpers d'intro", heading: "Bumpers <em>d'intro</em>", other: "talks", switchLabel: "Habillage pendant les talks &rarr;",
-    intro: "Le carton de 3 à 5 s avant chaque session du programme. Cliquer un cadre l'ouvre seul, en 1920 × 1080, pour OBS.",
+    intro: "Le carton de 3 à 5 s avant chaque session du programme. Cliquer un cadre l'ouvre seul, en 1920 × 1080, pour la régie.",
     frames: s => [{part: 1, caption: TRACK_LABEL[s.track], markup: s.contest ? contestBumper(s) : frameMarkup(s)}],
   },
   talks: {
     title: "Slides et intervenant", heading: "Slides et <em>intervenant</em>", other: "bumpers", switchLabel: "&larr; Bumpers d'intro",
-    intro: "Le cadre pendant chaque session&nbsp;: l'affiche recadrée dans la bande de gauche, la caméra live et les slides figurées, le nom sous les slides. Les tables rondes ont leur vue à la place des slides&nbsp;: l'affiche, le titre et les intervenant·es. Le Startup Contest a un cadre par pitch, puis le jury. Cliquer un cadre l'ouvre seul, en 1920 × 1080, pour OBS.",
+    intro: "Le cadre pendant chaque session&nbsp;: l'affiche recadrée dans la bande de gauche, la caméra live puis le nom de l'intervenant·e, les slides figurées. La bande sous les slides reste libre pour les sous-titres. Les tables rondes ont deux vues&nbsp;: l'écran de la salle (affiche, titre et intervenant·es, affiché par le PC de Samuel) et la trame YouTube, caméra en grand avec les intervenant·es à gauche. Le Startup Contest a un carton plein écran par pitch, le jury, puis un cadre caméra et slides par pitch. Cliquer un cadre l'ouvre seul, en 1920 × 1080, pour la régie.",
     frames: talkFrames,
   },
 };
@@ -550,6 +584,14 @@ function punchKeyHoles(canvas) {
   if (holes.length) canvas.style.clipPath = `path(evenodd,"M0 0H${W}V${H}H0Z${holes.map(h => `M${h.x} ${h.y}h${h.w}v${h.h}h${-h.w}Z`).join("")}")`;
 }
 
+// Viewing one frame in a browser window: scale it to fit, centred. At 1920 x 1080 (exports, vMix and OBS sources) the scale is 1.
+function fitSoloFrame(canvas) {
+  const scale = Math.min(innerWidth / 1920, innerHeight / 1080);
+  canvas.style.transformOrigin = "0 0";
+  canvas.style.transform = scale === 1 ? "none" : `scale(${scale})`;
+  canvas.style.marginLeft = `${Math.max(0, (innerWidth - 1920 * scale) / 2)}px`;
+  canvas.style.marginTop = `${Math.max(0, (innerHeight - 1080 * scale) / 2)}px`;
+}
 const params = new URLSearchParams(location.search);
 const view = params.get("view") === "talks" ? "talks" : "bumpers";
 const soloSession = SESSIONS.find(s => s.slug === params.get("session"));
@@ -558,7 +600,9 @@ if (soloSession) {
   const frames = VIEWS[view].frames(soloSession);
   document.body.classList.add("solo");
   document.getElementById("board").outerHTML = (frames.find(f => f.part === +params.get("part")) || frames[0]).markup;
-  if (params.get("key") === "1") punchKeyHoles(document.querySelector(".cv"));
+  const soloCanvas = document.querySelector(".cv");
+  if (params.get("key") === "1") punchKeyHoles(soloCanvas);
+  else { fitSoloFrame(soloCanvas); addEventListener("resize", () => fitSoloFrame(soloCanvas)); }
 } else {
   renderListing(document.getElementById("board"), view);
   fitFrames();
