@@ -6,7 +6,7 @@ track: "tech"
 startTime: "11:15"
 durationMinutes: 40
 room: ""
-speakerSlugs: []
+speakerSlugs: ["gregoire-de-turckheim"]
 format: "talk"
 themes: ["Inférence", "Datacenter", "Infrastructure IA"]
 illustration:

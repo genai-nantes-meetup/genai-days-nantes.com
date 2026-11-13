@@ -5,6 +5,7 @@ seoTitle: "Inference on my Mac mini is slow"
 themes: ["Inference", "Data centers", "AI infrastructure"]
 illustration:
   alt: "A line of executives, each in turn pouring molten metal into a GPU server"
+speakerSlugs: ["gregoire-de-turckheim"]
 ---
 
 Running a model locally looks simple, until the GPU bill and the seconds of waiting per answer show up.

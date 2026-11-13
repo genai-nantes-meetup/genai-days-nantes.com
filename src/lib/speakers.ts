@@ -112,6 +112,7 @@ export const SPEAKER_PORTRAIT_DIMENSIONS: Record<string, { width: number; height
   'florian-herveou': { width: 600, height: 600 },
   'frederic-didier': { width: 490, height: 490 },
   'gael-brisson': { width: 1024, height: 1024 },
+  'gregoire-de-turckheim': { width: 800, height: 800 },
   'horacio-gonzalez': { width: 800, height: 800 },
   'jaafar-steiblen-raji': { width: 800, height: 920 },
   'jean-yves-simon': { width: 800, height: 800 },
