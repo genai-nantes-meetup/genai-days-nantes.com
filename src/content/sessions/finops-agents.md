@@ -1,5 +1,5 @@
 ---
-title: "J'ai consommé mon budget IA en mai. Comment finir l'année?"
+title: "J'ai consommé mon budget IA en mai. Comment finir l'année ?"
 subtitle: "Maîtriser les coûts des Coding Agents à l'échelle de 300 personnes"
 seoTitle: "Les coûts cachés des agents de développement : comment piloter son budget"
 track: "decideurs"

@@ -39,7 +39,7 @@ describe('speaker page', () => {
     });
 
     expect(html).toContain('Sa session');
-    expect(html).toContain('Comment finir l&#39;année?');
+    expect(html).toContain('Comment finir l&#39;année\u00a0?');
     expect(html).toContain('Back Market est passé de 0 à 340 utilisateurs');
     expect(html).toContain('href="/programme/finops-agents"');
     expect(html).toContain('Agents IA');
