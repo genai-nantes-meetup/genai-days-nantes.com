@@ -1,24 +1,34 @@
-"""Export the live-stream graphics as 1920x1080 PNG files, packed twice: one zip for vMix, one zip for OBS.
+"""Export the live-stream graphics as PNG files, packed twice: one zip for vMix, one zip for OBS.
+The pages lay out a 1920x1080 canvas; the exporter renders it at --scale (default 2, so 3840x2160 UHD, same layout).
 The OBS pack also carries navigateur/, a standalone copy of bumpers.html with only the assets it loads (Browser sources).
-Usage: uv run --with playwright --with pillow python scripts/export_habillage.py <habillage-captation dir> [<out dir>]
+Usage: uv run --with playwright --with pillow python scripts/export_habillage.py <habillage-captation dir> [<out dir>] [--scale 1]
 Default out dir: <habillage-captation dir>/livrables/habillage-genai-days (the zips land next to it, in livrables/).
 Needs Chromium once: uv run --with playwright python -m playwright install chromium"""
-import functools, http.server, io, os, pathlib, shutil, subprocess, sys, tempfile, threading, urllib.parse, zipfile
+import argparse, functools, http.server, io, os, pathlib, re, shutil, subprocess, tempfile, threading, unicodedata, urllib.parse, zipfile
 from PIL import Image, ImageChops, ImageCms, ImageStat
 from playwright.sync_api import sync_playwright
 
-ROOT = os.path.abspath(sys.argv[1])
-OUT = os.path.abspath(sys.argv[2]) if len(sys.argv) > 2 else os.path.join(ROOT, "livrables", "habillage-genai-days")
+ARGS = argparse.ArgumentParser()
+ARGS.add_argument("root")
+ARGS.add_argument("out", nargs="?")
+ARGS.add_argument("--scale", type=int, choices=(1, 2), default=2, help="2 = 3840x2160 (default), 1 = 1920x1080")
+ARGS = ARGS.parse_args()
+ROOT = os.path.abspath(ARGS.root)
+OUT = os.path.abspath(ARGS.out) if ARGS.out else os.path.join(ROOT, "livrables", "habillage-genai-days")
 RENDERS = os.path.dirname(OUT)
+# W, H: the CSS canvas the pages lay out (and the coordinates in data-holes). PW, PH: the pixels the PNG files carry.
 W, H = 1920, 1080
+SCALE = ARGS.scale
+PW, PH = W * SCALE, H * SCALE
 
 BUMPERS = "01-bumpers"
-PANELS = "02-tables-rondes"
-CONTEST = "03-startup-contest"
-SIGNATURE = "04-signature-angle.png"
-END_CARD = "05-carton-de-fin.png"
-OPTION = "option-slides-et-intervenant"
-OPTION_PREVIEW = f"{OPTION}/_apercu"
+TALKS = "02-conferences"
+TALKS_PREVIEW = f"{TALKS}/_apercu"
+PANELS = "03-tables-rondes"
+PANELS_ROOM, PANELS_YOUTUBE = f"{PANELS}/salle", f"{PANELS}/youtube"
+CONTEST = "04-startup-contest"
+SIGNATURE = "05-signature-angle.png"
+END_CARD = "06-carton-inter-sessions-et-fin.png"
 BROWSER_DIR = "navigateur"
 README_VMIX, README_OBS = "LISEZ-MOI-vMix.txt", "LISEZ-MOI-OBS.txt"
 # Each pack: folder name inside its zip, the README it keeps, and the working-folder entries it leaves out.
@@ -26,7 +36,8 @@ PACKS = {
     "vmix": {"folder": "habillage-genai-days-vmix", "readme": README_VMIX, "skip": {README_OBS, BROWSER_DIR}},
     "obs": {"folder": "habillage-genai-days-obs", "readme": README_OBS, "skip": {README_VMIX}},
 }
-CONTEST_FRAMES = ["1-bumper.png", "2-pitch-1-bworlds.png", "3-pitch-2-motiv.png", "4-pitch-3-laborheto.png", "5-jury.png"]
+# Startup Contest files: 0 = bumper, then one file per ?part=N of the page (cards, jury, keyed slides overlays), read from talkFrames().
+CONTEST_BUMPER = "0-bumper.png"
 TRACK_SHORT = {"decide": "decider", "impl": "implementer", "common": "commun"}
 TRACK_NAME = {"decide": "Décider", "impl": "Implémenter", "common": "Commun"}
 HOLE_LABEL = {"camera": "Caméra", "slides": "PC (slides)"}
@@ -60,7 +71,7 @@ READY_JS = """async () => {
   if (col && col.scrollHeight > col.clientHeight + 1) issues.push(`text column overflows by ${col.scrollHeight - col.clientHeight}px`);
   const box = cv.querySelector(".tk-box");
   if (box && box.offsetTop + box.offsetHeight > TALK_CAM_TOP - 24) issues.push("title box runs into the camera");
-  cv.querySelectorAll(".title,.tk-title,.name,.cname,.role,.co,.lb,.wm").forEach(el => {
+  cv.querySelectorAll(".title,.tk-title,.name,.cname,.role,.co,.lb,.wm,.spk-card").forEach(el => {
     const r = el.getBoundingClientRect();
     if (r.width && (r.left < -1 || r.right > 1921 || r.bottom > 1081)) issues.push(`out of frame: ${el.className} "${el.textContent.trim().slice(0, 40)}"`);
   });
@@ -80,6 +91,9 @@ def capture(page, url, transparent, label):
     problems.extend(f"{label}: {issue}" for issue in result["issues"])
     png = page.screenshot(omit_background=transparent, clip={"x": 0, "y": 0, "width": W, "height": H})
     img = Image.open(io.BytesIO(png))
+    if not transparent and img.mode == "RGBA" and img.getchannel("A").getextrema() != (255, 255):
+        # A full frame must cover the whole canvas by itself, not rely on the screenshot's white fill.
+        problems.append(f"{label}: full frame has see-through pixels before flattening")
     return (img.convert("RGBA") if transparent else img.convert("RGB")), result["holes"]
 
 
@@ -88,32 +102,42 @@ def shoot(page, url, rel, transparent):
     path = os.path.join(OUT, rel)
     os.makedirs(os.path.dirname(path), exist_ok=True)
     img.save(path, icc_profile=SRGB, optimize=True)
-    return [dict(zip("nxywh", [h.split()[0], *map(int, h.split()[1:])])) for h in holes.split(";") if h]
+    # data-holes is in CSS px: scale to the file's pixels, which is what the checks and the READMEs use.
+    return [dict(zip("nxywh", [h.split()[0], *(int(v) * SCALE for v in h.split()[1:])])) for h in holes.split(";") if h]
+
+
+def contest_part_name(part):
+    if part["keyed"]:
+        return f"{part['part']}-slides-pitch-{part['pitch']}-{part['logo']}.png"
+    if part["pitch"]:
+        return f"{part['part']}-carton-pitch-{part['pitch']}-{part['logo']}.png"
+    slug = re.sub(r"[^a-z0-9]+", "-", unicodedata.normalize("NFKD", part["caption"]).encode("ascii", "ignore").decode().lower()).strip("-")
+    return f"{part['part']}-{slug}.png"
 
 
 # ---------- checks on the saved files ----------
 def check_opaque(rel):
     img = Image.open(os.path.join(OUT, rel))
-    if img.size != (W, H) or img.mode != "RGB":
-        problems.append(f"{rel}: expected opaque RGB {W}x{H}, got {img.mode} {img.size}")
+    if img.size != (PW, PH) or img.mode != "RGB":
+        problems.append(f"{rel}: expected opaque RGB {PW}x{PH}, got {img.mode} {img.size}")
 
 
 def alpha_of(rel):
     img = Image.open(os.path.join(OUT, rel))
-    if img.size != (W, H) or img.mode != "RGBA":
-        problems.append(f"{rel}: expected RGBA {W}x{H}, got {img.mode} {img.size}")
+    if img.size != (PW, PH) or img.mode != "RGBA":
+        problems.append(f"{rel}: expected RGBA {PW}x{PH}, got {img.mode} {img.size}")
     return img.getchannel("A")
 
 
 def check_talk_overlay(rel, holes):
     alpha = alpha_of(rel)
-    mask = Image.new("L", (W, H), 0)
+    mask = Image.new("L", (PW, PH), 0)
     for h in holes:
         mask.paste(255, (h["x"], h["y"], h["x"] + h["w"], h["y"] + h["h"]))
         inside = alpha.crop((h["x"], h["y"], h["x"] + h["w"], h["y"] + h["h"])).getextrema()
         if inside != (0, 0):
             problems.append(f"{rel}: {h['n']} hole alpha range {inside}, expected 0")
-    outside = Image.composite(Image.new("L", (W, H), 255), alpha, mask).getextrema()
+    outside = Image.composite(Image.new("L", (PW, PH), 255), alpha, mask).getextrema()
     if outside != (255, 255):
         problems.append(f"{rel}: alpha outside the holes ranges {outside}, expected 255")
 
@@ -121,8 +145,20 @@ def check_talk_overlay(rel, holes):
 def check_signature(rel):
     alpha = alpha_of(rel)
     box = alpha.point(lambda a: 255 if a else 0).getbbox()
-    if not box or box[2] > 560 or box[3] > 150:
-        problems.append(f"{rel}: signature bbox {box} should sit inside the 560x150 reserved zone")
+    zone = (560 * SCALE, 150 * SCALE)
+    if not box or box[2] > zone[0] or box[3] > zone[1]:
+        problems.append(f"{rel}: signature bbox {box} should sit inside the {zone[0]}x{zone[1]} reserved zone")
+        return
+    # The signature is drawn at opacity .72 on purpose, so its strongest alpha is ~184, never 255.
+    # Straight (unpremultiplied) alpha keeps those pixels cream; premultiplied or flattened files would darken them.
+    peak = alpha.getextrema()[1]
+    if peak < 128:
+        problems.append(f"{rel}: signature peak alpha {peak}, too faint to read")
+        return
+    strongest = alpha.point(lambda a: 255 if a == peak else 0)
+    rgb = ImageStat.Stat(Image.open(os.path.join(OUT, rel)).convert("RGB"), mask=strongest).mean
+    if min(rgb) < 220:
+        problems.append(f"{rel}: signature colour {[round(c) for c in rgb]} at alpha {peak} is not cream: alpha looks premultiplied")
 
 
 # ---------- contact sheets ----------
@@ -156,13 +192,20 @@ def contact_sheet(rels, dest, cols=3, thumb_w=640):
 
 
 # ---------- READMEs ----------
+def french_spacing(text):
+    """Non-breaking space before : ; ! ? and inside « », so the punctuation never wraps alone."""
+    text = re.sub(r" ([:;!?])(?=\s|$)", "\u00a0\\1", text, flags=re.M)
+    return text.replace("« ", "«\u00a0").replace(" »", "\u00a0»")
+
+
 def holes_text(talk_holes):
-    hole_sets = {tuple((h["n"], h["x"], h["y"], h["w"], h["h"]) for h in holes) for holes in talk_holes.values()}
-    if len(hole_sets) == 1:
-        return "Identiques pour tous les overlays de l'option :\n" + "\n".join(
-            f"  {HOLE_LABEL[n]:<12} x {x:<5} y {y:<5} largeur {w:<6} hauteur {h}" for n, x, y, w, h in next(iter(hole_sets)))
-    return "Attention, les trous varient selon le talk :\n" + "\n".join(
-        f"  {slug} : " + ", ".join(f"{h['n']} x {h['x']} y {h['y']} l {h['w']} h {h['h']}" for h in holes) for slug, holes in talk_holes.items())
+    groups = {}
+    for rel, holes in talk_holes.items():
+        key = tuple((h["n"], h["x"], h["y"], h["w"], h["h"]) for h in holes)
+        groups.setdefault(key, set()).add(os.path.dirname(rel))
+    return "\n\n".join("Trames de " + ", ".join(f"{d}/" for d in sorted(dirs)) + " :\n" + "\n".join(
+        f"  {HOLE_LABEL[n]:<12} x {x:<5} y {y:<5} largeur {w:<6} hauteur {h}" for n, x, y, w, h in key)
+        for key, dirs in groups.items())
 
 
 def schedule_table(sessions, files_by_slug):
@@ -175,51 +218,80 @@ def schedule_table(sessions, files_by_slug):
     return "\n".join(f"{r[0]:<{widths[0]}}  {r[1]:<{widths[1]}}  {r[2]:<{widths[2]}}  {r[3]}".rstrip() for r in rows)
 
 
-def common_sections(software, input_word):
+def resolution_text():
+    if SCALE == 1:
+        return f"Toutes les images font {PW} x {PH} px (Full HD)"
+    return (f"Toutes les images font {PW} x {PH} px (4K UHD). Une production en {W} x {H}\n"
+            f"les charge aussi : le logiciel les réduit de moitié, sans perte visible")
+
+
+def span(numbers):
+    return f"{numbers[0]}" if len(numbers) == 1 else f"{numbers[0]} à {numbers[-1]}"
+
+
+def contest_numbers(contest_parts):
+    cards = [p["part"] for p in contest_parts if p["pitch"] and not p["keyed"]]
+    others = [p["part"] for p in contest_parts if not p["pitch"] and not p["keyed"]]
+    keyed = [p["part"] for p in contest_parts if p["keyed"]]
+    return cards, others, keyed
+
+
+def common_sections(software, input_word, contest_parts):
+    cards, others, keyed = contest_numbers(contest_parts)
     head = f"""GENAI DAYS 2026 · Habillage de captation pour {software}
 Mardi 17 novembre 2026 · Hôtel de Région · Nantes
 
-Toutes les images font 1920 x 1080 px, en PNG sRGB, à charger en {input_word}.
+{resolution_text()}.
+Format PNG sRGB, à charger en {input_word}.
 (transparent) = PNG avec couche alpha, à poser par-dessus une source.
-(opaque) = image plein écran, elle remplace la source.
+(opaque) = image plein écran, sans aucune transparence : elle remplace la source.
 
 
 CONTENU
 
-L'essentiel, utilisé toute la journée :
-
 {BUMPERS}/                 (opaque) Carton d'intro de chaque session, 3 à 5 s.
                             Nom : heure-parcours-session.png, dans l'ordre de la journée.
-{PANELS}/           (opaque) Écran de chaque table ronde, plein écran, à la place des
-                            slides : affiche, titre, les quatre intervenant·es avec leur rôle.
-{CONTEST}/         (opaque) Séquence du Startup Contest : 1 bumper, 2 à 4 un écran
-                            par pitch, 5 délibération du jury.
-{SIGNATURE}      (transparent) Signature GENAI DAYS seule, en haut à gauche.
-                            Reste par-dessus le PC du speaker pendant tout un talk.
-{END_CARD}        (opaque) Affiche, signature et partenaires. Fin de journée, fin des vidéos.
+{TALKS}/             (transparent) Trame de chaque conférence, keynote d'ouverture comprise :
+                            affiche, titre et intervenant·e à gauche, signature, URL en haut
+                            à droite. Deux trous : la caméra (petite, à gauche) et les slides
+                            du PC (grandes, à droite). La bande sous les slides reste vide
+                            pour les sous-titres.
+  _apercu/                  (opaque) Les mêmes trames avec caméra et slides figurées.
+                            Pour voir le rendu attendu, jamais pour l'antenne.
+{PANELS_ROOM}/     (opaque) Écran de la salle pendant chaque table ronde : affiche,
+                            titre, intervenant·es. Affiché par le PC de Samuel sur l'entrée
+                            HDMI du speaker, pas par la régie.
+{PANELS_YOUTUBE}/   (transparent) Trame YouTube de chaque table ronde : un seul trou,
+                            la caméra en grand ; affiche, titre et intervenant·es à gauche.
+  _apercu/                  (opaque) La même trame avec la caméra figurée.
+{CONTEST}/         Séquence du Startup Contest, {len(cards)} pitchs :
+                            (opaque) 0 bumper, {span(cards)} un carton plein écran avant
+                            chaque pitch, {span(others)} délibération du jury.
+                            (transparent) {span(keyed)} trame caméra et slides pendant chaque
+                            pitch, mêmes trous que {TALKS}/.
+  _apercu/                  (opaque) Les mêmes trames avec caméra et slides figurées.
+{SIGNATURE}      (transparent) Signature GENAI DAYS seule, en haut à gauche, à poser
+                            sur la caméra quand elle passe seule à l'antenne.
+{END_CARD}
+                            (opaque) Entre deux sessions et en fin de journée, keynote
+                            de clôture comprise : affiche, URL et partenaires. Peut rester
+                            à l'écran aussi longtemps que nécessaire.
 
-En bonus, pas nécessaire au direct :
 
-{OPTION}/  (transparent) OPTION. Overlay complet pendant un talk : affiche et
-                            titre à gauche, nom de l'intervenant·e, signature, avec deux
-                            trous pour la caméra et le PC du speaker. Pas prévu dans le
-                            déroulé de base. Peut servir au montage des replays, et
-                            peut-être en direct en salle 2 (pas encore décidé).
-  _apercu/                  (opaque) Le même cadre avec caméra et slides figurées. Pour voir
-                            le rendu attendu, jamais pour l'antenne.
+DÉROULÉ DE LA JOURNÉE
 
-
-DÉROULÉ D'UNE SESSION (déroulé de base)
-
-1. Début de session : le bumper de {BUMPERS}, quelques secondes.
-2. Pendant un talk : PC du speaker plein écran, {SIGNATURE} par-dessus.
-3. Tables rondes (10:20 et 16:00, parcours Décider) : pas de slides. L'écran {PANELS}
-   de la session à la place du PC, en alternance avec la caméra plateau
-   ({SIGNATURE} par-dessus la caméra).
-4. Startup Contest (11:55) : {CONTEST} dans l'ordre. 1 en ouverture, 2, 3 et 4
-   pendant chaque pitch, 5 pendant la délibération du jury.
-5. Podcast (18:10) : bumper de {BUMPERS}, puis caméra avec {SIGNATURE} par-dessus.
-6. Fin de journée et fin de chaque vidéo : {END_CARD}.
+1. Entre deux sessions : {END_CARD}.
+2. Début de session : le bumper de {BUMPERS}, quelques secondes.
+3. Conférence : la trame {TALKS}/ de la session par-dessus la caméra et le PC
+   du speaker. Écran de la salle et YouTube identiques.
+4. Tables rondes (10:20 et 16:00, parcours Décider) : pas de slides.
+   Écran de la salle : {PANELS_ROOM}/, affiché par le PC de Samuel.
+   YouTube : la trame {PANELS_YOUTUBE}/ par-dessus la caméra.
+5. Startup Contest (11:55) : {CONTEST} dans l'ordre. 0 en ouverture, puis pour
+   chaque pitch son carton ({span(cards)}) le temps que la startup s'installe, et
+   pendant le pitch sa trame ({span(keyed)}) par-dessus la caméra et le PC. Enfin
+   {span(others)} pendant la délibération du jury.
+6. Keynote de clôture et fin de journée : {END_CARD}.
 
 Deux scènes tournent en parallèle (Décider et Implémenter) : la colonne Parcours du
 planning dit quelle scène est concernée.
@@ -227,35 +299,49 @@ planning dit quelle scène est concernée.
     return head
 
 
-def option_holes_section(talk_holes):
-    return f"""OPTION SLIDES ET INTERVENANT (bonus)
+def holes_section(talk_holes):
+    return f"""TRAMES : POSITION DES TROUS
 
-Remplace l'étape 2 du déroulé quand on veut voir la caméra et les slides ensemble.
-Un overlay par talk : il porte le titre et le nom, en changer à chaque session.
+Une trame par session : elle porte le titre et les noms, en changer à chaque session.
+Les trames de pitch du Startup Contest ({CONTEST}/) ont la mise en page de {TALKS}/.
 
-Trous de l'overlay (pixels sur 1920 x 1080, origine en haut à gauche) :
+Trous des trames, en pixels de l'image {PW} x {PH}, origine en haut à gauche :
 
 {holes_text(talk_holes)}
-
+{half_canvas_note()}
 Dans les trous, alpha 0. Partout ailleurs, alpha 255. Le liseré crème autour de la
-caméra fait partie de l'overlay. La caméra 16:9 entre à 1 px près dans 472 x 266.
+caméra fait partie de l'overlay. La caméra 16:9 entre à {SCALE} px près dans {472 * SCALE} x {266 * SCALE}.
 """
+
+
+def half_canvas_note():
+    if SCALE == 1:
+        return ""
+    return (f"\nSur une production en {W} x {H}, l'overlay est réduit de moitié : diviser\n"
+            f"toutes ces valeurs par {SCALE}.\n")
 
 
 def planning_section(sessions, files_by_slug):
     return f"""PLANNING
 
-(option) = fichier du bonus, inutile pour le déroulé de base.
+(transparent) = trame à poser par-dessus la caméra (et le PC pour les conférences).
 
 {schedule_table(sessions, files_by_slug)}
 """
 
 
-def readme_vmix(sessions, talk_holes, files_by_slug):
-    return "\n\n".join([common_sections("vMix", "input Image"), option_holes_section(talk_holes) + f"""
+def vmix_scale_note():
+    if SCALE == 1:
+        return ""
+    return (f"- En production {W} x {H}, vMix met les images {PW} x {PH} à l'échelle de la sortie.\n"
+            f"  Vérifier dans Position de l'input qu'elles occupent tout l'écran.\n")
+
+
+def readme_vmix(sessions, talk_holes, files_by_slug, contest_parts):
+    return "\n\n".join([common_sections("vMix", "input Image", contest_parts), holes_section(talk_holes) + f"""
 Dans vMix : prendre un input qui porte des couches (Colour, Virtual Set ou Multi View
 selon la version), y mettre la caméra et le PC comme couches positionnées et
-dimensionnées aux coordonnées ci-dessus, puis l'overlay de l'option en couche du
+dimensionnées aux coordonnées ci-dessus, puis la trame en couche du
 dessus ou sur un canal Overlay.
 """, f"""CONSEILS VMIX (à vérifier selon la version)
 
@@ -265,31 +351,73 @@ dessus ou sur un canal Overlay.
 - Les PNG opaques (bumpers, tables rondes, Startup Contest, carton de fin) passent
   en Preview puis en Program comme n'importe quel input.
 - Préparer les inputs de la journée à l'avance et les nommer comme les fichiers.
-""", planning_section(sessions, files_by_slug)])
+{vmix_scale_note()}""", planning_section(sessions, files_by_slug)])
 
 
-def readme_obs(sessions, talk_holes, files_by_slug, sample_slug, contest_slug):
-    return "\n\n".join([common_sections("OBS Studio", "source Image"), f"""SCÈNES OBS SUGGÉRÉES (à vérifier selon la version)
+def obs_canvas_note():
+    if SCALE == 1:
+        return ""
+    return (f",\nou {W} x {H} : dans ce cas, sélectionner chaque source Image puis clic droit >\n"
+            f"Transformer > Ajuster à l'écran (Ctrl+F), pour qu'elle occupe tout le canevas")
 
-Canevas : Paramètres > Vidéo > Résolution de base 1920 x 1080.
+
+def obs_browser_note():
+    if SCALE == 1:
+        return ""
+    return f", deux fois moins\nde pixels que les PNG sur un canevas {PW} x {PH}"
+
+
+def obs_browser_size_note():
+    if SCALE == 1:
+        return ""
+    return (f".\nLa page est dessinée pour {W} x {H} : sur un canevas {PW} x {PH}, garder ces\n"
+            f"valeurs puis Ctrl+F pour l'agrandir")
+
+
+def readme_obs(sessions, talk_holes, files_by_slug, sample_slug, contest_slug, contest_parts):
+    cards, others, keyed = contest_numbers(contest_parts)
+    return "\n\n".join([common_sections("OBS Studio", "source Image", contest_parts), f"""SCÈNES OBS SUGGÉRÉES (à vérifier selon la version)
+
+Canevas : Paramètres > Vidéo > Résolution de base {PW} x {PH}{obs_canvas_note()}.
 Dans une scène, l'ordre des sources est l'ordre des calques : la source du haut de la
 liste passe devant celles du dessous.
 
 - Bumper : une scène par session, chacune avec une source Image sur le bumper de
   {BUMPERS}. Ou une seule scène « Bumper » avec une source Diaporama d'images
   (Image Slide Show) qui contient tout {BUMPERS} dans l'ordre, avancée à la main.
-- Talk : la capture du PC du speaker (carte d'acquisition ou périphérique de
-  capture vidéo) en plein écran, et au-dessus une source Image {SIGNATURE}.
-- Table ronde : une source Image par table ronde ({PANELS}), plus une scène
-  caméra plateau avec {SIGNATURE} au-dessus, pour alterner.
-- Startup Contest : un Diaporama d'images avec les cinq fichiers de {CONTEST},
-  avancé à la main, ou une scène par fichier.
+- Conférence : une scène « Talk complet » (plus bas) avec la trame {TALKS}/ de la
+  session par-dessus la caméra et la capture du PC du speaker.
+- Table ronde (YouTube) : la caméra en grand dans le trou, la trame {PANELS_YOUTUBE}/
+  de la session au-dessus. L'écran de la salle vient du PC de Samuel.
+- Startup Contest : les fichiers opaques de {CONTEST} en Diaporama d'images avancé
+  à la main, ou une scène par fichier. Pour chaque pitch, une scène comme « Talk
+  complet » (plus bas) avec l'overlay {span(keyed)} du pitch par-dessus la caméra et le PC.
 - Fin : une source Image {END_CARD}.
 
 OBS gère la transparence PNG sans réglage.
-""", option_holes_section(talk_holes) + f"""
+""", f"""IMAGES OU SOURCE NAVIGATEUR ?
+
+Les deux sont dans ce dossier. Elles affichent la même chose.
+
+Images (conseillé) : les PNG des dossiers ci-dessus, en source Image. C'est le plus
+simple et le plus sûr : rien à calculer, rien à charger au moment du direct, et elles
+sont à la pleine résolution {PW} x {PH}.
+
+Les PNG (transparent) ont une vraie couche alpha. Overlays : transparents dans les
+deux trous (alpha 0), opaques partout ailleurs (alpha 255). Signature : transparente
+autour du logo, le logo lui-même légèrement translucide (voulu).
+Placer la source Image AU-DESSUS de la caméra et de la capture du PC dans la liste
+des sources : la caméra et les slides apparaissent dans les trous, sans
+incrustation, sans clé chroma, sans filtre ni réglage de fusion.
+Les PNG (opaque) n'ont aucune transparence : ils couvrent tout l'écran.
+
+Source Navigateur ({BROWSER_DIR}/, voir plus bas) : seulement pour qui préfère piloter
+une page HTML, par exemple pour changer de session en changeant l'URL.
+Elle rend la page à {W} x {H}{obs_browser_note()}.
+Le carton de fin et la signature n'y sont pas : pour eux, toujours les PNG.
+""", holes_section(talk_holes) + f"""
 Dans OBS : une scène « Talk complet » avec, de haut en bas dans la liste des sources,
-l'overlay de l'option (source Image), puis la caméra, puis la capture du PC. Placer
+la trame (source Image), puis la caméra, puis la capture du PC. Placer
 la caméra et le PC avec clic droit > Transformer > Modifier la transformation
 (Ctrl+E) : Position x et y comme ci-dessus, alignement en haut à gauche, type de
 cadre de délimitation « Mettre à l'échelle dans les limites intérieures », taille du
@@ -300,18 +428,21 @@ Les PNG restent le choix sûr. Ce dossier sert à qui préfère une source Navig
 {BROWSER_DIR}/bumpers.html est une copie autonome de la page qui a produit les PNG,
 avec seulement les images et polices dont elle a besoin. Rien ne passe par internet.
 
-Source Navigateur : largeur 1920, hauteur 1080. Décocher « Fichier local » et coller
-dans URL le chemin complet du fichier suivi des paramètres (avec « Fichier local »
-coché, OBS ne garde pas ce qui suit le « ? »). À tester sur la machine avant le jour J.
+Source Navigateur : largeur {W}, hauteur {H}{obs_browser_size_note()}.
+Décocher « Fichier local » et coller dans URL le chemin complet du fichier suivi des
+paramètres (avec « Fichier local » coché, OBS ne garde pas ce qui suit le « ? »).
+À tester sur la machine avant le jour J.
 Exemple sous Windows :
 
   file:///C:/habillage-genai-days-obs/{BROWSER_DIR}/bumpers.html?session={sample_slug}
 
 Paramètres :
   bumpers.html?session=<slug>                               bumper de la session
-  bumpers.html?view=talks&session=<slug>                    écran du talk ou de la table ronde
-  bumpers.html?view=talks&session=<slug>&key=1              overlay de l'option, trous transparents
-  bumpers.html?view=talks&session={contest_slug}&part=<1 à 4>   pitch 1 à 3, puis jury
+  bumpers.html?view=talks&session=<slug>                    trame de la conférence, écran de salle d'une table ronde
+  bumpers.html?view=talks&session=<slug>&part=2&key=1       table ronde, trame YouTube, trou transparent
+  bumpers.html?view=talks&session=<slug>&key=1              trame de la conférence, trous transparents
+  bumpers.html?view=talks&session={contest_slug}&part=<n>   n = numéro du fichier de {CONTEST}
+                                                            (ajouter &key=1 pour {span(keyed)})
 
 <slug> = la fin du nom de fichier du bumper, sans heure ni parcours : pour
 {BUMPERS}/0940-implementer-product-velocity.png, le slug est product-velocity.
@@ -332,7 +463,7 @@ def build_browser_copy(asset_paths):
 
 def verify_browser_copy(browser, page_root, checks):
     """Open the copied page from its own folder (file://) and compare each view to the exported PNG."""
-    page = browser.new_page(viewport={"width": W, "height": H}, device_scale_factor=1)
+    page = browser.new_page(viewport={"width": W, "height": H}, device_scale_factor=SCALE)
     failed = []
     page.on("requestfailed", lambda r: failed.append(r.url))
     base = pathlib.Path(page_root, "bumpers.html").as_uri()
@@ -368,7 +499,10 @@ def pack(name, readme_text):
                 if n.startswith(".") or (rel_dir == "." and n in spec["skip"] | {README_VMIX, README_OBS}):
                     continue
                 full = os.path.join(dirpath, n)
-                z.write(full, os.path.join(spec["folder"], os.path.relpath(full, OUT)))
+                # PNG data is already deflated: storing it keeps the zip the same size and builds it faster.
+                stored = n.endswith(".png")
+                z.write(full, os.path.join(spec["folder"], os.path.relpath(full, OUT)),
+                        compress_type=zipfile.ZIP_STORED if stored else zipfile.ZIP_DEFLATED)
                 count += 1
         z.writestr(os.path.join(spec["folder"], spec["readme"]), readme_text)
     return path, count + 1
@@ -390,7 +524,7 @@ def main():
 
     with sync_playwright() as pw:
         browser = pw.chromium.launch()
-        page = browser.new_page(viewport={"width": W, "height": H}, device_scale_factor=1)
+        page = browser.new_page(viewport={"width": W, "height": H}, device_scale_factor=SCALE)
         page.on("request", record_asset)
         # The listing views load every asset the page can show, so navigateur/ also works without ?session.
         for listing in ("bumpers.html", "bumpers.html?view=talks"):
@@ -399,7 +533,12 @@ def main():
         sessions = page.evaluate("""() => SESSIONS.map(s => {
           const t = document.createElement("textarea"); t.innerHTML = s.title;
           return {slug: s.slug, time: s.time, track: s.track, format: s.format, title: t.value.replace(/\\u2011/g, "-"),
-                  contest: !!s.contest, panel: !s.contest && s.speakers.length >= 3};
+                  contest: !!s.contest, panel: !s.contest && s.speakers.length >= 3,
+                  parts: s.contest ? talkFrames(s).map(f => {
+                    const ps = pitchers(s), p = ps.find(p => f.caption.endsWith("· " + p.company));
+                    return {part: f.part, keyed: !/class="cv[^"]*\\bcontest\\b/.test(f.markup), pitch: p ? ps.indexOf(p) + 1 : 0,
+                            logo: p ? p.logo : "", caption: f.caption};
+                  }) : []};
         })""")
         sessions.sort(key=lambda s: (s["time"], s["track"] != "decide"))
         files_by_slug, talk_holes, browser_checks = {}, {}, []
@@ -414,35 +553,66 @@ def main():
             browser_checks.append((query, bumper, False))
             files = [bumper]
             if s["contest"]:
-                contest_slug = s["slug"]
-                queries = [query] + [f"?view=talks&session={s['slug']}&part={i}" for i in range(1, len(CONTEST_FRAMES))]
-                for frame, q in zip(CONTEST_FRAMES, queries):
-                    rel = f"{CONTEST}/{frame}"
-                    shoot(page, base + "bumpers.html" + q, rel, False)
-                    check_opaque(rel)
-                    sheets["contest"].append(rel)
-                    browser_checks.append((q, rel, False))
-                    files.append(rel)
+                contest_slug, contest_parts = s["slug"], s["parts"]
+                rel = f"{CONTEST}/{CONTEST_BUMPER}"
+                shoot(page, base + "bumpers.html" + query, rel, False)
+                check_opaque(rel)
+                sheets["contest"].append(rel)
+                browser_checks.append((query, rel, False))
+                files.append(rel)
+                for part in contest_parts:
+                    name_part = contest_part_name(part)
+                    q = f"?view=talks&session={s['slug']}&part={part['part']}"
+                    if part["keyed"]:
+                        overlay, preview = f"{CONTEST}/{name_part}", f"{CONTEST}/_apercu/{name_part}"
+                        holes = shoot(page, base + "bumpers.html" + q + "&key=1", overlay, True)
+                        shoot(page, base + "bumpers.html" + q, preview, False)
+                        check_opaque(preview)
+                        if [h["n"] for h in holes] != ["camera", "slides"]:
+                            problems.append(f"{overlay}: holes not measured: {holes}")
+                        talk_holes[overlay] = holes
+                        check_talk_overlay(overlay, holes)
+                        sheets["talks"] += [overlay, preview]
+                        browser_checks += [(q + "&key=1", overlay, True), (q, preview, False)]
+                        files.append(f"{overlay}  (transparent)")
+                    else:
+                        rel = f"{CONTEST}/{name_part}"
+                        shoot(page, base + "bumpers.html" + q, rel, False)
+                        check_opaque(rel)
+                        sheets["contest"].append(rel)
+                        browser_checks.append((q, rel, False))
+                        files.append(rel)
             elif s["panel"]:
-                rel, q = f"{PANELS}/{name}", f"?view=talks&session={s['slug']}"
+                rel, q = f"{PANELS_ROOM}/{name}", f"?view=talks&session={s['slug']}&part=1"
                 shoot(page, base + "bumpers.html" + q, rel, False)
                 check_opaque(rel)
                 sheets["tables"].append(rel)
                 browser_checks.append((q, rel, False))
-                files += [rel, SIGNATURE]
+                q = f"?view=talks&session={s['slug']}&part=2"
+                overlay, preview = f"{PANELS_YOUTUBE}/{name}", f"{PANELS_YOUTUBE}/_apercu/{name}"
+                holes = shoot(page, base + "bumpers.html" + q + "&key=1", overlay, True)
+                shoot(page, base + "bumpers.html" + q, preview, False)
+                check_opaque(preview)
+                if [h["n"] for h in holes] != ["camera"]:
+                    problems.append(f"{overlay}: camera hole not measured: {holes}")
+                talk_holes[overlay] = holes
+                check_talk_overlay(overlay, holes)
+                sheets["tables"] += [overlay, preview]
+                browser_checks += [(q + "&key=1", overlay, True), (q, preview, False)]
+                files += [f"{rel}  (écran de la salle)", f"{overlay}  (transparent, YouTube)"]
             else:
                 q = f"?view=talks&session={s['slug']}"
-                overlay, preview = f"{OPTION}/{name}", f"{OPTION_PREVIEW}/{name}"
+                overlay, preview = f"{TALKS}/{name}", f"{TALKS_PREVIEW}/{name}"
                 holes = shoot(page, base + "bumpers.html" + q + "&key=1", overlay, True)
                 shoot(page, base + "bumpers.html" + q, preview, False)
                 check_opaque(preview)
                 if [h["n"] for h in holes] != ["camera", "slides"]:
                     problems.append(f"{overlay}: holes not measured: {holes}")
-                talk_holes[s["slug"]] = holes
+                talk_holes[overlay] = holes
                 check_talk_overlay(overlay, holes)
                 sheets["talks"] += [overlay, preview]
                 browser_checks += [(q + "&key=1", overlay, True), (q, preview, False)]
-                files += [SIGNATURE, f"{overlay}  (option)"]
+                files.append(f"{overlay}  (transparent)")
             files_by_slug[s["slug"]] = files
         shoot(page, base + "board.html?frame=o4", END_CARD, False)
         check_opaque(END_CARD)
@@ -453,8 +623,9 @@ def main():
 
         build_browser_copy(bumper_assets)
         sample_slug = next(s["slug"] for s in sessions if not s["contest"] and not s["panel"])
-        readmes = {"vmix": readme_vmix(sessions, talk_holes, files_by_slug),
-                   "obs": readme_obs(sessions, talk_holes, files_by_slug, sample_slug, contest_slug)}
+        readmes = {"vmix": readme_vmix(sessions, talk_holes, files_by_slug, contest_parts),
+                   "obs": readme_obs(sessions, talk_holes, files_by_slug, sample_slug, contest_slug, contest_parts)}
+        readmes = {key: french_spacing(text) for key, text in readmes.items()}
         for key, text in readmes.items():
             assert "\u2014" not in text, "READMEs must not contain em dashes"
             with open(os.path.join(OUT, PACKS[key]["readme"]), "w", encoding="utf-8") as f:
