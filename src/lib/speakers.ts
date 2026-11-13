@@ -72,6 +72,7 @@ export const SPEAKER_STARTUP_CONTEST_PITCHERS_ORDER = [
   'emmanuel-marboeuf',
   'pauline-corriou',
   'aurelie-pecaud',
+  'vincent-redor',
   'benoit-hediard',
 ] as const;
 
@@ -131,6 +132,7 @@ export const SPEAKER_PORTRAIT_DIMENSIONS: Record<string, { width: number; height
   'tiffany-souterre': { width: 610, height: 610 },
   'theo-hubert': { width: 800, height: 800 },
   'tristan-fransen': { width: 1000, height: 1170 },
+  'vincent-redor': { width: 800, height: 800 },
 };
 
 /* Variante basse résolution disponible uniquement pour les portraits dont le
@@ -157,6 +159,7 @@ export const SPEAKER_PORTRAIT_SMALL: Partial<Record<string, string>> = {
   'pauline-corriou': '/speakers/pauline-corriou-480-optimized.webp',
   'theo-hubert': '/speakers/theo-hubert-480-optimized.webp',
   'tristan-fransen': '/speakers/tristan-fransen-480-optimized.webp',
+  'vincent-redor': '/speakers/vincent-redor-480-optimized.webp',
   'jean-baptiste-kempf': '/speakers/jean-baptiste-kempf-480-optimized.webp',
   'quentin-adam': '/speakers/quentin-adam-480-optimized.webp',
 };

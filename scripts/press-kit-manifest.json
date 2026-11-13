@@ -46,7 +46,7 @@
   "src/content/sessions/product-velocity.md": "6d49d62679d8e2fe98f9989a1902c4354447a356d72839298c1c8ce23e59c8ab",
   "src/content/sessions/slm-compression-modeles.md": "e4c247d3615a1082530be735f1b3cebb9e61f25f1a68db286d141a623d2b9d23",
   "src/content/sessions/souverainete-ia.md": "fb3f4bdd1e9e31392cfdf2ac1154ed7a96e959fc244bf4334eb58d596e30bb5c",
-  "src/content/sessions/startup-contest.md": "85f71d43fda00ed3ed52c2edcc0eb8ff4d7e077f346156ea1c11f7a419a82c70",
+  "src/content/sessions/startup-contest.md": "2b8252e634dbfcf39d73d83debf0aae1510e25f4805ce607e9218b2667c504fa",
   "src/content/sessions/voice-agents.md": "720b8598f257ca742b6ba6630762a3281a7aaf3124ee828a78fee207903666a4",
   "src/content/speakers/annabelle-koster.md": "5647626b8a757b6206b6d60e86b51f7a81610abaf969ba7b43b534ce8da92f47",
   "src/content/speakers/antoine-brossault.md": "cfa4cf134b7a9aa9098658dc69197a908262d90e1bc6fed3e384a59ba2326916",
@@ -85,6 +85,7 @@
   "src/content/speakers/thomas-mathieu.md": "50e7c947c4abd10b526b43cdcf45803894bb3b9011186e43812a980691d491c1",
   "src/content/speakers/tiffany-souterre.md": "0bc1686f0d75ba83c34e93df99e676057598aa88bde1c41a897430443d95c542",
   "src/content/speakers/tristan-fransen.md": "32da67e3f4332d51737516fff9c1f235c3e42756389f458b5d9cefd6a4af0829",
+  "src/content/speakers/vincent-redor.md": "1d3ce3aaa2ae9e409b2bc3b0806328d4a9b9249754d80f3916d824212e25f62b",
   "src/content/team/dorian-ouvrard.md": "dc001be555bae1ca588b8ee4e8da971d10ccc233e3bc0fcbd89797e1464f9c77",
   "src/content/team/emilie-blum.md": "ab1795dfdfc656b04f2402072e3a59d0c245988810eeb219d9004ce22855cd03",
   "src/content/team/judie-boulissiere.md": "844e6aa1df9eec5bf0e3e962ed31230a42d4173fc8d3c15ee5343f0420758b40",
@@ -95,6 +96,6 @@
   "src/content/tracks/tech.md": "854c08266114feb6f5bca56e3d30e8cbbec78b1290428f9fa1b1825fc7184b84",
   "src/lib/cta-links.ts": "4b371bd87f8c8b53f45d2aad75dfef0d8b23ef2a729f1f88bad504d0c22479c9",
   "src/lib/programme.ts": "bc1ad74ef3d6b5a269573fbc3ce029b0cea0443e6a040f4e15f2d392a25cd63d",
-  "src/lib/speakers.ts": "7dc87be9829b6d3e8d9c9a55ef098231e1095b5a8e4a247e141961ff545c616e",
+  "src/lib/speakers.ts": "8a1932ddfa098c86bb7cb09365764f79adf80a7dec020745fee198a29e7da560",
   "src/styles/global.css": "35d9390f028fc0645bded079614c0c01eb77c353cc1588da505ba614dafe0726"
 }

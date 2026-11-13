@@ -121,6 +121,7 @@ describe('content collections', () => {
       'emmanuel-marboeuf',
       'pauline-corriou',
       'aurelie-pecaud',
+      'vincent-redor',
       'benoit-hediard',
       'constance-nebbula',
       'sebastien-le-corfec',
