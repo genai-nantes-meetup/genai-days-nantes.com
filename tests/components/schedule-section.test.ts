@@ -59,15 +59,6 @@ describe('ScheduleSection.astro', () => {
     expect(html).toContain('aria-label="Inclure « Podcast Message à caractère informatique » dans ma journée"');
   });
 
-  it('keeps the schedule change notice visible', async () => {
-    const container = await createAstroContainer();
-    const html = await container.renderToString(ScheduleSection);
-
-    expect(html).toContain('Horaires et contenus susceptibles d’évoluer.');
-    expect(html).not.toContain('Premiers éléments');
-    expect(html).not.toContain('Le découpage horaire est posé.');
-  });
-
   it('lays out the two tracks side by side with track headers', async () => {
     const container = await createAstroContainer();
     const html = await container.renderToString(ScheduleSection);
@@ -96,7 +87,6 @@ describe('ScheduleSection.astro', () => {
     expect(html).toContain('Those who decide');
     expect(html).toContain('Check-in and welcome coffee for attendees and partners');
     expect(html).toContain('Room change and coffee break');
-    expect(html).toContain('Times and content are subject to change.');
     expect(html).toContain('id="schedule-daypart-apres-midi"');
     expect(html).toContain('id="creneau-1800"');
     expect(html).toContain('href="/en/program/podcast-maci"');

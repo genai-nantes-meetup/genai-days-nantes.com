@@ -136,7 +136,6 @@ const copy = {
     atTime: 'à',
     quote: (text: string) => `"${text}"`,
     hostedBy: (name: string) => `Avec ${name}`,
-    notice: 'Horaires et contenus susceptibles d’évoluer.',
   },
   en: {
     commonKindLabels: {
@@ -161,7 +160,6 @@ const copy = {
     atTime: 'at',
     quote: (text: string) => `“${text}”`,
     hostedBy: (name: string) => `With ${name}`,
-    notice: 'Times and content are subject to change.',
   },
 }[locale];
 const commonKindLabels: Record<Exclude<ProgrammeSlotKind, 'conference'>, string> = copy.commonKindLabels;
@@ -235,7 +233,6 @@ const dayparts = [
       class="schedule-panel"
       role="group"
       aria-label={copy.panelLabel}
-      aria-describedby="schedule-notice"
       data-schedule-panel
     >
       {dayparts.map((daypart) => {
@@ -453,10 +450,6 @@ const dayparts = [
         );
       })}
     </div>
-
-    <p id="schedule-notice" class="schedule-section__notice">
-      {copy.notice}
-    </p>
   </div>
 </section>
 
@@ -585,14 +578,6 @@ const dayparts = [
      of the common card hugging its `min-height`. */
   .schedule-track-slot > .schedule-common {
     flex: 1;
-  }
-
-  .schedule-section__notice {
-    margin-top: clamp(1.5rem, 3vw, 2.25rem);
-    color: rgb(57 54 54 / 72%);
-    font-size: 0.75rem;
-    font-weight: 600;
-    line-height: 1.45;
   }
 
   .schedule-common {
