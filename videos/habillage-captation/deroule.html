@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rendu final · déroulé de la journée</title>
+<style>
+@font-face{font-family:"EB Garamond";src:url(assets/fonts/eb-garamond-latin-wght-normal.woff2) format("woff2");font-weight:400 800;font-style:normal;font-display:block}
+@font-face{font-family:"EB Garamond";src:url(assets/fonts/eb-garamond-latin-wght-italic.woff2) format("woff2");font-weight:400 800;font-style:italic;font-display:block}
+@font-face{font-family:"Special Elite";src:url(assets/fonts/special-elite-latin-400-normal.woff2) format("woff2");font-display:block}
+@font-face{font-family:"Azeret Mono";src:url(assets/fonts/azeret-mono-latin-500-normal.woff2) format("woff2");font-weight:500;font-display:block}
+
+/* Board tokens (the 16:9 frames keep brand colours whatever the theme) */
+:root{
+  --blue:#3D43CE;--orange:#FE4D1B;--cream:#F9F4EC;--ink:#393636;--night:#09122E;
+  --page:#F9F4EC;--text:#393636;--muted:#6f6a66;--line:#e2d9cb;--card:#fffdf8;--accent:#3D43CE;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--page:#09122E;--text:#F2ECE2;--muted:#a7a9bd;--line:#232c52;--card:#0f1a3d;--accent:#8f93ff}
+}
+:root[data-theme="dark"]{--page:#09122E;--text:#F2ECE2;--muted:#a7a9bd;--line:#232c52;--card:#0f1a3d;--accent:#8f93ff}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--page);color:var(--text);font:16px/1.55 Arial,Helvetica,sans-serif}
+.wrap{max-width:1480px;margin:0 auto;padding:0 max(16px,3vw)}
+.lb{font-family:Arial,Helvetica,sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.12em}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--page);color:var(--text);font:16px/1.55 Arial,Helvetica,sans-serif}
+.wrap{max-width:1480px;margin:0 auto;padding:0 max(16px,3vw)}
+.lb{font-family:Arial,Helvetica,sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.12em}
+.masthead{padding-top:28px;padding-bottom:28px;border-bottom:1px solid var(--line)}
+.masthead .back{display:inline-block;margin:0 0 30px;padding:9px 16px;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--text);text-decoration:none;font-size:12px}
+.masthead .back:hover{border-color:var(--accent)}
+.masthead .kicker{font-size:12px;color:var(--accent)}
+.masthead h1{font-family:"EB Garamond",serif;font-weight:600;font-size:clamp(40px,6vw,76px);line-height:1;margin:14px 0 18px;letter-spacing:-.01em}
+.masthead h1 em{font-style:italic;color:var(--orange)}
+.masthead p{max-width:900px;margin:0 0 10px}
+.runsheet{padding-top:32px;padding-bottom:8px}
+footer{margin:64px 0 0;padding:24px 0 48px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+
+/* Frame: the real 1920x1080 page in an iframe, scaled to the card width by fitFrames() */
+.fr{display:block;position:relative;aspect-ratio:16/9;overflow:hidden;border-radius:6px;background:#1c1c20;box-shadow:0 1px 0 var(--line),0 10px 30px rgba(9,18,46,.14)}
+.fr iframe.live{position:absolute;left:0;top:0;width:1920px;height:1080px;border:0;transform-origin:left top;pointer-events:none;background:#09122E}
+code{font:500 12px/1.5 "Azeret Mono",monospace;font-variant-ligatures:none;overflow-wrap:anywhere}
+
+/* Run sheet: one row per screen, technical details on the left, the real frame in the centre.
+   Renders are never hand-copied: .fr[data-live] gets an iframe of the bumpers.html or board.html frame the exporter captures. */
+.rs-who{padding:14px 16px 15px;border:1px solid var(--line);border-radius:8px;background:var(--card);font-size:13px;line-height:1.5;color:var(--muted)}
+.rs-who b{display:flex;align-items:center;gap:9px;margin-bottom:4px;color:var(--text);font-size:15px}
+.rs-dot{display:inline-block;flex:none;width:11px;height:11px;border-radius:50%;vertical-align:0}
+.d-regie{background:var(--blue)}
+.d-salle{background:var(--text)}
+.d-samuel{background:var(--orange)}
+.d-florian{background:transparent;box-shadow:inset 0 0 0 3px var(--orange)}
+.rs-files{display:flex;flex-wrap:wrap;gap:6px 22px;align-items:baseline;margin:14px 0 0;padding:12px 16px;border-radius:8px;background:var(--card);border:1px solid var(--line);font-size:13px;color:var(--muted)}
+.rs-files .lb{font-size:11px;color:var(--accent)}
+.rs-files a{color:var(--text)}
+code{font:500 12px/1.5 "Azeret Mono",monospace;font-variant-ligatures:none;overflow-wrap:anywhere}
+.rs-step{margin-top:40px;padding-top:26px;border-top:1px solid var(--line)}
+.rs-step-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px;margin-bottom:6px}
+.rs-n{font-family:"EB Garamond",serif;font-size:44px;line-height:.9;color:var(--orange);font-weight:500;min-width:30px}
+.rs-step-head h3{margin:0;font-family:"EB Garamond",serif;font-size:28px;font-weight:600;line-height:1.1}
+.rs-step-head .lb{font-size:11px;color:var(--muted)}
+.rs-row{display:grid;grid-template-columns:minmax(250px,320px) minmax(0,1fr);gap:18px 30px;align-items:start;margin-top:18px}
+@media (max-width:900px){.rs-row{grid-template-columns:minmax(0,1fr)}}
+.rs-sub{grid-column:1/-1;display:flex;align-items:baseline;gap:12px;margin:0;font-size:12px;color:var(--accent)}
+.rs-sub span{font-family:"EB Garamond",serif;font-size:21px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--text)}
+.rs-tech{margin:0;font-size:13.5px;line-height:1.5}
+.rs-tech dt{margin:12px 0 2px;font:700 10.5px Arial,Helvetica,sans-serif;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+.rs-tech dt:first-child{margin-top:0}
+.rs-tech dd{margin:0}
+.rs-tech dd+dd{margin-top:4px}
+.rs-tech .rs-dot{margin-right:7px}
+.rs-tbc,.rs-tbd{display:inline-block;margin:0 4px 0 0;padding:2px 8px 1px;border-radius:999px;font:700 10px/1.5 Arial,Helvetica,sans-serif;text-transform:uppercase;letter-spacing:.1em;vertical-align:1px;white-space:nowrap}
+.rs-tbc{border:1.5px solid var(--orange);color:var(--orange)}
+.rs-tbd{background:var(--orange);color:#F9F4EC}
+.rs-screens{display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
+.rs-screens.split{grid-template-columns:repeat(2,minmax(0,1fr))}
+.rs-screens.compact{max-width:560px}
+@media (max-width:720px){.rs-screens.split{grid-template-columns:minmax(0,1fr)}}
+.rs-screens figure{margin:0}
+.rs-screens figcaption{display:flex;align-items:center;gap:9px;margin:0 0 8px;font-size:11px;color:var(--text)}
+.rs-screens figcaption .rs-by{margin-left:auto;font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);font-size:12px}
+.rs-screens a.fr:hover{box-shadow:0 0 0 2px var(--accent),0 10px 30px rgba(9,18,46,.14)}
+.fr iframe.live{position:absolute;left:0;top:0;width:1920px;height:1080px;border:0;transform-origin:left top;pointer-events:none;background:#09122E}
+.rs-raw{position:relative;aspect-ratio:16/9;display:grid;place-items:center;padding:24px;border-radius:6px;background:#fff;color:#2c2c30;text-align:center;box-shadow:0 1px 0 var(--line),0 10px 30px rgba(9,18,46,.14);font-size:14px}
+.rs-raw b{display:block;font-family:"EB Garamond",serif;font-size:26px;margin-bottom:6px}
+</style>
+</head>
+<body>
+<header class="wrap masthead">
+  <a class="back lb" href="board.html">&larr; Retour au board</a>
+  <div class="kicker lb">GENAI DAYS 2026 · Captations des conférences</div>
+  <h1>Rendu <em>final</em></h1>
+  <p>Le déroulé de la journée, écran par écran&nbsp;: qui envoie quoi, sur l'écran de la salle et sur le direct YouTube. Chaque image est le vrai cadre produit par la page qui fabrique les fichiers des zips, avec caméra et slides figurées. Cliquer un cadre l'ouvre seul en 1920 × 1080. Deux salles tournent en parallèle&nbsp;: l'Hémicycle (Décider) et la Salle Loire (Implémenter).</p>
+</header>
+
+<main class="wrap runsheet">
+  <div class="rs-files"><span class="lb">Fichiers</span><span><a href="livrables/habillage-genai-days-vmix.zip">habillage-genai-days-vmix.zip</a> · LISEZ-MOI-vMix.txt</span><span><a href="livrables/habillage-genai-days-obs.zip">habillage-genai-days-obs.zip</a> · LISEZ-MOI-OBS.txt</span><span>Mêmes PNG dans les deux zips, le LISEZ-MOI donne les positions des trous.</span></div>
+
+  <!-- 1 -->
+  <div class="rs-step">
+    <div class="rs-step-head"><span class="rs-n">1</span><h3>Entre deux sessions</h3><span class="lb">Toute la journée</span></div>
+    <div class="rs-row">
+      <dl class="rs-tech">
+        <dt>Qui</dt><dd><span class="rs-dot d-regie"></span>Régie</dd>
+        <dt>Source</dt><dd>Carton inter-sessions, plein écran (opaque)&nbsp;: <code>06-carton-inter-sessions-et-fin.png</code></dd>
+        <dt>Quand, combien de temps</dt><dd>Ouverture des portes, pauses, déjeuner, changement de speaker. Reste à l'écran tant qu'aucune session ne tourne&nbsp;: le direct ne passe jamais au noir.</dd>
+        <dt>Notes</dt><dd>Aucune info de session&nbsp;: le même carton vaut pour les deux salles.</dd>
+      </dl>
+      <div class="rs-screens">
+        <figure><figcaption class="lb"><span class="rs-dot d-regie"></span>Salle et YouTube (identiques)</figcaption><a class="fr" data-live="board o4"></a></figure>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2 -->
+  <div class="rs-step">
+    <div class="rs-step-head"><span class="rs-n">2</span><h3>Conférence</h3><span class="lb">Exemple&nbsp;: 14:25 · Implémenter · Salle Loire · 40 min</span></div>
+    <div class="rs-row">
+      <p class="rs-sub lb">2a<span>Bumper d'intro</span></p>
+      <dl class="rs-tech">
+        <dt>Qui</dt><dd><span class="rs-dot d-regie"></span>Régie</dd>
+        <dt>Source</dt><dd>Bumper plein écran (opaque)&nbsp;: <code>01-bumpers/1425-implementer-slm-compression-modeles.png</code></dd>
+        <dt>Quand, combien de temps</dt><dd>Au lancement de la session, 3 à 5 s, avant la première prise de parole.</dd>
+        <dt>Notes</dt><dd>Un bumper par session, nommé heure-parcours-session, dans l'ordre de la journée.</dd>
+      </dl>
+      <div class="rs-screens">
+        <figure><figcaption class="lb"><span class="rs-dot d-regie"></span>Salle et YouTube (identiques)</figcaption><a class="fr" data-live="bumpers slm-compression-modeles"></a></figure>
+      </div>
+    </div>
+    <div class="rs-row">
+      <p class="rs-sub lb">2b<span>Trame slides et caméra</span></p>
+      <dl class="rs-tech">
+        <dt>Qui</dt><dd><span class="rs-dot d-regie"></span>Régie compose l'image</dd>
+        <dt>Sources</dt><dd>Trame (transparente, deux trous)&nbsp;: <code>02-conferences/1425-implementer-slm-compression-modeles.png</code></dd><dd>Dans le grand trou&nbsp;: <span class="rs-dot d-salle"></span>PC de la salle en HDMI.</dd><dd>Dans le petit trou&nbsp;: la caméra.</dd>
+        <dt>Quand, combien de temps</dt><dd>Tout le talk, questions comprises.</dd>
+        <dt>Notes</dt><dd>Focus sur les slides, caméra en petit, nom de l'intervenant·e sous la caméra. La bande sous les slides reste libre pour les sous-titres en direct. Signature d'angle déjà incluse. Une trame par session&nbsp;: en changer à chaque talk. Positions des trous&nbsp;: LISEZ-MOI, «&nbsp;Trames&nbsp;: position des trous&nbsp;».</dd>
+      </dl>
+      <div class="rs-screens">
+        <figure><figcaption class="lb"><span class="rs-dot d-regie"></span>Salle et YouTube (identiques)</figcaption><a class="fr" data-live="talks slm-compression-modeles"></a></figure>
+      </div>
+    </div>
+    <div class="rs-row">
+      <p class="rs-sub lb">2c<span>Retour au carton inter-sessions</span></p>
+      <dl class="rs-tech">
+        <dt>Qui</dt><dd><span class="rs-dot d-regie"></span>Régie</dd>
+        <dt>Source</dt><dd><code>06-carton-inter-sessions-et-fin.png</code>, comme à l'étape 1.</dd>
+        <dt>Quand</dt><dd>Dès les applaudissements, jusqu'au bumper suivant.</dd>
+      </dl>
+      <div class="rs-screens compact">
+        <figure><figcaption class="lb"><span class="rs-dot d-regie"></span>Salle et YouTube (identiques)</figcaption><a class="fr" data-live="board o4"></a></figure>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3 -->
+  <div class="rs-step">
+    <div class="rs-step-head"><span class="rs-n">3</span><h3>Keynote d'ouverture</h3><span class="lb">09:15 · Temps commun · 15 min</span></div>
+    <div class="rs-row">
+      <p class="rs-sub lb">3a<span>Bumper d'intro</span></p>
+      <dl class="rs-tech">
+        <dt>Qui</dt><dd><span class="rs-dot d-regie"></span>Régie</dd>
+        <dt>Source</dt><dd><code>01-bumpers/0915-commun-keynote-ouverture.png</code></dd>
+        <dt>Quand, combien de temps</dt><dd>Ouverture de la journée, 3 à 5 s.</dd>
+      </dl>
+      <div class="rs-screens">
+        <figure><figcaption class="lb"><span class="rs-dot d-regie"></span>Salle et YouTube (identiques)</figcaption><a class="fr" data-live="bumpers keynote-ouverture"></a></figure>
+      </div>
+    </div>
+    <div class="rs-row">
+      <p class="rs-sub lb">3b<span>Trame slides et caméra</span></p>
+      <dl class="rs-tech">
+        <dt>Qui</dt><dd><span class="rs-dot d-regie"></span>Régie compose l'image</dd>
+        <dt>Sources</dt><dd><code>02-conferences/0915-commun-keynote-ouverture.png</code> + <span class="rs-dot d-salle"></span>PC de la salle + caméra, comme une conférence.</dd>
+        <dt>Quand</dt><dd>Toute la keynote, puis retour au carton inter-sessions.</dd>
+      </dl>
+      <div class="rs-screens">
+        <figure><figcaption class="lb"><span class="rs-dot d-regie"></span>Salle et YouTube (identiques)</figcaption><a class="fr" data-live="talks keynote-ouverture"></a></figure>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 -->
+  <div class="rs-step">
+    <div class="rs-step-head"><span class="rs-n">4</span><h3>Table ronde</h3><span class="lb">Exemple&nbsp;: 10:20 · Décider · Hémicycle · 40 min</span></div>
+    <div class="rs-row">
+      <p class="rs-sub lb">4a<span>Bumper d'intro</span></p>
+      <dl class="rs-tech">
+        <dt>Qui</dt><dd><span class="rs-dot d-regie"></span>Régie</dd>
+        <dt>Source</dt><dd><code>01-bumpers/1020-decider-souverainete-ia.png</code></dd>
+        <dt>Quand, combien de temps</dt><dd>Au lancement, 3 à 5 s.</dd>
+      </dl>
+      <div class="rs-screens">
+        <figure><figcaption class="lb"><span class="rs-dot d-regie"></span>Salle et YouTube (identiques)</figcaption><a class="fr" data-live="bumpers souverainete-ia"></a></figure>
+      </div>
+    </div>
+    <div class="rs-row">
+      <p class="rs-sub lb">4b<span>Pendant la table ronde&nbsp;: la salle et YouTube diffèrent</span></p>
+      <dl class="rs-tech">
+        <dt>Écran de la salle</dt><dd><span class="rs-dot d-samuel"></span>PC de Samuel, sur l'entrée HDMI du pupitre. La régie n'y touche pas.</dd><dd>Slide fixe plein écran (opaque)&nbsp;: <code>03-tables-rondes/salle/1020-decider-souverainete-ia.png</code></dd>
+        <dt>YouTube</dt><dd><span class="rs-dot d-regie"></span>Régie&nbsp;: trame caméra (transparente, un trou) par-dessus la caméra&nbsp;: <code>03-tables-rondes/youtube/1020-decider-souverainete-ia.png</code></dd>
+        <dt>Quand, combien de temps</dt><dd>Toute la table ronde, puis retour au carton inter-sessions.</dd>
+        <dt>Notes</dt><dd>Pas de slides. Caméra en grand, bande gauche avec l'affiche, le titre et tous les intervenant·es. Même principe pour la table ronde de 16:00.</dd><dd><span class="rs-tbc">À confirmer</span>comment l'écran de la salle repasse sur la régie (carton, conférence suivante) une fois le PC de Samuel débranché.</dd>
+      </dl>
+      <div class="rs-screens split">
+        <figure><figcaption class="lb"><span class="rs-dot d-samuel"></span>Écran de la salle</figcaption><a class="fr" data-live="talks souverainete-ia 1"></a></figure>
+        <figure><figcaption class="lb"><span class="rs-dot d-regie"></span>YouTube (à distance)</figcaption><a class="fr" data-live="talks souverainete-ia 2"></a></figure>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5 -->
+  <div class="rs-step">
+    <div class="rs-step-head"><span class="rs-n">5</span><h3>Startup Contest</h3><span class="lb">11:55 · Décider · Hémicycle · 30 min · 4 pitchs</span></div>
+    <div class="rs-row">
+      <p class="rs-sub lb">5a<span>Bumper d'intro</span></p>
+      <dl class="rs-tech">
+        <dt>Écran de la salle</dt><dd><span class="rs-dot d-florian"></span>PC de Florian Hervéou</dd>
+        <dt>YouTube</dt><dd><span class="rs-dot d-regie"></span>Régie</dd>
+        <dt>Source</dt><dd><code>04-startup-contest/0-bumper.png</code>, la même image des deux côtés.</dd>
+        <dt>Quand</dt><dd>Ouverture du concours, le temps que Florian lance l'animation.</dd>
+      </dl>
+      <div class="rs-screens">
+        <figure><figcaption class="lb"><span class="rs-dot d-florian"></span>Salle et YouTube (identiques)<span class="rs-by">deux pilotes, même image</span></figcaption><a class="fr" data-live="bumpers startup-contest"></a></figure>
+      </div>
+    </div>
+    <div class="rs-row">
+      <p class="rs-sub lb">5b<span>Carton avant chaque pitch</span></p>
+      <dl class="rs-tech">
+        <dt>Écran de la salle</dt><dd><span class="rs-dot d-florian"></span>PC de Florian Hervéou</dd>
+        <dt>YouTube</dt><dd><span class="rs-dot d-regie"></span>Régie</dd>
+        <dt>Sources</dt><dd>Un carton plein écran (opaque) par pitch&nbsp;: <code>04-startup-contest/1-carton-pitch-1-bworlds.png</code> à <code>4-carton-pitch-4-globetrotters.png</code></dd>
+        <dt>Quand</dt><dd>Le temps que la startup s'installe.</dd>
+        <dt>Notes</dt><dd><span class="rs-tbc">À confirmer</span>entre deux pitchs, la régie passe-t-elle YouTube sur le carton ou sur la caméra&nbsp;?</dd>
+      </dl>
+      <div class="rs-screens">
+        <figure><figcaption class="lb"><span class="rs-dot d-florian"></span>Salle et YouTube (identiques)<span class="rs-by">exemple&nbsp;: pitch 1</span></figcaption><a class="fr" data-live="talks startup-contest 1"></a></figure>
+      </div>
+    </div>
+    <div class="rs-row">
+      <p class="rs-sub lb">5c<span>Pendant chaque pitch&nbsp;: la salle et YouTube diffèrent</span></p>
+      <dl class="rs-tech">
+        <dt>Écran de la salle</dt><dd><span class="rs-dot d-florian"></span>PC de Florian Hervéou&nbsp;: les slides de la startup en plein écran, sans habillage.</dd>
+        <dt>YouTube</dt><dd><span class="rs-dot d-regie"></span>Régie&nbsp;: trame slides et caméra du pitch (transparente, deux trous), comme une conférence&nbsp;: <code>04-startup-contest/6-slides-pitch-1-bworlds.png</code> à <code>9-slides-pitch-4-globetrotters.png</code></dd>
+        <dt>Quand</dt><dd>Pendant chaque pitch.</dd>
+        <dt>Notes</dt><dd><span class="rs-tbc">À confirmer</span>comment les slides du PC de Florian arrivent à la régie (même entrée HDMI du pupitre, ou sortie dupliquée).</dd>
+      </dl>
+      <div class="rs-screens split">
+        <figure><figcaption class="lb"><span class="rs-dot d-florian"></span>Écran de la salle</figcaption><div class="rs-raw"><div><b>Slides de la startup</b>En plein écran depuis le PC de Florian Hervéou, sans habillage.</div></div></figure>
+        <figure><figcaption class="lb"><span class="rs-dot d-regie"></span>YouTube (à distance)</figcaption><a class="fr" data-live="talks startup-contest 6"></a></figure>
+      </div>
+    </div>
+    <div class="rs-row">
+      <p class="rs-sub lb">5d<span>Délibération du jury</span></p>
+      <dl class="rs-tech">
+        <dt>Écran de la salle</dt><dd><span class="rs-dot d-florian"></span>PC de Florian Hervéou</dd>
+        <dt>YouTube</dt><dd><span class="rs-dot d-regie"></span>Régie</dd>
+        <dt>Source</dt><dd><code>04-startup-contest/5-jury.png</code> (opaque)</dd>
+        <dt>Quand</dt><dd>Après le dernier pitch, pendant la délibération, puis retour au carton inter-sessions.</dd>
+        <dt>Notes</dt><dd><span class="rs-tbc">À confirmer</span>YouTube reste-t-il sur ce carton, ou sur la caméra si le jury délibère sur scène&nbsp;?</dd>
+      </dl>
+      <div class="rs-screens">
+        <figure><figcaption class="lb"><span class="rs-dot d-florian"></span>Salle et YouTube (identiques)</figcaption><a class="fr" data-live="talks startup-contest 5"></a></figure>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6 -->
+  <div class="rs-step">
+    <div class="rs-step-head"><span class="rs-n">6</span><h3>Keynote de clôture</h3><span class="lb">17:35 · deux salles en parallèle</span></div>
+    <div class="rs-row">
+      <dl class="rs-tech">
+        <dt>Qui</dt><dd><span class="rs-dot d-regie"></span>Régie</dd>
+        <dt>Où</dt><dd>Maxime Pitussi dans l'Hémicycle, Samuel Berthe en Salle Loire, en même temps.</dd>
+        <dt>Source</dt><dd><code>06-carton-inter-sessions-et-fin.png</code>&nbsp;: pas de bumper ni de trame dédiés, le carton inter-sessions sert aussi de carton de fin (décision de Dorian).</dd>
+        <dt>Quand</dt><dd>Avant et après les deux keynotes, et en fin de journée.</dd>
+        <dt>Notes</dt><dd><span class="rs-tbc">À confirmer</span>pendant les keynotes elles-mêmes&nbsp;: slides du PC de la salle seules, caméra avec la signature, et laquelle des deux salles part sur YouTube.</dd>
+      </dl>
+      <div class="rs-screens">
+        <figure><figcaption class="lb"><span class="rs-dot d-regie"></span>Salle et YouTube (identiques)</figcaption><a class="fr" data-live="board o4"></a></figure>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7 -->
+  <div class="rs-step">
+    <div class="rs-step-head"><span class="rs-n">7</span><h3>Signature d'angle</h3><span class="lb">Caméra seule</span></div>
+    <div class="rs-row">
+      <dl class="rs-tech">
+        <dt>Qui</dt><dd><span class="rs-dot d-regie"></span>Régie, en surimpression</dd>
+        <dt>Source</dt><dd><code>05-signature-angle.png</code> (transparent) par-dessus la caméra plein écran.</dd>
+        <dt>Où elle s'applique</dt><dd>Seulement quand la caméra passe seule à l'antenne, sans trame&nbsp;: plan large, questions de la salle, imprévu. Les trames des conférences, tables rondes et pitchs portent déjà la signature&nbsp;; bumpers et cartons n'en ont pas.</dd>
+        <dt>Notes</dt><dd><span class="rs-tbc">À confirmer</span>les moments où la régie prévoit la caméra seule, et pour les keynotes de clôture.</dd>
+      </dl>
+      <div class="rs-screens">
+        <figure><figcaption class="lb"><span class="rs-dot d-regie"></span>Salle et YouTube (identiques)</figcaption><a class="fr" data-live="board g2"></a></figure>
+      </div>
+    </div>
+  </div>
+
+<footer>
+  GENAI DAYS · 17 novembre 2026 · Hôtel de Région, Nantes · genai-days-nantes.com · #GenAIDaysNantes
+</footer>
+</main>
+
+<script>
+// Each render is the real frame the exporter captures, never a hand-written copy.
+// data-live="<bumpers|talks> <session slug> [part]" for bumpers.html, "board <canvas id>" for board.html?frame=.
+// The single-file build swaps liveFrame for inline renderers.
+const liveFrame = {
+  href: (view, id, part) => view === "board" ? `board.html?frame=${id}`
+    : `bumpers.html?${view === "talks" ? "view=talks&" : ""}session=${id}${part ? `&part=${part}` : ""}`,
+  mount: (frame, view, id, part) => {
+    const iframe = document.createElement("iframe");
+    iframe.className = "live";
+    iframe.tabIndex = -1;
+    iframe.title = `${id}${part ? ` ${part}` : ""}`;
+    iframe.loading = "lazy";
+    iframe.src = liveFrame.href(view, id, part);
+    frame.appendChild(iframe);
+  },
+};
+document.querySelectorAll(".fr[data-live]").forEach(frame => {
+  const [view, id, part] = frame.dataset.live.split(" ");
+  const href = liveFrame.href(view, id, part);
+  if (href) frame.href = href;
+  liveFrame.mount(frame, view, id, part);
+});
+
+function fitFrames() {
+  document.querySelectorAll(".fr").forEach(frame => {
+    const canvas = frame.querySelector(".cv, iframe.live");
+    if (canvas) canvas.style.transform = `scale(${frame.clientWidth / 1920})`;
+  });
+}
+fitFrames();
+new ResizeObserver(fitFrames).observe(document.body);
+</script>
+</body>
+</html>

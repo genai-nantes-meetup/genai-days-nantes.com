@@ -27,7 +27,7 @@ body{margin:0;background:var(--page);color:var(--text);font:16px/1.55 Arial,Helv
 .lb{font-family:Arial,Helvetica,sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.12em}
 
 /* Board header */
-.masthead{padding:56px 0 28px;border-bottom:1px solid var(--line)}
+.masthead{padding-top:56px;padding-bottom:28px;border-bottom:1px solid var(--line)}
 .masthead .kicker{font-size:12px;color:var(--accent)}
 .masthead h1{font-family:"EB Garamond",serif;font-weight:600;font-size:clamp(40px,6vw,76px);line-height:1;margin:14px 0 18px;letter-spacing:-.01em}
 .masthead h1 em{font-style:italic;color:var(--orange)}
@@ -64,6 +64,7 @@ section.el{padding:56px 0 8px}
 .examples{display:grid;gap:16px;grid-template-columns:repeat(3,minmax(0,1fr))}
 @media (max-width:720px){.examples{grid-template-columns:1fr}}
 .examples figure{margin:0}
+.examples.two{grid-template-columns:repeat(2,minmax(0,1fr))}
 .examples.hero{grid-template-columns:minmax(0,1fr);max-width:1100px;margin-bottom:8px}
 .examples img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:6px;box-shadow:0 10px 30px rgba(9,18,46,.14)}
 .examples figcaption{font-size:12px;color:var(--muted);margin-top:6px}
@@ -74,7 +75,7 @@ section.el{padding:56px 0 8px}
 footer{margin:64px 0 0;padding:24px 0 48px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
 
 /* Frame: a fixed 1920x1080 canvas scaled to the card width by fitFrames() */
-.fr{position:relative;aspect-ratio:16/9;overflow:hidden;border-radius:6px;background:#1c1c20;box-shadow:0 1px 0 var(--line),0 10px 30px rgba(9,18,46,.14)}
+.fr{display:block;position:relative;aspect-ratio:16/9;overflow:hidden;border-radius:6px;background:#1c1c20;box-shadow:0 1px 0 var(--line),0 10px 30px rgba(9,18,46,.14)}
 .fr.zoom{aspect-ratio:32/9}
 .cv{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:left top;overflow:hidden;color:var(--cream);font-family:Arial,Helvetica,sans-serif}
 .cv *{box-sizing:border-box}
@@ -125,10 +126,10 @@ footer{margin:64px 0 0;padding:24px 0 48px;border-top:1px solid var(--line);font
 .slide .sl-c i{position:absolute;bottom:0;width:12%;background:#9a9aa3}
 .slide .sl-n{position:absolute;right:3%;bottom:4%;font:500 15px "Azeret Mono",monospace;color:#9a9aa3;letter-spacing:.1em}
 
-/* Lower third C (filet sérigraphié) */
-.filet .rule{width:110px;height:6px;background:var(--orange);margin-bottom:22px}
-.filet .name{font-family:"EB Garamond",serif;font-weight:600;line-height:1;text-shadow:.04em .04em 0 var(--orange)}
-.filet .role{font:700 17px/1.45 Arial,Helvetica,sans-serif;text-transform:uppercase;letter-spacing:.12em;margin-top:14px;opacity:.9}
+/* Speaker card under the camera, same as bumpers.html: the strip under the slides stays free for live subtitles */
+.spk-card{position:absolute;padding:20px 24px 22px;background:rgba(9,18,46,.66);border-radius:4px}
+.spk-card .name{font-family:"EB Garamond",serif;font-weight:600;line-height:1;text-shadow:.04em .04em 0 var(--orange)}
+.spk-card .role{font:700 13px/1.4 Arial,Helvetica,sans-serif;text-transform:uppercase;letter-spacing:.1em;margin-top:10px;opacity:.9}
 .scrim-b{position:absolute;left:0;right:0;bottom:0;height:420px;background:linear-gradient(transparent,rgba(9,18,46,.8))}
 
 .chip{display:inline-flex;align-items:center;gap:10px;padding:8px 14px 7px;border-radius:999px;font:700 18px Arial,Helvetica,sans-serif;text-transform:uppercase;letter-spacing:.12em}
@@ -146,6 +147,10 @@ footer{margin:64px 0 0;padding:24px 0 48px;border-top:1px solid var(--line);font
 /* Partner strip (logos are cream mono PNGs) */
 .partners{display:flex;flex-wrap:wrap;justify-content:center;align-items:center}
 .partners img{object-fit:contain}
+
+/* Live renders: .fr[data-live] gets an iframe of the real bumpers.html frame */
+code{font:500 12px/1.5 "Azeret Mono",monospace;font-variant-ligatures:none;overflow-wrap:anywhere}
+.fr iframe.live{position:absolute;left:0;top:0;width:1920px;height:1080px;border:0;transform-origin:left top;pointer-events:none;background:#09122E}
 
 /* Solo mode (?frame=<canvas id>): one canvas alone at native 1920x1080, for image exports.
    &key=1 drops the camera stand-in and keeps the rest on a transparent page (vMix overlay). */
@@ -165,41 +170,47 @@ html.key,body.solo.key{background:transparent}
 <header class="wrap masthead">
   <div class="kicker lb">GENAI DAYS 2026 · Captations des conférences</div>
   <h1>Habillage de <em>captation</em></h1>
-  <p>L'habillage des vidéos des talks filmés le 17 novembre à l'Hôtel de Région. Ce sont des overlays HTML joués dans OBS : les zones « caméra live » et « slides » sont des emplacements de sources, le reste est l'overlay. Les affiches de la DA en sont la base.</p>
+  <p>L'habillage des vidéos des talks filmés le 17 novembre à l'Hôtel de Région. La régie les charge en PNG depuis les zips&nbsp;: les zones « caméra live » et « slides » sont des trous où passent ses sources, le reste est l'overlay. Les affiches de la DA en sont la base.</p>
   <p>Sur cette planche, la caméra est figurée par un portrait assombri sur fond de scène gris, les slides par une maquette grise en 16:9. Sessions, noms, rôles et horaires viennent du programme publié sur genai-days-nantes.com.</p>
 </header>
 <nav class="tocbar" aria-label="Sections"><div class="wrap">
 <ul class="toc">
+  <li><a href="deroule.html">Rendu final, déroulé de la journée &rarr;</a></li>
   <li><a href="#e1">01 Bumper d'intro</a></li>
   <li><a href="#e2">02 Signature d'angle</a></li>
-  <li><a href="#e4">03 Slides et intervenant (option)</a></li>
+  <li><a href="#e4">03 Slides et intervenant</a></li>
   <li><a href="#e3">04 Tables rondes</a></li>
   <li><a href="#e7">05 Startup Contest</a></li>
-  <li><a href="#e5">06 Carton de fin</a></li>
+  <li><a href="#e5">06 Carton inter-sessions et de fin</a></li>
   <li><a href="#e6">07 Miniature YouTube</a></li>
 </ul>
 </div></nav>
 
 <main class="wrap">
 
+<!-- ============ RUN SHEET (sub-page) ============ -->
+<section class="el" id="e0" style="padding-top:40px">
+  <a class="cta" href="deroule.html"><strong>Rendu final&nbsp;: le déroulé de la journée &rarr;</strong><span class="lb">Écran par écran, qui envoie quoi, en salle et sur YouTube</span></a>
+</section>
+
 <!-- ============ 01 INTRO BUMPER ============ -->
 <section class="el" id="e1">
   <div class="el-head"><div class="el-num">01</div><h2>Bumper d'intro</h2><p>Carton de 3 à 5 s avant le talk : titre de la session, intervenant·es, parcours, horaire.</p></div>
   <div class="examples hero">
-    <figure><img src="exports/bumper-table-ronde.webp" alt="Bumper d'intro de la table ronde « Les Américains ont pris en otage mon SI »"><figcaption>Le bumper généré pour chaque session : l'affiche de la session, le titre en relief, les intervenant·es, le parcours et l'horaire.</figcaption></figure>
+    <figure><a class="fr" data-live="bumpers souverainete-ia"></a><figcaption>Le bumper généré pour chaque session : l'affiche de la session, le titre en relief, les intervenant·es, le parcours et l'horaire.</figcaption></figure>
   </div>
   <div class="sub lb">Exemples</div>
   <div class="examples">
-    <figure><img src="exports/bumper-solo.webp" alt="Bumper d'un talk solo"><figcaption>Talk solo</figcaption></figure>
-    <figure><img src="exports/bumper-table-ronde.webp" alt="Bumper d'une table ronde"><figcaption>Table ronde</figcaption></figure>
-    <figure><img src="exports/bumper-tba.webp" alt="Bumper d'une session sans intervenant annoncé"><figcaption>Intervenant à annoncer</figcaption></figure>
+    <figure><a class="fr" data-live="bumpers voice-agents"></a><figcaption>Conférence</figcaption></figure>
+    <figure><a class="fr" data-live="bumpers conduite-changement-ia"></a><figcaption>Table ronde</figcaption></figure>
+    <figure><a class="fr" data-live="bumpers ia-pour-industrie"></a><figcaption>Deux intervenant·es</figcaption></figure>
   </div>
   <a class="cta" href="bumpers.html"><strong>Tous les bumpers d'intro &rarr;</strong><span class="lb">Une page, chaque session du programme</span></a>
 </section>
 
 <!-- ============ 02 BUG ============ -->
 <section class="el" id="e2">
-  <div class="el-head"><div class="el-num">02</div><h2>Signature d'angle</h2><p>Symbole, mot-symbole compact et « Nantes 2026 », en haut à gauche, pendant tout le talk. Elle n'apparaît pas sur les bumpers d'intro ni sur les cartons de fin, qui portent déjà le logo. La zone de 560 × 150 px (sur 1920 × 1080) lui est réservée : aucun autre élément ne s'y pose.</p></div>
+  <div class="el-head"><div class="el-num">02</div><h2>Signature d'angle</h2><p>Symbole, mot-symbole compact et « Nantes 2026 », en haut à gauche. Elle est déjà dans les trames des conférences, tables rondes et pitchs&nbsp;; seule (<code>05-signature-angle.png</code>), elle se pose sur la caméra quand celle-ci passe seule à l'antenne. Elle n'apparaît pas sur les bumpers d'intro ni sur les cartons, qui portent déjà le logo. La zone de 560 × 150 px (sur 1920 × 1080) lui est réservée : aucun autre élément ne s'y pose.</p></div>
   <div class="opts two">
     <article class="opt">
       <div class="fr"><div class="cv" id="g2" data-bug>
@@ -223,37 +234,15 @@ html.key,body.solo.key{background:transparent}
 
 <!-- ============ 04 SLIDES + LIVE CAMERA ============ -->
 <section class="el" id="e4">
-  <div class="el-head"><div class="el-num">03</div><h2>Slides et intervenant <span class="lb" style="font-size:13px;color:var(--muted);vertical-align:middle">Option</span></h2><p>En bonus, utilisation pas encore décidée : pour le montage final des replays, et peut-être en direct dans la salle 2. L'affiche de la session tient une bande verticale à gauche avec le titre et la caméra (16:9), les slides du PC occupent la droite, le nom de l'intervenant·e se lit dessous. En direct, le cas de base reste le bumper puis le PC du speaker en plein écran, avec la signature.</p></div>
+  <div class="el-head"><div class="el-num">03</div><h2>Slides et intervenant</h2><p>La trame de base de chaque conférence, keynote d'ouverture comprise, identique sur l'écran de la salle et sur YouTube. La régie pose le PNG de la session (<code>02-conferences/</code>, deux trous) par-dessus le PC du speaker reçu en HDMI et la caméra. L'affiche de la session tient une bande verticale à gauche avec le titre et la caméra (16:9), les slides occupent la droite. Le nom de l'intervenant·e se lit sous la caméra, pour laisser la bande sous les slides libre aux sous-titres en direct.</p></div>
   <div class="opts two">
     <article class="opt">
-      <div class="fr"><div class="cv" id="s1" data-bug style="background:#09122E">
-        <div class="poster" style="left:0;top:0;width:520px;height:1080px"><img src="assets/sessions/stage-2-talk-3-slm.webp" alt="" style="object-position:28% 50%"></div>
-        <div class="abs" style="left:0;top:0;width:520px;height:200px;background:linear-gradient(rgba(9,18,46,.5),rgba(9,18,46,0))"></div>
-        <div class="abs" style="left:24px;top:190px;width:472px;padding:22px 24px 24px;background:rgba(9,18,46,.42);border-radius:4px">
-          <div style="display:flex;gap:14px;align-items:center"><span class="chip impl" style="font-size:15px">Implémenter</span><span class="lb" style="font-size:16px">14:25</span></div>
-          <div class="serif relief" style="font-size:44px;line-height:1.02;font-weight:600;margin-top:16px">Mon modèle ne tient pas sur une puce embarquée</div>
-        </div>
-        <div class="cam" style="left:24px;top:536px;width:472px;height:266px;box-shadow:0 0 0 6px var(--cream)"><div class="footage"><img class="who" src="assets/speakers/norm/theo-hubert.webp" alt=""></div><span class="camtag">CAMÉRA LIVE</span></div>
-        <div class="slide" style="left:560px;top:60px;width:1320px"><div class="sl-t"></div><div class="sl-l" style="top:30%;width:40%"></div><div class="sl-l" style="top:38%;width:44%"></div><div class="sl-l" style="top:46%;width:36%"></div><div class="sl-l" style="top:54%;width:42%"></div><div class="sl-c"><i style="left:12%;height:30%"></i><i style="left:34%;height:52%"></i><i style="left:56%;height:70%"></i><i style="left:78%;height:88%"></i></div><div class="sl-n">SLIDES 16:9</div></div>
-        <div class="abs filet" style="left:560px;top:846px"><div class="rule"></div><div class="name" style="font-size:58px">Théo Hubert</div><div class="role">Cofondateur, Président &amp; CTO · AlphaEdge</div></div>
-        <div class="abs lb" style="right:40px;top:1000px;font-size:15px;opacity:.7">genai-days-nantes.com</div>
-      </div></div>
+      <a class="fr" data-live="talks slm-compression-modeles"></a>
       <h3>Talk du parcours Implémenter</h3>
       <p>Mon modèle ne tient pas sur une puce embarquée, Théo Hubert.</p>
     </article>
     <article class="opt">
-      <div class="fr"><div class="cv" id="s2" data-bug style="background:#09122E">
-        <div class="poster" style="left:0;top:0;width:520px;height:1080px"><img src="assets/sessions/stage-1-talk-8-finops.webp" alt="" style="object-position:30% 50%"></div>
-        <div class="abs" style="left:0;top:0;width:520px;height:200px;background:linear-gradient(rgba(9,18,46,.5),rgba(9,18,46,0))"></div>
-        <div class="abs" style="left:24px;top:190px;width:472px;padding:22px 24px 24px;background:rgba(9,18,46,.42);border-radius:4px">
-          <div style="display:flex;gap:14px;align-items:center"><span class="chip decide" style="font-size:15px">Décider</span><span class="lb" style="font-size:16px">13:45</span></div>
-          <div class="serif relief" style="font-size:44px;line-height:1.02;font-weight:600;margin-top:16px">J'ai consommé mon budget IA en mai. Comment finir l'année&nbsp;?</div>
-        </div>
-        <div class="cam" style="left:24px;top:536px;width:472px;height:266px;box-shadow:0 0 0 6px var(--cream)"><div class="footage"><img class="who" src="assets/speakers/norm/nicolas-martignole.webp" alt=""></div><span class="camtag">CAMÉRA LIVE</span></div>
-        <div class="slide" style="left:560px;top:60px;width:1320px"><div class="sl-t"></div><div class="sl-l" style="top:30%;width:40%"></div><div class="sl-l" style="top:38%;width:44%"></div><div class="sl-l" style="top:46%;width:36%"></div><div class="sl-l" style="top:54%;width:42%"></div><div class="sl-c"><i style="left:12%;height:30%"></i><i style="left:34%;height:52%"></i><i style="left:56%;height:70%"></i><i style="left:78%;height:88%"></i></div><div class="sl-n">SLIDES 16:9</div></div>
-        <div class="abs filet" style="left:560px;top:846px"><div class="rule"></div><div class="name" style="font-size:58px">Nicolas Martignole</div><div class="role">Principal Engineer · Back Market</div></div>
-        <div class="abs lb" style="right:40px;top:1000px;font-size:15px;opacity:.7">genai-days-nantes.com</div>
-      </div></div>
+      <a class="fr" data-live="talks finops-agents"></a>
       <h3>Talk du parcours Décider</h3>
       <p>J'ai consommé mon budget IA en mai. Comment finir l'année&nbsp;? Nicolas Martignole.</p>
     </article>
@@ -263,30 +252,34 @@ html.key,body.solo.key{background:transparent}
 
 <!-- ============ 04 ROUND TABLES ============ -->
 <section class="el" id="e3">
-  <div class="el-head"><div class="el-num">04</div><h2>Tables rondes</h2><p>À la place des slides : l'affiche de la session, le titre et les quatre intervenant·es avec leur rôle. Une vue par table ronde.</p></div>
-  <div class="examples">
-    <figure><img src="exports/table-ronde-souverainete-ia.webp" alt="Les Américains ont pris en otage mon SI"><figcaption>Les Américains ont pris en otage mon SI</figcaption></figure>
-    <figure><img src="exports/table-ronde-conduite-changement-ia.webp" alt="Une partie de mon équipe a peur que l'IA lui prenne son poste"><figcaption>Une partie de mon équipe a peur que l'IA lui prenne son poste</figcaption></figure>
+  <div class="el-head"><div class="el-num">04</div><h2>Tables rondes</h2><p>Pas de slides, et deux écrans différents. Écran de la salle&nbsp;: une slide fixe plein écran avec l'affiche, le titre et les quatre intervenant·es, affichée par le PC de Samuel sur l'entrée HDMI du pupitre (<code>03-tables-rondes/salle/</code>). YouTube&nbsp;: la régie pose une trame centrée sur la caméra, en grand, avec l'affiche, le titre et tous les intervenant·es dans la bande de gauche (<code>03-tables-rondes/youtube/</code>, un trou).</p></div>
+  <div class="examples two">
+    <figure><a class="fr" data-live="talks souverainete-ia 1"></a><figcaption>Écran de la salle · Les Américains ont pris en otage mon SI</figcaption></figure>
+    <figure><a class="fr" data-live="talks souverainete-ia 2"></a><figcaption>YouTube · Les Américains ont pris en otage mon SI</figcaption></figure>
+    <figure><a class="fr" data-live="talks conduite-changement-ia 1"></a><figcaption>Écran de la salle · Une partie de mon équipe a peur que l'IA lui prenne son poste</figcaption></figure>
+    <figure><a class="fr" data-live="talks conduite-changement-ia 2"></a><figcaption>YouTube · Une partie de mon équipe a peur que l'IA lui prenne son poste</figcaption></figure>
   </div>
-  <a class="cta" href="bumpers.html?view=talks#tables-rondes"><strong>Les tables rondes en grand &rarr;</strong><span class="lb">Une vue par table ronde, pour OBS</span></a>
+  <a class="cta" href="bumpers.html?view=talks#tables-rondes"><strong>Les tables rondes en grand &rarr;</strong><span class="lb">Écran de la salle et trame YouTube de chaque table ronde</span></a>
 </section>
 
 <!-- ============ 05 STARTUP CONTEST ============ -->
 <section class="el" id="e7">
-  <div class="el-head"><div class="el-num">05</div><h2>Startup Contest</h2><p>Un bumper d'intro avec les finalistes et le jury. Pendant le concours, à la place des slides : une vue par startup, avec le nom de la boîte et la personne qui pitche, puis une vue du jury pour la délibération. Même affiche en fond.</p></div>
+  <div class="el-head"><div class="el-num">05</div><h2>Startup Contest</h2><p>Un bumper d'intro avec les quatre pitchs et le jury. Avant chaque pitch, un carton plein écran avec la startup et la personne qui pitche&nbsp;; pendant le pitch, la trame slides et caméra comme une conférence. Puis le carton du jury pour la délibération. Même affiche en fond.</p></div>
   <div class="examples">
-    <figure><img src="exports/startup-bumper.webp" alt="Bumper d'intro"><figcaption>Bumper d'intro</figcaption></figure>
-    <figure><img src="exports/startup-pitch-bworlds.webp" alt="Pitch 1 · BWorlds"><figcaption>Pitch 1 · BWorlds</figcaption></figure>
-    <figure><img src="exports/startup-pitch-motiv.webp" alt="Pitch 2 · Motiv"><figcaption>Pitch 2 · Motiv</figcaption></figure>
-    <figure><img src="exports/startup-pitch-laborheto.webp" alt="Pitch 3 · Laborhêto"><figcaption>Pitch 3 · Laborhêto</figcaption></figure>
-    <figure><img src="exports/startup-jury.webp" alt="Jury"><figcaption>Jury</figcaption></figure>
+    <figure><a class="fr" data-live="bumpers startup-contest"></a><figcaption>Bumper d'intro</figcaption></figure>
+    <figure><a class="fr" data-live="talks startup-contest 1"></a><figcaption>Carton pitch 1 · BWorlds</figcaption></figure>
+    <figure><a class="fr" data-live="talks startup-contest 2"></a><figcaption>Carton pitch 2 · Motiv</figcaption></figure>
+    <figure><a class="fr" data-live="talks startup-contest 3"></a><figcaption>Carton pitch 3 · Laborhêto</figcaption></figure>
+    <figure><a class="fr" data-live="talks startup-contest 4"></a><figcaption>Carton pitch 4 · Globetrotters.ai</figcaption></figure>
+    <figure><a class="fr" data-live="talks startup-contest 5"></a><figcaption>Jury</figcaption></figure>
+    <figure><a class="fr" data-live="talks startup-contest 6"></a><figcaption>Trame pendant le pitch 1 · BWorlds</figcaption></figure>
   </div>
-  <a class="cta" href="bumpers.html?view=talks#startup-contest"><strong>Le Startup Contest en grand &rarr;</strong><span class="lb">Chaque vue en 1920 × 1080, pour OBS</span></a>
+  <a class="cta" href="bumpers.html?view=talks#startup-contest"><strong>Le Startup Contest en grand &rarr;</strong><span class="lb">Chaque vue en 1920 × 1080, pour la régie</span></a>
 </section>
 
 <!-- ============ 05 OUTRO ============ -->
 <section class="el" id="e5">
-  <div class="el-head"><div class="el-num">06</div><h2>Carton de fin</h2><p>6 à 10 s en fin de vidéo : une affiche de la DA, le lockup GENAI DAYS, la signature « L'intelligence artificielle, ici et maintenant. » et les partenaires en logos crème.</p></div>
+  <div class="el-head"><div class="el-num">06</div><h2>Carton inter-sessions et de fin</h2><p>Carton d'attente entre deux sessions (<code>06-carton-inter-sessions-et-fin.png</code>)&nbsp;: la régie le laisse à l'antenne autant qu'il faut, pour que le direct ne passe jamais au noir. Il sert aussi de carton de fin, 6 à 10 s en fin de vidéo. Une affiche de la DA, le lockup GENAI DAYS, la signature « L'intelligence artificielle, ici et maintenant. » et les partenaires en logos crème. Aucune info de session : il vaut pour toutes les salles, y compris après la keynote de clôture.</p></div>
   <div class="opts one">
     <article class="opt">
       <div class="fr"><div class="cv" id="o4">
@@ -296,8 +289,8 @@ html.key,body.solo.key{background:transparent}
           <div class="wm relief" style="font-size:120px;line-height:1"><b>GEN<i>AI</i></b> DAYS</div>
           <div class="serif" style="font-size:40px;font-style:italic;margin-top:14px">L'intelligence artificielle, ici et maintenant.</div>
         </div>
-        <div class="abs lb" style="left:0;right:0;top:770px;text-align:center;font-size:16px;opacity:.85">genai-days-nantes.com · Avec le soutien de</div>
-        <div class="abs partners" data-partners="42" style="left:150px;right:150px;top:815px;gap:24px 50px"></div>
+        <div class="abs lb" style="left:0;right:0;top:752px;text-align:center;font-size:16px;opacity:.85">genai-days-nantes.com · Avec le soutien de</div>
+        <div class="abs partners" data-partners="42" style="left:110px;right:110px;top:796px;gap:24px 42px"></div>
       </div></div>
       <h3>L'affiche officielle</h3>
       <p>L'art de couverture, lockup dans le ciel, partenaires posés sur la route.</p>
@@ -368,10 +361,12 @@ html.key,body.solo.key{background:transparent}
 
 <script>
 // Partner logos, cream mono versions; the data-partners value is the logo height in canvas px
-const PARTNER_LOGOS = ["region-pdl","clever-cloud","swiftask","adn-ouest","club-eti","ippon","alphaedge","elastic","techtown","cross-data","sfeir","wescale","cloudflare","jems","icilundi","bworlds","externatic","explore-the-vault","leboncoin-tech","la-cantine","devoteam","brijyt","etix"];
+const PARTNER_LOGOS = ["region-pdl","clever-cloud","swiftask","adn-ouest","club-eti","ippon","alphaedge","elastic","techtown","cross-data","sfeir","wescale","cloudflare","jems","icilundi","bworlds","externatic","explore-the-vault","leboncoin-tech","la-cantine","devoteam","brijyt","etix","werealproduction"];
+// Stacked marks with tiny lettering stay unreadable at the shared height
+const PARTNER_HEIGHT_BOOST = {"club-eti": 1.5, "la-cantine": 1.5};
 document.querySelectorAll("[data-partners]").forEach(strip => {
   const height = +strip.dataset.partners;
-  strip.innerHTML = PARTNER_LOGOS.map(slug => `<img src="assets/partners/${slug}.png" alt="" style="height:${height}px">`).join("");
+  strip.innerHTML = PARTNER_LOGOS.map(slug => `<img src="assets/partners/${slug}.png" alt="" style="height:${Math.round(height * (PARTNER_HEIGHT_BOOST[slug] || 1))}px">`).join("");
 });
 
 // Corner signature on every talk frame
@@ -390,9 +385,29 @@ document.querySelectorAll(".fr[data-clone]").forEach(frame => {
   frame.appendChild(copy);
 });
 
+// Live renders: the real bumpers.html frame (the page the exporter captures), never a hand-written copy.
+// data-live="<bumpers|talks> <session slug> [part]". The single-file build swaps liveFrame for an inline renderer.
+const liveFrame = {
+  href: (view, session, part) => `bumpers.html?${view === "talks" ? "view=talks&" : ""}session=${session}${part ? `&part=${part}` : ""}`,
+  fill: (iframe, view, session, part) => { iframe.src = liveFrame.href(view, session, part); },
+};
+function mountLiveFrames() {
+  document.querySelectorAll(".fr[data-live]").forEach(frame => {
+    const [view, session, part] = frame.dataset.live.split(" ");
+    const iframe = document.createElement("iframe");
+    iframe.className = "live";
+    iframe.tabIndex = -1;
+    iframe.title = `${session}${part ? ` ${part}` : ""}`;
+    iframe.loading = "lazy";
+    liveFrame.fill(iframe, view, session, part);
+    frame.href = liveFrame.href(view, session, part);
+    frame.appendChild(iframe);
+  });
+}
+
 function fitFrames() {
   document.querySelectorAll(".fr").forEach(frame => {
-    const canvas = frame.querySelector(".cv");
+    const canvas = frame.querySelector(".cv, iframe.live");
     if (!canvas) return;
     const w = frame.clientWidth, h = frame.clientHeight;
     const zoom = +frame.dataset.zoom || 1;
@@ -403,6 +418,14 @@ function fitFrames() {
     canvas.style.transform = `scale(${(w / 1920) * zoom})`;
   });
 }
+// Viewing one frame in a browser window: scale it to fit, centred. At 1920 x 1080 (exports, vMix and OBS sources) the scale is 1.
+function fitSoloFrame(canvas) {
+  const scale = Math.min(innerWidth / 1920, innerHeight / 1080);
+  canvas.style.transformOrigin = "0 0";
+  canvas.style.transform = scale === 1 ? "none" : `scale(${scale})`;
+  canvas.style.marginLeft = `${Math.max(0, (innerWidth - 1920 * scale) / 2)}px`;
+  canvas.style.marginTop = `${Math.max(0, (innerHeight - 1080 * scale) / 2)}px`;
+}
 const query = new URLSearchParams(location.search), soloCanvas = document.getElementById(query.get("frame") || "");
 if (soloCanvas?.classList.contains("cv")) {
   document.body.replaceChildren(document.querySelector("body > svg"), soloCanvas);
@@ -410,8 +433,12 @@ if (soloCanvas?.classList.contains("cv")) {
   if (query.get("key") === "1") {
     document.documentElement.classList.add("key");
     document.body.classList.add("key");
+  } else {
+    fitSoloFrame(soloCanvas);
+    addEventListener("resize", () => fitSoloFrame(soloCanvas));
   }
 } else {
+  mountLiveFrames();
   fitFrames();
   new ResizeObserver(fitFrames).observe(document.body);
 }

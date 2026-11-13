@@ -1,11 +1,11 @@
-"""Pack board.html + bumpers.html (bumpers and in-talk frames) and their assets into one offline HTML file. Usage: uv run --with pillow python scripts/build_single_html.py <habillage-captation dir>"""
+"""Pack board.html, deroule.html (run sheet, #deroule) and bumpers.html (bumpers and in-talk frames) with their assets into one offline HTML file. Usage: uv run --with pillow python scripts/build_single_html.py <habillage-captation dir>"""
 import base64, glob, io, json, os, re, sys
 from PIL import Image
 
 ROOT = sys.argv[1]
 OUT = os.path.join(ROOT, "habillage-captation-genai-days.html")
 read = lambda p: open(os.path.join(ROOT, p), encoding="utf-8").read()
-board, bumpers = read("board.html"), read("bumpers.html")
+board, deroule, bumpers = read("board.html"), read("deroule.html"), read("bumpers.html")
 
 
 def must_replace(text, old, new, count=1):
@@ -17,7 +17,6 @@ def must_replace(text, old, new, count=1):
 # ---------- assets: recompressed once, keyed by their original path ----------
 POSTER_MAX_W = 1920
 SQUARE_POSTER_SIDE = 1080
-EXPORT_MAX_W = 1280      # export examples only show at card width
 LOGO_MAX_H = 160         # tallest logo is 150 canvas px (Startup Contest pitch tiles)
 
 
@@ -46,13 +45,11 @@ for p in sorted(glob.glob("assets/speakers/norm/*.webp", root_dir=ROOT)):
     assets[p] = webp_uri(p)
 for p in sorted(glob.glob("assets/partners/*.png", root_dir=ROOT)) + sorted(glob.glob("assets/startups/*.png", root_dir=ROOT)):
     assets[p] = webp_uri(p, max_h=LOGO_MAX_H)
-for p in sorted(glob.glob("exports/*.webp", root_dir=ROOT)):
-    assets[p] = webp_uri(p, EXPORT_MAX_W)
 grain_uri = raw_uri("assets/img/grain.png", "image/png")
 fonts = {f: raw_uri(f"assets/fonts/{f}", "font/woff2") for f in os.listdir(os.path.join(ROOT, "assets/fonts"))}
 
 # Every static asset path in both pages must resolve
-for path in re.findall(r'src="((?:assets|exports)/[^"$]+)"', board + bumpers):
+for path in re.findall(r'src="(assets/[^"$]+)"', board + bumpers):
     assert path in assets, path
 
 
@@ -117,6 +114,7 @@ css = "\n".join([
     font_faces,
     scope_css(css_of(board), ".pg-board", keep_globals=True),
     scope_css(bumpers_css, ".pg-bumpers", keep_globals=False),
+    scope_css(css_of(deroule), ".pg-deroule", keep_globals=False),
     "[hidden]{display:none!important}",
 ])
 
@@ -128,8 +126,9 @@ def body_of(html):
 
 symbol = re.search(r'<svg width="0".*?</svg>', board, re.S).group(0)
 board_body = body_of(board).replace(symbol, "")
-board_body = re.sub(r'src="((?:assets|exports)/[^"]+)"', r'data-asset="\1"', board_body)
+board_body = re.sub(r'src="(assets/[^"]+)"', r'data-asset="\1"', board_body)
 board_body = must_replace(board_body, 'href="bumpers.html"', 'href="#bumpers"')
+board_body = must_replace(board_body, 'href="deroule.html"', 'href="#deroule"', count=2)
 board_body = must_replace(board_body, 'href="bumpers.html?view=talks"', 'href="#talks"')
 board_body = must_replace(board_body, 'href="bumpers.html?view=talks#tables-rondes"', 'href="#talks-tables-rondes"')
 board_body = must_replace(board_body, 'href="bumpers.html?view=talks#startup-contest"', 'href="#talks-startup-contest"')
@@ -138,6 +137,10 @@ board_body = must_replace(board_body, '<li><a href="#e6">07 Miniature YouTube</a
                           '\n    <li><a href="#talks">Slides et intervenant, toutes les sessions</a></li>')
 
 bumpers_body = body_of(bumpers).replace(re.search(r'<svg width="0".*?</svg>', bumpers, re.S).group(0), "")
+bumpers_body = must_replace(bumpers_body, 'href="board.html"', 'href="#board"')
+
+# Run sheet: its own page (#deroule). It also carries the board scope, so the board canvases it clones keep their styles.
+deroule_body = must_replace(body_of(deroule), 'href="board.html"', 'href="#board"')
 # The same masthead and slots, twice: bumpers listing, then in-talk frames listing (filled by renderListing)
 talks_body = must_replace(bumpers_body, '<div id="board">', '<div class="pg-bumpers" id="talks">')
 bumpers_body = must_replace(bumpers_body, '<div id="board">', '<div class="pg-bumpers" id="bumpers">')
@@ -152,11 +155,39 @@ board_js = script_of(board)
 board_js = must_replace(board_js, '`<img src="assets/partners/${slug}.png"', '`<img data-asset="assets/partners/${slug}.png"')
 board_js = board_js.replace("document.querySelectorAll(", "BOARD.querySelectorAll(")
 board_js = must_replace(board_js, "// Clones after bugs", "hydrateAssets(BOARD);\n\n// Clones after bugs")
+board_js = must_replace(board_js, """const liveFrame = {
+  href: (view, session, part) => `bumpers.html?${view === "talks" ? "view=talks&" : ""}session=${session}${part ? `&part=${part}` : ""}`,
+  fill: (iframe, view, session, part) => { iframe.src = liveFrame.href(view, session, part); },
+};""", """const liveFrame = {
+  href: (view, session, part) => view === "talks" ? `#talk=${session}${part ? `&part=${part}` : ""}` : `#session=${session}`,
+  fill: fillLiveFrame,
+};""")
 board_js = "(() => {\nconst BOARD = document.querySelector(\".pg-board\");\n" + board_js + "})();\n"
 
+deroule_js = script_of(deroule)
+deroule_js = must_replace(deroule_js, """  href: (view, id, part) => view === "board" ? `board.html?frame=${id}`
+    : `bumpers.html?${view === "talks" ? "view=talks&" : ""}session=${id}${part ? `&part=${part}` : ""}`,""",
+"""  // Board canvases have no solo view in the single file: those frames are plain copies of the board's own canvas
+  href: (view, id, part) => view === "board" ? null
+    : view === "talks" ? `#talk=${id}${part ? `&part=${part}` : ""}` : `#session=${id}`,""")
+deroule_js = must_replace(deroule_js, """    iframe.src = liveFrame.href(view, id, part);
+    frame.appendChild(iframe);""", """    fillLiveFrame(iframe, view, id, part);
+    frame.appendChild(iframe);""")
+deroule_js = must_replace(deroule_js, """  mount: (frame, view, id, part) => {
+""", """  mount: (frame, view, id, part) => {
+    if (view === "board") {
+      const copy = document.getElementById(id).cloneNode(true);
+      copy.removeAttribute("id");
+      return frame.appendChild(copy);
+    }
+""")
+deroule_js = deroule_js.replace("document.querySelectorAll(", "DEROULE.querySelectorAll(")
+# Hidden until #deroule: rescale once the router has shown it
+deroule_js = "(() => {\nconst DEROULE = document.getElementById(\"deroule\");\n" + deroule_js + "addEventListener(\"hashchange\", fitFrames);\n})();\n"
+
 bumpers_js = script_of(bumpers)
-bumpers_js = must_replace(bumpers_js, 'src="${src}"', 'data-asset="${src}"', count=11)
-bumpers_js = must_replace(bumpers_js, '<img src="assets/partners/${s.host}.png"', '<img data-asset="assets/partners/${s.host}.png"')
+assert 'src="${src}"' in bumpers_js
+bumpers_js = bumpers_js.replace('src="${src}"', 'data-asset="${src}"')
 # Talks listing anchors get a prefix, so they cannot clash with bumper card ids (startup-contest)
 bumpers_js = must_replace(bumpers_js, 'const anchorPrefix = "";', 'const anchorPrefix = "talks-";')
 bumpers_js = must_replace(bumpers_js, 'document.querySelectorAll(".fr")', 'PAGES.querySelectorAll(".pg-bumpers .fr")')
@@ -186,11 +217,20 @@ function soloRequest() {
   return {view, session, frame};
 }
 
-let lastSoloCardId = null;
+// Three views share the file: the pages (board and listings), the run sheet (#deroule) and a solo frame.
+// Each page view keeps its scroll, so Back from a frame or from the run sheet returns to where the reader was.
+const DEROULE = document.getElementById("deroule"), savedScroll = {};
+history.scrollRestoration = "manual";
+let currentView = null, lastSoloCardId = null;
 function showRequestedView() {
   const solo = soloRequest();
+  const view = solo ? "solo" : location.hash === "#deroule" ? "deroule" : "pages";
+  if (currentView && currentView !== "solo") savedScroll[currentView] = scrollY;
+  const previousView = currentView;
+  currentView = view;
   document.body.classList.toggle("solo", !!solo);
-  PAGES.hidden = !!solo;
+  PAGES.hidden = view !== "pages";
+  DEROULE.hidden = view !== "deroule";
   SOLO.hidden = !solo;
   if (solo) {
     SOLO.innerHTML = solo.frame.markup;
@@ -200,18 +240,40 @@ function showRequestedView() {
     return;
   }
   SOLO.innerHTML = "";
-  fitFrames();
-  fitTitles(LISTING);
-  fitTitles(TALKS);
-  if (lastSoloCardId) document.getElementById(lastSoloCardId)?.scrollIntoView({block: "center"});
+  if (view === "pages") {
+    fitFrames();
+    fitTitles(LISTING);
+    fitTitles(TALKS);
+  }
+  if (previousView && previousView !== view && savedScroll[view] !== undefined) scrollTo(0, savedScroll[view]);
+  else if (view === "pages" && lastSoloCardId) document.getElementById(lastSoloCardId)?.scrollIntoView({block: "center"});
+  else if (view === "deroule") scrollTo(0, 0);
   else if (location.hash.length > 1) document.getElementById(location.hash.slice(1))?.scrollIntoView();
   lastSoloCardId = null;
 }
 showRequestedView();
 addEventListener("hashchange", showRequestedView);
 document.fonts.ready.then(() => soloRequest() ? fitTitles(SOLO) : (fitTitles(LISTING), fitTitles(TALKS)));
+
+// Live renders (.fr[data-live], board and run sheet): each frame renders in its own iframe holding only the bumpers.html CSS,
+// so the board styles cannot leak into it; markup, assets and title fitting are the ones the listings use.
+const LIVE_FRAME_DOC = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><style>${FRAME_CSS}</style></head><body class="solo"></body></html>`;
+window.fillLiveFrame = (iframe, view, slug, part) => {
+  const session = SESSIONS.find(s => s.slug === slug);
+  if (!session) return console.error("run sheet: unknown session", slug);
+  iframe.addEventListener("load", () => {
+    const doc = iframe.contentDocument, frames = VIEWS[view].frames(session);
+    doc.body.innerHTML = FRAME_SYMBOL + (frames.find(f => f.part === +part) || frames[0]).markup;
+    hydrateAssets(doc.body);
+    fitTitles(doc);
+    doc.fonts.ready.then(() => fitTitles(doc));
+  }, {once: true});
+  iframe.srcdoc = LIVE_FRAME_DOC;
+};
 """
-bumpers_js = "(() => {\n" + bumpers_js + "})();\n"
+frame_css = font_faces + "\n" + re.sub(r"@font-face\{[^}]*\}", "", bumpers_css)
+bumpers_js = ("(() => {\nconst FRAME_CSS = " + json.dumps(frame_css) + ";\nconst FRAME_SYMBOL = " + json.dumps(symbol) + ";\n"
+              + bumpers_js + "})();\n")
 
 hydrate_js = """// Each image is embedded once here; <img data-asset> elements get their src from this map
 const ASSETS = """ + json.dumps(assets, separators=(",", ":")) + """;
@@ -238,17 +300,21 @@ page = f"""<!doctype html>
 <body>
 {symbol}
 <div id="pages">
-<div class="pg-board">
+<div class="pg-board" id="board">
 {board_body.strip()}
 </div>
 {bumpers_body.strip()}
 {talks_body.strip()}
 </div>
+<div class="pg-board pg-deroule" id="deroule" hidden>
+{deroule_body.strip()}
+</div>
 <div class="pg-bumpers" id="solo" hidden></div>
 <script>
 {hydrate_js}
-{board_js}
 {bumpers_js}
+{board_js}
+{deroule_js}
 </script>
 </body>
 </html>
