@@ -1,7 +1,7 @@
 ---
 # Sources : https://www.linkedin.com/in/roch-moll%C3%A9ro-3b62417a/ (dates du parcours)
 # Parcours : texte de présentation fourni par l’organisation, repris tel quel
-# Portrait : photo fournie par l’organisation, 374 x 374 px, original conservé dans roch-mollero.png (aucune version plus grande trouvée sur Google Images, seule la photo de profil LinkedIn en 200 px y figure)
+# Portrait : photo fournie par l’organisation, 374 x 374 px, original conservé dans roch-mollero.png (aucune version plus grande trouvée). Cadrage élargi le 13/11/2026 à la demande de l’organisation : épaules, t-shirt et fond générés par gpt-image-2.5, visage et cheveux = photo d’origine recollée sans retouche (roch-mollero-elargi.png, 755 px), recadré en 520 x 520 px
 # Logo : https://www.gobano.ai/icons/favicon-48x48.svg (symbole Gobano sur tuile, original conservé dans gobano-square.svg)
 name: "Roch Molléro"
 role: "Directeur technique"
@@ -27,7 +27,7 @@ companies:
     description: "Gobano Robotics développe une IA physique qui transforme des bras robotisés standards en travailleurs autonomes : manipulation de vêtements, préhension universelle et automatisation industrielle."
     website: "https://www.gobano.ai/"
     logo: "/logos/gobano-square-optimized.svg"
-photo: "/speakers/roch-mollero-optimized.webp"
+photo: "/speakers/roch-mollero-elargi-optimized.webp"
 companyLogo: "/logos/gobano-square-optimized.svg"
 companyLogoAlt: "Logo Gobano Robotics"
 linkedin: "https://www.linkedin.com/in/roch-moll%C3%A9ro-3b62417a/"

@@ -3,7 +3,7 @@
 # https://www.antoinebrossault.com/ (site personnel, projets et articles)
 # https://github.com/Antoinebr (profil GitHub)
 # https://app.qwoted.com/opportunities/event-cloud-ai-infrastructure-2025-paris (intervention Cloud & AI Infrastructure 2025, alors Senior Sales Engineer chez Fastly)
-# Portrait : https://www.linkedin.com/in/antoinebr/ (photo de profil, 449 x 449 px, original conservé dans antoine-brossault-linkedin.jpg)
+# Portrait : https://pbs.twimg.com/profile_images/870213424629903360/6XfkiWVO.jpg (photo de profil X @antoineBr, original 2500 x 1668 px conservé dans antoine-brossault-x.jpg, recadré en 800 x 800 px)
 # Logo : repris du partenaire Cloudflare (public/logos/cloudflare-optimized.svg)
 name: "Antoine Brossault"
 role: "Solutions Engineer"
@@ -36,7 +36,7 @@ companies:
     description: "Plateforme mondiale de cloud de connectivité qui sécurise, accélère et fiabilise les applications, les API et les infrastructures, y compris pour les usages d’intelligence artificielle."
     website: "https://www.cloudflare.com/"
     logo: "/logos/cloudflare-optimized.svg"
-photo: "/speakers/antoine-brossault-optimized.webp"
+photo: "/speakers/antoine-brossault-x-optimized.webp"
 companyLogo: "/logos/cloudflare-optimized.svg"
 companyLogoAlt: "Logo Cloudflare"
 linkedin: "https://www.linkedin.com/in/antoinebr/"
