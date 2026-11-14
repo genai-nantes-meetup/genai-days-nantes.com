@@ -1,6 +1,6 @@
 ---
 title: "L’inférence de mon Mac mini est lente"
-subtitle: "Du GPU à la plateforme d’inférence"
+subtitle: "Servir des jetons à l’échelle"
 seoTitle: "L’inférence de mon Mac mini est lente"
 track: "tech"
 startTime: "11:15"
@@ -15,6 +15,4 @@ illustration:
   variant: "rag"
 ---
 
-Faire tourner un modèle en local paraît simple, jusqu’à la facture GPU et aux secondes d’attente par réponse.
-
-Cette session détaille les différentes couches d’infrastructure de l’inférence, du GPU et de sa mémoire jusqu’à la plateforme managée, en passant par les moteurs d’inférence et l’orchestration. Pour chaque couche, elle montre ce qui coûte, ce qui ralentit et les leviers pour agir.
+On a tous joué sur notre laptop en local avec un modèle d’inférence. Dans ce talk, vous découvrirez le parcours de Scaleway pour partir de cette expérimentation et arriver à servir des trillions de tokens sur des dizaines de modèles. Nous vous y présenterons les challenges, les métriques à surveiller, les embûches à éviter… pour tirer le meilleur parti de la grosse boîte pleine de GPUs qui vient de plomber votre budget.

@@ -1,6 +1,6 @@
 ---
 title: "Inference on my Mac mini is slow"
-subtitle: "From the GPU to the inference platform"
+subtitle: "Serving tokens at scale"
 seoTitle: "Inference on my Mac mini is slow"
 themes: ["Inference", "Data centers", "AI infrastructure"]
 illustration:
@@ -8,6 +8,4 @@ illustration:
 speakerSlugs: ["gregoire-de-turckheim"]
 ---
 
-Running a model locally looks simple, until the GPU bill and the seconds of waiting per answer show up.
-
-This session walks through the layers of inference infrastructure, from the GPU and its memory up to the managed platform, including inference engines and orchestration. For each layer, it shows what costs money, what slows things down and which levers to pull.
+We’ve all played with an inference model locally on our laptop. In this talk, you will follow Scaleway’s journey from that experiment to serving trillions of tokens across dozens of models. We will walk through the challenges, the metrics to watch, the pitfalls to avoid… and how to get the most out of the big box full of GPUs that just blew up your budget.
