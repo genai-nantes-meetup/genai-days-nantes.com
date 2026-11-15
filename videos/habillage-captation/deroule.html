@@ -53,7 +53,6 @@ code{font:500 12px/1.5 "Azeret Mono",monospace;font-variant-ligatures:none;overf
 .rs-dot{display:inline-block;flex:none;width:11px;height:11px;border-radius:50%;vertical-align:0}
 .d-regie{background:var(--blue)}
 .d-salle{background:var(--text)}
-.d-samuel{background:var(--orange)}
 .d-florian{background:transparent;box-shadow:inset 0 0 0 3px var(--orange)}
 .rs-files{display:flex;flex-wrap:wrap;gap:6px 22px;align-items:baseline;margin:14px 0 0;padding:12px 16px;border-radius:8px;background:var(--card);border:1px solid var(--line);font-size:13px;color:var(--muted)}
 .rs-files .lb{font-size:11px;color:var(--accent)}
@@ -88,6 +87,36 @@ code{font:500 12px/1.5 "Azeret Mono",monospace;font-variant-ligatures:none;overf
 .fr iframe.live{position:absolute;left:0;top:0;width:1920px;height:1080px;border:0;transform-origin:left top;pointer-events:none;background:#09122E}
 .rs-raw{position:relative;aspect-ratio:16/9;display:grid;place-items:center;padding:24px;border-radius:6px;background:#fff;color:#2c2c30;text-align:center;box-shadow:0 1px 0 var(--line),0 10px 30px rgba(9,18,46,.14);font-size:14px}
 .rs-raw b{display:block;font-family:"EB Garamond",serif;font-size:26px;margin-bottom:6px}
+
+/* Room filter: .runsheet[data-salle] hides what belongs to the other room. data-room="both" always shows. */
+.pl-filter{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;padding:14px 0;background:var(--page);border-bottom:1px solid var(--line)}
+.pl-filter .lb{font-size:11px;color:var(--muted);margin-right:4px}
+.pl-filter button{padding:9px 16px;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--text);font:700 12px Arial,Helvetica,sans-serif;text-transform:uppercase;letter-spacing:.1em;cursor:pointer}
+.pl-filter button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.runsheet[data-salle="hemicycle"] [data-room="loire"],.runsheet[data-salle="loire"] [data-room="hemicycle"]{display:none}
+.pl-h2,.rs-h2{font-family:"EB Garamond",serif;font-weight:600;font-size:clamp(30px,4vw,44px);line-height:1.05;margin:44px 0 6px}
+.pl-intro{max-width:900px;margin:0 0 18px;color:var(--muted)}
+.pl-item{display:grid;grid-template-columns:86px minmax(0,1fr) minmax(300px,440px);gap:4px 26px;padding:18px 0;border-top:1px solid var(--line)}
+.pl-thumbs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-content:start}
+.pl-thumbs figure{margin:0}
+.pl-thumbs .fr{border-radius:4px}
+.pl-thumbs a.fr:hover{box-shadow:0 0 0 2px var(--accent)}
+.pl-thumbs figcaption{margin-top:4px;font-size:11px;line-height:1.3;color:var(--muted)}
+@media (max-width:1100px){.pl-item{grid-template-columns:86px minmax(0,1fr)}.pl-thumbs{grid-column:2}}
+.pl-time{font:500 22px/1.1 "Azeret Mono",monospace;color:var(--text)}
+.pl-time span{display:block;margin-top:4px;font-size:13px;color:var(--muted)}
+.pl-meta{margin:0 0 4px;font-size:11px;color:var(--accent)}
+[data-room="loire"] .pl-meta{color:var(--orange)}
+.pl-body h3{margin:0;font-family:"EB Garamond",serif;font-size:24px;font-weight:600;line-height:1.15}
+.pl-who{margin:3px 0 0;font-size:14px}
+.pl-who span{color:var(--muted)}
+.pl-steps{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:5px;font-size:13.5px}
+.pl-steps li{display:grid;grid-template-columns:150px minmax(0,1fr);gap:12px}
+.pl-k{font-size:10.5px;color:var(--muted);padding-top:3px}
+.pl-n{color:var(--muted)}
+.pl-open{margin-left:4px;font-size:12px;color:var(--accent)}
+.pl-break .pl-body h3{font-size:19px;color:var(--muted)}
+@media (max-width:640px){.pl-item{grid-template-columns:minmax(0,1fr)}.pl-thumbs{grid-column:auto}.pl-steps li{grid-template-columns:minmax(0,1fr);gap:0}}
 </style>
 </head>
 <body>
@@ -95,11 +124,49 @@ code{font:500 12px/1.5 "Azeret Mono",monospace;font-variant-ligatures:none;overf
   <a class="back lb" href="board.html">&larr; Retour au board</a>
   <div class="kicker lb">GENAI DAYS 2026 · Captations des conférences</div>
   <h1>Rendu <em>final</em></h1>
-  <p>Le déroulé de la journée, écran par écran&nbsp;: qui envoie quoi, sur l'écran de la salle et sur le direct YouTube. Chaque image est le vrai cadre produit par la page qui fabrique les fichiers des zips, avec caméra et slides figurées. Cliquer un cadre l'ouvre seul en 1920 × 1080. Deux salles tournent en parallèle&nbsp;: l'Hémicycle (Décider) et la Salle Loire (Implémenter).</p>
+  <p>Le déroulé de la journée, salle par salle puis écran par écran&nbsp;: qui envoie quoi, sur l'écran de la salle et sur le direct YouTube. Deux salles tournent en parallèle&nbsp;: l'Hémicycle (Décider) et la Salle Loire (Implémenter). Choisir sa salle ci-dessous&nbsp;: la page n'affiche que son déroulé.</p>
 </header>
 
 <main class="wrap runsheet">
-  <div class="rs-files"><span class="lb">Fichiers</span><span><a href="livrables/habillage-genai-days-vmix.zip">habillage-genai-days-vmix.zip</a> · LISEZ-MOI-vMix.txt</span><span><a href="livrables/habillage-genai-days-obs.zip">habillage-genai-days-obs.zip</a> · LISEZ-MOI-OBS.txt</span><span>Mêmes PNG dans les deux zips, le LISEZ-MOI donne les positions des trous.</span></div>
+  <nav class="pl-filter" aria-label="Filtrer par salle"><span class="lb">Salle</span><button type="button" data-salle="hemicycle">Hémicycle</button><button type="button" data-salle="loire">Salle Loire</button></nav>
+
+  <div class="rs-files"><span class="lb">Fichiers</span><span>Dossier <code>images/</code> du zip GENAI-DAYS-habillage-captation, chemins ci-dessous relatifs à ce dossier.</span><span>Mode d'emploi et positions des trous&nbsp;: <code>LISEZ-MOI-vMix.txt</code> ou <code>LISEZ-MOI-OBS.txt</code>.</span></div>
+
+  <h2 class="pl-h2">Planning de la journée</h2>
+  <p class="pl-intro">Heure par heure, ce que la régie envoie. «&nbsp;voir&nbsp;» ouvre le cadre en 1920 × 1080. L'écran de la salle et YouTube montrent toujours la même image. Hémicycle&nbsp;: la bande sous les slides reste vide pour les sous-titres en direct. Salle Loire&nbsp;: pas de sous-titres, les slides sont centrées.</p>
+  <div class="pl-list">
+<article class="pl-item pl-break" data-room="both"><div class="pl-time">09:30<span>09:40</span></div><div class="pl-body"><p class="pl-meta lb">Entre deux sessions</p><h3>Ouverture des salles, déplacement vers les parcours</h3><ol class="pl-steps"><li><span class="pl-k lb">À l'antenne</span><span class="pl-v"><code>06-carton-inter-sessions-et-fin.png</code> <span class="pl-n">tout du long, salle et YouTube.</span></span></li></ol></div><div class="pl-thumbs"><figure><a class="fr" data-live="board o4"></a><figcaption>Carton inter-sessions</figcaption></figure></div></article>
+<article class="pl-item" data-room="hemicycle"><div class="pl-time">09:40<span>10:20</span></div><div class="pl-body"><p class="pl-meta lb">Hémicycle · Conférence · 40 min</p><h3>Je ne sais pas ce que mes équipes mettent dans ChatGPT</h3><p class="pl-who">Gaël Brisson <span>(Swiftask)</span></p><ol class="pl-steps"><li><span class="pl-k lb">Bumper</span><span class="pl-v"><code>01-bumpers/0940-decider-agents-entreprise-shadowai-knowledge.png</code> <span class="pl-n">3 à 5 s, salle et YouTube.</span> <a class="pl-open" data-open="bumpers agents-entreprise-shadowai-knowledge">voir</a></span></li><li><span class="pl-k lb">Pendant le talk</span><span class="pl-v"><code>02-conferences/0940-decider-agents-entreprise-shadowai-knowledge.png</code> + caméra + PC du pupitre <span class="pl-n">salle et YouTube identiques.</span> <a class="pl-open" data-open="talks agents-entreprise-shadowai-knowledge">voir</a></span></li><li><span class="pl-k lb">Après</span><span class="pl-v"><code>06-carton-inter-sessions-et-fin.png</code> <span class="pl-n">dès les applaudissements.</span></span></li></ol></div><div class="pl-thumbs"><figure><a class="fr" data-live="bumpers agents-entreprise-shadowai-knowledge"></a><figcaption>Bumper</figcaption></figure><figure><a class="fr" data-live="talks agents-entreprise-shadowai-knowledge"></a><figcaption>Pendant le talk</figcaption></figure></div></article>
+<article class="pl-item" data-room="loire"><div class="pl-time">09:40<span>10:20</span></div><div class="pl-body"><p class="pl-meta lb">Salle Loire · Conférence · 40 min</p><h3>Je shippe plus vite que jamais, et je ne sais plus pourquoi</h3><p class="pl-who">Jean-Yves Simon <span>(Mirakl)</span></p><ol class="pl-steps"><li><span class="pl-k lb">Bumper</span><span class="pl-v"><code>01-bumpers/0940-implementer-product-velocity.png</code> <span class="pl-n">3 à 5 s, salle et YouTube.</span> <a class="pl-open" data-open="bumpers product-velocity">voir</a></span></li><li><span class="pl-k lb">Pendant le talk</span><span class="pl-v"><code>02-conferences/0940-implementer-product-velocity.png</code> + caméra + PC du pupitre <span class="pl-n">salle et YouTube identiques.</span> <a class="pl-open" data-open="talks product-velocity">voir</a></span></li><li><span class="pl-k lb">Après</span><span class="pl-v"><code>06-carton-inter-sessions-et-fin.png</code> <span class="pl-n">dès les applaudissements.</span></span></li></ol></div><div class="pl-thumbs"><figure><a class="fr" data-live="bumpers product-velocity"></a><figcaption>Bumper</figcaption></figure><figure><a class="fr" data-live="talks product-velocity"></a><figcaption>Pendant le talk</figcaption></figure></div></article>
+<article class="pl-item" data-room="hemicycle"><div class="pl-time">10:20<span>11:00</span></div><div class="pl-body"><p class="pl-meta lb">Hémicycle · Table ronde · 40 min</p><h3>Les Américains ont pris en otage mon SI</h3><p class="pl-who">Quentin Adam <span>(Clever Cloud)</span>, Constance Nebbula <span>(Région Pays de la Loire)</span>, Jean-Baptiste Kempf <span>(VLC · Scaleway · Kyber)</span>, Claire Augris <span>(Images & Réseaux)</span></p><ol class="pl-steps"><li><span class="pl-k lb">Bumper</span><span class="pl-v"><code>01-bumpers/1020-decider-souverainete-ia.png</code> <span class="pl-n">3 à 5 s, salle et YouTube.</span> <a class="pl-open" data-open="bumpers souverainete-ia">voir</a></span></li><li><span class="pl-k lb">Pendant la table ronde</span><span class="pl-v"><code>03-tables-rondes/1020-decider-souverainete-ia.png</code> + caméra <span class="pl-n">en grand, salle et YouTube identiques.</span> <a class="pl-open" data-open="talks souverainete-ia">voir</a></span></li><li><span class="pl-k lb">Après</span><span class="pl-v"><code>06-carton-inter-sessions-et-fin.png</code> <span class="pl-n">dès les applaudissements.</span></span></li></ol></div><div class="pl-thumbs"><figure><a class="fr" data-live="bumpers souverainete-ia"></a><figcaption>Bumper</figcaption></figure><figure><a class="fr" data-live="talks souverainete-ia"></a><figcaption>Pendant la table ronde</figcaption></figure></div></article>
+<article class="pl-item" data-room="loire"><div class="pl-time">10:20<span>11:00</span></div><div class="pl-body"><p class="pl-meta lb">Salle Loire · Conférence · 40 min</p><h3>Mon agent ne répond jamais deux fois pareil</h3><p class="pl-who">Charli Idrac <span>(Brevo)</span></p><ol class="pl-steps"><li><span class="pl-k lb">Bumper</span><span class="pl-v"><code>01-bumpers/1020-implementer-agentic-coding.png</code> <span class="pl-n">3 à 5 s, salle et YouTube.</span> <a class="pl-open" data-open="bumpers agentic-coding">voir</a></span></li><li><span class="pl-k lb">Pendant le talk</span><span class="pl-v"><code>02-conferences/1020-implementer-agentic-coding.png</code> + caméra + PC du pupitre <span class="pl-n">salle et YouTube identiques.</span> <a class="pl-open" data-open="talks agentic-coding">voir</a></span></li><li><span class="pl-k lb">Après</span><span class="pl-v"><code>06-carton-inter-sessions-et-fin.png</code> <span class="pl-n">dès les applaudissements.</span></span></li></ol></div><div class="pl-thumbs"><figure><a class="fr" data-live="bumpers agentic-coding"></a><figcaption>Bumper</figcaption></figure><figure><a class="fr" data-live="talks agentic-coding"></a><figcaption>Pendant le talk</figcaption></figure></div></article>
+<article class="pl-item pl-break" data-room="both"><div class="pl-time">11:00<span>11:15</span></div><div class="pl-body"><p class="pl-meta lb">Entre deux sessions</p><h3>Déplacement et pause café</h3><ol class="pl-steps"><li><span class="pl-k lb">À l'antenne</span><span class="pl-v"><code>06-carton-inter-sessions-et-fin.png</code> <span class="pl-n">tout du long, salle et YouTube.</span></span></li></ol></div><div class="pl-thumbs"><figure><a class="fr" data-live="board o4"></a><figcaption>Carton inter-sessions</figcaption></figure></div></article>
+<article class="pl-item" data-room="hemicycle"><div class="pl-time">11:15<span>11:55</span></div><div class="pl-body"><p class="pl-meta lb">Hémicycle · Conférence · 40 min</p><h3>En démo, mon agent IA vocal ne se trompe jamais</h3><p class="pl-who">Julien Lesaicherre <span>(ElevenLabs)</span></p><ol class="pl-steps"><li><span class="pl-k lb">Bumper</span><span class="pl-v"><code>01-bumpers/1115-decider-voice-agents.png</code> <span class="pl-n">3 à 5 s, salle et YouTube.</span> <a class="pl-open" data-open="bumpers voice-agents">voir</a></span></li><li><span class="pl-k lb">Pendant le talk</span><span class="pl-v"><code>02-conferences/1115-decider-voice-agents.png</code> + caméra + PC du pupitre <span class="pl-n">salle et YouTube identiques.</span> <a class="pl-open" data-open="talks voice-agents">voir</a></span></li><li><span class="pl-k lb">Après</span><span class="pl-v"><code>06-carton-inter-sessions-et-fin.png</code> <span class="pl-n">dès les applaudissements.</span></span></li></ol></div><div class="pl-thumbs"><figure><a class="fr" data-live="bumpers voice-agents"></a><figcaption>Bumper</figcaption></figure><figure><a class="fr" data-live="talks voice-agents"></a><figcaption>Pendant le talk</figcaption></figure></div></article>
+<article class="pl-item" data-room="loire"><div class="pl-time">11:15<span>11:55</span></div><div class="pl-body"><p class="pl-meta lb">Salle Loire · Conférence · 40 min</p><h3>L’inférence de mon Mac mini est lente</h3><p class="pl-who">Grégoire de Turckheim <span>(Scaleway)</span></p><ol class="pl-steps"><li><span class="pl-k lb">Bumper</span><span class="pl-v"><code>01-bumpers/1115-implementer-inference-serving.png</code> <span class="pl-n">3 à 5 s, salle et YouTube.</span> <a class="pl-open" data-open="bumpers inference-serving">voir</a></span></li><li><span class="pl-k lb">Pendant le talk</span><span class="pl-v"><code>02-conferences/1115-implementer-inference-serving.png</code> + caméra + PC du pupitre <span class="pl-n">salle et YouTube identiques.</span> <a class="pl-open" data-open="talks inference-serving">voir</a></span></li><li><span class="pl-k lb">Après</span><span class="pl-v"><code>06-carton-inter-sessions-et-fin.png</code> <span class="pl-n">dès les applaudissements.</span></span></li></ol></div><div class="pl-thumbs"><figure><a class="fr" data-live="bumpers inference-serving"></a><figcaption>Bumper</figcaption></figure><figure><a class="fr" data-live="talks inference-serving"></a><figcaption>Pendant le talk</figcaption></figure></div></article>
+<article class="pl-item" data-room="hemicycle"><div class="pl-time">11:55<span>12:25</span></div><div class="pl-body"><p class="pl-meta lb">Hémicycle · Concours · 30 min · 5 pitchs</p><h3>Startup Contest</h3><p class="pl-who">Animation&nbsp;: Florian Hervéou. Jury&nbsp;: Constance Nebbula, Sébastien Le&nbsp;Corfec, Thomas Mathieu, David Léaurant.</p><ol class="pl-steps"><li><span class="pl-k lb">Bumper</span><span class="pl-v"><code>04-startup-contest/00-bumper.png</code> <span class="pl-n">ouverture du concours, salle et YouTube.</span> <a class="pl-open" data-open="bumpers startup-contest">voir</a></span></li><li><span class="pl-k lb">Pendant les pitchs</span><span class="pl-v"><code>04-startup-contest/01-trame-pitch.png</code> + caméra + PC de Florian Hervéou au pupitre <span class="pl-n">Florian pilote depuis son PC le deck de tous les pitchs. Même trame pour les cinq pitchs, salle et YouTube identiques.</span> <a class="pl-open" data-open="talks startup-contest 1">voir</a></span></li><li><span class="pl-k lb">Après</span><span class="pl-v"><code>06-carton-inter-sessions-et-fin.png</code> <span class="pl-n">dès les applaudissements.</span></span></li></ol></div><div class="pl-thumbs"><figure><a class="fr" data-live="bumpers startup-contest"></a><figcaption>Bumper</figcaption></figure><figure><a class="fr" data-live="talks startup-contest 1"></a><figcaption>Trame des pitchs</figcaption></figure></div></article>
+<article class="pl-item" data-room="loire"><div class="pl-time">11:55<span>12:25</span></div><div class="pl-body"><p class="pl-meta lb">Salle Loire · Conférence · 30 min</p><h3>Mes GPUs chauffent et ma facture grimpe</h3><p class="pl-who">Olivier Lauvray <span>(VSORA)</span></p><ol class="pl-steps"><li><span class="pl-k lb">Bumper</span><span class="pl-v"><code>01-bumpers/1155-implementer-gpu-architecture.png</code> <span class="pl-n">3 à 5 s, salle et YouTube.</span> <a class="pl-open" data-open="bumpers gpu-architecture">voir</a></span></li><li><span class="pl-k lb">Pendant le talk</span><span class="pl-v"><code>02-conferences/1155-implementer-gpu-architecture.png</code> + caméra + PC du pupitre <span class="pl-n">salle et YouTube identiques.</span> <a class="pl-open" data-open="talks gpu-architecture">voir</a></span></li><li><span class="pl-k lb">Après</span><span class="pl-v"><code>06-carton-inter-sessions-et-fin.png</code> <span class="pl-n">dès les applaudissements.</span></span></li></ol></div><div class="pl-thumbs"><figure><a class="fr" data-live="bumpers gpu-architecture"></a><figcaption>Bumper</figcaption></figure><figure><a class="fr" data-live="talks gpu-architecture"></a><figcaption>Pendant le talk</figcaption></figure></div></article>
+<article class="pl-item pl-break" data-room="both"><div class="pl-time">12:25<span>13:45</span></div><div class="pl-body"><p class="pl-meta lb">Entre deux sessions</p><h3>Déjeuner</h3><ol class="pl-steps"><li><span class="pl-k lb">À l'antenne</span><span class="pl-v"><code>06-carton-inter-sessions-et-fin.png</code> <span class="pl-n">tout du long, salle et YouTube.</span></span></li></ol></div><div class="pl-thumbs"><figure><a class="fr" data-live="board o4"></a><figcaption>Carton inter-sessions</figcaption></figure></div></article>
+<article class="pl-item" data-room="hemicycle"><div class="pl-time">13:45<span>14:25</span></div><div class="pl-body"><p class="pl-meta lb">Hémicycle · Conférence · 40 min</p><h3>J'ai consommé mon budget IA en mai. Comment finir l'année&nbsp;?</h3><p class="pl-who">Nicolas Martignole <span>(Back Market)</span></p><ol class="pl-steps"><li><span class="pl-k lb">Bumper</span><span class="pl-v"><code>01-bumpers/1345-decider-finops-agents.png</code> <span class="pl-n">3 à 5 s, salle et YouTube.</span> <a class="pl-open" data-open="bumpers finops-agents">voir</a></span></li><li><span class="pl-k lb">Pendant le talk</span><span class="pl-v"><code>02-conferences/1345-decider-finops-agents.png</code> + caméra + PC du pupitre <span class="pl-n">salle et YouTube identiques.</span> <a class="pl-open" data-open="talks finops-agents">voir</a></span></li><li><span class="pl-k lb">Après</span><span class="pl-v"><code>06-carton-inter-sessions-et-fin.png</code> <span class="pl-n">dès les applaudissements.</span></span></li></ol></div><div class="pl-thumbs"><figure><a class="fr" data-live="bumpers finops-agents"></a><figcaption>Bumper</figcaption></figure><figure><a class="fr" data-live="talks finops-agents"></a><figcaption>Pendant le talk</figcaption></figure></div></article>
+<article class="pl-item" data-room="loire"><div class="pl-time">13:45<span>14:25</span></div><div class="pl-body"><p class="pl-meta lb">Salle Loire · Conférence · 40 min</p><h3>Mon modèle a le droit de se tromper. Mon robot, non</h3><p class="pl-who">Roch Molléro <span>(Gobano Robotics)</span></p><ol class="pl-steps"><li><span class="pl-k lb">Bumper</span><span class="pl-v"><code>01-bumpers/1345-implementer-physical-ai-robotique.png</code> <span class="pl-n">3 à 5 s, salle et YouTube.</span> <a class="pl-open" data-open="bumpers physical-ai-robotique">voir</a></span></li><li><span class="pl-k lb">Pendant le talk</span><span class="pl-v"><code>02-conferences/1345-implementer-physical-ai-robotique.png</code> + caméra + PC du pupitre <span class="pl-n">salle et YouTube identiques.</span> <a class="pl-open" data-open="talks physical-ai-robotique">voir</a></span></li><li><span class="pl-k lb">Après</span><span class="pl-v"><code>06-carton-inter-sessions-et-fin.png</code> <span class="pl-n">dès les applaudissements.</span></span></li></ol></div><div class="pl-thumbs"><figure><a class="fr" data-live="bumpers physical-ai-robotique"></a><figcaption>Bumper</figcaption></figure><figure><a class="fr" data-live="talks physical-ai-robotique"></a><figcaption>Pendant le talk</figcaption></figure></div></article>
+<article class="pl-item" data-room="hemicycle"><div class="pl-time">14:25<span>15:05</span></div><div class="pl-body"><p class="pl-meta lb">Hémicycle · Conférence · 40 min</p><h3>Mon concurrent utilise des humanoïdes dans sa chaine de production</h3><p class="pl-who">Laurent Duthoit <span>(Renault Group)</span>, Camille Croze <span>(Wandercraft)</span></p><ol class="pl-steps"><li><span class="pl-k lb">Bumper</span><span class="pl-v"><code>01-bumpers/1425-decider-ia-pour-industrie.png</code> <span class="pl-n">3 à 5 s, salle et YouTube.</span> <a class="pl-open" data-open="bumpers ia-pour-industrie">voir</a></span></li><li><span class="pl-k lb">Pendant le talk</span><span class="pl-v"><code>02-conferences/1425-decider-ia-pour-industrie.png</code> + caméra + PC du pupitre <span class="pl-n">salle et YouTube identiques.</span> <a class="pl-open" data-open="talks ia-pour-industrie">voir</a></span></li><li><span class="pl-k lb">Après</span><span class="pl-v"><code>06-carton-inter-sessions-et-fin.png</code> <span class="pl-n">dès les applaudissements.</span></span></li></ol></div><div class="pl-thumbs"><figure><a class="fr" data-live="bumpers ia-pour-industrie"></a><figcaption>Bumper</figcaption></figure><figure><a class="fr" data-live="talks ia-pour-industrie"></a><figcaption>Pendant le talk</figcaption></figure></div></article>
+<article class="pl-item" data-room="loire"><div class="pl-time">14:25<span>15:05</span></div><div class="pl-body"><p class="pl-meta lb">Salle Loire · Conférence · 40 min</p><h3>Mon modèle ne tient pas sur une puce embarquée</h3><p class="pl-who">Théo Hubert <span>(AlphaEdge)</span></p><ol class="pl-steps"><li><span class="pl-k lb">Bumper</span><span class="pl-v"><code>01-bumpers/1425-implementer-slm-compression-modeles.png</code> <span class="pl-n">3 à 5 s, salle et YouTube.</span> <a class="pl-open" data-open="bumpers slm-compression-modeles">voir</a></span></li><li><span class="pl-k lb">Pendant le talk</span><span class="pl-v"><code>02-conferences/1425-implementer-slm-compression-modeles.png</code> + caméra + PC du pupitre <span class="pl-n">salle et YouTube identiques.</span> <a class="pl-open" data-open="talks slm-compression-modeles">voir</a></span></li><li><span class="pl-k lb">Après</span><span class="pl-v"><code>06-carton-inter-sessions-et-fin.png</code> <span class="pl-n">dès les applaudissements.</span></span></li></ol></div><div class="pl-thumbs"><figure><a class="fr" data-live="bumpers slm-compression-modeles"></a><figcaption>Bumper</figcaption></figure><figure><a class="fr" data-live="talks slm-compression-modeles"></a><figcaption>Pendant le talk</figcaption></figure></div></article>
+<article class="pl-item pl-break" data-room="both"><div class="pl-time">15:05<span>15:20</span></div><div class="pl-body"><p class="pl-meta lb">Entre deux sessions</p><h3>Déplacement et pause café</h3><ol class="pl-steps"><li><span class="pl-k lb">À l'antenne</span><span class="pl-v"><code>06-carton-inter-sessions-et-fin.png</code> <span class="pl-n">tout du long, salle et YouTube.</span></span></li></ol></div><div class="pl-thumbs"><figure><a class="fr" data-live="board o4"></a><figcaption>Carton inter-sessions</figcaption></figure></div></article>
+<article class="pl-item" data-room="hemicycle"><div class="pl-time">15:20<span>16:00</span></div><div class="pl-body"><p class="pl-meta lb">Hémicycle · Conférence · 40 min</p><h3>Nos POCs ne passent jamais en production</h3><p class="pl-who">Tiffany Souterre <span>(AWS)</span></p><ol class="pl-steps"><li><span class="pl-k lb">Bumper</span><span class="pl-v"><code>01-bumpers/1520-decider-industrialisation-projet-ia.png</code> <span class="pl-n">3 à 5 s, salle et YouTube.</span> <a class="pl-open" data-open="bumpers industrialisation-projet-ia">voir</a></span></li><li><span class="pl-k lb">Pendant le talk</span><span class="pl-v"><code>02-conferences/1520-decider-industrialisation-projet-ia.png</code> + caméra + PC du pupitre <span class="pl-n">salle et YouTube identiques.</span> <a class="pl-open" data-open="talks industrialisation-projet-ia">voir</a></span></li><li><span class="pl-k lb">Après</span><span class="pl-v"><code>06-carton-inter-sessions-et-fin.png</code> <span class="pl-n">dès les applaudissements.</span></span></li></ol></div><div class="pl-thumbs"><figure><a class="fr" data-live="bumpers industrialisation-projet-ia"></a><figcaption>Bumper</figcaption></figure><figure><a class="fr" data-live="talks industrialisation-projet-ia"></a><figcaption>Pendant le talk</figcaption></figure></div></article>
+<article class="pl-item" data-room="loire"><div class="pl-time">15:20<span>16:00</span></div><div class="pl-body"><p class="pl-meta lb">Salle Loire · Conférence · 40 min</p><h3>Mes agents IA sont la nouvelle cible des attaques</h3><p class="pl-who">Antoine Brossault <span>(Cloudflare)</span></p><ol class="pl-steps"><li><span class="pl-k lb">Bumper</span><span class="pl-v"><code>01-bumpers/1520-implementer-cyber-ai.png</code> <span class="pl-n">3 à 5 s, salle et YouTube.</span> <a class="pl-open" data-open="bumpers cyber-ai">voir</a></span></li><li><span class="pl-k lb">Pendant le talk</span><span class="pl-v"><code>02-conferences/1520-implementer-cyber-ai.png</code> + caméra + PC du pupitre <span class="pl-n">salle et YouTube identiques.</span> <a class="pl-open" data-open="talks cyber-ai">voir</a></span></li><li><span class="pl-k lb">Après</span><span class="pl-v"><code>06-carton-inter-sessions-et-fin.png</code> <span class="pl-n">dès les applaudissements.</span></span></li></ol></div><div class="pl-thumbs"><figure><a class="fr" data-live="bumpers cyber-ai"></a><figcaption>Bumper</figcaption></figure><figure><a class="fr" data-live="talks cyber-ai"></a><figcaption>Pendant le talk</figcaption></figure></div></article>
+<article class="pl-item" data-room="hemicycle"><div class="pl-time">16:00<span>16:40</span></div><div class="pl-body"><p class="pl-meta lb">Hémicycle · Table ronde · 40 min</p><h3>Une partie de mon équipe a peur que l'IA lui prenne son poste</h3><p class="pl-who">Camille Marini <span>(Alan)</span>, Frédéric Didier <span>(Groupe Crédit Agricole)</span>, Delphine Ziegler <span>(Doctolib)</span>, Céline Haentzler <span>(Betclic Group)</span></p><ol class="pl-steps"><li><span class="pl-k lb">Bumper</span><span class="pl-v"><code>01-bumpers/1600-decider-conduite-changement-ia.png</code> <span class="pl-n">3 à 5 s, salle et YouTube.</span> <a class="pl-open" data-open="bumpers conduite-changement-ia">voir</a></span></li><li><span class="pl-k lb">Pendant la table ronde</span><span class="pl-v"><code>03-tables-rondes/1600-decider-conduite-changement-ia.png</code> + caméra <span class="pl-n">en grand, salle et YouTube identiques.</span> <a class="pl-open" data-open="talks conduite-changement-ia">voir</a></span></li><li><span class="pl-k lb">Après</span><span class="pl-v"><code>06-carton-inter-sessions-et-fin.png</code> <span class="pl-n">dès les applaudissements.</span></span></li></ol></div><div class="pl-thumbs"><figure><a class="fr" data-live="bumpers conduite-changement-ia"></a><figcaption>Bumper</figcaption></figure><figure><a class="fr" data-live="talks conduite-changement-ia"></a><figcaption>Pendant la table ronde</figcaption></figure></div></article>
+<article class="pl-item" data-room="loire"><div class="pl-time">16:00<span>16:40</span></div><div class="pl-body"><p class="pl-meta lb">Salle Loire · Conférence · 40 min</p><h3>Je n'ai pas confiance dans mes pull&#8209;requests générées</h3><p class="pl-who">Florian Bruniaux <span>(Founding team @ RTK)</span></p><ol class="pl-steps"><li><span class="pl-k lb">Bumper</span><span class="pl-v"><code>01-bumpers/1600-implementer-harness-context-engineering.png</code> <span class="pl-n">3 à 5 s, salle et YouTube.</span> <a class="pl-open" data-open="bumpers harness-context-engineering">voir</a></span></li><li><span class="pl-k lb">Pendant le talk</span><span class="pl-v"><code>02-conferences/1600-implementer-harness-context-engineering.png</code> + caméra + PC du pupitre <span class="pl-n">salle et YouTube identiques.</span> <a class="pl-open" data-open="talks harness-context-engineering">voir</a></span></li><li><span class="pl-k lb">Après</span><span class="pl-v"><code>06-carton-inter-sessions-et-fin.png</code> <span class="pl-n">dès les applaudissements.</span></span></li></ol></div><div class="pl-thumbs"><figure><a class="fr" data-live="bumpers harness-context-engineering"></a><figcaption>Bumper</figcaption></figure><figure><a class="fr" data-live="talks harness-context-engineering"></a><figcaption>Pendant le talk</figcaption></figure></div></article>
+<article class="pl-item pl-break" data-room="both"><div class="pl-time">16:40<span>16:55</span></div><div class="pl-body"><p class="pl-meta lb">Entre deux sessions</p><h3>Déplacement et pause café</h3><ol class="pl-steps"><li><span class="pl-k lb">À l'antenne</span><span class="pl-v"><code>06-carton-inter-sessions-et-fin.png</code> <span class="pl-n">tout du long, salle et YouTube.</span></span></li></ol></div><div class="pl-thumbs"><figure><a class="fr" data-live="board o4"></a><figcaption>Carton inter-sessions</figcaption></figure></div></article>
+<article class="pl-item" data-room="hemicycle"><div class="pl-time">16:55<span>17:35</span></div><div class="pl-body"><p class="pl-meta lb">Hémicycle · Conférence · 40 min</p><h3>Ma sécurité ne fait pas le poids face aux IA</h3><p class="pl-who">Régis Dubrulle <span>(ANSSI)</span></p><ol class="pl-steps"><li><span class="pl-k lb">Bumper</span><span class="pl-v"><code>01-bumpers/1655-decider-nouvelles-menaces-cyber.png</code> <span class="pl-n">3 à 5 s, salle et YouTube.</span> <a class="pl-open" data-open="bumpers nouvelles-menaces-cyber">voir</a></span></li><li><span class="pl-k lb">Pendant le talk</span><span class="pl-v"><code>02-conferences/1655-decider-nouvelles-menaces-cyber.png</code> + caméra + PC du pupitre <span class="pl-n">salle et YouTube identiques.</span> <a class="pl-open" data-open="talks nouvelles-menaces-cyber">voir</a></span></li><li><span class="pl-k lb">Après</span><span class="pl-v"><code>06-carton-inter-sessions-et-fin.png</code> <span class="pl-n">dès les applaudissements.</span></span></li></ol></div><div class="pl-thumbs"><figure><a class="fr" data-live="bumpers nouvelles-menaces-cyber"></a><figcaption>Bumper</figcaption></figure><figure><a class="fr" data-live="talks nouvelles-menaces-cyber"></a><figcaption>Pendant le talk</figcaption></figure></div></article>
+<article class="pl-item" data-room="loire"><div class="pl-time">16:55<span>17:35</span></div><div class="pl-body"><p class="pl-meta lb">Salle Loire · Conférence · 40 min</p><h3>Je n'arrive pas à savoir si mes agents sont performants ou non</h3><p class="pl-who">Tristan Fransen <span>(Pennylane)</span></p><ol class="pl-steps"><li><span class="pl-k lb">Bumper</span><span class="pl-v"><code>01-bumpers/1655-implementer-agent-evaluation.png</code> <span class="pl-n">3 à 5 s, salle et YouTube.</span> <a class="pl-open" data-open="bumpers agent-evaluation">voir</a></span></li><li><span class="pl-k lb">Pendant le talk</span><span class="pl-v"><code>02-conferences/1655-implementer-agent-evaluation.png</code> + caméra + PC du pupitre <span class="pl-n">salle et YouTube identiques.</span> <a class="pl-open" data-open="talks agent-evaluation">voir</a></span></li><li><span class="pl-k lb">Après</span><span class="pl-v"><code>06-carton-inter-sessions-et-fin.png</code> <span class="pl-n">dès les applaudissements.</span></span></li></ol></div><div class="pl-thumbs"><figure><a class="fr" data-live="bumpers agent-evaluation"></a><figcaption>Bumper</figcaption></figure><figure><a class="fr" data-live="talks agent-evaluation"></a><figcaption>Pendant le talk</figcaption></figure></div></article>
+<article class="pl-item" data-room="hemicycle"><div class="pl-time">17:35<span>17:50</span></div><div class="pl-body"><p class="pl-meta lb">Hémicycle · Keynote · 15 min</p><h3>Keynote de clôture</h3><p class="pl-who">Maxime Pitussi <span>(Organisation)</span></p><ol class="pl-steps"><li><span class="pl-k lb">Bumper</span><span class="pl-v"><code>01-bumpers/1735-decider-keynote-cloture-hemicycle.png</code> <span class="pl-n">3 à 5 s, salle et YouTube.</span> <a class="pl-open" data-open="bumpers keynote-cloture-hemicycle">voir</a></span></li><li><span class="pl-k lb">Pendant le talk</span><span class="pl-v"><code>02-conferences/1735-decider-keynote-cloture-hemicycle.png</code> + caméra + PC du pupitre <span class="pl-n">salle et YouTube identiques.</span> <a class="pl-open" data-open="talks keynote-cloture-hemicycle">voir</a></span></li><li><span class="pl-k lb">Après</span><span class="pl-v"><code>07-podcast-teasing-hemicycle.png</code> <span class="pl-n">dès les applaudissements, teasing du podcast.</span></span></li></ol></div><div class="pl-thumbs"><figure><a class="fr" data-live="bumpers keynote-cloture-hemicycle"></a><figcaption>Bumper</figcaption></figure><figure><a class="fr" data-live="talks keynote-cloture-hemicycle"></a><figcaption>Pendant le talk</figcaption></figure></div></article>
+<article class="pl-item" data-room="loire"><div class="pl-time">17:35<span>17:50</span></div><div class="pl-body"><p class="pl-meta lb">Salle Loire · Keynote · 15 min</p><h3>Keynote de clôture</h3><p class="pl-who">Samuel Berthe <span>(Organisation)</span></p><ol class="pl-steps"><li><span class="pl-k lb">Bumper</span><span class="pl-v"><code>01-bumpers/1735-implementer-keynote-cloture-loire.png</code> <span class="pl-n">3 à 5 s, salle et YouTube.</span> <a class="pl-open" data-open="bumpers keynote-cloture-loire">voir</a></span></li><li><span class="pl-k lb">Pendant le talk</span><span class="pl-v"><code>02-conferences/1735-implementer-keynote-cloture-loire.png</code> + caméra + PC du pupitre <span class="pl-n">salle et YouTube identiques.</span> <a class="pl-open" data-open="talks keynote-cloture-loire">voir</a></span></li><li><span class="pl-k lb">Après</span><span class="pl-v"><code>06-carton-inter-sessions-et-fin.png</code> <span class="pl-n">dès les applaudissements.</span></span></li></ol></div><div class="pl-thumbs"><figure><a class="fr" data-live="bumpers keynote-cloture-loire"></a><figcaption>Bumper</figcaption></figure><figure><a class="fr" data-live="talks keynote-cloture-loire"></a><figcaption>Pendant le talk</figcaption></figure></div></article>
+<article class="pl-item" data-room="hemicycle"><div class="pl-time">17:50<span>18:10</span></div><div class="pl-body"><p class="pl-meta lb">Hémicycle · Avant le podcast</p><h3>Teasing du podcast</h3><ol class="pl-steps"><li><span class="pl-k lb">Écran de la salle</span><span class="pl-v"><code>07-podcast-teasing-hemicycle.png</code> <span class="pl-n">de la fin de la keynote de clôture jusqu'au lancement du podcast. Remplace le carton inter-sessions.</span> <a class="pl-open" data-open="talks podcast-maci">voir</a></span></li></ol></div><div class="pl-thumbs"><figure><a class="fr" data-live="talks podcast-maci"></a><figcaption>Teasing</figcaption></figure></div></article>
+<article class="pl-item pl-break" data-room="loire"><div class="pl-time">17:50<span>18:10</span></div><div class="pl-body"><p class="pl-meta lb">Entre deux sessions</p><h3>Fin des conférences, afterwork</h3><ol class="pl-steps"><li><span class="pl-k lb">À l'antenne</span><span class="pl-v"><code>06-carton-inter-sessions-et-fin.png</code> <span class="pl-n">tout du long, salle et YouTube.</span></span></li></ol></div><div class="pl-thumbs"><figure><a class="fr" data-live="board o4"></a><figcaption>Carton inter-sessions</figcaption></figure></div></article>
+<article class="pl-item" data-room="hemicycle"><div class="pl-time">18:10</div><div class="pl-body"><p class="pl-meta lb">Hémicycle · Podcast en public · écran de la salle seulement</p><h3>Podcast Message à caractère informatique</h3><p class="pl-who">Animation&nbsp;: Horacio Gonzalez. Invités&nbsp;: Florian Bruniaux, Olivier Lauvray, Théo Hubert, David Pilato, Roch Molléro.</p><ol class="pl-steps"><li><span class="pl-k lb">Écran de la salle</span><span class="pl-v"><code>01-bumpers/1810-commun-podcast-maci.png</code> <span class="pl-n">au lancement, puis tout l'enregistrement.</span> <a class="pl-open" data-open="bumpers podcast-maci">voir</a></span></li></ol></div><div class="pl-thumbs"><figure><a class="fr" data-live="bumpers podcast-maci"></a><figcaption>Bumper</figcaption></figure></div></article>
+  </div>
+
+  <h2 class="rs-h2">Écran par écran</h2>
+  <p class="pl-intro">Chaque type de moment, avec le vrai cadre produit par la page qui fabrique les fichiers du zip, caméra et slides figurées. Cliquer un cadre l'ouvre seul en 1920 × 1080.</p>
 
   <!-- 1 -->
   <div class="rs-step">
@@ -138,7 +205,7 @@ code{font:500 12px/1.5 "Azeret Mono",monospace;font-variant-ligatures:none;overf
         <dt>Qui</dt><dd><span class="rs-dot d-regie"></span>Régie compose l'image</dd>
         <dt>Sources</dt><dd>Trame (transparente, deux trous)&nbsp;: <code>02-conferences/1425-implementer-slm-compression-modeles.png</code></dd><dd>Dans le grand trou&nbsp;: <span class="rs-dot d-salle"></span>PC de la salle en HDMI.</dd><dd>Dans le petit trou&nbsp;: la caméra.</dd>
         <dt>Quand, combien de temps</dt><dd>Tout le talk, questions comprises.</dd>
-        <dt>Notes</dt><dd>Focus sur les slides, caméra en petit, nom de l'intervenant·e sous la caméra. La bande sous les slides reste libre pour les sous-titres en direct. Signature d'angle déjà incluse. Une trame par session&nbsp;: en changer à chaque talk. Positions des trous&nbsp;: LISEZ-MOI, «&nbsp;Trames&nbsp;: position des trous&nbsp;».</dd>
+        <dt>Notes</dt><dd>Focus sur les slides, caméra en petit, nom de l'intervenant·e sous la caméra. Hémicycle&nbsp;: la bande sous les slides reste libre pour les sous-titres en direct. Salle Loire, sans sous-titres&nbsp;: slides centrées, trous un peu plus bas. Signature d'angle déjà incluse. Une trame par session&nbsp;: en changer à chaque talk. Positions des trous&nbsp;: LISEZ-MOI, «&nbsp;Trames&nbsp;: position des trous&nbsp;».</dd>
       </dl>
       <div class="rs-screens">
         <figure><figcaption class="lb"><span class="rs-dot d-regie"></span>Salle et YouTube (identiques)</figcaption><a class="fr" data-live="talks slm-compression-modeles"></a></figure>
@@ -157,38 +224,11 @@ code{font:500 12px/1.5 "Azeret Mono",monospace;font-variant-ligatures:none;overf
     </div>
   </div>
 
-  <!-- 3 -->
-  <div class="rs-step">
-    <div class="rs-step-head"><span class="rs-n">3</span><h3>Keynote d'ouverture</h3><span class="lb">09:15 · Temps commun · 15 min</span></div>
+  <!-- 4 -->
+  <div class="rs-step" data-room="hemicycle">
+    <div class="rs-step-head"><span class="rs-n">3</span><h3>Table ronde</h3><span class="lb">Exemple&nbsp;: 10:20 · Décider · Hémicycle · 40 min</span></div>
     <div class="rs-row">
       <p class="rs-sub lb">3a<span>Bumper d'intro</span></p>
-      <dl class="rs-tech">
-        <dt>Qui</dt><dd><span class="rs-dot d-regie"></span>Régie</dd>
-        <dt>Source</dt><dd><code>01-bumpers/0915-commun-keynote-ouverture.png</code></dd>
-        <dt>Quand, combien de temps</dt><dd>Ouverture de la journée, 3 à 5 s.</dd>
-      </dl>
-      <div class="rs-screens">
-        <figure><figcaption class="lb"><span class="rs-dot d-regie"></span>Salle et YouTube (identiques)</figcaption><a class="fr" data-live="bumpers keynote-ouverture"></a></figure>
-      </div>
-    </div>
-    <div class="rs-row">
-      <p class="rs-sub lb">3b<span>Trame slides et caméra</span></p>
-      <dl class="rs-tech">
-        <dt>Qui</dt><dd><span class="rs-dot d-regie"></span>Régie compose l'image</dd>
-        <dt>Sources</dt><dd><code>02-conferences/0915-commun-keynote-ouverture.png</code> + <span class="rs-dot d-salle"></span>PC de la salle + caméra, comme une conférence.</dd>
-        <dt>Quand</dt><dd>Toute la keynote, puis retour au carton inter-sessions.</dd>
-      </dl>
-      <div class="rs-screens">
-        <figure><figcaption class="lb"><span class="rs-dot d-regie"></span>Salle et YouTube (identiques)</figcaption><a class="fr" data-live="talks keynote-ouverture"></a></figure>
-      </div>
-    </div>
-  </div>
-
-  <!-- 4 -->
-  <div class="rs-step">
-    <div class="rs-step-head"><span class="rs-n">4</span><h3>Table ronde</h3><span class="lb">Exemple&nbsp;: 10:20 · Décider · Hémicycle · 40 min</span></div>
-    <div class="rs-row">
-      <p class="rs-sub lb">4a<span>Bumper d'intro</span></p>
       <dl class="rs-tech">
         <dt>Qui</dt><dd><span class="rs-dot d-regie"></span>Régie</dd>
         <dt>Source</dt><dd><code>01-bumpers/1020-decider-souverainete-ia.png</code></dd>
@@ -199,89 +239,87 @@ code{font:500 12px/1.5 "Azeret Mono",monospace;font-variant-ligatures:none;overf
       </div>
     </div>
     <div class="rs-row">
-      <p class="rs-sub lb">4b<span>Pendant la table ronde&nbsp;: la salle et YouTube diffèrent</span></p>
+      <p class="rs-sub lb">3b<span>Pendant la table ronde</span></p>
       <dl class="rs-tech">
-        <dt>Écran de la salle</dt><dd><span class="rs-dot d-samuel"></span>PC de Samuel, sur l'entrée HDMI du pupitre. La régie n'y touche pas.</dd><dd>Slide fixe plein écran (opaque)&nbsp;: <code>03-tables-rondes/salle/1020-decider-souverainete-ia.png</code></dd>
-        <dt>YouTube</dt><dd><span class="rs-dot d-regie"></span>Régie&nbsp;: trame caméra (transparente, un trou) par-dessus la caméra&nbsp;: <code>03-tables-rondes/youtube/1020-decider-souverainete-ia.png</code></dd>
+        <dt>Qui</dt><dd><span class="rs-dot d-regie"></span>Régie compose l'image.</dd>
+        <dt>Sources</dt><dd>Trame caméra (transparente, un trou)&nbsp;: <code>03-tables-rondes/1020-decider-souverainete-ia.png</code></dd><dd>Dans le trou&nbsp;: la caméra, en grand.</dd>
         <dt>Quand, combien de temps</dt><dd>Toute la table ronde, puis retour au carton inter-sessions.</dd>
-        <dt>Notes</dt><dd>Pas de slides. Caméra en grand, bande gauche avec l'affiche, le titre et tous les intervenant·es. Même principe pour la table ronde de 16:00.</dd><dd><span class="rs-tbc">À confirmer</span>comment l'écran de la salle repasse sur la régie (carton, conférence suivante) une fois le PC de Samuel débranché.</dd>
+        <dt>Notes</dt><dd>Pas de slides. Bande gauche avec l'affiche, le titre et tous les intervenant·es. Même principe pour la table ronde de 16:00.</dd>
       </dl>
-      <div class="rs-screens split">
-        <figure><figcaption class="lb"><span class="rs-dot d-samuel"></span>Écran de la salle</figcaption><a class="fr" data-live="talks souverainete-ia 1"></a></figure>
-        <figure><figcaption class="lb"><span class="rs-dot d-regie"></span>YouTube (à distance)</figcaption><a class="fr" data-live="talks souverainete-ia 2"></a></figure>
+      <div class="rs-screens">
+        <figure><figcaption class="lb"><span class="rs-dot d-regie"></span>Salle et YouTube (identiques)</figcaption><a class="fr" data-live="talks souverainete-ia"></a></figure>
       </div>
     </div>
   </div>
 
   <!-- 5 -->
-  <div class="rs-step">
-    <div class="rs-step-head"><span class="rs-n">5</span><h3>Startup Contest</h3><span class="lb">11:55 · Décider · Hémicycle · 30 min · 4 pitchs</span></div>
+  <div class="rs-step" data-room="hemicycle">
+    <div class="rs-step-head"><span class="rs-n">4</span><h3>Startup Contest</h3><span class="lb">11:55 · Décider · Hémicycle · 30 min · 5 pitchs</span></div>
     <div class="rs-row">
-      <p class="rs-sub lb">5a<span>Bumper d'intro</span></p>
+      <p class="rs-sub lb">4a<span>Bumper d'intro</span></p>
       <dl class="rs-tech">
-        <dt>Écran de la salle</dt><dd><span class="rs-dot d-florian"></span>PC de Florian Hervéou</dd>
-        <dt>YouTube</dt><dd><span class="rs-dot d-regie"></span>Régie</dd>
-        <dt>Source</dt><dd><code>04-startup-contest/0-bumper.png</code>, la même image des deux côtés.</dd>
-        <dt>Quand</dt><dd>Ouverture du concours, le temps que Florian lance l'animation.</dd>
+        <dt>Qui</dt><dd><span class="rs-dot d-regie"></span>Régie</dd>
+        <dt>Source</dt><dd><code>04-startup-contest/00-bumper.png</code></dd>
+        <dt>Quand</dt><dd>Ouverture du concours, 3 à 5 s.</dd>
       </dl>
       <div class="rs-screens">
-        <figure><figcaption class="lb"><span class="rs-dot d-florian"></span>Salle et YouTube (identiques)<span class="rs-by">deux pilotes, même image</span></figcaption><a class="fr" data-live="bumpers startup-contest"></a></figure>
+        <figure><figcaption class="lb"><span class="rs-dot d-regie"></span>Salle et YouTube (identiques)</figcaption><a class="fr" data-live="bumpers startup-contest"></a></figure>
       </div>
     </div>
     <div class="rs-row">
-      <p class="rs-sub lb">5b<span>Carton avant chaque pitch</span></p>
+      <p class="rs-sub lb">4b<span>Pendant tout le concours</span></p>
       <dl class="rs-tech">
-        <dt>Écran de la salle</dt><dd><span class="rs-dot d-florian"></span>PC de Florian Hervéou</dd>
-        <dt>YouTube</dt><dd><span class="rs-dot d-regie"></span>Régie</dd>
-        <dt>Sources</dt><dd>Un carton plein écran (opaque) par pitch&nbsp;: <code>04-startup-contest/1-carton-pitch-1-bworlds.png</code> à <code>4-carton-pitch-4-globetrotters.png</code></dd>
-        <dt>Quand</dt><dd>Le temps que la startup s'installe.</dd>
-        <dt>Notes</dt><dd><span class="rs-tbc">À confirmer</span>entre deux pitchs, la régie passe-t-elle YouTube sur le carton ou sur la caméra&nbsp;?</dd>
+        <dt>Qui</dt><dd><span class="rs-dot d-regie"></span>Régie compose l'image, comme une conférence.</dd>
+        <dt>Sources</dt><dd>Trame générique (transparente, deux trous)&nbsp;: <code>04-startup-contest/01-trame-pitch.png</code>, la même pour les cinq pitchs.</dd><dd>Dans le grand trou&nbsp;: <span class="rs-dot d-florian"></span>le PC de Florian Hervéou, branché au pupitre.</dd><dd>Dans le petit trou&nbsp;: la caméra.</dd>
+        <dt>Quand</dt><dd>Du premier pitch à la fin de la délibération.</dd>
+        <dt>Notes</dt><dd>Florian pilote depuis son PC le deck de tous les pitchs. Rien à changer côté régie entre deux pitchs.</dd>
       </dl>
       <div class="rs-screens">
-        <figure><figcaption class="lb"><span class="rs-dot d-florian"></span>Salle et YouTube (identiques)<span class="rs-by">exemple&nbsp;: pitch 1</span></figcaption><a class="fr" data-live="talks startup-contest 1"></a></figure>
-      </div>
-    </div>
-    <div class="rs-row">
-      <p class="rs-sub lb">5c<span>Pendant chaque pitch&nbsp;: la salle et YouTube diffèrent</span></p>
-      <dl class="rs-tech">
-        <dt>Écran de la salle</dt><dd><span class="rs-dot d-florian"></span>PC de Florian Hervéou&nbsp;: les slides de la startup en plein écran, sans habillage.</dd>
-        <dt>YouTube</dt><dd><span class="rs-dot d-regie"></span>Régie&nbsp;: trame slides et caméra du pitch (transparente, deux trous), comme une conférence&nbsp;: <code>04-startup-contest/6-slides-pitch-1-bworlds.png</code> à <code>9-slides-pitch-4-globetrotters.png</code></dd>
-        <dt>Quand</dt><dd>Pendant chaque pitch.</dd>
-        <dt>Notes</dt><dd><span class="rs-tbc">À confirmer</span>comment les slides du PC de Florian arrivent à la régie (même entrée HDMI du pupitre, ou sortie dupliquée).</dd>
-      </dl>
-      <div class="rs-screens split">
-        <figure><figcaption class="lb"><span class="rs-dot d-florian"></span>Écran de la salle</figcaption><div class="rs-raw"><div><b>Slides de la startup</b>En plein écran depuis le PC de Florian Hervéou, sans habillage.</div></div></figure>
-        <figure><figcaption class="lb"><span class="rs-dot d-regie"></span>YouTube (à distance)</figcaption><a class="fr" data-live="talks startup-contest 6"></a></figure>
-      </div>
-    </div>
-    <div class="rs-row">
-      <p class="rs-sub lb">5d<span>Délibération du jury</span></p>
-      <dl class="rs-tech">
-        <dt>Écran de la salle</dt><dd><span class="rs-dot d-florian"></span>PC de Florian Hervéou</dd>
-        <dt>YouTube</dt><dd><span class="rs-dot d-regie"></span>Régie</dd>
-        <dt>Source</dt><dd><code>04-startup-contest/5-jury.png</code> (opaque)</dd>
-        <dt>Quand</dt><dd>Après le dernier pitch, pendant la délibération, puis retour au carton inter-sessions.</dd>
-        <dt>Notes</dt><dd><span class="rs-tbc">À confirmer</span>YouTube reste-t-il sur ce carton, ou sur la caméra si le jury délibère sur scène&nbsp;?</dd>
-      </dl>
-      <div class="rs-screens">
-        <figure><figcaption class="lb"><span class="rs-dot d-florian"></span>Salle et YouTube (identiques)</figcaption><a class="fr" data-live="talks startup-contest 5"></a></figure>
+        <figure><figcaption class="lb"><span class="rs-dot d-regie"></span>Salle et YouTube (identiques)</figcaption><a class="fr" data-live="talks startup-contest 1"></a></figure>
       </div>
     </div>
   </div>
 
   <!-- 6 -->
   <div class="rs-step">
-    <div class="rs-step-head"><span class="rs-n">6</span><h3>Keynote de clôture</h3><span class="lb">17:35 · deux salles en parallèle</span></div>
+    <div class="rs-step-head"><span class="rs-n">5</span><h3>Keynotes de clôture</h3><span class="lb">17:35 · une par salle · 15 min</span></div>
     <div class="rs-row">
       <dl class="rs-tech">
-        <dt>Qui</dt><dd><span class="rs-dot d-regie"></span>Régie</dd>
+        <dt>Qui</dt><dd><span class="rs-dot d-regie"></span>Régie, comme une conférence&nbsp;: bumper puis trame.</dd>
         <dt>Où</dt><dd>Maxime Pitussi dans l'Hémicycle, Samuel Berthe en Salle Loire, en même temps.</dd>
-        <dt>Source</dt><dd><code>06-carton-inter-sessions-et-fin.png</code>&nbsp;: pas de bumper ni de trame dédiés, le carton inter-sessions sert aussi de carton de fin (décision de Dorian).</dd>
-        <dt>Quand</dt><dd>Avant et après les deux keynotes, et en fin de journée.</dd>
-        <dt>Notes</dt><dd><span class="rs-tbc">À confirmer</span>pendant les keynotes elles-mêmes&nbsp;: slides du PC de la salle seules, caméra avec la signature, et laquelle des deux salles part sur YouTube.</dd>
+        <dt>Sources</dt><dd><code>01-bumpers/1735-decider-keynote-cloture-hemicycle.png</code> et <code>02-conferences/1735-decider-keynote-cloture-hemicycle.png</code></dd><dd><code>01-bumpers/1735-implementer-keynote-cloture-loire.png</code> et <code>02-conferences/1735-implementer-keynote-cloture-loire.png</code></dd>
+        <dt>Notes</dt><dd>Habillage sobre, sans portrait, sur la première page du deck de clôture.</dd>
+      </dl>
+      <div class="rs-screens split">
+        <figure><figcaption class="lb"><span class="rs-dot d-regie"></span>Bumper</figcaption><a class="fr" data-live="bumpers keynote-cloture-loire"></a></figure>
+        <figure><figcaption class="lb"><span class="rs-dot d-regie"></span>Trame</figcaption><a class="fr" data-live="talks keynote-cloture-loire"></a></figure>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6b -->
+  <div class="rs-step" data-room="hemicycle">
+    <div class="rs-step-head"><span class="rs-n">6</span><h3>Podcast en public</h3><span class="lb">À partir de 17:50 · Hémicycle · écran de la salle</span></div>
+    <div class="rs-row">
+      <p class="rs-sub lb">6a<span>Teasing</span></p>
+      <dl class="rs-tech">
+        <dt>Qui</dt><dd><span class="rs-dot d-regie"></span>Régie</dd>
+        <dt>Source</dt><dd><code>07-podcast-teasing-hemicycle.png</code> (opaque)</dd>
+        <dt>Quand</dt><dd>De la fin de la keynote de clôture (17:50) jusqu'au lancement du podcast (18:10), à la place du carton inter-sessions.</dd>
       </dl>
       <div class="rs-screens">
-        <figure><figcaption class="lb"><span class="rs-dot d-regie"></span>Salle et YouTube (identiques)</figcaption><a class="fr" data-live="board o4"></a></figure>
+        <figure><figcaption class="lb"><span class="rs-dot d-regie"></span>Écran de la salle</figcaption><a class="fr" data-live="talks podcast-maci"></a></figure>
+      </div>
+    </div>
+    <div class="rs-row">
+      <p class="rs-sub lb">6b<span>Bumper</span></p>
+      <dl class="rs-tech">
+        <dt>Qui</dt><dd><span class="rs-dot d-regie"></span>Régie</dd>
+        <dt>Source</dt><dd><code>01-bumpers/1810-commun-podcast-maci.png</code> (opaque)</dd>
+        <dt>Quand</dt><dd>Au lancement, puis il reste à l'écran pendant tout l'enregistrement.</dd>
+      </dl>
+      <div class="rs-screens">
+        <figure><figcaption class="lb"><span class="rs-dot d-regie"></span>Écran de la salle</figcaption><a class="fr" data-live="bumpers podcast-maci"></a></figure>
       </div>
     </div>
   </div>
@@ -294,7 +332,7 @@ code{font:500 12px/1.5 "Azeret Mono",monospace;font-variant-ligatures:none;overf
         <dt>Qui</dt><dd><span class="rs-dot d-regie"></span>Régie, en surimpression</dd>
         <dt>Source</dt><dd><code>05-signature-angle.png</code> (transparent) par-dessus la caméra plein écran.</dd>
         <dt>Où elle s'applique</dt><dd>Seulement quand la caméra passe seule à l'antenne, sans trame&nbsp;: plan large, questions de la salle, imprévu. Les trames des conférences, tables rondes et pitchs portent déjà la signature&nbsp;; bumpers et cartons n'en ont pas.</dd>
-        <dt>Notes</dt><dd><span class="rs-tbc">À confirmer</span>les moments où la régie prévoit la caméra seule, et pour les keynotes de clôture.</dd>
+        <dt>Notes</dt><dd><span class="rs-tbc">À confirmer</span>les moments où la régie prévoit la caméra seule.</dd>
       </dl>
       <div class="rs-screens">
         <figure><figcaption class="lb"><span class="rs-dot d-regie"></span>Salle et YouTube (identiques)</figcaption><a class="fr" data-live="board g2"></a></figure>
@@ -331,13 +369,32 @@ document.querySelectorAll(".fr[data-live]").forEach(frame => {
   liveFrame.mount(frame, view, id, part);
 });
 
+// "voir" links open the solo frame, same targets as the renders
+document.querySelectorAll(".pl-open[data-open]").forEach(link => {
+  const [view, id, part] = link.dataset.open.split(" ");
+  link.href = liveFrame.href(view, id, part);
+});
+
+// Room filter, kept in ?salle= so a régie can bookmark its own room
+function showRoom(room) {
+  const sheet = document.querySelector("main.runsheet");
+  sheet.dataset.salle = room;
+  document.querySelectorAll(".pl-filter button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.salle === room)));
+  const url = new URL(location.href);
+  url.searchParams.set("salle", room);
+  history.replaceState(history.state, "", url);
+  fitFrames();
+}
+document.querySelectorAll(".pl-filter button").forEach(b => b.addEventListener("click", () => showRoom(b.dataset.salle)));
+
 function fitFrames() {
   document.querySelectorAll(".fr").forEach(frame => {
     const canvas = frame.querySelector(".cv, iframe.live");
     if (canvas) canvas.style.transform = `scale(${frame.clientWidth / 1920})`;
   });
 }
-fitFrames();
+const requestedRoom = new URLSearchParams(location.search).get("salle");
+showRoom(requestedRoom === "loire" ? "loire" : "hemicycle");
 new ResizeObserver(fitFrames).observe(document.body);
 </script>
 </body>
