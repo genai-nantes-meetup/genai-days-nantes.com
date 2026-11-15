@@ -14,3 +14,5 @@ film/assets/audio/music-*.wav
 
 # Packs vMix / OBS livrés aux régies (zips lourds, régénérés par scripts/export_habillage.py)
 habillage-captation/livrables/
+# HyperFrames studio waveform cache, rebuilt on demand
+.waveform-cache/
