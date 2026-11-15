@@ -81,8 +81,8 @@ describe('public JSON API', () => {
 
     const frEntry = fr.json.sessions.find((item: { id: string }) => item.id === 'agentic-coding');
     const enEntry = en.json.sessions.find((item: { id: string }) => item.id === 'agentic-coding');
-    expect(frEntry.title).toBe('Plus je lui donne de context, moins il est bon');
-    expect(enEntry.title).toBe('The more context I give it, the worse it gets');
+    expect(frEntry.title).toBe('Mon agent ne répond jamais deux fois pareil');
+    expect(enEntry.title).toBe('My agent never answers the same way twice');
     expect(frEntry.pageUrl).toBe('https://example.com/programme/agentic-coding');
     expect(enEntry.pageUrl).toBe('https://example.com/en/program/agentic-coding');
     expect(frEntry.quoteTitle).toBe(true);

@@ -1,7 +1,7 @@
 ---
-title: "Plus je lui donne de context, moins il est bon"
-subtitle: "Pourquoi nous avons tué notre agent pour le rendre fiable"
-seoTitle: "Plus je lui donne de context, moins il est bon"
+title: "Mon agent ne répond jamais deux fois pareil"
+subtitle: "Une AI Factory maison pour un agent déterministe, testable et fiable. De la data science à l’AIOps"
+seoTitle: "Mon agent ne répond jamais deux fois pareil"
 track: "tech"
 startTime: "10:20"
 durationMinutes: 40

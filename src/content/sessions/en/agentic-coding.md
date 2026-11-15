@@ -1,7 +1,7 @@
 ---
-title: "The more context I give it, the worse it gets"
-subtitle: "Why we killed our agent to make it reliable"
-seoTitle: "The more context I give it, the worse it gets"
+title: "My agent never answers the same way twice"
+subtitle: "An in-house AI Factory for a deterministic, testable, reliable agent. From data science to AIOps"
+seoTitle: "My agent never answers the same way twice"
 themes: ["AI Ops", "Customer support", "Business impact", "AI factory"]
 illustration:
   alt: "A stack of pages flies up above a head where an overloaded electronic brain lights up"
