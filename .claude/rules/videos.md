@@ -83,6 +83,8 @@ python3 -m http.server 8000                                        # board.html,
 uv run --with pillow python scripts/build_single_html.py .         # fichier unique hors ligne, ignoré par git
 ```
 
+Livrable aux régies : un seul zip, `livrables/GENAI-DAYS-habillage-captation.zip`, commun à vMix et OBS (les deux LISEZ-MOI dedans, chacun prend ce qui le concerne). Pas de zip par logiciel (Dorian, 15/11/2026). Chaîne, depuis `habillage-captation/` : `uv run --with playwright --with pillow python scripts/export_habillage.py .` (PNG 4K, environ 5 min), puis `build_single_html.py`, puis `python3 scripts/pack_livrable.py .`. Ne lancer l'export qu'une fois le rendu validé par Dorian. Le déroulé (`deroule.html`) a un planning salle par salle, filtré par `?salle=hemicycle` ou `?salle=loire`.
+
 Portraits : source unique, le site. `scripts/normalise_faces.py [slug ...]` (OpenCV) lit le champ `photo` de chaque speaker dans `src/content/speakers/` et écrit seulement les recadrages dérivés dans `assets/speakers/norm/`, à taille de visage et ligne des yeux constantes. Sans argument, il traite tous les speakers de `SESSIONS`. L'habillage ne garde aucune copie des photos : pour changer un portrait, on change la photo du site puis on relance le script. Commande : `uv run --with "opencv-python-headless<5" --with numpy --with pyyaml python videos/habillage-captation/scripts/normalise_faces.py`.
 
 ## Sorties et git
