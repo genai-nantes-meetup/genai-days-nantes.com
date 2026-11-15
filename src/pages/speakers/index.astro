@@ -8,13 +8,15 @@ import Footer from '../../components/Footer.astro';
 import Header from '../../components/Header.astro';
 import TrackMark from '../../components/TrackMark';
 import { EVENT, EVENT_YEAR } from '../../lib/event';
-import { SPEAKER_EVENT_ROLE_LABELS, SPEAKER_PORTRAIT_DIMENSIONS, SPEAKER_TARGET, sortSpeakersByProminence, getSpeakerPortraitSrcset, getCompanyLogoBackdrop, trackForSpeaker } from '../../lib/speakers';
+import { SPEAKER_EVENT_ROLE_LABELS, SPEAKER_PORTRAIT_DIMENSIONS, SPEAKER_TARGET, sortSpeakersByProminence, excludeGuestOnlySpeakers, getSpeakerPortraitSrcset, getCompanyLogoBackdrop, trackForSpeaker } from '../../lib/speakers';
 import { getLocaleFromPath, localizePath } from '../../lib/i18n';
 import { getLocalizedCollection } from '../../lib/localized-content';
 
 const locale = getLocaleFromPath(Astro.url.pathname);
-const speakers = sortSpeakersByProminence(await getLocalizedCollection('speakers', locale));
 const sessions = await getCollection('sessions');
+const speakers = sortSpeakersByProminence(
+  excludeGuestOnlySpeakers(await getLocalizedCollection('speakers', locale), sessions),
+);
 const speakerTrackById = new Map(speakers.map((speaker) => [speaker.id, trackForSpeaker(speaker.id, sessions)]));
 
 /* Cadrage par portrait, propre à cette page (mur de portraits serrés) :

@@ -220,6 +220,18 @@ export function sortSpeakersByProminence<T extends { id: string; data: { name: s
   });
 }
 
+/* Un invité de session (guestSlugs, par exemple au podcast) qui ne porte
+ * aucune session lui-même n'est pas speaker : il garde sa fiche, liée depuis
+ * la session, mais ne figure ni dans la liste des speakers ni sur l'accueil. */
+export function excludeGuestOnlySpeakers<T extends { id: string }>(
+  speakers: T[],
+  sessions: CollectionEntry<'sessions'>[],
+): T[] {
+  const sessionSpeakerIds = new Set(sessions.flatMap((session) => session.data.speakerSlugs));
+  const guestIds = new Set(sessions.flatMap((session) => session.data.guestSlugs));
+  return speakers.filter((speaker) => !guestIds.has(speaker.id) || sessionSpeakerIds.has(speaker.id));
+}
+
 /* Un·e speaker n'a plus de champ `track` en frontmatter : son parcours se
  * déduit de ses sessions. Les sessions communes aux deux parcours (keynotes,
  * podcast) ne renseignent rien sur l'appartenance à un parcours, donc seules

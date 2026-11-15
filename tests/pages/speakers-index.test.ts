@@ -3,12 +3,15 @@ import { getCollection } from 'astro:content';
 import SpeakersIndexPage from '../../src/pages/speakers/index.astro';
 import { EVENT_YEAR } from '../../src/lib/event';
 import { getTicketCtaCopy } from '../../src/lib/pricing';
-import { SPEAKER_TARGET, sortSpeakersByProminence, trackForSpeaker } from '../../src/lib/speakers';
+import { SPEAKER_TARGET, excludeGuestOnlySpeakers, sortSpeakersByProminence, trackForSpeaker } from '../../src/lib/speakers';
+
+const getListedSpeakers = async () =>
+  excludeGuestOnlySpeakers(await getCollection('speakers'), await getCollection('sessions'));
 import { createAstroContainer } from '../utils/create-astro-container';
 
 describe('speakers index page', () => {
   it('renders every announced speaker in a linked portrait wall', async () => {
-    const speakers = await getCollection('speakers');
+    const speakers = await getListedSpeakers();
     const container = await createAstroContainer();
     const html = await container.renderToString(SpeakersIndexPage);
 
@@ -38,8 +41,21 @@ describe('speakers index page', () => {
     expect(positions).toEqual([...positions].sort((a, b) => a - b));
   });
 
-  it('shows the company logo on the tile of speakers who have one', async () => {
+  it('leaves out session guests who give no session of their own', async () => {
     const speakers = await getCollection('speakers');
+    const listedIds = new Set((await getListedSpeakers()).map((speaker) => speaker.id));
+    const guestOnly = speakers.filter((speaker) => !listedIds.has(speaker.id));
+    const container = await createAstroContainer();
+    const html = await container.renderToString(SpeakersIndexPage);
+
+    expect(guestOnly.length).toBeGreaterThan(0);
+    guestOnly.forEach((speaker) => {
+      expect(html).not.toContain(`data-speaker-tile="${speaker.id}"`);
+    });
+  });
+
+  it('shows the company logo on the tile of speakers who have one', async () => {
+    const speakers = await getListedSpeakers();
     const withLogo = speakers.filter((speaker) => speaker.data.companyLogo);
     const container = await createAstroContainer();
     const html = await container.renderToString(SpeakersIndexPage);
@@ -52,7 +68,7 @@ describe('speakers index page', () => {
   });
 
   it('shows remaining announcement slots and closes with the shared ticket', async () => {
-    const speakers = await getCollection('speakers');
+    const speakers = await getListedSpeakers();
     const container = await createAstroContainer();
     const html = await container.renderToString(SpeakersIndexPage);
 
@@ -70,7 +86,7 @@ describe('speakers index page', () => {
   });
 
   it('renders the English directory with localized profile links and metadata', async () => {
-    const speakers = await getCollection('speakers');
+    const speakers = await getListedSpeakers();
     const container = await createAstroContainer();
     const html = await container.renderToString(SpeakersIndexPage, {
       request: new Request('https://example.com/en/speakers'),
