@@ -42,7 +42,7 @@
   "src/content/sessions/keynote-ouverture-christelle-morancais.md": "a4e2ef98aa94887142049c35d3dd23ca62b08503faf01cc9a1d6a6db865fcabc",
   "src/content/sessions/nouvelles-menaces-cyber.md": "2270c48b4e0aef1386502514b0b3458294e5ed66877be28501d5c8d4f32c4f32",
   "src/content/sessions/physical-ai-robotique.md": "4abf8b1de9f0b1fbdb6196f93a48a40ba3672bc0a18994e41654f04154509f88",
-  "src/content/sessions/podcast-maci.md": "de1e0b40748239a45938dbb94e27a4be5793e2547ec90581419ad4b0b5345aa1",
+  "src/content/sessions/podcast-maci.md": "84642db3bdb66281c93131f6fcbc6cdeda9b4512220d6d121e7f402178dee648",
   "src/content/sessions/product-velocity.md": "6d49d62679d8e2fe98f9989a1902c4354447a356d72839298c1c8ce23e59c8ab",
   "src/content/sessions/slm-compression-modeles.md": "e4c247d3615a1082530be735f1b3cebb9e61f25f1a68db286d141a623d2b9d23",
   "src/content/sessions/souverainete-ia.md": "fb3f4bdd1e9e31392cfdf2ac1154ed7a96e959fc244bf4334eb58d596e30bb5c",
@@ -60,6 +60,7 @@
   "src/content/speakers/claire-augris.md": "9adefe453c8911dac2225bcbf2e248d8ecea5840c4003b78b21792bb8a12ac15",
   "src/content/speakers/constance-nebbula.md": "f84a2292b17eabee9dabba88c602c57621e556b328fb4349e51659357bdc13af",
   "src/content/speakers/david-leaurant.md": "47a6ac04b0807089e026d41470c24dba9d93f31cf8ad1cc7f3bbaba05a82b4ef",
+  "src/content/speakers/david-pilato.md": "a9b43ac0d5c8406753f86e6a85171735e5bcb23bab22382e01cd9f488abd00ac",
   "src/content/speakers/delphine-ziegler.md": "aac723d56cf93b02cff6f5d459d15b90f678d2c500dc0fadbdeb7de2b170017a",
   "src/content/speakers/emmanuel-marboeuf.md": "272218f9fe953a0316f3d3b694458a0c392069b1db10b6a09f05683aa8fb7952",
   "src/content/speakers/florian-bruniaux.md": "1b708c3feb016db05b7f149aa47fdb64424b9dc64aeaaf655d76221e74550855",
@@ -95,7 +96,7 @@
   "src/content/tracks/decideurs.md": "115b36b601ea2a7c25c384aa8821321150cc3fccdd94cbe119a102ee72757dd7",
   "src/content/tracks/tech.md": "854c08266114feb6f5bca56e3d30e8cbbec78b1290428f9fa1b1825fc7184b84",
   "src/lib/cta-links.ts": "4b371bd87f8c8b53f45d2aad75dfef0d8b23ef2a729f1f88bad504d0c22479c9",
-  "src/lib/programme.ts": "bc1ad74ef3d6b5a269573fbc3ce029b0cea0443e6a040f4e15f2d392a25cd63d",
-  "src/lib/speakers.ts": "8a1932ddfa098c86bb7cb09365764f79adf80a7dec020745fee198a29e7da560",
+  "src/lib/programme.ts": "072b1731ee78d3d4dd9e4b08e2c3b23c580b76dfd72ec4086016c5a039919d55",
+  "src/lib/speakers.ts": "462e2bfe7bb35fc5ab205fced17d7bd5d4c6793c719042fb3c42b03a6f30ce2e",
   "src/styles/global.css": "35d9390f028fc0645bded079614c0c01eb77c353cc1588da505ba614dafe0726"
 }

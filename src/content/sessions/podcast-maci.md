@@ -8,7 +8,7 @@ startTime: "18:10"
 durationMinutes: 120
 room: "Hémicycle"
 speakerSlugs: ["horacio-gonzalez"]
-guestSlugs: ["florian-bruniaux", "olivier-lauvray", "theo-hubert", "roch-mollero"]
+guestSlugs: ["florian-bruniaux", "olivier-lauvray", "theo-hubert", "david-pilato", "roch-mollero"]
 presentedBy:
   name: "Clever Cloud"
   website: "https://www.clever.cloud/"
