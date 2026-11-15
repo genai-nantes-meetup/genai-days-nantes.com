@@ -179,6 +179,10 @@ export async function getSessionPagePaths() {
   const trackById = new Map(tracks.map((track) => [track.id, track]));
 
   return sessions.map((session) => {
+    /* Le temps commun n'est pas un parcours : ses sessions (keynote d'ouverture,
+     * podcast du soir) encadrent la journée, les relier comme précédente et
+     * suivante sauterait tout le programme. */
+    const isCommonSession = session.data.track === COMMON_TRACK_ID;
     const sameTrackSessions = sessions
       .filter((candidate) => candidate.data.track === session.data.track)
       .sort((a, b) => a.data.startTime.localeCompare(b.data.startTime));
@@ -189,8 +193,8 @@ export async function getSessionPagePaths() {
       props: {
         session,
         track: trackById.get(session.data.track),
-        previousSession: sameTrackSessions[sessionIndex - 1],
-        nextSession: sameTrackSessions[sessionIndex + 1],
+        previousSession: isCommonSession ? undefined : sameTrackSessions[sessionIndex - 1],
+        nextSession: isCommonSession ? undefined : sameTrackSessions[sessionIndex + 1],
         /* Les invités (guestSlugs) ne comptent que sur la fiche de la session :
          * les pages intervenant et le programme lisent speakerSlugs seul. */
         speakers: [...new Set([...session.data.speakerSlugs, ...session.data.guestSlugs])]
