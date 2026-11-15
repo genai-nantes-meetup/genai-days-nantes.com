@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import { SPEAKER_EVENT_ROLE_SHORT_LABELS } from '../lib/speakers';
 import { getLocaleFromPath, localizePath } from '../lib/i18n';
+import { formatHostedSessionOverline } from '../lib/programme';
 import { getLocalizedCollection } from '../lib/localized-content';
 import CoverLabel from './CoverLabel.astro';
 import EventName from './EventName.astro';
@@ -112,6 +113,13 @@ const presentersFor = (session: (typeof sessions)[number]) => [
       }]
     : []),
 ];
+const overlineFor = (session: (typeof sessions)[number]) =>
+  session.data.guestSlugs.length > 0
+    ? formatHostedSessionOverline(
+        session.data.speakerSlugs.flatMap((slug) => speakerById.get(slug)?.data.name ?? []),
+        locale,
+      )
+    : undefined;
 const totalLabels = sessions.length + speakers.length + 1;
 const requiredLabelIds = [
   'landing-day-manifesto',
@@ -254,6 +262,7 @@ const requiredLabelIds = [
                 durationMinutes={session.data.durationMinutes}
                 title={session.data.title}
                 quoted={session.data.quoteTitle}
+                overline={overlineFor(session)}
                 speakers={presentersFor(session)}
               />
             </template>

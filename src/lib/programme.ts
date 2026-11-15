@@ -200,3 +200,10 @@ export async function getSessionPagePaths() {
     };
   });
 }
+
+/* Une session à invités (podcast) ne liste que ses animateurs sur l’étiquette :
+ * tous les noms d’invités ne tiennent pas sur une ligne. */
+export function formatHostedSessionOverline(hostNames: string[], locale: Locale): string {
+  const hosts = new Intl.ListFormat(locale, { type: 'conjunction' }).format(hostNames);
+  return locale === 'en' ? `Hosted by ${hosts}, with many guests` : `Animé par ${hosts}, avec de nombreux invités`;
+}

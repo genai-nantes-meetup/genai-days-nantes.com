@@ -9,7 +9,7 @@ import CoverLabel from "../../components/CoverLabel.astro";
 import TrackMark from "../../components/TrackMark";
 import LabelArchive from "../../components/LabelArchive.astro";
 import BrandText from "../../components/BrandText.astro";
-import { getSessionPagePaths } from "../../lib/programme";
+import { formatHostedSessionOverline, getSessionPagePaths } from "../../lib/programme";
 import { getLocaleFromPath, localizePath } from "../../lib/i18n";
 import {
   localizeEntry,
@@ -46,8 +46,19 @@ const partners = await getCollection("partners");
 const companyLogoByName = new Map(
   partners.map((partner) => [partner.data.name, partner.data.logo]),
 );
+/* Les invités figurent dans « Sur scène », pas sur l’étiquette. */
+const labelSpeakers = speakers.filter((speaker) =>
+  session.data.speakerSlugs.includes(speaker.id),
+);
+const labelOverline =
+  session.data.guestSlugs.length > 0
+    ? formatHostedSessionOverline(
+        labelSpeakers.map((speaker) => speaker.data.name),
+        locale,
+      )
+    : undefined;
 const labelPresenters = [
-  ...speakers.map((speaker) => ({
+  ...labelSpeakers.map((speaker) => ({
     name: speaker.data.name,
     company: speaker.data.company,
     companyLogo:
@@ -354,6 +365,7 @@ const breadcrumbJsonLd = {
           durationMinutes={session.data.durationMinutes}
           title={session.data.title}
           quoted={session.data.quoteTitle}
+          overline={labelOverline}
           speakers={labelPresenters}
         />
       </div>
