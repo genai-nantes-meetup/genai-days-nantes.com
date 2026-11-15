@@ -108,9 +108,11 @@ def shoot(page, url, rel, transparent):
 
 
 def transition_name(part):
+    # Part 1 is the régie overlay: Florian's slides start at 01, right after the bumper (00)
+    number = part["part"] - 1
     if part["pitch"]:
-        return f"{part['part']:02d}-transition-pitch-{part['pitch']}-{part['logo']}.png"
-    return f"{part['part']:02d}-transition-jury.png"
+        return f"{number:02d}-transition-pitch-{part['pitch']}-{part['logo']}.png"
+    return f"{number:02d}-transition-jury.png"
 
 
 # ---------- checks on the saved files ----------
@@ -201,7 +203,7 @@ def holes_text(talk_holes):
     for rel, holes in talk_holes.items():
         key = tuple((h["n"], h["x"], h["y"], h["w"], h["h"]) for h in holes)
         # The Salle Loire overlays (no subtitles) have their slides lower: name the room when it matters
-        room = " (Salle Loire)" if "-implementer-" in rel else " (Hémicycle)" if "-decider-" in rel else ""
+        room = " (Salle Loire)" if "-implementer-" in rel else " (Hémicycle)" if rel.startswith(TALKS + "/") else ""
         groups.setdefault(key, set()).add(os.path.dirname(rel) + "/" + room)
     return "\n\n".join("Trames de " + ", ".join(sorted(dirs)) + " :\n" + "\n".join(
         f"  {HOLE_LABEL[n]:<12} x {x:<5} y {y:<5} largeur {w:<6} hauteur {h}" for n, x, y, w, h in key)
