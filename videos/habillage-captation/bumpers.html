@@ -267,6 +267,10 @@ const SESSIONS = [
    speakers:[P("Samuel Berthe","samuel-berthe","","Organisation")]},
   {slug:"podcast-maci", time:"18:10", dur:null, track:COMMON, room:"hemicycle", format:"Podcast en public", title:"Podcast Message à caractère informatique", art:"podcast-maci-clever-cloud", side:"left", fx:.5, waiting:true, presentedBy:"clever-cloud",
    speakers:[P("Horacio Gonzalez","horacio-gonzalez","VP DevRel","Clever Cloud","Animateur"),P("Florian Bruniaux","florian-bruniaux","Chief AI Officer","Founding team @ RTK"),P("Olivier Lauvray","olivier-lauvray","VP International Business Development","VSORA"),P("Théo Hubert","theo-hubert","Cofondateur, Président & CTO","AlphaEdge"),P("David Pilato","david-pilato","Developer, Evangelist","Elastic"),P("Roch Molléro","roch-mollero","Directeur technique","Gobano Robotics")]},
+  {slug:"second-brain", time:"Backup", backup:true, dur:40, track:IMPL, format:"Conférence", title:"Je réexplique tout à mon IA à chaque conversation", art:"second-brain", side:"left", fx:.5,
+   speakers:[P("Clément Spiers","clement-spiers","Marketing Lead","lemlist"),P("Louis Ammonique","louis-ammonique","Growth","Clever Cloud")]},
+  {slug:"rex-chine", time:"Backup", backup:true, dur:40, track:DECIDE, format:"Conférence", title:"On me répète que l'Europe est en retard sur la Chine", art:"rex-chine", side:"right", fx:.2,
+   speakers:[P("Thomas Mathieu","thomas-mathieu","CEO et cofondateur","Guest Suite"),P("Mathieu Le Gac","mathieu-le-gac","Cofondateur","Wattflow")]},
 ];
 const TRACK_LABEL = {decide:"Ceux qui décident", impl:"Ceux qui implémentent", common:"Temps commun"};
 const W = 1920, H = 1080;
@@ -307,11 +311,15 @@ function artPlacement(s, boxW, boxH, targetX, fx = s.fx) {
   return `left:${left.toFixed(0)}px;top:${top.toFixed(0)}px;width:${(iw * scale).toFixed(0)}px;height:${(ih * scale).toFixed(0)}px`;
 }
 const ART_TRIMS = {
+  "rex-chine":.01,
+  "second-brain":0.065,
   "agent-evaluation":.04,"cyber-ai":.025,"datacenter":.02,"ia-industrie":.042,"industrialisation":.035,"inference":.05,
   "nouvelles-menaces-cyber":.04,"physical-ai":.05,"podcast-maci-clever-cloud":.025,"product-velocity":.06,"keynote-cloture":.04,"stage-0-keynote":.025,
   "stage-1-talk-5-startup-contest":.04,"stage-2-talk-3-slm":.016,"context-engineering":.02,"conduite-changement":.06,
 };
 const ART_SIZES = {
+  "rex-chine":[2560,1435],
+  "second-brain":[2560,1433],
   "agent-evaluation":[2560,1433],"agentic-coding":[2560,1433],"agents-enterprise":[2560,1425],"conduite-changement":[2560,1433],
   "context-engineering":[2560,1433],"cyber-ai":[2560,1433],"datacenter":[2560,1433],"ia-industrie":[2560,1433],
   "industrialisation":[2560,1433],"inference":[2560,1433],"nouvelles-menaces-cyber":[2560,1433],"physical-ai":[2560,1433],
@@ -325,7 +333,7 @@ function poster(s, box, targetX) {
 }
 
 function frameMarkup(s) {
-  const meta = `<div class="meta"><span class="chip">${TRACK_LABEL[s.track]}</span><span class="lb">${[s.format, s.time, s.dur && `${s.dur} min`].filter(Boolean).join(" · ")}</span></div>`;
+  const meta = `<div class="meta"><span class="chip">${TRACK_LABEL[s.track]}</span><span class="lb">${[s.format, !s.backup && s.time, s.dur && `${s.dur} min`].filter(Boolean).join(" · ")}</span></div>`;
   const foot = `Mardi 17 novembre 2026 · Hôtel de Région · Nantes`;
   const isRight = s.side === "right";
   if (s.paper) {
@@ -487,7 +495,7 @@ function hostAndJury(s) {
 
 // Intro bumper: two labelled groups, the finalists first since they are what the session is about
 function contestBumper(s) {
-  const meta = `<div class="meta"><span class="chip">${TRACK_LABEL[s.track]}</span><span class="lb">${s.format} · ${s.time} · ${s.dur} min</span></div>`;
+  const meta = `<div class="meta"><span class="chip">${TRACK_LABEL[s.track]}</span><span class="lb">${[s.format, !s.backup && s.time, `${s.dur} min`].filter(Boolean).join(" · ")}</span></div>`;
   return `<div class="cv lay-A contest t-${s.track}" data-slug="${s.slug}" style="background:${CONTEST_BLACK}">
     ${contestBackdrop(s)}
     <div class="col" style="top:110px;bottom:120px">${meta}<div class="title" style="font-size:104px;margin-top:26px">${s.title}</div>

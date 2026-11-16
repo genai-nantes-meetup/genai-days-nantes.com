@@ -522,7 +522,7 @@ def main():
         sessions = page.evaluate("""() => SESSIONS.map(s => {
           const t = document.createElement("textarea"); t.innerHTML = s.title;
           return {slug: s.slug, time: s.time, track: s.track, format: s.format, title: t.value.replace(/\\u2011/g, "-"),
-                  contest: !!s.contest, waiting: !!s.waiting, panel: !s.contest && !s.waiting && s.speakers.length >= 3,
+                  contest: !!s.contest, waiting: !!s.waiting, backup: !!s.backup, panel: !s.contest && !s.waiting && s.speakers.length >= 3,
                   transitions: s.contest ? talkFrames(s).filter(f => f.transition).map(f => {
                     const ps = pitchers(s), p = ps.find(p => f.caption.endsWith("· " + p.company));
                     return {part: f.part, pitch: p ? ps.indexOf(p) + 1 : 0, logo: p ? p.logo : ""};
@@ -532,7 +532,9 @@ def main():
         files_by_slug, talk_holes, browser_checks = {}, {}, []
         sheets = {k: [] for k in ("bumpers", "talks", "tables", "contest")}
         for s in sessions:
-            name = f"{s['time'].replace(':', '')}-{TRACK_SHORT[s['track']]}-{s['slug']}.png"
+            # Backup talks have no slot until they replace a session: no time in the name, grouped at the end
+            prefix = "backup" if s["backup"] else s["time"].replace(":", "")
+            name = f"{prefix}-{TRACK_SHORT[s['track']]}-{s['slug']}.png"
             bumper = f"{BUMPERS}/{name}"
             query = f"?session={s['slug']}"
             shoot(page, base + "bumpers.html" + query, bumper, False)
