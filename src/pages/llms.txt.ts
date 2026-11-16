@@ -7,6 +7,7 @@ import { SPEAKER_EVENT_ROLE_SHORT_LABELS } from '../lib/speakers';
 import { stripMarkdownToPlainText } from '../lib/markdown';
 import { localizePath } from '../lib/i18n';
 import { getLocalizedCollection } from '../lib/localized-content';
+import { excludeUnlistedSessions, excludeUnlistedSpeakers } from '../lib/listing';
 import { getPublicApiPath, PUBLIC_API_RESOURCES, type PublicApiResource } from '../lib/public-api';
 import EVENT from '../content/event.json';
 import PRICING from '../content/pricing.json';
@@ -43,7 +44,7 @@ const KEY_PAGES = [
 
 export const GET: APIRoute = async ({ site, url }) => {
   const siteUrl = (site ?? new URL(url.origin)).href;
-  const [tracks, sessions, speakers, englishSpeakers, team, partners] = await Promise.all([
+  const [tracks, allSessions, allSpeakers, englishSpeakers, team, partners] = await Promise.all([
     getCollection('tracks'),
     getCollection('sessions'),
     getCollection('speakers'),
@@ -51,6 +52,8 @@ export const GET: APIRoute = async ({ site, url }) => {
     getCollection('team'),
     getCollection('partners'),
   ]);
+  const sessions = excludeUnlistedSessions(allSessions);
+  const speakers = excludeUnlistedSpeakers(allSpeakers, allSessions);
   const supporter = partners.find((partner) => partner.data.featuredPartner);
   const supporterLine = supporter
     ? ` Avec le soutien de la ${supporter.data.name} (${supporter.data.website}).`

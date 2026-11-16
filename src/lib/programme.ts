@@ -1,5 +1,6 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import type { Locale } from './i18n';
+import { excludeUnlistedSessions, isUnlistedSession } from './listing';
 
 export type ProgrammeSlotKind =
   | 'arrival'
@@ -182,8 +183,10 @@ export async function getSessionPagePaths() {
     /* Le temps commun n'est pas un parcours : ses sessions (keynote d'ouverture,
      * podcast du soir) encadrent la journée, les relier comme précédente et
      * suivante sauterait tout le programme. */
-    const isCommonSession = session.data.track === COMMON_TRACK_ID;
-    const sameTrackSessions = sessions
+    /* Une session de secours n'a pas de place dans l'enchaînement du parcours,
+     * et aucune session listée ne renvoie vers elle. */
+    const isOutsideSequence = session.data.track === COMMON_TRACK_ID || isUnlistedSession(session);
+    const sameTrackSessions = excludeUnlistedSessions(sessions)
       .filter((candidate) => candidate.data.track === session.data.track)
       .sort((a, b) => a.data.startTime.localeCompare(b.data.startTime));
     const sessionIndex = sameTrackSessions.findIndex((candidate) => candidate.id === session.id);
@@ -193,8 +196,8 @@ export async function getSessionPagePaths() {
       props: {
         session,
         track: trackById.get(session.data.track),
-        previousSession: isCommonSession ? undefined : sameTrackSessions[sessionIndex - 1],
-        nextSession: isCommonSession ? undefined : sameTrackSessions[sessionIndex + 1],
+        previousSession: isOutsideSequence ? undefined : sameTrackSessions[sessionIndex - 1],
+        nextSession: isOutsideSequence ? undefined : sameTrackSessions[sessionIndex + 1],
         /* Les invités (guestSlugs) ne comptent que sur la fiche de la session :
          * les pages intervenant et le programme lisent speakerSlugs seul. */
         speakers: [...new Set([...session.data.speakerSlugs, ...session.data.guestSlugs])]

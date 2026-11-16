@@ -1,13 +1,16 @@
 ---
 import { getCollection } from 'astro:content';
+import { excludeUnlistedSessions, excludeUnlistedSpeakers } from '../../lib/listing';
 import EventName from '../../components/EventName.astro';
 import StickerRewardLayout from '../../layouts/StickerRewardLayout.astro';
 import { EVENT, formatEventDateLabel, formatEventDateShort } from '../../lib/event';
 import { getLocaleFromPath, INTL_LOCALES, localizePath } from '../../lib/i18n';
 
 const locale = getLocaleFromPath(Astro.url.pathname);
-const sessions = await getCollection('sessions');
-const speakers = await getCollection('speakers');
+/* Mêmes étiquettes que LabelArchive : ni sessions de secours ni leurs intervenants. */
+const allSessions = await getCollection('sessions');
+const sessions = excludeUnlistedSessions(allSessions);
+const speakers = excludeUnlistedSpeakers(await getCollection('speakers'), allSessions);
 const requiredLabelIds = [
   'landing-day-manifesto',
   ...speakers.map((speaker) => `speaker-${speaker.id}`),

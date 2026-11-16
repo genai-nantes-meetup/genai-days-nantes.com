@@ -2,10 +2,12 @@ import { getCollection } from 'astro:content';
 import { describe, expect, it } from 'vitest';
 import { GET } from '../../src/pages/llms.txt';
 import { stripMarkdownToPlainText } from '../../src/lib/markdown';
+import { excludeUnlistedSessions, excludeUnlistedSpeakers, isUnlistedSession } from '../../src/lib/listing';
 
 describe('llms.txt', () => {
   it('derives every announced session from the content collection', async () => {
-    const sessions = await getCollection('sessions');
+    const allSessions = await getCollection('sessions');
+    const sessions = excludeUnlistedSessions(allSessions);
     const response = await GET({
       site: new URL('https://example.com/'),
       url: new URL('https://example.com/llms.txt'),
@@ -24,6 +26,9 @@ describe('llms.txt', () => {
       if (session.body?.trim()) {
         expect(text).toContain(stripMarkdownToPlainText(session.body, { keepLinkUrls: true }));
       }
+    }
+    for (const session of allSessions.filter(isUnlistedSession)) {
+      expect(text).not.toContain(`/programme/${session.id}`);
     }
   });
 
@@ -65,7 +70,7 @@ describe('llms.txt', () => {
     expect(text).toContain('- Privacy and legal notice: https://example.com/en/privacy');
     expect(text).toContain('Les conférences restent présentées en français.');
 
-    for (const speaker of await getCollection('speakers')) {
+    for (const speaker of excludeUnlistedSpeakers(await getCollection('speakers'), await getCollection('sessions'))) {
       expect(text).toContain(speaker.data.name);
       expect(text).toContain(`https://example.com/speakers/${speaker.id}`);
       expect(text).toContain(`https://example.com/en/speakers/${speaker.id}`);

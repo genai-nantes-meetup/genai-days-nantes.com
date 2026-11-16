@@ -24,6 +24,7 @@ import { toISODateTime } from "../../lib/event";
 import EVENT from "../../content/event.json";
 import { getSocialImageUrl } from "../../lib/social-image";
 import { stripMarkdownToPlainText } from "../../lib/markdown";
+import { isUnlistedSession } from "../../lib/listing";
 
 export const getStaticPaths = getSessionPagePaths;
 type Props = InferGetStaticPropsType<typeof getStaticPaths>;
@@ -324,6 +325,7 @@ const breadcrumbJsonLd = {
   description={pageDescription}
   socialImage={socialImage}
   structuredData={[sessionJsonLd, breadcrumbJsonLd]}
+  robots={isUnlistedSession(session) ? "noindex" : undefined}
 >
   <Header />
   <main>

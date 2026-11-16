@@ -20,6 +20,7 @@ const locale = getLocaleFromPath(Astro.url.pathname);
 const props = Astro.props as {
   speaker: CollectionEntry<'speakers'>;
   sessions: CollectionEntry<'sessions'>[];
+  isUnlisted: boolean;
 };
 const speaker = await localizeEntry(props.speaker, locale);
 const sessions = await Promise.all(props.sessions.map((session) => localizeEntry(session, locale)));
@@ -193,6 +194,7 @@ const socialLinks = [
   description={pageDescription}
   socialImage={socialImage}
   structuredData={[speakerJsonLd, breadcrumbJsonLd]}
+  robots={props.isUnlisted ? 'noindex' : undefined}
 >
   <Header />
   <main>

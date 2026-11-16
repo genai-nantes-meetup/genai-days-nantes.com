@@ -3,6 +3,7 @@ import EVENT from '../content/event.json';
 import { localizePath, type Locale } from './i18n';
 import { COMMON_TRACK_ID, getSessionlessSlots, getSlotId, type ProgrammeSlot } from './programme';
 import { getLocalizedCollection } from './localized-content';
+import { excludeUnlistedSessions, excludeUnlistedSpeakers } from './listing';
 import { stripMarkdownToPlainText } from './markdown';
 import { SPEAKER_EVENT_ROLE_SHORT_LABELS, sortSpeakersByProminence } from './speakers';
 
@@ -83,10 +84,12 @@ async function buildSponsors(locale: Locale, toAbsoluteUrl: UrlBuilder) {
 }
 
 async function buildSpeakers(locale: Locale, toAbsoluteUrl: UrlBuilder) {
-  const [speakers, sessions] = await Promise.all([
+  const [allSpeakers, allSessions] = await Promise.all([
     getLocalizedCollection('speakers', locale),
     getLocalizedCollection('sessions', locale),
   ]);
+  const speakers = excludeUnlistedSpeakers(allSpeakers, allSessions);
+  const sessions = excludeUnlistedSessions(allSessions);
   const sessionsBySpeaker = new Map<string, { id: string; title: string; url: string }[]>();
   for (const session of sessions) {
     for (const slug of session.data.speakerSlugs) {
@@ -147,11 +150,12 @@ function getSlotEntryKind(slot: ProgrammeSlot): SessionEntryKind {
 }
 
 async function buildSessions(locale: Locale, toAbsoluteUrl: UrlBuilder) {
-  const [sessions, speakers, tracks] = await Promise.all([
+  const [allSessions, speakers, tracks] = await Promise.all([
     getLocalizedCollection('sessions', locale),
     getLocalizedCollection('speakers', locale),
     getLocalizedCollection('tracks', locale),
   ]);
+  const sessions = excludeUnlistedSessions(allSessions);
   const speakerById = new Map(speakers.map((speaker) => [speaker.id, speaker.data]));
   const trackById = new Map(tracks.map((track) => [track.id, track.data]));
   const sessionEntries = sessions.map((session) => {

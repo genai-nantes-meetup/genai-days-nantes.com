@@ -8,14 +8,16 @@ import Footer from '../../components/Footer.astro';
 import Header from '../../components/Header.astro';
 import TrackMark from '../../components/TrackMark';
 import { EVENT, EVENT_YEAR } from '../../lib/event';
-import { SPEAKER_EVENT_ROLE_LABELS, SPEAKER_PORTRAIT_DIMENSIONS, SPEAKER_TARGET, sortSpeakersByProminence, excludeGuestOnlySpeakers, getSpeakerPortraitSrcset, getCompanyLogoBackdrop, trackForSpeaker } from '../../lib/speakers';
+import { SPEAKER_EVENT_ROLE_LABELS, SPEAKER_PORTRAIT_DIMENSIONS, SPEAKER_TARGET, sortSpeakersByProminence, getListedSpeakers, getSpeakerPortraitSrcset, getCompanyLogoBackdrop, trackForSpeaker } from '../../lib/speakers';
 import { getLocaleFromPath, localizePath } from '../../lib/i18n';
 import { getLocalizedCollection } from '../../lib/localized-content';
+import { excludeUnlistedSessions } from '../../lib/listing';
 
 const locale = getLocaleFromPath(Astro.url.pathname);
-const sessions = await getCollection('sessions');
+const allSessions = await getCollection('sessions');
+const sessions = excludeUnlistedSessions(allSessions);
 const speakers = sortSpeakersByProminence(
-  excludeGuestOnlySpeakers(await getLocalizedCollection('speakers', locale), sessions),
+  getListedSpeakers(await getLocalizedCollection('speakers', locale), allSessions),
 );
 const speakerTrackById = new Map(speakers.map((speaker) => [speaker.id, trackForSpeaker(speaker.id, sessions)]));
 

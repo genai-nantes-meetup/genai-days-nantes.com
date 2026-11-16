@@ -1,5 +1,5 @@
 {
-  "scripts/build-press-kit.py": "8b435736e12ec767292006b79573f096e12922999338ef4c246187b8b8e3481f",
+  "scripts/build-press-kit.py": "1ef929386c4a3e5f703569c7e85943b19498a19dff95e865e607f58cd2139a5e",
   "src/components/HeroAffiche.astro": "e0dc1800e43e16ad6226cefaf92581516d8c6792259d4f3be19e9105947f459f",
   "src/content/event.json": "e376eb672e9f9d1ccf380c2f8e3bb6ecdb0ecc8a45e44a196bfa20022ffcf91f",
   "src/content/partners/adn-ouest.md": "a6612c9e52e50c59bb8491640dc004827b2538200cfc887a29b85de883628e1f",
@@ -44,6 +44,8 @@
   "src/content/sessions/physical-ai-robotique.md": "4abf8b1de9f0b1fbdb6196f93a48a40ba3672bc0a18994e41654f04154509f88",
   "src/content/sessions/podcast-maci.md": "5d4be6bd5ae9eee7a2e516eb19686dbe261ab9e7872c8114c1d843515ad91594",
   "src/content/sessions/product-velocity.md": "6d49d62679d8e2fe98f9989a1902c4354447a356d72839298c1c8ce23e59c8ab",
+  "src/content/sessions/rex-chine.md": "5d515405af1702e93d83908b2879fb00835c0c381e2f474a63101fa3a3727540",
+  "src/content/sessions/second-brain.md": "b25539b39f704d2e4993af9bd8c0400f2376e61add844654c60da298cda8982c",
   "src/content/sessions/slm-compression-modeles.md": "e4c247d3615a1082530be735f1b3cebb9e61f25f1a68db286d141a623d2b9d23",
   "src/content/sessions/souverainete-ia.md": "fb3f4bdd1e9e31392cfdf2ac1154ed7a96e959fc244bf4334eb58d596e30bb5c",
   "src/content/sessions/startup-contest.md": "2b8252e634dbfcf39d73d83debf0aae1510e25f4805ce607e9218b2667c504fa",
@@ -58,6 +60,7 @@
   "src/content/speakers/charli-idrac.md": "7e7cf498b05b8825215f5103717f9c5897329f6b9efddf04891e696401d82482",
   "src/content/speakers/christelle-morancais.md": "a3478ffc8d768a5c825a553a27535f9158f524d5c685dbc944138241c9bf418f",
   "src/content/speakers/claire-augris.md": "9adefe453c8911dac2225bcbf2e248d8ecea5840c4003b78b21792bb8a12ac15",
+  "src/content/speakers/clement-spiers.md": "c45a91a9665c2e30ef8c4287a9c32a5400066c6cf85cbb5cac5b651ea8d29e05",
   "src/content/speakers/constance-nebbula.md": "f84a2292b17eabee9dabba88c602c57621e556b328fb4349e51659357bdc13af",
   "src/content/speakers/david-leaurant.md": "47a6ac04b0807089e026d41470c24dba9d93f31cf8ad1cc7f3bbaba05a82b4ef",
   "src/content/speakers/david-pilato.md": "38409dc42047d8c91a3d70979cd05b2d1523d075c1bcff9dcde9e11499f16016",
@@ -74,7 +77,9 @@
   "src/content/speakers/jean-yves-simon.md": "a6abe077cb91aef11de25f44052d3fd2e50ede5790e995323bcfea1531d5d6c3",
   "src/content/speakers/julien-lesaicherre.md": "6ca677b0c9f9c0cd3102391aa69865179db88f9b9eb2f1d28d25e253d4c1a549",
   "src/content/speakers/laurent-duthoit.md": "248c1d0ad3ab39ff2c1ac15a2a3779c5d924dd313a3443a3a743874c190f9dc6",
+  "src/content/speakers/louis-ammonique.md": "5fb15de63e92cf83026403f2c65bddb94869e48bc72a3f9fd1f2eeb6209036af",
   "src/content/speakers/marie-fleur-sacreste.md": "3f7041fa8ac3d3d75e111bb63d3b6f26be0a7be38554be8ca8bfa5f4171d7747",
+  "src/content/speakers/mathieu-le-gac.md": "4d54b4e180cc612b14141196f5a7752d788cd5e7b58dfdc8b62c81efffb4cbfe",
   "src/content/speakers/nicolas-martignole.md": "84fbea0268fdb1371dffd885e1fa3004f2f78d17122ba111f9578edf1ce9048d",
   "src/content/speakers/olivier-lauvray.md": "2c68284eb5591cffef7e8368ef75bbd149334bd1cde0369c0d53a7260c652b66",
   "src/content/speakers/pauline-corriou.md": "f6d35c41aad7d10626c7d678bcb6e9f3b3eec5922652e41f08b4bab0e7dd9de4",
@@ -96,7 +101,7 @@
   "src/content/tracks/decideurs.md": "115b36b601ea2a7c25c384aa8821321150cc3fccdd94cbe119a102ee72757dd7",
   "src/content/tracks/tech.md": "854c08266114feb6f5bca56e3d30e8cbbec78b1290428f9fa1b1825fc7184b84",
   "src/lib/cta-links.ts": "4b371bd87f8c8b53f45d2aad75dfef0d8b23ef2a729f1f88bad504d0c22479c9",
-  "src/lib/programme.ts": "072b1731ee78d3d4dd9e4b08e2c3b23c580b76dfd72ec4086016c5a039919d55",
-  "src/lib/speakers.ts": "ded64a6a8ee5be8ff91de5793221ea6ca219c825931b74889290d35663f8e66d",
+  "src/lib/programme.ts": "5e0c04f2978c3aeac9e90328352edc31a50f8510561e5f2dc1b67649a799be50",
+  "src/lib/speakers.ts": "180b6598bb8e712f9250018898b9c691886d0cd204f9d8d897d1ac1ada03ee38",
   "src/styles/global.css": "35d9390f028fc0645bded079614c0c01eb77c353cc1588da505ba614dafe0726"
 }

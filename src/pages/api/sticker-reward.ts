@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import { getSecret } from 'astro:env/server';
 import { Resend } from 'resend';
 import { DEFAULT_LOCALE, isLocale, type Locale } from '../../lib/i18n';
+import { excludeUnlistedSessions, excludeUnlistedSpeakers } from '../../lib/listing';
 
 export const prerender = false;
 
@@ -116,8 +117,10 @@ export const POST: APIRoute = async ({ request }) => {
     return json({ message: copy.invalidPhone }, 400);
   }
 
-  const sessions = await getCollection('sessions');
-  const speakers = await getCollection('speakers');
+  /* Mêmes étiquettes que LabelArchive : ni sessions de secours ni leurs intervenants. */
+  const allSessions = await getCollection('sessions');
+  const sessions = excludeUnlistedSessions(allSessions);
+  const speakers = excludeUnlistedSpeakers(await getCollection('speakers'), allSessions);
   const requiredLabelIds = [
     'landing-day-manifesto',
     ...speakers.map((speaker) => `speaker-${speaker.id}`),

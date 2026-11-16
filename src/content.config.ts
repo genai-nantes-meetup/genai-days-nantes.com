@@ -100,6 +100,10 @@ const sessions = defineCollection({
      * qui ont déjà leur propre session, et leur page ne doit pas lister le
      * podcast. Les autres sessions laissent ce champ vide. */
     guestSlugs: z.array(z.string()).default([]),
+    /* Session de secours, prête à remplacer un désistement : sa page existe
+     * (URL directe, noindex) mais aucune liste, API ni index ne la mentionne,
+     * pas plus que les intervenants qui n'ont qu'elle. Voir src/lib/listing.ts. */
+    unlisted: z.boolean().default(false),
     presentedBy: z
       .object({
         name: z.string(),

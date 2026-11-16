@@ -1,5 +1,6 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import type { Locale } from './i18n';
+import { excludeUnlistedSessions, excludeUnlistedSpeakers, getUnlistedSpeakerIds, isUnlistedSession } from './listing';
 
 export const SPEAKER_TARGET = 28;
 
@@ -100,6 +101,9 @@ export const SPEAKER_PORTRAIT_DIMENSIONS: Record<string, { width: number; height
   'aurelie-pecaud': { width: 800, height: 800 },
   'celine-haentzler': { width: 800, height: 800 },
   'charli-idrac': { width: 800, height: 800 },
+  'mathieu-le-gac': { width: 788, height: 788 },
+  'louis-ammonique': { width: 318, height: 318 },
+  'clement-spiers': { width: 700, height: 700 },
   'claire-augris': { width: 800, height: 800 },
   'benoit-hediard': { width: 800, height: 800 },
   'camille-croze': { width: 400, height: 400 },
@@ -232,6 +236,15 @@ export function excludeGuestOnlySpeakers<T extends { id: string }>(
   return speakers.filter((speaker) => !guestIds.has(speaker.id) || sessionSpeakerIds.has(speaker.id));
 }
 
+/* Les speakers affichés dans les listes (accueil, /speakers, JSON-LD) : ni
+ * invités seuls, ni intervenants des seules sessions de secours. */
+export function getListedSpeakers<T extends { id: string }>(
+  speakers: T[],
+  sessions: CollectionEntry<'sessions'>[],
+): T[] {
+  return excludeGuestOnlySpeakers(excludeUnlistedSpeakers(speakers, sessions), excludeUnlistedSessions(sessions));
+}
+
 /* Un·e speaker n'a plus de champ `track` en frontmatter : son parcours se
  * déduit de ses sessions. Les sessions communes aux deux parcours (keynotes,
  * podcast) ne renseignent rien sur l'appartenance à un parcours, donc seules
@@ -255,12 +268,22 @@ export function trackForSpeaker(
 export async function getSpeakerPagePaths() {
   const speakers = await getCollection('speakers');
   const sessions = await getCollection('sessions');
+  const unlistedSpeakerIds = getUnlistedSpeakerIds(sessions);
 
-  return speakers.map((speaker) => ({
-    params: { speaker: speaker.id },
-    props: {
-      speaker,
-      sessions: sessions.filter((session) => session.data.speakerSlugs.includes(speaker.id)),
-    },
-  }));
+  return speakers.map((speaker) => {
+    const isUnlisted = unlistedSpeakerIds.has(speaker.id);
+    /* Une session de secours ne figure que sur la fiche de ses intervenants
+     * eux-mêmes masqués : un speaker listé (Thomas Mathieu) ne la montre pas. */
+    return {
+      params: { speaker: speaker.id },
+      props: {
+        speaker,
+        isUnlisted,
+        sessions: sessions.filter(
+          (session) =>
+            session.data.speakerSlugs.includes(speaker.id) && (isUnlisted || !isUnlistedSession(session)),
+        ),
+      },
+    };
+  });
 }

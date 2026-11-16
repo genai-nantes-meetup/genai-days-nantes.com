@@ -8,6 +8,10 @@ import { GET as getSessionsFr } from '../../src/pages/api/fr/sessions.json';
 import { GET as getSessionsEn } from '../../src/pages/api/en/sessions.json';
 import { getPublicApiPath } from '../../src/lib/public-api';
 import { sortSpeakersByProminence } from '../../src/lib/speakers';
+import { excludeUnlistedSpeakers, getUnlistedSpeakerIds, isUnlistedSession } from '../../src/lib/listing';
+
+const getListedSpeakers = async () =>
+  excludeUnlistedSpeakers(await getCollection('speakers'), await getCollection('sessions'));
 
 const SITE = 'https://example.com/';
 
@@ -44,7 +48,7 @@ describe('public JSON API', () => {
   });
 
   it('serves every speaker with absolute localized URLs and their sessions', async () => {
-    const speakers = await getCollection('speakers');
+    const speakers = await getListedSpeakers();
     const fr = await call(getSpeakersFr, '/api/fr/speakers.json');
     const en = await call(getSpeakersEn, '/api/en/speakers.json');
 
@@ -61,7 +65,7 @@ describe('public JSON API', () => {
   });
 
   it('orders speakers like the website, in both languages', async () => {
-    const expected = sortSpeakersByProminence(await getCollection('speakers')).map((speaker) => speaker.id);
+    const expected = sortSpeakersByProminence(await getListedSpeakers()).map((speaker) => speaker.id);
     const fr = await call(getSpeakersFr, '/api/fr/speakers.json');
     const en = await call(getSpeakersEn, '/api/en/speakers.json');
 
@@ -93,6 +97,22 @@ describe('public JSON API', () => {
 
     const starts = fr.json.sessions.map((item: { startTime: string }) => item.startTime);
     expect([...starts].sort()).toEqual(starts);
+  });
+
+  it('leaves backup sessions and the speakers who only give them out of every payload', async () => {
+    const sessions = await getCollection('sessions');
+    const unlistedSessionIds = sessions.filter(isUnlistedSession).map((session) => session.id);
+    const unlistedSpeakerIds = [...getUnlistedSpeakerIds(sessions)];
+    const speakersPayload = (await call(getSpeakersFr, '/api/fr/speakers.json')).json;
+    const sessionsPayload = (await call(getSessionsFr, '/api/fr/sessions.json')).json;
+    const servedSessionIds = [
+      ...sessionsPayload.sessions.map((item: { id: string }) => item.id),
+      ...speakersPayload.speakers.flatMap((item: { sessions: { id: string }[] }) => item.sessions.map((session) => session.id)),
+    ];
+    const servedSpeakerIds = speakersPayload.speakers.map((item: { id: string }) => item.id);
+
+    for (const id of unlistedSessionIds) expect(servedSessionIds).not.toContain(id);
+    for (const id of unlistedSpeakerIds) expect(servedSpeakerIds).not.toContain(id);
   });
 
   it('lists breaks, lunch and the closing keynote from the programme slots', async () => {

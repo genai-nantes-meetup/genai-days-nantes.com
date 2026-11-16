@@ -6,10 +6,11 @@ import { EVENT } from '../lib/event';
 import { getLocaleFromPath, localizePath } from '../lib/i18n';
 import { getLocalizedCollection } from '../lib/localized-content';
 import { PROGRAMME_SLOTS } from '../lib/programme';
+import { excludeUnlistedSessions } from '../lib/listing';
 
 const locale = getLocaleFromPath(Astro.url.pathname);
 const tracks = await getLocalizedCollection('tracks', locale);
-const sessions = await getCollection('sessions');
+const sessions = excludeUnlistedSessions(await getCollection('sessions'));
 const decisionTrack = tracks.find((track) => track.id === 'decideurs');
 const deliveryTrack = tracks.find((track) => track.id === 'tech');
 const startupContest = sessions.find((session) => session.id === 'startup-contest');

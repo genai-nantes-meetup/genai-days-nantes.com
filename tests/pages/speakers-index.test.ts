@@ -3,10 +3,9 @@ import { getCollection } from 'astro:content';
 import SpeakersIndexPage from '../../src/pages/speakers/index.astro';
 import { EVENT_YEAR } from '../../src/lib/event';
 import { getTicketCtaCopy } from '../../src/lib/pricing';
-import { SPEAKER_TARGET, excludeGuestOnlySpeakers, sortSpeakersByProminence, trackForSpeaker } from '../../src/lib/speakers';
+import { SPEAKER_TARGET, getListedSpeakers as listSpeakers, sortSpeakersByProminence, trackForSpeaker } from '../../src/lib/speakers';
 
-const getListedSpeakers = async () =>
-  excludeGuestOnlySpeakers(await getCollection('speakers'), await getCollection('sessions'));
+const getListedSpeakers = async () => listSpeakers(await getCollection('speakers'), await getCollection('sessions'));
 import { createAstroContainer } from '../utils/create-astro-container';
 
 describe('speakers index page', () => {

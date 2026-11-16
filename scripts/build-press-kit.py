@@ -972,8 +972,19 @@ def build_context(tmp: Path) -> dict:
         tracks.append(data)
     tracks.sort(key=lambda item: item["accentColor"] != "blue")
 
-    sessions = collection("sessions")
-    speakers = collection("speakers")
+    # Backup talks (`unlisted: true`) stay out of the kit, like the speakers who
+    # only appear in them: same rule as src/lib/listing.ts on the site.
+    all_sessions = collection("sessions")
+    sessions = [session for session in all_sessions if not session.get("unlisted")]
+
+    def participants(session: dict) -> list[str]:
+        return [*session["speakerSlugs"], *session.get("guestSlugs", [])]
+
+    listed_ids = {slug for session in sessions for slug in participants(session)}
+    unlisted_ids = {
+        slug for session in all_sessions if session.get("unlisted") for slug in participants(session)
+    } - listed_ids
+    speakers = [speaker for speaker in collection("speakers") if speaker["id"] not in unlisted_ids]
     speakers_by_id = {speaker["id"]: speaker for speaker in speakers}
     order = prominence_order()
     speakers.sort(key=lambda s: (order.index(s["id"]) if s["id"] in order else len(order), s["name"]))

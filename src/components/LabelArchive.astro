@@ -4,6 +4,7 @@ import { SPEAKER_EVENT_ROLE_SHORT_LABELS } from '../lib/speakers';
 import { getLocaleFromPath, localizePath } from '../lib/i18n';
 import { formatHostedSessionOverline } from '../lib/programme';
 import { getLocalizedCollection } from '../lib/localized-content';
+import { excludeUnlistedSessions, excludeUnlistedSpeakers } from '../lib/listing';
 import CoverLabel from './CoverLabel.astro';
 import EventName from './EventName.astro';
 import ImagePlaceholder from './ImagePlaceholder.astro';
@@ -82,8 +83,11 @@ const copy = {
     },
   },
 }[locale];
-const sessions = (await getLocalizedCollection('sessions', locale)).sort((a, b) => a.data.startTime.localeCompare(b.data.startTime));
-const speakers = (await getLocalizedCollection('speakers', locale)).sort((a, b) => a.data.name.localeCompare(b.data.name));
+const allSessions = await getLocalizedCollection('sessions', locale);
+const sessions = excludeUnlistedSessions(allSessions).sort((a, b) => a.data.startTime.localeCompare(b.data.startTime));
+const speakers = excludeUnlistedSpeakers(await getLocalizedCollection('speakers', locale), allSessions).sort((a, b) =>
+  a.data.name.localeCompare(b.data.name),
+);
 const partners = await getCollection('partners');
 const tracks = await getLocalizedCollection('tracks', locale);
 const speakerById = new Map(speakers.map((speaker) => [speaker.id, speaker]));

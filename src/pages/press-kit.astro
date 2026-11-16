@@ -15,6 +15,7 @@ import TrackMark from "../components/TrackMark";
 import { formatEventDateLabel } from "../lib/event";
 import { getLocaleFromPath, localizePath } from "../lib/i18n";
 import { getLocalizedCollection } from "../lib/localized-content";
+import { excludeUnlistedSessions } from "../lib/listing";
 import EVENT from "../content/event.json";
 import PRICING from "../content/pricing.json";
 import PRESS from "../content/press.json";
@@ -28,7 +29,7 @@ const supporter = partners.find((partner) => partner.data.featuredPartner)?.data
 // Les sessions restent en français : la page n’en lit que des données
 // communes aux deux langues, et le nom propre du podcast, que le titre
 // anglais pourrait reformuler.
-const sessions = await getCollection("sessions");
+const sessions = excludeUnlistedSessions(await getCollection("sessions"));
 const speakers = await getLocalizedCollection("speakers", locale);
 const openingKeynote = sessions.find((session) => session.data.format === "keynote");
 const keynoteSpeaker = speakers.find(

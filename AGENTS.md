@@ -60,6 +60,12 @@ Whenever you change a page's visible wording (title, headline, lede, key copy), 
 
 Sponsors, speakers and sessions are served as prerendered, read-only JSON (CORS open): `/api/fr/{sponsors,speakers,sessions}.json` in French and `/api/en/{...}.json` in English. Payloads are built in `src/lib/public-api.ts` from the localized collections, the six route files are one-line wrappers, and `src/pages/llms.txt.ts` lists them in its "API de données / Data API" section. A new payload field is added in `public-api.ts` only. A new resource also goes in `PUBLIC_API_RESOURCES` and `API_RESOURCE_LABELS` so llms.txt lists it. Tests: `tests/pages/public-api.test.ts`.
 
+## Backup talks (unlisted sessions)
+
+A session with `unlisted: true` in its French frontmatter is a backup talk, ready to replace a speaker who drops out. Its page is built in both languages with `noindex`, but it appears nowhere else: programme, home, pages of listed speakers, labels and stickers, public JSON API, llms.txt, sitemap, press kit. A speaker whose sessions are all unlisted is unlisted too (derived, no flag on speakers). The rule lives in `src/lib/listing.ts` (`excludeUnlistedSessions`, `excludeUnlistedSpeakers`) and `getListedSpeakers()` in `src/lib/speakers.ts`; `astro.config.mjs` (sitemap) and `scripts/build-press-kit.py` apply the same rule. Any new reader that lists sessions or speakers goes through these helpers.
+
+To switch a backup talk on: remove `unlisted: true`, set the real `startTime` (and `room` if needed), then rebuild the press kit with the command above.
+
 ## Known gaps
 
 Known issues recorded rather than fixed, so they are not rediscovered from scratch. Remove an entry when it is fixed.
