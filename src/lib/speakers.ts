@@ -91,6 +91,34 @@ export const SPEAKER_MASTERS_OF_CEREMONIES_ORDER = [
     'jaafar-steiblen-raji',
 ] as const;
 
+/* Real size of every session illustration under public/talks, keyed by `illustration.src`.
+ * Hardcoded because the Cloudflare prerender runs in workerd, which has neither
+ * `sharp` nor the filesystem. tests/lib/speakers.test.ts compares it with the files. */
+export const SESSION_ILLUSTRATION_DIMENSIONS: Record<string, { width: number; height: number }> = {
+  '/talks/agent-evaluation-optimized.webp': { width: 2560, height: 1433 },
+  '/talks/agentic-coding-optimized.webp': { width: 2560, height: 1433 },
+  '/talks/agents-enterprise-optimized.webp': { width: 2560, height: 1425 },
+  '/talks/conduite-changement-optimized.webp': { width: 2560, height: 1433 },
+  '/talks/context-engineering-optimized.webp': { width: 2560, height: 1433 },
+  '/talks/cyber-ai-optimized.webp': { width: 2560, height: 1433 },
+  '/talks/datacenter-optimized.webp': { width: 2560, height: 1433 },
+  '/talks/ia-industrie-optimized.webp': { width: 2560, height: 1433 },
+  '/talks/industrialisation-optimized.webp': { width: 2560, height: 1433 },
+  '/talks/inference-optimized.webp': { width: 2560, height: 1433 },
+  '/talks/nouvelles-menaces-cyber-optimized.webp': { width: 2560, height: 1433 },
+  '/talks/physical-ai-optimized.webp': { width: 2560, height: 1433 },
+  '/talks/podcast-maci-clever-cloud-optimized.webp': { width: 2560, height: 1433 },
+  '/talks/product-velocity-optimized.webp': { width: 2000, height: 2000 },
+  '/talks/rex-chine-optimized.webp': { width: 2560, height: 1435 },
+  '/talks/second-brain-optimized.webp': { width: 2560, height: 1433 },
+  '/talks/souverainete-optimized.webp': { width: 2560, height: 1433 },
+  '/talks/stage-0-keynote-optimized.webp': { width: 2560, height: 1434 },
+  '/talks/stage-1-talk-5-startup-contest-optimized.webp': { width: 2560, height: 1434 },
+  '/talks/stage-1-talk-8-finops-optimized.webp': { width: 1600, height: 697 },
+  '/talks/stage-2-talk-3-slm-optimized.webp': { width: 2560, height: 1434 },
+  '/talks/voice-agents-optimized.webp': { width: 2560, height: 1433 },
+};
+
 /* Dimensions réelles des fichiers portrait, non dérivables du schéma de la
  * collection speakers (pas de champ photoWidth/photoHeight en frontmatter).
  * Partagées entre toutes les vues qui affichent un portrait, pour réserver

@@ -7,12 +7,10 @@ import Footer from '../../components/Footer.astro';
 import TrackMark from '../../components/TrackMark';
 import SessionIllustration from '../../components/SessionIllustration.astro';
 import { EVENT, EVENT_YEAR } from '../../lib/event';
-import { SPEAKER_EVENT_ROLE_LABELS, SPEAKER_PORTRAIT_DIMENSIONS, getSpeakerPagePaths, getSpeakerPortraitSrcset, getCompanyLogoBackdrop, trackForSpeaker } from '../../lib/speakers';
+import { SPEAKER_EVENT_ROLE_LABELS, SPEAKER_PORTRAIT_DIMENSIONS, SESSION_ILLUSTRATION_DIMENSIONS, getSpeakerPagePaths, getSpeakerPortraitSrcset, getCompanyLogoBackdrop, trackForSpeaker } from '../../lib/speakers';
 import { getLocaleFromPath, localizePath } from '../../lib/i18n';
 import { getLocalizedCollection, localizeEntry } from '../../lib/localized-content';
 import { stripMarkdownToPlainText } from '../../lib/markdown';
-import sharp from 'sharp';
-import { fileURLToPath, pathToFileURL } from 'node:url';
 
 export const getStaticPaths = getSpeakerPagePaths;
 
@@ -116,23 +114,6 @@ const roomFor = (session: CollectionEntry<'sessions'>) =>
   session.data.room ||
   trackById.get(session.data.track)?.room ||
   (trackById.get(session.data.track)?.name ?? (session.data.track === 'commun' ? copy.sharedSessionRoom : session.data.track));
-
-/* Dimensions réelles de chaque illustration, lues au build, pour réserver la
- * place de la vignette et éviter un décalage de mise en page au chargement. */
-/* Résolu depuis la racine du projet : relatif à import.meta.url, le chemin
- * pointerait vers dist/ une fois la page compilée. */
-const publicDirectory = pathToFileURL(`${process.cwd()}/public/`);
-const illustrationDimensionsBySessionId = new Map(
-  await Promise.all(
-    sessions
-      .filter((session) => session.data.illustration?.src)
-      .map(async (session) => {
-        const src = session.data.illustration!.src!.replace(/^\//, '');
-        const { width, height } = await sharp(fileURLToPath(new URL(src, publicDirectory))).metadata();
-        return [session.id, { width, height }] as const;
-      }),
-  ),
-);
 
 // Tronque au dernier espace avant la limite pour ne jamais couper un mot en deux.
 function truncateAtWordBoundary(text: string, maxLength: number): string {
@@ -348,7 +329,7 @@ const socialLinks = [
         <div class="mt-8 grid gap-5">
           {sessions.map((session) => {
             const illustration = session.data.illustration;
-            const illustrationDimensions = illustrationDimensionsBySessionId.get(session.id);
+            const illustrationDimensions = illustration?.src ? SESSION_ILLUSTRATION_DIMENSIONS[illustration.src] : undefined;
             return (
               <a
                 class={`speaker-session-card speaker-session-card--${session.data.track}`}

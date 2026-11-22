@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { sortSpeakersByProminence } from '../../src/lib/speakers';
+import { readdirSync, readFileSync } from 'node:fs';
+import sharp from 'sharp';
+import { SESSION_ILLUSTRATION_DIMENSIONS, sortSpeakersByProminence } from '../../src/lib/speakers';
 
 const speaker = (id: string, name: string) => ({ id, data: { name } });
 
@@ -80,5 +82,22 @@ describe('sortSpeakersByProminence', () => {
     const input = [speaker('b', 'B'), speaker('a', 'A')];
     sortSpeakersByProminence(input);
     expect(input.map((s) => s.id)).toEqual(['b', 'a']);
+  });
+});
+
+describe('SESSION_ILLUSTRATION_DIMENSIONS', () => {
+  const sessionsDirectory = 'src/content/sessions';
+  const illustrationSources = readdirSync(sessionsDirectory)
+    .filter((name) => name.endsWith('.md'))
+    .map((name) => readFileSync(`${sessionsDirectory}/${name}`, 'utf8').match(/^\s+src:\s*"([^"]+)"/m)?.[1])
+    .filter((src): src is string => Boolean(src));
+
+  it('lists every session illustration', () => {
+    expect(Object.keys(SESSION_ILLUSTRATION_DIMENSIONS).sort()).toEqual([...new Set(illustrationSources)].sort());
+  });
+
+  it.each(Object.entries(SESSION_ILLUSTRATION_DIMENSIONS))('matches the real size of %s', async (src, expected) => {
+    const { width, height } = await sharp(`public${src}`).metadata();
+    expect({ width, height }).toEqual(expected);
   });
 });

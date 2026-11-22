@@ -102,6 +102,6 @@
   "src/content/tracks/tech.md": "854c08266114feb6f5bca56e3d30e8cbbec78b1290428f9fa1b1825fc7184b84",
   "src/lib/cta-links.ts": "4b371bd87f8c8b53f45d2aad75dfef0d8b23ef2a729f1f88bad504d0c22479c9",
   "src/lib/programme.ts": "5e0c04f2978c3aeac9e90328352edc31a50f8510561e5f2dc1b67649a799be50",
-  "src/lib/speakers.ts": "180b6598bb8e712f9250018898b9c691886d0cd204f9d8d897d1ac1ada03ee38",
+  "src/lib/speakers.ts": "325a7b4e17eda98d8e7f6108cb98c64430b946270fe72492a41a3ba4dbc1eff0",
   "src/styles/global.css": "35d9390f028fc0645bded079614c0c01eb77c353cc1588da505ba614dafe0726"
 }
